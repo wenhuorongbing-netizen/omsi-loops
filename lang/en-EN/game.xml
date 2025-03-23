@@ -20,6 +20,9 @@
             • The two-column layout in the responsive UI now sets a minimum height for the Action List.<br>
             • Loadouts will no longer auto-save themselves when you change a loop counter. They weren't supposed to.<br>
             • Fixed a long-standing bug that would cause travel actions to fail when you remove the portal from the action list (the PORTAL MISSING bug).<br>
+            • A great many bugfixes provided by Guri on the Discord! Action stories should unlock much more reliably. In addition:<br>
+            • The effects of Mercantilism should show up more reliably in tooltips.<br>
+            • Prestige will no longer request confirmation if you're resetting at the beginning of a prestige run.<br>
             ]]></version>
             <version verNum="3P.1.1"><![CDATA[
             <b>Mar 1st, 2024</b>
