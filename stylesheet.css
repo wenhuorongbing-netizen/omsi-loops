@@ -172,7 +172,7 @@ body:not(.loading) > .hideWhenLoaded {
 }
 
 /* Top menus, loadouts, and action stories can have focusable children in the popup, so they're sticky (they use focus-within) */
-.showthatH:hover .showthisH, .showthatH:focus-within .showthisH,
+.showthatH:hover .showthisH, .showthatH:focus-within .showthisH, .showthatH.menu-open .showthisH,
 .showthatloadout:hover .showthisloadout, .showthisloadout:hover, .showthatloadout:focus-within .showthisloadout,
 .showthatstory:hover .showthisstory, .showthatstory:focus-within .showthisstory,
 
@@ -596,6 +596,176 @@ input[type="checkbox"][disabled] + label {
 #statsColumn {
     width: 316px;
     vertical-align: top;
+}
+
+#readingShell {
+    width: calc(100% - 12px);
+    margin: 0 0 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.readingTabs,
+.readingSubTabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.readingTab,
+.readingSubTab {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.readingTab.is-active,
+.readingSubTab.is-active,
+.chronicleChapterButton.is-active {
+    background-color: var(--button-hover-background);
+    box-shadow: 0 3px var(--button-shadow);
+}
+
+.readingPane {
+    background: color-mix(in srgb, var(--body-background) 90%, var(--popup-background));
+    border: 1px solid var(--input-border);
+    border-radius: 10px;
+    padding: 10px;
+    min-height: 220px;
+}
+
+.readingPaneHeader {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.inspectorMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.readingMetaChip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 22px;
+    padding: 0 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--popup-background) 80%, transparent);
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.readingSubPane {
+    max-height: 360px;
+    overflow: auto;
+}
+
+.inspectorEmpty {
+    color: var(--default-color);
+    opacity: 0.8;
+    line-height: 1.5;
+}
+
+.inspectorDefinitionList {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+}
+
+.inspectorDefinitionRow {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 8px;
+    align-items: start;
+}
+
+.inspectorDefinitionRow dt {
+    font-weight: 700;
+}
+
+.inspectorDefinitionRow dd {
+    margin: 0;
+}
+
+.inspectorRichText > :first-child {
+    margin-top: 0;
+}
+
+.inspectorRichText > :last-child {
+    margin-bottom: 0;
+}
+
+#chronicleChapterRail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+#chronicleChapterViewer {
+    border-top: 1px solid var(--input-border);
+    padding-top: 8px;
+}
+
+.chronicleChapterCard {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.chronicleChapterHeading {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.chronicleStoryList {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.chronicleStoryCard {
+    display: grid;
+    grid-template-columns: max-content 1fr max-content;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--popup-background) 85%, transparent);
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.chronicleStoryCard.has-unread {
+    box-shadow: inset 0 0 0 2px var(--story-highlight-border);
+}
+
+.chronicleStoryBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 18px;
+    padding: 0 4px;
+    border: 2px var(--action-category-border-style) var(--action-category-accent);
+    border-radius: 999px;
+    color: var(--action-category-accent);
+    font-size: 0.6rem;
+    font-weight: 700;
+}
+
+.chronicleStoryCount {
+    font-size: 0.75rem;
+    font-weight: 700;
+    opacity: 0.8;
 }
 
 #statsWindow {
@@ -1503,6 +1673,69 @@ li#actionLogLatest {
     vertical-align:top;
 }
 
+#plannerHeader {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    padding-bottom: 6px;
+    background: linear-gradient(var(--body-background) 70%, var(--body-background-transparent) 100%);
+}
+
+#plannerStatusBar {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+}
+
+.plannerStatusPill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 22px;
+    padding: 0 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--popup-background) 80%, transparent);
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.plannerStatusPill[data-state="off"] {
+    opacity: 0.7;
+}
+
+.plannerStatusPill[data-state="running"] {
+    border-color: var(--progress-bar-color);
+}
+
+.plannerStatusPill[data-state="ready"] {
+    border-color: var(--default-color);
+}
+
+.plannerStatusPill[data-state="stale"] {
+    border-color: var(--alert-color);
+}
+
+#plannerControls {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+#plannerHeader #nextActionsAmountButtons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+}
+
+#plannerHeader #actionChanges {
+    margin-top: 0 !important;
+}
+
 #curActionsListContainer {
     width: 35%;
     height: 100%;
@@ -1542,6 +1775,18 @@ li#actionLogLatest {
     justify-content: space-between;
     width: 205px;
     height: 20px;
+}
+
+.nextActionContainer:focus-visible,
+.actionLogEntry:focus-visible,
+.storyContainer:focus-visible,
+.chronicleStoryCard:focus-visible {
+    outline: 2px solid var(--button-background);
+    outline-offset: 2px;
+}
+
+.inspector-selected {
+    box-shadow: inset 0 0 0 2px var(--button-background);
 }
 .nextActionCategoryMark {
     position: absolute;
@@ -2248,7 +2493,7 @@ li#actionLogLatest {
             flex-direction: column;
             height: 100%;
         }
-        & #actionList > *:not(.showthat, #actionChanges, #expandableList) {
+        & #actionList > *:not(.showthat, #plannerHeader, #expandableList) {
             display: none;
         }
         
@@ -2568,7 +2813,7 @@ li#actionLogLatest {
             flex-direction: column;
             height: 100%;
         }
-        & #actionList > *:not(.showthat, #actionChanges, #expandableList) {
+        & #actionList > *:not(.showthat, #plannerHeader, #expandableList) {
             display: none;
         }
     

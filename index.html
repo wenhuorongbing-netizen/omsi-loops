@@ -64,6 +64,41 @@
 
     <main id="main">
         <div id="statsColumn">
+            <div id="readingShell">
+                <div id="readingTabs" class="readingTabs" role="tablist" aria-label="Reading Panels">
+                    <button id="readingTabInspector" class="button readingTab is-active" type="button" onclick="view.setReadingPane('inspector')"></button>
+                    <button id="readingTabChronicle" class="button readingTab" type="button" onclick="view.setReadingPane('chronicle')"></button>
+                    <button id="readingTabCharacter" class="button readingTab" type="button" onclick="view.setReadingPane('character')"></button>
+                </div>
+                <section id="inspectorPane" class="readingPane" aria-live="polite">
+                    <div id="inspectorEmpty" class="inspectorEmpty"></div>
+                    <div id="inspectorContent" class="hidden">
+                        <div id="inspectorHeader" class="readingPaneHeader"></div>
+                        <div id="inspectorMeta" class="inspectorMeta"></div>
+                        <div id="inspectorTabs" class="readingSubTabs" role="tablist" aria-label="Inspector Tabs">
+                            <button id="inspectorTabSummary" class="button readingSubTab is-active" type="button" onclick="view.setInspectorTab('summary')"></button>
+                            <button id="inspectorTabStory" class="button readingSubTab" type="button" onclick="view.setInspectorTab('story')"></button>
+                            <button id="inspectorTabNumbers" class="button readingSubTab" type="button" onclick="view.setInspectorTab('numbers')"></button>
+                        </div>
+                        <div id="inspectorSummaryPane" class="readingSubPane"></div>
+                        <div id="inspectorStoryPane" class="readingSubPane hidden"></div>
+                        <div id="inspectorNumbersPane" class="readingSubPane hidden"></div>
+                    </div>
+                </section>
+                <section id="chroniclePane" class="readingPane hidden">
+                    <div id="chronicleTabs" class="readingSubTabs" role="tablist" aria-label="Chronicle Tabs">
+                        <button id="chronicleTabLog" class="button readingSubTab is-active" type="button" onclick="view.setChronicleTab('log')"></button>
+                        <button id="chronicleTabChapters" class="button readingSubTab" type="button" onclick="view.setChronicleTab('chapters')"></button>
+                        <button id="chronicleTabStories" class="button readingSubTab" type="button" onclick="view.setChronicleTab('stories')"></button>
+                    </div>
+                    <div id="chronicleLogPane" class="readingSubPane"></div>
+                    <div id="chronicleChaptersPane" class="readingSubPane hidden">
+                        <div id="chronicleChapterRail"></div>
+                        <div id="chronicleChapterViewer"></div>
+                    </div>
+                    <div id="chronicleStoriesPane" class="readingSubPane hidden"></div>
+                </section>
+            </div>
             <!-- The stat view starts out in radar mode so that init() can get text lengths -->
             <div id="statsWindow" data-view="radar">
                 <div id="statsTitle" class="showthat block">
@@ -354,6 +389,21 @@
                     <button class="button" style="z-index: 0;" onclick="adjustActionListSize(-100)"><i class="fas fa-minus"></i></button>
                 </div>
                 <br>
+                <div id="plannerHeader">
+                    <div id="plannerStatusBar">
+                        <div id="plannerPredictorState" class="plannerStatusPill"></div>
+                        <div id="plannerSelectionState" class="plannerStatusPill"></div>
+                    </div>
+                    <div id="plannerControls">
+                        <div id="nextActionsAmountButtons">
+                            <div class="bold localized" data-lockey="actions>tooltip>amount"></div>
+                            <button class="button change-amount" onclick="changeActionAmount(1)">1</button>
+                            <button class="button change-amount" onclick="changeActionAmount(5)">5</button>
+                            <button class="button change-amount" onclick="changeActionAmount(10)">10</button>
+                            <input id="amountCustom" oninput="setCustomActionAmount()" onblur="setCustomActionAmount()" value="1" style="width: 75px; position: relative; left: 0; top: -2px; border: 1px solid var(--input-border); height: 16px;">
+                        </div>
+            </div>
+                </div>
                 <div id="expandableList">
                     <div id="curActionsListContainer">
                         <div id="curActionsList"></div>
@@ -366,13 +416,6 @@
                     <div id="nextActionsListContainer">
                         <div id="nextActionsList"></div>
                         <div id="actionTooltipContainer" style="margin-top:10px;width:100%;text-align:left;max-height:357px;overflow:auto;"></div>
-                        <div id="nextActionsAmountButtons">
-                            <div class="bold localized" data-lockey="actions>tooltip>amount"></div>
-                            <button class="button change-amount" onclick="changeActionAmount(1)">1</button>
-                            <button class="button change-amount" onclick="changeActionAmount(5)">5</button>
-                            <button class="button change-amount" onclick="changeActionAmount(10)">10</button>
-                            <input id="amountCustom" oninput="setCustomActionAmount()" onblur="setCustomActionAmount()" value="1" style="width: 75px; position: relative; left: 0; top: -2px; border: 1px solid var(--input-border); height: 16px;">
-                        </div>
                     </div>
                 </div>
                 <div id="actionChanges" style="display:flex;text-align:left;width:100%;margin-top:5px;">
@@ -508,7 +551,7 @@
     <nav id="navbar">
         <a id="navbar_town" href="#shortTownColumn" class="nav localized" data-lockey="menu>navigation>town" onclick="return scrollToPanel(event, 'shortTownColumn')"></a>
         <a id="navbar_actions" href="#actionsColumn" class="nav localized" data-lockey="menu>navigation>actions" onclick="return scrollToPanel(event, 'actionsColumn')"></a>
-        <a id="navbar_action_log" href="#actionLogContainer" class="nav localized" data-lockey="menu>navigation>action_log" onclick="return scrollToPanel(event, 'actionLogContainer')"></a>
+        <a id="navbar_action_log" href="#statsColumn" class="nav localized" data-lockey="menu>navigation>action_log" onclick="view.openReadingPaneFromNav('chronicle', 'log'); return scrollToPanel(event, 'statsColumn')"></a>
         <a id="navbar_stats" href="#statsColumn" class="nav localized" data-lockey="menu>navigation>stats" onclick="return scrollToPanel(event, 'statsColumn')"></a>
     </nav>
 

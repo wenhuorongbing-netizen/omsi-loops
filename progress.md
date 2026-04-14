@@ -262,3 +262,53 @@ Original prompt: 你是一个游戏汉化师仔细思考这个游戏该如何汉
 - content implementation: complete for policy 2
 - automated QA package: complete
 - blind-review signoff: prepared but still pending external human reviewers; `signoff.md` intentionally does not claim a completed human signoff
+- 2026-04-14 GUI/QOL P0 shell pass:
+- Scope implemented:
+- Added a new right-column reading shell in `index.html` with three top-level tabs: `Inspector`, `Chronicle`, and `Character`.
+- Added the first `Inspector` pass in `views/main.view.js` with stable click-selected detail views for:
+- action buttons
+- action-story cards
+- queued next-action rows
+- action-log entries
+- Added `Inspector` sub-tabs (`Summary / Story / Numbers`) and a first structured summary layer using area, role, type, source, queue count/state, and lightweight action tags without adding recommendations or changing action order.
+- Added the first `Chronicle` shell:
+- moved the live `#actionLogContainer` into the new chronicle log pane at runtime
+- added a chapter rail / viewer fed by the existing global story nodes
+- added an action-story list fed by unlocked story cards, including unread highlighting
+- Reworked the planner header in `index.html` so the amount controls, list toggles, loadout menu, and tracked-stat selector now live inside a dedicated `#plannerHeader` above the scrollable queue area.
+- Added planner status pills in `views/main.view.js` / `stylesheet.css` for current predictor state and current inspector selection.
+- Upgraded top menu interaction from hover-only to click-open + hover-compatible:
+- click on a top menu now toggles it open
+- outside click closes open menus
+- `Esc` closes open menus and clears the pinned inspector selection
+- Fixed the `Sit By Waterfall` / training-limit regression properly in `views/main.view.js` by updating all duplicated `trainingLimit...` placeholders instead of only the first DOM match.
+- Fixed the first GUI/QOL regression in the new chronicle shell: `renderChronicleStories()` now safely falls back when `unreadActionStories` is not initialized yet, which was previously aborting `View.initalize()` before the reading shell finished wiring itself up.
+- Verification:
+- `node --check views/main.view.js`
+- `node --check views/menu.view.js`
+- `node --check actionLog.js`
+- Started the repo static server with `node tools/static-server.mjs 5500`
+- Ran the required `develop-web-game` Playwright client against `http://127.0.0.1:5500` with final artifacts in `output/gui-qol-p0/client-final/`
+- Ran an additional Playwright interaction regression over the new GUI/QOL shell; artifacts were written to `output/gui-qol-p0/`
+- `inspector-action.png`
+- `inspector-queue.png`
+- `inspector-story.png`
+- `inspector-log.png`
+- `chronicle-chapters.png`
+- `menu-click-open.png`
+- `results.json`
+- The earlier `output/gui-qol-p0/client/` run was kept as a pre-fix intermediate artifact; the final clean client replay is the `client-final/` run, which produced `shot-0.png` and no new `errors-0.json`.
+- Runtime checks in that pass confirmed:
+- clicking an action opens `Inspector` and still queues the action
+- clicking a queue row pins queue-context details into `Inspector`
+- clicking a story card opens the `Story` tab
+- `Chronicle` renders story cards and a chapter rail
+- action-log entries can be opened from `Chronicle`
+- menu click-open and outside-click close both work
+- `#plannerHeader` computes as `position: sticky`
+- no new runtime console/page errors remained after the unread-story initialization guard was added
+- Suggested next GUI/QOL slices:
+- P1 town-side search/filter/summary strip and unread counts
+- P1 queue region separators / stronger row affordances
+- P1 loadout management panel instead of pure hover popup
+- P2 mobile drawer treatment and predictor deep integration

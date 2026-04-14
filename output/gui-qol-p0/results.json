@@ -1,0 +1,36 @@
+{
+  "readingTabs": [
+    "检视",
+    "纪事",
+    "角色"
+  ],
+  "initialReadingPane": "character",
+  "actionInspector": {
+    "pane": "inspector",
+    "header": "徘徊",
+    "queueRows": 1,
+    "selectedLabel": "已选中: 徘徊"
+  },
+  "queueInspector": {
+    "header": "徘徊",
+    "summary": "\n            \n                \n                    \n                        区域\n                        新手镇\n                    \n                \n                    \n                        功能\n                        推进\n                    \n                \n                    \n                        类型\n                        推进条\n                    \n                \n                    \n                        来源\n                        队列\n                    \n                \n                    \n                        队列次数\n                        1\n                    \n                \n                    \n                        队列状态\n                        启用\n                    \n                \n            \n        "
+  },
+  "storyInspector": {
+    "header": "徘徊",
+    "activeTab": "故事"
+  },
+  "chronicleStoriesCount": 19,
+  "chapterButtons": 1,
+  "logEntryCount": 1,
+  "logInspector": {
+    "pane": "inspector",
+    "header": "日志"
+  },
+  "menuOpenAfterClick": true,
+  "menuClosedAfterOutsideClick": true,
+  "plannerHeader": {
+    "position": "sticky",
+    "top": "0px"
+  },
+  "consoleErrors": []
+}

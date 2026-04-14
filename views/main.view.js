@@ -43,10 +43,18 @@ class View {
         adjustAll();
         this.updateActionTooltips();
         this.initActionLog();
+        this.initializeReadingShell();
+        this.initializePlannerShell();
         document.body.removeEventListener("mouseover", this.mouseoverHandler);
         document.body.addEventListener("mouseover", this.mouseoverHandler, {passive: true});
         document.body.removeEventListener("focusin", this.mouseoverHandler);
         document.body.addEventListener("focusin", this.mouseoverHandler, {passive: true});
+        document.body.removeEventListener("click", this.documentClickHandler);
+        document.body.addEventListener("click", this.documentClickHandler);
+        document.removeEventListener("keydown", this.keydownHandler);
+        document.addEventListener("keydown", this.keydownHandler);
+        document.removeEventListener("predictor-update", this.predictorUpdateHandler);
+        document.addEventListener("predictor-update", this.predictorUpdateHandler);
         window.addEventListener("modifierkeychange", this.modifierkeychangeHandler);
         /** @type {WeakMap<HTMLElement, Element | false>} */
         this.tooltipTriggerMap = new WeakMap();
@@ -56,11 +64,21 @@ class View {
     constructor() {
         this.mouseoverHandler = this.mouseoverHandler.bind(this);
         this.modifierkeychangeHandler = this.modifierkeychangeHandler.bind(this);
+        this.documentClickHandler = this.documentClickHandler.bind(this);
+        this.keydownHandler = this.keydownHandler.bind(this);
+        this.predictorUpdateHandler = this.predictorUpdateHandler.bind(this);
         const savedFilter = window.localStorage.getItem("actionCategoryFilter");
         this.actionCategoryFilter = actionCategories.includes(/** @type {ActionCategory} */(savedFilter))
             ? /** @type {ActionCategory} */(savedFilter)
             : "";
         this.actionCategoryLegendCollapsed = window.localStorage.getItem("actionCategoryLegendCollapsed") === "true";
+        this.readingPane = /** @type {"inspector"|"chronicle"|"character"} */("character");
+        this.inspectorTab = /** @type {"summary"|"story"|"numbers"} */("summary");
+        this.chronicleTab = /** @type {"log"|"chapters"|"stories"} */("log");
+        this.chronicleChapter = 0;
+        this.predictorState = /** @type {"off"|"running"|"ready"|"stale"} */("off");
+        this.inspectorSelection = null;
+        this.guiLanguage = "";
     }
 
     /** @param {UIEvent} event */
@@ -100,6 +118,609 @@ class View {
         }
         return trigger;
     };
+
+    isChineseLanguage() {
+        return Localization.currentLang?.startsWith("zh");
+    }
+
+    getGuiText(key) {
+        const texts = this.isChineseLanguage()
+            ? {
+                inspector: "检视",
+                chronicle: "纪事",
+                character: "角色",
+                summary: "摘要",
+                story: "故事",
+                numbers: "数值",
+                log: "日志",
+                chapters: "章节",
+                stories: "行动故事",
+                inspectorEmpty: "点击一个行动、故事卡、队列项或日志条目，就会在这里固定显示详情。",
+                noStory: "这个对象目前没有可读故事。",
+                noNumbers: "这个对象目前没有额外数值说明。",
+                noChronicleStories: "当前还没有可读的行动故事。",
+                area: "区域",
+                role: "功能",
+                type: "类型",
+                tags: "标签",
+                source: "来源",
+                queuedLoops: "队列次数",
+                queueState: "队列状态",
+                selected: "已选中",
+                nothingSelected: "未选中对象",
+                predictor: "预测器",
+                predictorOff: "关闭",
+                predictorRunning: "运行中",
+                predictorReady: "已完成",
+                predictorStale: "过期",
+                chapter: "章节",
+                actionTypeNormal: "普通",
+                actionTypeProgress: "推进条",
+                actionTypeLimited: "有限",
+                actionTypeMultipart: "多段",
+                tagTravel: "旅行",
+                tagTeaching: "教学",
+                tagTrial: "试炼",
+                tagDungeon: "地下城",
+                tagBuff: "增益",
+                sourceAction: "行动面板",
+                sourceStory: "故事卡",
+                sourceQueue: "队列",
+                sourceLog: "日志",
+                queueEnabled: "启用",
+                queueDisabled: "停用",
+                queueCollapsed: "折叠",
+                chapterPrefix: "第",
+                chapterSuffix: "章",
+            }
+            : {
+                inspector: "Inspector",
+                chronicle: "Chronicle",
+                character: "Character",
+                summary: "Summary",
+                story: "Story",
+                numbers: "Numbers",
+                log: "Log",
+                chapters: "Chapters",
+                stories: "Action Stories",
+                inspectorEmpty: "Click an action, story card, queue row, or log entry to pin its details here.",
+                noStory: "This item does not currently have readable story text.",
+                noNumbers: "This item does not currently have extra numeric context.",
+                noChronicleStories: "There are no readable action stories yet.",
+                area: "Area",
+                role: "Role",
+                type: "Type",
+                tags: "Tags",
+                source: "Source",
+                queuedLoops: "Queued Loops",
+                queueState: "Queue State",
+                selected: "Selected",
+                nothingSelected: "Nothing selected",
+                predictor: "Predictor",
+                predictorOff: "Off",
+                predictorRunning: "Running",
+                predictorReady: "Ready",
+                predictorStale: "Stale",
+                chapter: "Chapter",
+                actionTypeNormal: "Normal",
+                actionTypeProgress: "Progress",
+                actionTypeLimited: "Limited",
+                actionTypeMultipart: "Multipart",
+                tagTravel: "Travel",
+                tagTeaching: "Teaching",
+                tagTrial: "Trial",
+                tagDungeon: "Dungeon",
+                tagBuff: "Buff",
+                sourceAction: "Action Panel",
+                sourceStory: "Story Card",
+                sourceQueue: "Queue",
+                sourceLog: "Log",
+                queueEnabled: "Enabled",
+                queueDisabled: "Disabled",
+                queueCollapsed: "Collapsed",
+                chapterPrefix: "Chapter ",
+                chapterSuffix: "",
+            };
+        return texts[key] ?? key;
+    }
+
+    initializeReadingShell() {
+        const chronicleLogPane = htmlElement("chronicleLogPane");
+        const actionLogContainer = htmlElement("actionLogContainer");
+        if (actionLogContainer.parentElement !== chronicleLogPane) {
+            chronicleLogPane.appendChild(actionLogContainer);
+        }
+        this.refreshGuiLanguage(true);
+        this.setReadingPane(this.readingPane);
+        this.setInspectorTab(this.inspectorTab);
+        this.setChronicleTab(this.chronicleTab);
+        this.renderChronicleChapters();
+        this.renderChronicleStories();
+        this.renderInspector();
+    }
+
+    initializePlannerShell() {
+        this.setPredictorState(options.predictor ? "running" : "off");
+        this.updatePlannerStatus();
+    }
+
+    refreshGuiLanguage(force=false) {
+        if (!force && this.guiLanguage === Localization.currentLang) return;
+        this.guiLanguage = Localization.currentLang;
+        htmlElement("readingTabInspector").textContent = this.getGuiText("inspector");
+        htmlElement("readingTabChronicle").textContent = this.getGuiText("chronicle");
+        htmlElement("readingTabCharacter").textContent = this.getGuiText("character");
+        htmlElement("inspectorTabSummary").textContent = this.getGuiText("summary");
+        htmlElement("inspectorTabStory").textContent = this.getGuiText("story");
+        htmlElement("inspectorTabNumbers").textContent = this.getGuiText("numbers");
+        htmlElement("chronicleTabLog").textContent = this.getGuiText("log");
+        htmlElement("chronicleTabChapters").textContent = this.getGuiText("chapters");
+        htmlElement("chronicleTabStories").textContent = this.getGuiText("stories");
+        htmlElement("inspectorEmpty").textContent = this.getGuiText("inspectorEmpty");
+        this.updatePlannerStatus();
+        this.renderChronicleChapters();
+        this.renderChronicleStories();
+        this.renderInspector();
+    }
+
+    setReadingPane(pane) {
+        this.readingPane = pane;
+        const statsColumn = htmlElement("statsColumn");
+        const panes = {
+            inspector: htmlElement("inspectorPane"),
+            chronicle: htmlElement("chroniclePane"),
+        };
+        statsColumn.dataset.readingPane = pane;
+        panes.inspector.classList.toggle("hidden", pane !== "inspector");
+        panes.chronicle.classList.toggle("hidden", pane !== "chronicle");
+        htmlElement("statsWindow").classList.toggle("hidden", pane !== "character");
+        htmlElement("readingTabInspector").classList.toggle("is-active", pane === "inspector");
+        htmlElement("readingTabChronicle").classList.toggle("is-active", pane === "chronicle");
+        htmlElement("readingTabCharacter").classList.toggle("is-active", pane === "character");
+    }
+
+    setInspectorTab(tab) {
+        this.inspectorTab = tab;
+        htmlElement("inspectorTabSummary").classList.toggle("is-active", tab === "summary");
+        htmlElement("inspectorTabStory").classList.toggle("is-active", tab === "story");
+        htmlElement("inspectorTabNumbers").classList.toggle("is-active", tab === "numbers");
+        htmlElement("inspectorSummaryPane").classList.toggle("hidden", tab !== "summary");
+        htmlElement("inspectorStoryPane").classList.toggle("hidden", tab !== "story");
+        htmlElement("inspectorNumbersPane").classList.toggle("hidden", tab !== "numbers");
+    }
+
+    setChronicleTab(tab) {
+        this.chronicleTab = tab;
+        htmlElement("chronicleTabLog").classList.toggle("is-active", tab === "log");
+        htmlElement("chronicleTabChapters").classList.toggle("is-active", tab === "chapters");
+        htmlElement("chronicleTabStories").classList.toggle("is-active", tab === "stories");
+        htmlElement("chronicleLogPane").classList.toggle("hidden", tab !== "log");
+        htmlElement("chronicleChaptersPane").classList.toggle("hidden", tab !== "chapters");
+        htmlElement("chronicleStoriesPane").classList.toggle("hidden", tab !== "stories");
+        if (tab === "chapters") this.renderChronicleChapters();
+        if (tab === "stories") this.renderChronicleStories();
+    }
+
+    setChronicleChapter(chapter) {
+        this.chronicleChapter = chapter;
+        this.renderChronicleChapters();
+    }
+
+    openReadingPaneFromNav(pane, tab) {
+        this.setReadingPane(pane);
+        if (pane === "chronicle" && tab) {
+            this.setChronicleTab(tab);
+        }
+    }
+
+    setPredictorState(state) {
+        this.predictorState = options.predictor ? state : "off";
+        this.updatePlannerStatus();
+    }
+
+    predictorUpdateHandler() {
+        this.setPredictorState("ready");
+    }
+
+    documentClickHandler(event) {
+        if (!(event.target instanceof HTMLElement)) return;
+        const target = event.target;
+        const insidePopup = target.closest(".showthis,.showthis2,.showthisH,.showthisloadout,.showthisstory");
+        const menuTrigger = target.closest("#menu > li.showthatH");
+
+        if (menuTrigger && !insidePopup) {
+            this.toggleMenuPopup(menuTrigger.id);
+        } else if (!target.closest("#menu")) {
+            this.closeOpenMenus();
+        }
+
+        if (insidePopup) return;
+
+        const queueRow = target.closest(".nextActionContainer");
+        if (queueRow && !target.closest(".nextActionButtons")) {
+            const actionId = Number(queueRow.getAttribute("data-action-id"));
+            if (Number.isFinite(actionId)) {
+                this.openInspectorForQueue(actionId);
+            }
+            return;
+        }
+
+        const storyContainer = target.closest(".storyContainer");
+        if (storyContainer instanceof HTMLElement) {
+            const varName = storyContainer.id.replace("storyContainer", "");
+            this.openInspectorForStory(varName);
+            return;
+        }
+
+        const actionContainer = target.closest(".actionOrTravelContainer");
+        if (actionContainer instanceof HTMLElement) {
+            const varName = actionContainer.id.replace("container", "");
+            queueMicrotask(() => this.openInspectorForAction(varName));
+            return;
+        }
+
+        const logEntry = target.closest(".actionLogEntry");
+        if (logEntry instanceof HTMLElement) {
+            const index = Number(logEntry.id.replace("actionLogEntry", ""));
+            if (Number.isFinite(index)) {
+                this.openInspectorForLog(index);
+            }
+        }
+    }
+
+    keydownHandler(event) {
+        if (!(event.target instanceof HTMLElement)) return;
+        if (event.key === "Escape") {
+            this.closeOpenMenus();
+            if (this.readingPane === "inspector" && this.inspectorSelection) {
+                this.clearInspectorSelection();
+            }
+            return;
+        }
+        if (!(event.key === "Enter" || event.key === " ")) return;
+
+        const target = event.target;
+        const storyContainer = target.closest(".storyContainer");
+        if (storyContainer instanceof HTMLElement) {
+            event.preventDefault();
+            this.openInspectorForStory(storyContainer.id.replace("storyContainer", ""));
+            return;
+        }
+        const queueRow = target.closest(".nextActionContainer");
+        if (queueRow instanceof HTMLElement) {
+            event.preventDefault();
+            const actionId = Number(queueRow.getAttribute("data-action-id"));
+            if (Number.isFinite(actionId)) this.openInspectorForQueue(actionId);
+            return;
+        }
+        const logEntry = target.closest(".actionLogEntry");
+        if (logEntry instanceof HTMLElement) {
+            event.preventDefault();
+            const index = Number(logEntry.id.replace("actionLogEntry", ""));
+            if (Number.isFinite(index)) this.openInspectorForLog(index);
+        }
+    }
+
+    toggleMenuPopup(menuId) {
+        const menuElement = htmlElement(menuId);
+        const isOpen = menuElement.classList.contains("menu-open");
+        this.closeOpenMenus();
+        if (!isOpen) {
+            menuElement.classList.add("menu-open");
+            menuElement.setAttribute("aria-expanded", "true");
+        }
+    }
+
+    closeOpenMenus() {
+        for (const menu of document.querySelectorAll("#menu > li.showthatH.menu-open")) {
+            if (!(menu instanceof HTMLElement)) continue;
+            menu.classList.remove("menu-open");
+            menu.setAttribute("aria-expanded", "false");
+        }
+    }
+
+    getActionByVarName(varName) {
+        return totalActionList.find(action => action.varName === varName) ?? null;
+    }
+
+    getActionTypeLabel(type) {
+        const key = `actionType${type[0].toUpperCase()}${type.slice(1)}`;
+        return this.getGuiText(key);
+    }
+
+    getSelectionSourceLabel(source) {
+        const key = `source${source[0].toUpperCase()}${source.slice(1)}`;
+        return this.getGuiText(key);
+    }
+
+    getActionInspectorTags(action) {
+        const tags = [];
+        if (getPossibleTravel(action.name).length > 0) tags.push(this.getGuiText("tagTravel"));
+        if (action.skills && Object.keys(action.skills).some(skill => action.teachesSkill(skill))) tags.push(this.getGuiText("tagTeaching"));
+        if (isBuffName(action.grantsBuff)) tags.push(this.getGuiText("tagBuff"));
+        if (action.name.includes("Trial")) tags.push(this.getGuiText("tagTrial"));
+        if (["SDungeon", "LDungeon", "TheSpire"].includes(action.varName)) tags.push(this.getGuiText("tagDungeon"));
+        return tags;
+    }
+
+    getActionTooltipHTML(action) {
+        const container = document.getElementById(`container${action.varName}`);
+        const tooltip = container?.querySelector(action.unlocked() ? ".showthis.when-unlocked" : ".showthis.when-locked");
+        return tooltip instanceof HTMLElement ? tooltip.innerHTML : "";
+    }
+
+    getActionStoryHTML(varName) {
+        const storyContent = document.getElementById(`storyContent${varName}`);
+        return storyContent instanceof HTMLElement ? storyContent.innerHTML : "";
+    }
+
+    getInspectorSelectionKey(selection=this.inspectorSelection) {
+        if (!selection) return "";
+        if (selection.kind === "log") return `log:${selection.index}`;
+        return `${selection.kind}:${selection.source}:${selection.varName}:${selection.actionId ?? ""}`;
+    }
+
+    renderDefinitionRows(rows) {
+        const visibleRows = rows.filter(([, value]) => value !== "" && value !== undefined && value !== null);
+        if (visibleRows.length === 0) return "";
+        return `
+            <dl class="inspectorDefinitionList">
+                ${visibleRows.map(([label, value]) => `
+                    <div class="inspectorDefinitionRow">
+                        <dt>${label}</dt>
+                        <dd>${value}</dd>
+                    </div>
+                `).join("")}
+            </dl>
+        `;
+    }
+
+    describeQueueState(action) {
+        const states = [];
+        states.push(action.disabled ? this.getGuiText("queueDisabled") : this.getGuiText("queueEnabled"));
+        if (action.collapsed) states.push(this.getGuiText("queueCollapsed"));
+        return states.join(" · ");
+    }
+
+    applyInspectorSelectionHighlight() {
+        document.querySelectorAll(".inspector-selected").forEach(element => element.classList.remove("inspector-selected"));
+        if (!this.inspectorSelection) return;
+
+        let element = null;
+        if (this.inspectorSelection.kind === "log") {
+            element = document.getElementById(`actionLogEntry${this.inspectorSelection.index}`);
+        } else if (this.inspectorSelection.source === "action") {
+            element = document.getElementById(`container${this.inspectorSelection.varName}`);
+        } else if (this.inspectorSelection.source === "story") {
+            element = document.getElementById(`storyContainer${this.inspectorSelection.varName}`);
+        } else if (this.inspectorSelection.source === "queue") {
+            element = document.getElementById(`nextActionContainer${this.inspectorSelection.actionId}`);
+        }
+        element?.classList.add("inspector-selected");
+    }
+
+    setInspectorSelection(selection, preferredTab="summary") {
+        const nextKey = this.getInspectorSelectionKey(selection);
+        if (nextKey !== "" && nextKey === this.getInspectorSelectionKey() && this.readingPane === "inspector") {
+            this.clearInspectorSelection();
+            return;
+        }
+        this.inspectorSelection = selection;
+        this.setReadingPane("inspector");
+        this.setInspectorTab(preferredTab);
+        this.applyInspectorSelectionHighlight();
+        this.renderInspector();
+        this.updatePlannerStatus();
+    }
+
+    openInspectorForAction(varName, preferredTab="summary") {
+        this.setInspectorSelection({kind: "action", source: "action", varName}, preferredTab);
+    }
+
+    openInspectorForStory(varName) {
+        this.setInspectorSelection({kind: "action", source: "story", varName}, "story");
+    }
+
+    openInspectorForQueue(actionId) {
+        const queuedAction = actions.next.find(action => action.actionId === actionId);
+        const action = queuedAction ? getActionPrototype(queuedAction.name) : null;
+        if (!queuedAction || !action) return;
+        this.setInspectorSelection({kind: "action", source: "queue", varName: action.varName, actionId}, "summary");
+    }
+
+    openInspectorForLog(index) {
+        const entry = actionLog.getEntry(index);
+        if (!entry) return;
+        const preferredTab = entry instanceof ActionStoryEntry || entry instanceof GlobalStoryEntry ? "story" : "summary";
+        this.setInspectorSelection({kind: "log", index}, preferredTab);
+    }
+
+    clearInspectorSelection() {
+        this.inspectorSelection = null;
+        this.applyInspectorSelectionHighlight();
+        this.renderInspector();
+        this.updatePlannerStatus();
+    }
+
+    formatChapterLabel(index) {
+        if (this.isChineseLanguage()) {
+            return `${this.getGuiText("chapterPrefix")}${index + 1}${this.getGuiText("chapterSuffix")}`;
+        }
+        return `${this.getGuiText("chapterPrefix")}${index + 1}`;
+    }
+
+    renderInspector() {
+        const empty = htmlElement("inspectorEmpty");
+        const content = htmlElement("inspectorContent");
+        if (!this.inspectorSelection) {
+            empty.classList.remove("hidden");
+            content.classList.add("hidden");
+            htmlElement("inspectorHeader").textContent = "";
+            htmlElement("inspectorMeta").innerHTML = "";
+            htmlElement("inspectorSummaryPane").innerHTML = "";
+            htmlElement("inspectorStoryPane").innerHTML = "";
+            htmlElement("inspectorNumbersPane").innerHTML = "";
+            return;
+        }
+
+        let title = "";
+        let meta = "";
+        let summary = "";
+        let story = `<p>${this.getGuiText("noStory")}</p>`;
+        let numbers = `<p>${this.getGuiText("noNumbers")}</p>`;
+
+        if (this.inspectorSelection.kind === "action") {
+            const action = this.getActionByVarName(this.inspectorSelection.varName);
+            if (!action) {
+                this.clearInspectorSelection();
+                return;
+            }
+            const queuedAction = this.inspectorSelection.source === "queue"
+                ? actions.next.find(nextAction => nextAction.actionId === this.inspectorSelection.actionId)
+                : null;
+            const tags = this.getActionInspectorTags(action);
+            title = action.label;
+            meta = `
+                <span class="readingMetaChip zone-${action.townNum + 1}">${getTownName(action.townNum)}</span>
+                <span class="readingMetaChip action-category-${action.category}">${getActionCategoryLabel(action.category)}</span>
+                <span class="readingMetaChip action-type-${action.type}">${this.getActionTypeLabel(action.type)}</span>
+            `;
+            summary = this.renderDefinitionRows([
+                [this.getGuiText("area"), getTownName(action.townNum)],
+                [this.getGuiText("role"), getActionCategoryLabel(action.category)],
+                [this.getGuiText("type"), this.getActionTypeLabel(action.type)],
+                [this.getGuiText("source"), this.getSelectionSourceLabel(this.inspectorSelection.source)],
+                [this.getGuiText("queuedLoops"), queuedAction ? formatNumber(queuedAction.loops) : ""],
+                [this.getGuiText("queueState"), queuedAction ? this.describeQueueState(queuedAction) : ""],
+                [this.getGuiText("tags"), tags.join(" · ")],
+            ]);
+            const storyHTML = this.getActionStoryHTML(action.varName);
+            if (storyHTML) story = `<div class="inspectorRichText">${storyHTML}</div>`;
+            const tooltipHTML = this.getActionTooltipHTML(action);
+            if (tooltipHTML) numbers = `<div class="inspectorRichText">${tooltipHTML}</div>`;
+        } else if (this.inspectorSelection.kind === "log") {
+            const entry = actionLog.getEntry(this.inspectorSelection.index);
+            if (!entry) {
+                this.clearInspectorSelection();
+                return;
+            }
+            const action = entry.action;
+            title = action?.label ?? this.getGuiText("log");
+            meta = `
+                <span class="readingMetaChip">${this.getGuiText("log")}</span>
+                <span class="readingMetaChip">${entry.type}</span>
+            `;
+            summary = `<div class="inspectorRichText">${entry.element.innerHTML}</div>`;
+            if (entry instanceof ActionStoryEntry) {
+                const storyInfo = action?.getStoryTexts()?.find(({num}) => num === entry.storyIndex);
+                story = `<div class="inspectorRichText">${storyInfo ? `${storyInfo.conditionHTML}${storyInfo.text}` : this.getGuiText("noStory")}</div>`;
+            } else if (entry instanceof GlobalStoryEntry) {
+                story = `<div class="inspectorRichText">${_txt(`time_controls>stories>story[num="${entry.chapter}"]`)}</div>`;
+            }
+            if (action) {
+                const tooltipHTML = this.getActionTooltipHTML(action);
+                if (tooltipHTML) numbers = `<div class="inspectorRichText">${tooltipHTML}</div>`;
+            }
+        }
+
+        empty.classList.add("hidden");
+        content.classList.remove("hidden");
+        htmlElement("inspectorHeader").textContent = title;
+        htmlElement("inspectorMeta").innerHTML = meta;
+        htmlElement("inspectorSummaryPane").innerHTML = summary;
+        htmlElement("inspectorStoryPane").innerHTML = story;
+        htmlElement("inspectorNumbersPane").innerHTML = numbers;
+    }
+
+    renderChronicleChapters() {
+        const rail = document.getElementById("chronicleChapterRail");
+        const viewer = document.getElementById("chronicleChapterViewer");
+        if (!(rail instanceof HTMLElement) || !(viewer instanceof HTMLElement)) return;
+        const availableChapters = [];
+        for (let i = 0; i <= storyMax; i++) {
+            if (document.getElementById(`story${i}`)) availableChapters.push(i);
+        }
+        if (availableChapters.length === 0) {
+            rail.innerHTML = "";
+            viewer.innerHTML = `<p>${this.getGuiText("noStory")}</p>`;
+            return;
+        }
+        if (!availableChapters.includes(this.chronicleChapter)) {
+            this.chronicleChapter = availableChapters[availableChapters.length - 1];
+        }
+        rail.innerHTML = availableChapters.map(chapter => `
+            <button
+                type="button"
+                class="button chronicleChapterButton${chapter === this.chronicleChapter ? " is-active" : ""}"
+                onclick="view.setChronicleChapter(${chapter})"
+            >${this.formatChapterLabel(chapter)}</button>
+        `).join("");
+        const storyDiv = document.getElementById(`story${this.chronicleChapter}`);
+        viewer.innerHTML = `
+            <div class="chronicleChapterCard">
+                <div class="chronicleChapterHeading">${this.formatChapterLabel(this.chronicleChapter)}</div>
+                <div class="inspectorRichText">${storyDiv?.innerHTML ?? ""}</div>
+            </div>
+        `;
+    }
+
+    renderChronicleStories() {
+        const pane = document.getElementById("chronicleStoriesPane");
+        if (!(pane instanceof HTMLElement)) return;
+        const unreadStories = Array.isArray(globalThis.unreadActionStories) ? globalThis.unreadActionStories : [];
+        const storyActions = totalActionList
+            .filter(action => action.storyReqs !== undefined)
+            .filter(action => {
+                const storyContainer = document.getElementById(`storyContainer${action.varName}`);
+                return storyContainer instanceof HTMLElement && !storyContainer.classList.contains("hidden");
+            });
+        if (storyActions.length === 0) {
+            pane.innerHTML = `<p>${this.getGuiText("noChronicleStories")}</p>`;
+            return;
+        }
+        pane.innerHTML = `
+            <div class="chronicleStoryList">
+                ${storyActions.map(action => {
+                    const unread = unreadStories.includes(`storyContainer${action.varName}`);
+                    const storyTexts = action.getStoryTexts();
+                    const unlockedCount = storyTexts.filter(({num}) => action.storyReqs(num)).length;
+                    return `
+                        <button
+                            type="button"
+                            class="chronicleStoryCard action-category-${action.category}${unread ? " has-unread" : ""}"
+                            onclick="view.openInspectorForStory('${action.varName}')"
+                        >
+                            <span class="chronicleStoryBadge">${getActionCategoryShortLabel(action.category)}</span>
+                            <span class="chronicleStoryName">${action.label}</span>
+                            <span class="chronicleStoryCount">${unlockedCount}/${storyTexts.length}</span>
+                        </button>
+                    `;
+                }).join("")}
+            </div>
+        `;
+    }
+
+    updatePlannerStatus() {
+        const predictorState = htmlElement("plannerPredictorState");
+        const selectionState = htmlElement("plannerSelectionState");
+        const predictorLabel = {
+            off: this.getGuiText("predictorOff"),
+            running: this.getGuiText("predictorRunning"),
+            ready: this.getGuiText("predictorReady"),
+            stale: this.getGuiText("predictorStale"),
+        }[options.predictor ? this.predictorState : "off"];
+        predictorState.textContent = `${this.getGuiText("predictor")}: ${predictorLabel}`;
+        predictorState.dataset.state = options.predictor ? this.predictorState : "off";
+
+        let selectionLabel = this.getGuiText("nothingSelected");
+        if (this.inspectorSelection?.kind === "action") {
+            const action = this.getActionByVarName(this.inspectorSelection.varName);
+            if (action) selectionLabel = `${this.getGuiText("selected")}: ${action.label}`;
+        } else if (this.inspectorSelection?.kind === "log") {
+            selectionLabel = `${this.getGuiText("selected")}: ${this.getGuiText("log")} #${this.inspectorSelection.index + 1}`;
+        }
+        selectionState.textContent = selectionLabel;
+    }
 
     createStats() {
         if (statGraph.initalized) return;
@@ -217,6 +838,7 @@ class View {
     };
 
     update() {
+        this.refreshGuiLanguage();
 
         this.handleUpdateRequests();
 
@@ -671,6 +1293,7 @@ class View {
     };
     updateNextActions() {
         const {scrollTop} = nextActionsDiv; // save the current scroll position
+        this.setPredictorState(options.predictor ? "running" : "off");
         if (options.predictor) {
             Koviko.preUpdateHandler(nextActionsDiv);
         }
@@ -689,7 +1312,7 @@ class View {
                         ondragend=${draggedUndecorate.bind(null, i)}
                         ondragenter=${dragOverDecorate.bind(null, i)}
                         ondragleave=${dragExitUndecorate.bind(null, i)}
-                        draggable='true' data-action-id='${i}'
+                        draggable='true' tabindex='0' role='button' data-action-id='${i}'
                     >
                         <div class='nextActionLoops'><img class='smallIcon imageDragFix'> ×
                         <div class='bold'></div></div>
@@ -721,6 +1344,7 @@ class View {
                 }
             })
             .attr("data-action-category", a => a.action.category)
+            .attr("data-action-var-name", a => a.action.varName)
             .classed("action-has-limit", a => hasLimit(a.name))
             .classed("action-is-training", a => isTraining(a.name))
             .classed("action-is-singular", a => a.action.allowed?.() === 1)
@@ -760,6 +1384,9 @@ class View {
             Koviko.postUpdateHandler(actions.next, nextActionsDiv);
         }
         nextActionsDiv.scrollTop = Math.max(nextActionsDiv.scrollTop, scrollTop); // scrolling down to see the new thing added is okay, scrolling up when you click an action button is not
+        this.applyInspectorSelectionHighlight();
+        this.renderInspector();
+        this.updatePlannerStatus();
     };
 
     updateCurrentActionsDivs() {
@@ -912,6 +1539,8 @@ class View {
         this.actionLogObserver.observe(log);
         log.addEventListener("scroll", this.recordScrollPosition, {passive: true});
         log.addEventListener("scrollend", this.recordScrollPosition, {passive: true});
+        this.renderChronicleStories();
+        this.renderChronicleChapters();
     }
     /** @this {HTMLElement & LastScrollRecord} */
     recordScrollPosition() {
@@ -939,6 +1568,8 @@ class View {
             element = entry.createElement();
             element.id = `actionLogEntry${index}`;
             element.style.order = index;
+            element.tabIndex = 0;
+            element.setAttribute("role", "button");
 
             const nextEntry = htmlElement(`actionLogEntry${index+1}`, false, false);
             log.insertBefore(element, nextEntry ?? htmlElement("actionLogLatest"));
@@ -949,6 +1580,8 @@ class View {
             // element.scrollIntoView({block: "nearest", inline: "nearest", behavior: "auto"});
             setTimeout(() => element.classList.remove("highlight"), 1);
         }
+        this.applyInspectorSelectionHighlight();
+        this.renderInspector();
     }
 
     mouseoverAction(index, isShowing) {
@@ -1062,6 +1695,8 @@ class View {
 
     updateGlobalStory(num) {
         actionLog.addGlobalStory(num);
+        this.chronicleChapter = num;
+        this.renderChronicleChapters();
     }
 
     updateStories(init) {
@@ -1111,6 +1746,8 @@ class View {
                         } else {
                             document.getElementById(divName).classList.remove("storyContainerCompleted");
                         }
+                        this.renderChronicleStories();
+                        this.renderInspector();
                     }
                 }
             }
@@ -1147,6 +1784,7 @@ class View {
         townShowing = townNum;
         this.updateActionCategoryLegend();
         this.applyActionCategoryFilter();
+        this.renderChronicleStories();
     };
 
     showActions(stories) {
@@ -1169,6 +1807,7 @@ class View {
         actionStoriesShowing = stories;
         this.updateActionCategoryLegend();
         this.applyActionCategoryFilter();
+        this.renderChronicleStories();
     };
 
     initializeActionCategoryLegend() {
@@ -1869,8 +2508,10 @@ class View {
             }
         }
         storyShowing = num;
+        this.chronicleChapter = num;
         document.getElementById("storyPage").textContent = String(storyShowing + 1);
         document.getElementById(`story${num}`).style.display = "inline-block";
+        this.renderChronicleChapters();
     };
 
     changeStatView() {
