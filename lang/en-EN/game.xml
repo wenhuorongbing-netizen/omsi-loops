@@ -23,15 +23,12 @@
             • Localized the Challenges, Totals, and Prestige menus, and added a dedicated 4.0 changelog entry for the translation update.<br>
             • Hardened tooltip hiding so action and story popovers stay hidden until hover or focus.<br>
             ]]></version>
-            <version caption="Latest"><![CDATA[
-            <b>Recent changes</b>
-            • Fixed the first Wander action failing when fractional mana consumption is enabled in Extras.<br>
-            • The two-column layout in the responsive UI now sets a minimum height for the Action List.<br>
-            • Loadouts will no longer auto-save themselves when you change a loop counter. They weren't supposed to.<br>
-            • Fixed a long-standing bug that would cause travel actions to fail when you remove the portal from the action list (the PORTAL MISSING bug).<br>
-            • A great many bugfixes provided by Guri on the Discord! Action stories should unlock much more reliably. In addition:<br>
-            • The effects of Mercantilism should show up more reliably in tooltips.<br>
-            • Prestige will no longer request confirmation if you're resetting at the beginning of a prestige run.<br>
+            <version verNum="4.01"><![CDATA[
+            <b>Apr 14th, 2026</b>
+            • Added action role tags plus legend and weak filtering, so each loop-planning button now reads as progression, growth, resource, shortcut, or side content without turning the UI into a walkthrough.<br>
+            • Reworked failed-action feedback into structured attribution, separating route, cost, condition, timing, build-model, and exhausted states while keeping soft blockers from pausing the loop like real failures.<br>
+            • Reframed Mt. Olympus, Face Judgement, Startington, and Jungle Path so the branch reads as different systems responding to different lives rather than a simple success/failure morality split.<br>
+            • Fixed the Action Stories display regression where story text could spill across every card instead of staying hidden until hover or focus.<br>
             ]]></version>
             <version verNum="3P.1.1"><![CDATA[
             <b>Mar 1st, 2024</b>
@@ -1073,11 +1070,13 @@
                 forgotten. It is a place that kept functioning after it was abandoned.
 			</story>
 			<story num="8"> <!--Change 8 to Jungle Path-->
-                Shadow realm or not, there are enough things that haven't changed that you still lean on your established routine. Right down
-                to the part where you have to get some supplies to brave the jungle just outside the small town, from a local trader. Too bad
-                this one is quite selectively deaf to your attempts at haggling, but hey. You've gotten good enough at budgeting and scrounging
-                up coins that you could pay him in the end. Turning your eyes to the narrow trail through the dense jungle before you, you set
-                foot among the wild trees, noting the ruins among the tree-trunks. You wonder if this place has always been a jungle...
+                Leaving Startington does not return you to anything normal. The jungle beyond it feels like the same abandoned logic taking a
+                different shape: less stone, more roots; less rubble, more things trying to grow over the wound before you can read it. You
+                still have to buy supplies from a trader who looks like he learned commerce by counting ration tins and coffin nails, and you
+                still have to choose which risks are worth paying for. When you finally step under the dense canopy, you notice ruined walls
+                threaded between the trunks and pathways that look half-made by refugees, half-made by animals. If Startington was a town that
+                kept functioning after being discarded, this jungle is what that same instinct looks like once it escapes the streets and starts
+                building with vines, fear, and whoever survives long enough to join in.
 			</story>
 			<story num="9"> <!--Made the Looping Potion--> <!--Change 9 to Looping Potion-->
                 Learning the finer points of alchemy, of the subtle rules underpinning the "simple" brewing of potions had been a long, exhausting
@@ -1480,7 +1479,7 @@
         </town3>
         <town4>
             <name>Valhalla</name>
-            <desc>A sprawling and jolly city filled with all manner of nice things. Vikings, beer, angels, beer, blah blah blah, and beer! You can spend your time in the great hall, or in the outskirts of the city. Either way, you'll surely have a great time.</desc>
+            <desc>A polished city of halls, colleges, charities, and offices, all built on the belief that worth should be recognized, named, and put to work. Valhalla is generous by the standards of gods, but it is not casual about anything: citizenship, blessing, rank, and reputation are all things to be earned, recorded, and administered.</desc>
         </town4>
         <town5>
             <name>Startington</name>
@@ -1488,7 +1487,7 @@
         </town5>
         <town6>
             <name>Jungle Path</name>
-            <desc>A twisting jungle that seems determined to swallow you in its depths. All the same, you can hear people somewhere in the near distance and magical herbs growing by the bushel.</desc>
+            <desc>A borderland where Startington's harsh improvisations keep going after the streets run out. The jungle grows over ruins, survivor camps, ritual clearings, and paths that close almost as soon as they are found. It is dangerous, fertile, and crowded with signs that abandoned people have not stopped building a life here; they have simply started building it with stranger materials.</desc>
         </town6>
         <town7>
             <name>Commerceville</name>
@@ -1873,14 +1872,14 @@
             <label>Meet People</label>
             <label_done>People Met</label_done>
             <tooltip><![CDATA[
-            They won't let you get away with a simple chat.<br>Unlocked at 22% Explored.
+            A village is never of one mind. Different people notice different kinds of usefulness.<br>Unlocked at 22% Explored.
             ]]></tooltip>
-            <story_1><![CDATA[<b>1% People Met:</b>⮀ You stand there, a little stumped at the situation you've gotten yourself into, when a young lass asks you about your day so far.]]></story_1>
-            <story_2><![CDATA[<b>20% People Met:</b>⮀ The people here are generally nice enough, if a bit brusque at times. Some people have small tasks that they're happy to pay for.]]></story_2>
-            <story_3><![CDATA[<b>40% People Met:</b>⮀ There are a surprising amount of people in the village. You didn't catch that when you were looking around.]]></story_3>
-            <story_4><![CDATA[<b>60% People Met:</b>⮀ It almost seems that most people have something they want done, the real problem is figuring out what's worth your time.]]></story_4>
-            <story_5><![CDATA[<b>80% People Met:</b>⮀ Having met such a large portion of the people in this village, you almost feel guilty about stealing from them. Almost.]]></story_5>
-            <story_6><![CDATA[<b>100% People Met:</b>⮀ You've spoken to everyone. Every child, adult, teen, animal and plant in this village. Everyone, and everything.]]></story_6>
+            <story_1><![CDATA[<b>1% People Met:</b> You stand there, a little stumped at the situation you've gotten yourself into, when a young lass asks about your day and then immediately whether you can carry a crate for her mother. Apparently friendliness and usefulness travel together here.]]></story_1>
+            <story_2><![CDATA[<b>20% People Met:</b> The people here are generally nice enough, if a bit brisk. One villager values strong hands, another quick wits, another simply the patience to hear the same complaint all the way through.]]></story_2>
+            <story_3><![CDATA[<b>40% People Met:</b> There are more people in the village than you first realized, and they do not agree on much. Some call a person trustworthy if they finish what they start; others if they keep calm in a crisis; others if they know when to keep a secret.]]></story_3>
+            <story_4><![CDATA[<b>60% People Met:</b> It almost seems that everyone has something they want done, but sorting the worthwhile requests from the worthless ones is only part of the challenge. The other part is noticing what each person thinks makes someone worth asking in the first place.]]></story_4>
+            <story_5><![CDATA[<b>80% People Met:</b> Having met such a large portion of the people in this village, you are starting to understand that being liked, being trusted, and being considered useful are three different things. That makes stealing from them only slightly easier.]]></story_5>
+            <story_6><![CDATA[<b>100% People Met:</b> You've spoken to everyone. Every child, adult, teen, animal, and plant in this village. Everyone, and everything. The place feels different now that you know how many different standards of worth can fit into one supposedly simple town.]]></story_6>
         </meet_people>
         <train_strength>
             <label>Train Strength</label>
@@ -1948,41 +1947,41 @@
         <warrior_lessons>
             <label>Warrior Lessons</label>
             <tooltip><![CDATA[
-            Learning to fight is probably important; you have a long journey ahead of you.<br>Requires a reputation of 2 or above.<br>Unlocked at 20% Investigated.
+            Iron teaches more than strength. She teaches discipline, endurance, and how to keep order once a fight starts.<br>Requires a reputation of 2 or above.<br>Unlocked at 20% Investigated.
             ]]></tooltip>
-            <story_1><![CDATA[<b>1 Combat:</b>⮀ You manage to track down the warrior that was staying in town, and are greeted by a small woman holding a sword almost as tall as her. She introduces herself as "Iron" and smiles politely.  Her pleasant demeanour doesn't stop her from thoroughly trouncing you.]]></story_1>
-            <story_2><![CDATA[<b>100 Combat:</b>⮀ You manage to give Iron a run for her money, but she still manages to eke out a victory. She is, however, noticeably worn out afterward.]]></story_2>
-            <story_3><![CDATA[<b>200 Combat:</b>⮀ You push Iron to the brink of defeat, and then she starts fighting dirty.]]></story_3>
-            <story_4><![CDATA[<b>250 Combat:</b>⮀ All your experience fighting Iron finally pays off when you manage to defeat her! You feel really proud of yourself, right up until she smacks your head with the flat of her sword and demands a rematch.]]></story_4>
-            <story_5><![CDATA[<b>500 Combat:</b>⮀ Rematch. Rematch. Rematch. Your training sessions with Iron have evolved into a nonstop gauntlet of sparring matches, as many as you can fit in a loop. You win a lot more than you lose, but Iron simply refuses to lie down and quit. She's clearly exhausted, but every time it looks like she's about to take a break you see a flash of determination in her eyes and she stands up again and demands another rematch.]]></story_5>
-            <story_6><![CDATA[<b>1,000 Combat:</b>⮀ Nowadays it takes everything Iron has just to keep up with you. Dirty tricks, masterful feints, sheer unadulterated stubbornness and spite. But you're wise to all her tricks and skilled enough to counter them, and you never let up the momentum, never let her catch her breath. The exhaustion catches up to her, sooner than in past loops, and eventually even Iron can't muster the strength to stand up and demand another rematch, instead collapsing flat on her back and falling asleep.]]></story_6>
+            <story_1><![CDATA[<b>1 Combat:</b> You track down the warrior staying in town and are greeted by a small woman holding a sword almost as tall as she is. She introduces herself as "Iron," smiles politely, and then thrashes you so thoroughly that the lesson is obvious before she says a word. Later, while you pick yourself up, she remarks that anyone can swing hard for a moment; what matters is whether you can keep your form when everything hurts.]]></story_1>
+            <story_2><![CDATA[<b>100 Combat:</b> You manage to give Iron a run for her money, but she still ekes out a victory. She is worn out afterward, yet more interested in the moments where you held your stance under pressure than the moments where you landed a flashy hit.]]></story_2>
+            <story_3><![CDATA[<b>200 Combat:</b> You push Iron to the brink of defeat, and then she starts fighting dirty. When you complain, she snorts and tells you that discipline only means something if it survives contact with chaos.]]></story_3>
+            <story_4><![CDATA[<b>250 Combat:</b> All your experience fighting Iron finally pays off when you manage to defeat her. You feel proud of yourself right up until she smacks your head with the flat of her sword and demands a rematch, pointing out that one victory proves less than the ability to do it again tomorrow.]]></story_4>
+            <story_5><![CDATA[<b>500 Combat:</b> Rematch. Rematch. Rematch. Your training sessions with Iron have evolved into a nonstop gauntlet of sparring matches, as many as you can fit in a loop. What she seems to respect most is not power, but the fact that you keep showing up ready to be tested all over again.]]></story_5>
+            <story_6><![CDATA[<b>1,000 Combat:</b> Nowadays it takes everything Iron has just to keep up with you: dirty tricks, masterful feints, and sheer stubbornness. Eventually even she collapses flat on her back and falls asleep after a match. Before she drifts off, she mutters that if the world has judges above it, they probably care more for resolve like this than for elegant speeches.]]></story_6>
         </warrior_lessons>
         <mage_lessons>
             <label>Mage Lessons</label>
             <tooltip><![CDATA[
-            The mystic arts got you into this mess, maybe they can help you get out of it.<br>Requires a reputation of 2 or above.<br>Unlocked at 20% Investigated.
+            Warrick teaches the useful kind of magic: observation, interpretation, and the nerve to test what a rule actually means.<br>Requires a reputation of 2 or above.<br>Unlocked at 20% Investigated.
             ]]></tooltip>
-            <story_1><![CDATA[<b>1 Magic:</b>⮀ You approach a burly man dressed in flowing robes, and ask if he would be willing to teach you some magic. The man agrees to teach you some basic cantrips if you help him out with menial tasks. He introduces himself as Warrick.]]></story_1>
-            <story_2><![CDATA[<b>100 Magic:</b>⮀ Warrick compliments you on your ability to wield mana, and is happy to share some more dangerous cantrips with your promise to not use it for ill. He refuses to teach you about alchemy.]]></story_2>
-            <story_3><![CDATA[<b>200 Magic:</b>⮀ Warrick is suspicious about your proficiency with mana for someone he's just run into in the wild, but is still more than willing to humor you. If he throws appraising glances at you every now and then, you pay them no mind.]]></story_3>
-            <story_4><![CDATA[<b>250 Magic:</b>⮀ You and Warrick duel, your lessons from that point on are finding an out of the way location and duking it out with magic. Warrick seems appreciative about the exertion.]]></story_4>
-            <story_5><![CDATA[<b>10 Alchemy:</b>⮀ You offer to help him with his alchemy work and he immediately seems to develop a soft spot for you, talking about herbs and their effects when combined with each other and how they build together to create mystical potions. The man's passionate, that's for sure.]]></story_5>
-            <story_6><![CDATA[<b>50 Alchemy:</b>⮀ You offer Warrick some alchemy techniques that he's never heard of in exchange for some more magic techniques and lessons. He agrees readily.]]></story_6>
-            <story_7><![CDATA[<b>100 Alchemy:</b>⮀ You offer to teach Warrick about alchemy if he teaches you about the branches of magic you have little grounding in. The man himself is a genius and has much to teach. He gives it his all, tempted by the secrets of Alchemy.]]></story_7>
+            <story_1><![CDATA[<b>1 Magic:</b> You approach a burly man dressed in flowing robes and ask if he would teach you some magic. He agrees to basic cantrips if you help him with menial tasks, introduces himself as Warrick, and spends as much time asking why a spell works as showing you how.]]></story_1>
+            <story_2><![CDATA[<b>100 Magic:</b> Warrick compliments your control over mana and starts sharing more dangerous cantrips once you promise not to abuse them. He says the trick to real magic is not obedience, but noticing where a rule stops short of explaining what actually happens.]]></story_2>
+            <story_3><![CDATA[<b>200 Magic:</b> Warrick is suspicious about your proficiency for someone he just met in the wild, but he is more curious than alarmed. The appraising glances he throws your way feel less like suspicion than approval for the way you keep testing the edge of what he says aloud.]]></story_3>
+            <story_4><![CDATA[<b>250 Magic:</b> You and Warrick start dueling as part of your lessons. He calls it practical theory: the fastest way to learn what a spell really means is to cast it against someone smart enough to punish lazy assumptions.]]></story_4>
+            <story_5><![CDATA[<b>10 Alchemy:</b> You offer to help with his alchemy work and he immediately softens, talking at length about herbs, interactions, and how a good mage should learn from anything that changes under careful attention. The man is passionate, that much is certain.]]></story_5>
+            <story_6><![CDATA[<b>50 Alchemy:</b> You offer Warrick techniques he has never heard of in exchange for more magic lessons, and he agrees readily. He seems delighted not by novelty itself, but by how willingly you step outside the neat borders of any single discipline.]]></story_6>
+            <story_7><![CDATA[<b>100 Alchemy:</b> You offer to teach Warrick about alchemy if he teaches you about branches of magic where your grounding is weak. He gives it his all, tempted by the exchange. Insight, it turns out, respects crossed boundaries more than tidy categories.]]></story_7>
         </mage_lessons>
         <heal_the_sick>
             <label>Heal The Sick</label>
             <label_done>Healed</label_done>
             <label_part>Patient</label_part>
             <tooltip><![CDATA[
-            You won't be able to heal them all, but they'll be thankful for doing what you can.<br>Healing is always 3 parts, each with a main stat - Diagnose (Per), Treat (Int), Inform (Cha).<br>Gives (magic skill) * max(restoration skill/50, 1) * (1 + main stat / 100) * sqrt(1 + times completed / 100) * (original mana cost / actual mana cost) progress points per mana.<br>Requires a reputation of 1 or above.<br>Unlocked at 12 Magic skill.<br>Gives 3 reputation upon patient completion.
+            You will not heal everyone, but gratitude is a powerful thing. Whether it is the only thing watching is a different question.<br>Healing is always 3 parts, each with a main stat - Diagnose (Per), Treat (Int), Inform (Cha).<br>Gives (magic skill) * max(restoration skill/50, 1) * (1 + main stat / 100) * sqrt(1 + times completed / 100) * (original mana cost / actual mana cost) progress points per mana.<br>Requires a reputation of 1 or above.<br>Unlocked at 12 Magic skill.<br>Gives 3 reputation upon patient completion.
 			]]></tooltip>
-			<story_1><![CDATA[<b>Patient healed:</b>⮀ You're allowed in to see the patients and begin healing. You're not too experienced but neither is anyone else here, and your basic magic skills make some of the small things easier even if they can't heal people directly. It's excellent practice and everyone you heal, whether you're setting broken bones or bandaging small scrapes, is extraordinarily thankful for your help.]]></story_1>
-			<story_2><![CDATA[<b>10 Patients healed in a loop:</b>⮀ You wipe your brow after finishing a particularly difficult diagnosis. You wouldn't want to have to do something like that without magic. Divinations make diagnoses so much easier. At this point you've basically cleared out the entire healing home - your reputation is absolutely sterling and the nurses and healers are more than thankful for your help.]]></story_2>
-			<story_3><![CDATA[<b>100 Patients healed:</b>⮀ You've healed some of these townsfolk so many times, you don't actually need to speak to them or examine them to find out what's wrong. You go through the same steps anyways, because good bedside manners are an integral part of earning respect as a healer.]]></story_3>
-			<story_4><![CDATA[<b>1000 Patients healed:</b>⮀ You never formally trained as a healer, but you've healed so many people that you're pretty much an expert now. Nothing can stop you, nothing can stump you, nothing can even slow you down! ...Except when they bring in a patient you haven't seen before. When that happens, it usually takes you a while to figure out what their problem is.]]></story_4>
-			<story_5><![CDATA[<b>Failed Action:</b>⮀ You're turned away at the door, the small healers home stating that they can't trust you to not poison the people inside or make the situation worse.]]></story_5>
-			<story_6><![CDATA[<b>50 Restoration:</b>⮀ You'd say it's like magic, but you were already using magic so instead it's like double-magic. The medics can't tell what you're doing, it's completely outside their paradigm: you simply touch the patient's forehead and, with a surge of energy, they're healed. You don't do it to boast, though. All you want is to help.]]></story_6>
+			<story_1><![CDATA[<b>Patient healed:</b> You're allowed in to see the patients and begin healing. You are not especially experienced, but neither is anyone else here, and even your basic magic makes the work easier. Everyone you help is extraordinarily thankful, and you begin to understand how quickly visible care becomes its own kind of reputation.]]></story_1>
+			<story_2><![CDATA[<b>10 Patients healed in a loop:</b> You wipe your brow after finishing a difficult diagnosis. Divinations make this kind of work far easier, and by now the nurses are greeting you like a trusted colleague. Respect, it seems, can be earned by competence just as surely as affection can be earned by kindness.]]></story_2>
+			<story_3><![CDATA[<b>100 Patients healed:</b> You've healed some of these townsfolk so many times that you barely need to examine them anymore, yet you still go through the full routine. Bedside manner matters. Some people judge a healer by results, but the people in the room notice whether you also treat them like human beings.]]></story_3>
+			<story_4><![CDATA[<b>1000 Patients healed:</b> You never formally trained as a healer, but by now you are effectively an expert. Nothing can stop you, stump you, or even slow you down for long, except the occasional patient whose suffering does not fit the pattern. Skill teaches certainty; care teaches caution.]]></story_4>
+			<story_5><![CDATA[<b>Failed Action:</b> You're turned away at the door, the small healer's home insisting they cannot trust you not to poison the people inside or make things worse. Help only counts as help when the people receiving it believe you mean it.]]></story_5>
+			<story_6><![CDATA[<b>50 Restoration:</b> You simply touch a patient's forehead and, with a surge of energy, they are healed. The medics can barely make sense of what you are doing. You do not show off; you just keep moving. Gratitude follows you, but it is hard not to wonder whether stranger powers might notice the effectiveness before they notice the mercy.]]></story_6>
 			<segment_names>
 				<name>Diagnose</name>
 				<name>Treat</name>
@@ -2210,13 +2209,13 @@
         <sit_by_waterfall>
             <label>Sit By Waterfall</label>
             <tooltip><![CDATA[
-            It's peaceful here. Loud, but peaceful.<br>Has 4x exp/talent gain, and can only be done <div id='trainingLimitSoul'></div> times per reset.<br>Unlocked at 70% Forest Explored.
+            The forest is generous with comparisons if you sit still long enough to notice them.<br>Has 4x exp/talent gain, and can only be done <div id='trainingLimitSoul'></div> times per reset.<br>Unlocked at 70% Forest Explored.
             ]]></tooltip>
-            <story_1><![CDATA[<b>Sat by waterfall:</b>⮀ You find a surprisingly quiet waterfall flowing down a steep cliff and stop to stare for a while, simply to observe the natural beauty of the sight. As you watch, the force of the water manages to dislodge a small pebble from the top of the waterfall and send it careening down. You're oddly mesmerized as it bounces along the path, constantly being immersed and spat out again by the water. You don't know when you sat down and began meditating, only that you woke from your deep realization hours later.]]></story_1>
-	        <story_2><![CDATA[<b>100 Soul Talent:</b>⮀ Sometimes you get stressed, or scared, or lonely. You don't know how long it'll be until you escape the loops - you don't even know if you ever will escape the loops! It's pretty overwhelming, and the constant repetition of the same tasks over and over doesn't help. It's a relief to take some time to yourself; to relax, meditate, and just breathe.]]></story_2>
-	        <story_3><![CDATA[<b>1,000 Soul Talent:</b>⮀ You still get anxious sometimes, but you're getting better at relaxing at a moment's notice. A few minutes break, a couple of deep breaths, and you're fired up and ready to go again. It's still nice to sit by the waterfall sometimes, though.]]></story_3>
-	        <story_4><![CDATA[<b>10,000 Soul Talent:</b>⮀ You don't have to take breaks anymore to relax. Whenever you feel that anxiety bubbling up within you, you can effortlessly push it away by taking a single deep breath. In... and out.]]></story_4>
-	        <story_5><![CDATA[<b>100,000 Soul Talent:</b>⮀ Sometimes, things are hard, but it's okay. Everything will work out in the end, and you're at peace.]]></story_5>
+            <story_1><![CDATA[<b>Sat by waterfall:</b> You find a surprisingly quiet waterfall flowing down a steep cliff and stop to stare for a while. As you watch, the force of the water knocks a pebble free and sends it tumbling down the cascade. The same current buries one thing, carries another, and polishes a third. You do not know when watching became meditating, only that you wake from it hours later feeling like the lesson mattered.]]></story_1>
+	        <story_2><![CDATA[<b>100 Soul Talent:</b> Sometimes you get stressed, or scared, or lonely. You do not know how long it will take to escape the loops, or whether you ever will. It helps to sit somewhere that keeps proving the same force can shape different things in different ways without invalidating any of them.]]></story_2>
+	        <story_3><![CDATA[<b>1,000 Soul Talent:</b> You still get anxious sometimes, but you are getting better at calming yourself quickly. A few minutes by the water is enough to remind you that pressure is not always a verdict; sometimes it is simply what reveals what a thing can become.]]></story_3>
+	        <story_4><![CDATA[<b>10,000 Soul Talent:</b> You do not need formal breaks anymore. Whenever anxiety starts bubbling up, one deliberate breath is enough to push it away. In, and out. The waterfall keeps falling, never repeating the exact same shape twice, and somehow that steadies you.]]></story_4>
+	        <story_5><![CDATA[<b>100,000 Soul Talent:</b> Sometimes things are hard, but that is not the same as saying they are wrong. You sit by the waterfall, hear the same roar shaping different outcomes at once, and feel at peace.]]></story_5>
         </sit_by_waterfall>
         <old_shortcut>
             <label>Old Shortcut</label>
@@ -2295,7 +2294,7 @@
             <story_2><![CDATA[<b>100 Speed Talent:</b>⮀ You can feel your legs tense up as you prepare for another sprint, the tension releasing all at once as you take off and dash between the trees.]]></story_2>
             <story_3><![CDATA[<b>1,000 Speed Talent:</b>⮀ At the start of each loop, the pains and strains from the previous loop just vanish like everything else, giving you a lot more opportunity to exercise. Sure, losing the actual progress isn't much fun, but the more you train, the faster your training bears fruit.]]></story_3>
             <story_4><![CDATA[<b>10,000 Speed Talent:</b>⮀ If anyone was watching, they would probably assume you're doing something illegal as you train up from your usual jogging pace to setting speed records in mere hours. No foul play here though, just many lifetimes worth of practice paying off!]]></story_4>
-            <story_5><![CDATA[<b>100,000 Speed Talent:</b>⮀ You find yourself thinking about teleportation. Looking up a few spells for it, you have come to the conclusion that it's just not worth the hassle for you anymore; you're so fast that you'd have to teleport from one end of the world to the other for it to be faster than just running.]]></story_5>-->
+            <story_5><![CDATA[<b>100,000 Speed Talent:</b>⮀ You find yourself thinking about teleportation. Looking up a few spells for it, you have come to the conclusion that it's just not worth the hassle for you anymore; you're so fast that you'd have to teleport from one end of the world to the other for it to be faster than just running.]]></story_5>
         </train_speed>
         <follow_flowers>
             <label>Follow Flowers</label>
@@ -2314,13 +2313,13 @@
         <bird_watching>
             <label>Bird Watching</label>
             <tooltip><![CDATA[
-            Far along the flower trail, there seems to be a large variety of birds flying about. Perhaps you could take up a new hobby.<br>Requires glasses.<br>Has 4x exp/talent gain, and can only be done <div id='trainingLimitPer'></div> times per reset.<br>Unlocked at 80% Flower Trail Followed.
+            Far along the flower trail, the same wind carries wildly different birds. Watching them is a good way to learn that one sky can reward many styles of flight.<br>Requires glasses.<br>Has 4x exp/talent gain, and can only be done <div id='trainingLimitPer'></div> times per reset.<br>Unlocked at 80% Flower Trail Followed.
             ]]></tooltip>
-            <story_1><![CDATA[<b>Birds watched:</b>⮀ You spot a colorful bird and attempt to follow it with your eyes, you fail. You try again and again until you can reliably pick out fast moving birds and animals with pinpoint precision. It's also strangely relaxing to watch birds congregate together, listening to the bird-call and watching them interact. It's fast, frenetic and savage at times, but that's nature.]]></story_1>
-            <story_2><![CDATA[<b>100 Perception Talent:</b>⮀ While your eyes have not grown any sharper across the loops, your ability to interpret and understand what you're seeing has grown impressively. Most detectives don't have as good an eye for detail as you currently do.]]></story_2>
-            <story_3><![CDATA[<b>1,000 Perception Talent:</b>⮀ Your eyesight without glasses is still pretty bad, but by this point the merchant is suggesting a different prescription. Your ability to interpret and infer has grown <i>that</i> much.]]></story_3>
-            <story_4><![CDATA[<b>10,000 Perception Talent:</b>⮀ While your new glasses gave you a headache initially, by now they let you look almost to the edge of the horizon on a clear day while your Perception has grown sharp enough that the sheer amount of detail no longer overwhelms your ability to think.]]></story_4>
-            <story_5><![CDATA[<b>100,000 Perception Talent:</b>⮀ You stand by the flower trail, eyes closed. For the past few loops, your eyes and eyesight have stopped getting any better, so you decided to train your hearing instead. You can hear a bird flying overhead, the subtle turbulence around its wings telling you that it needs to preen a feather near its shoulder. You smile.]]></story_5>-->
+            <story_1><![CDATA[<b>Birds watched:</b> You spot a colorful bird and fail to follow it with your eyes. Repeated failure turns into practice, then into precision. It is strangely relaxing to watch how some birds cut straight through open air while others vanish through thorns and branches without ever seeming to touch them.]]></story_1>
+            <story_2><![CDATA[<b>100 Perception Talent:</b> Your eyes have not grown any sharper across the loops, but your ability to interpret what you are seeing has. The same gust lifts every bird, yet each uses it differently. It is hard not to think that people may be much the same.]]></story_2>
+            <story_3><![CDATA[<b>1,000 Perception Talent:</b> Your eyesight without glasses is still poor, but by this point the merchant is suggesting a different prescription. Your ability to infer and compare has grown that much. Watching the forest has made differences in style feel more meaningful than differences in raw reach.]]></story_3>
+            <story_4><![CDATA[<b>10,000 Perception Talent:</b> While your new glasses gave you a headache initially, by now they let you look almost to the edge of the horizon on a clear day while your mind keeps up with the detail. Hawks, songbirds, scavengers: same sky, different callings, none invalidated by the others.]]></story_4>
+            <story_5><![CDATA[<b>100,000 Perception Talent:</b> You stand by the flower trail with your eyes closed. Your sight has plateaued, so you train your hearing instead. A bird passes overhead and the subtle turbulence around its wings tells you exactly how it flies. You smile. The world is full of patterns that only make sense once you stop expecting every creature to move the same way.]]></story_5>
         </bird_watching>
         <clear_thicket>
             <label>Clear Thicket</label>
@@ -2354,18 +2353,18 @@
         <dark_magic>
             <label>Dark Magic</label>
             <tooltip><![CDATA[
-            Embrace the dark arts to more efficiently harvest mana. But at what cost?<br>Adds 1 negative reputation.<br>Requires a reputation of 0 or below.<br>Unlocked with both 20% Witch Knowledge and 100 Magic.
+            Some doors answer discipline. Others answer trespass. This is the latter.<br>Adds 1 negative reputation.<br>Requires a reputation of 0 or below.<br>Unlocked with both 20% Witch Knowledge and 100 Magic.
             ]]></tooltip>
-            <story_1><![CDATA[<b>1 Dark magic:</b>⮀ You ask the witch for more information on dark magic and then during the conversation slowly reveal your interest in the subject and float the offer that you would be willing to trade if she would teach you the beginning steps. She smirks deviously and agrees to the deal.]]></story_1>
-            <story_2><![CDATA[<b>25 Dark magic:</b>⮀ The witch demands more and more of you and you slowly figure out ways of broaching the subject with her that doesn't startle her enough that she stops talking to you or just flat out shuts you down. The magic she begins to teach is brutal, ominous and forceful. You do not work with or help, you take and dominate.]]></story_2>
-            <story_3><![CDATA[<b>50 Dark magic:</b>⮀ The dark magic she teaches seems to veer more to the side of ritualistic sacrifice and communion with the dark gods, she tells you when you ask that it's because she can't really teach you too much more unless you have a darker being backing you as her mana isn't inherent but a gift from the darker divine powers. She teaches you of a ritual that you can use to summon the dark gods and strike a bargain. She warns that you'll need souls as payment.]]></story_3>
-            <story_4><![CDATA[<b>300 Dark magic:</b>⮀ As you become more skilled at dark magic, the number of applications for it continues to grow; now you're learning to connect to the Shadow Realm, a world parallel to this one full of dark energy. Unfortunately, whenever you try to access it, all you find is chaos. Trisha tells you that there are stable locations in the shadow realm, but to reach them you have to already know where they are, and to create a stable connection you'll need to know more spatial magic than she can teach you. While not very helpful by itself, at least you have an idea how to move forward now.]]></story_4>
+            <story_1><![CDATA[<b>1 Dark magic:</b> You ask the witch for more information on dark magic and slowly reveal your interest in the subject. She smiles like she was waiting to hear it. There are powers, she says, that notice hands willing to take rather than ask.]]></story_1>
+            <story_2><![CDATA[<b>25 Dark magic:</b> The witch demands more and more of you, and you slowly figure out how to broach the subject without spooking her into silence. The magic she teaches is brutal, ominous, and forceful. You do not work with it. You seize, drain, and compel.]]></story_2>
+            <story_3><![CDATA[<b>50 Dark magic:</b> Her lessons begin drifting toward ritual sacrifice and communion with darker powers. When you ask why, she shrugs and explains that some knowledge is only lent to people who already have an answer from elsewhere. Not every response, apparently, comes from bright halls and public blessings.]]></story_3>
+            <story_4><![CDATA[<b>300 Dark magic:</b> As you become more skilled, the number of applications continues to grow. Now you are learning to connect to the Shadow Realm, a world parallel to this one and soaked in dark energy. Unfortunately, whenever you reach for it, all you find is chaos. Trisha says there are stable places in that realm, but you have to know what you are looking for before it will look back.]]></story_4>
         </dark_magic>
         <dark_ritual>
             <label>Dark Ritual</label>
             <label_done>Completed</label_done>
             <tooltip><![CDATA[
-            Sacrifice an increasing amount of soulstones to the dark gods, granting a permanent speed 10% boost to all actions in Beginnersville.<br>Gives (dark magic skill) * (1 + witch knowledge / 100) * (1 + main stat / 100) * (original mana cost / actual mana cost) progress points per mana.<br>Requires a reputation of -5 or below.<br>Can only have 1 Dark Ritual action.<br>Unlocked with both 50% Witch Knowledge and 50 Dark Magic.<br>Sacrifices (50 * (rituals completed+1)) soulstones. Currently sacrificing
+            Pay in soulstones and blood, and receive an answer no respectable altar would ever give.<br>Gives (dark magic skill) * (1 + witch knowledge / 100) * (1 + main stat / 100) * (original mana cost / actual mana cost) progress points per mana.<br>Requires a reputation of -5 or below.<br>Can only have 1 Dark Ritual action.<br>Unlocked with both 50% Witch Knowledge and 50 Dark Magic.<br>Sacrifices (50 * (rituals completed+1)) soulstones. Currently sacrificing
             ]]></tooltip>
             <tooltip2><![CDATA[
              soulstones.
@@ -2375,11 +2374,11 @@
                 <name>Prepare the Altar</name>
                 <name>Summon the Dark Gods</name>
             </segment_names>
-            <story_1><![CDATA[<b>3rd ritual segment reached:</b>⮀ Knowing what the ritual was and how large a space you would need, you were mildly surprised to find a clearing large enough in the forest. Well, the clearing itself wasn't really large enough on its own. It was a dense cluster of clearings that you've taken mana from that you could easily clear out to make a ritual space. Preparing the altar is surprisingly tame, all said and done. Stone and wood comprise most of the altar and the rest you brought with you when you made this plan. In the end the altar you build is only small, a communion point instead of a summoning. Holding a heart from nearby deer, you pierce it and begin to chant ritualistic words of power. The clearing grows dark and the forest quietens, nary a sound is heard apart from the drip drip drip of the blood from the pierced heart in your hand. The blood you've spilled on the altar begins to blacken and swirl without outside force and eventually forms into a small face, disgusting to look at but enough to communicate through.]]></story_1>
-                <story_2><![CDATA[<b>Ritual completed:</b>⮀ You commune with the dark gods long past the point that the blood has faded. The deal is struck thusly: time itself will move faster for you only in select areas, and you will pay a cost in souls. The dark god you commune with seems almost surprised as you immediately offer up some of the soulstones that you have.]]></story_2>
-            <story_3><![CDATA[<b>50 Rituals completed:</b>⮀ The more rituals you perform, the more extravagant setups the dark gods demand, and the less they reward you with. Towers of soulstones swirl away into dust as you get up and stretch. You'd think they'd be more pleased to have a repeat customer.]]></story_3>
-            <story_4><![CDATA[<b>300 Rituals completed:</b>⮀ The dark gods have been less and less willing to deal with you as of late, no matter how many soulstones you offer. Is their power stretching near its limits, or have you become so powerful that they're starting to see you as a threat? You're not sure.]]></story_4>
-            <story_5><![CDATA[<b>666 Rituals completed:</b>⮀ The face emerges from the blood, but this time its expression is grim. It explains to you how, although your offering will be accepted this time, there can be no more deals made after today. No matter how much you poke or prod, it refuses to elaborate, and when it finally sinks back into the now-dry pool, you're just as baffled by the dark gods' motives as you were this morning.]]></story_5>
+            <story_1><![CDATA[<b>3rd ritual segment reached:</b> Knowing what the ritual requires, you are mildly surprised to find a clearing large enough for it. Preparing the altar is almost disappointingly practical: wood, stone, blood, and just enough symbolism to make the bargain legible. By the time the spilled blood darkens and curls into a face, you have the ugly certainty that this is not worship. It is negotiation through loss.]]></story_1>
+            <story_2><![CDATA[<b>Ritual completed:</b> You commune with the dark gods long past the point that the blood has faded. The deal is simple: time itself will move faster for you in chosen places, and you will pay in souls. The presence on the altar seems almost surprised when you accept the exchange immediately. This is not a blessing. It is a contract.]]></story_2>
+            <story_3><![CDATA[<b>50 Rituals completed:</b> The more rituals you perform, the more extravagant the setup becomes and the less dramatic the reward feels. Towers of soulstones whirl away into dust while you stretch your back and wonder whether repeat business has made you easier to classify, or merely easier to exploit.]]></story_3>
+            <story_4><![CDATA[<b>300 Rituals completed:</b> The dark gods have been less and less willing to deal with you lately, no matter how many soulstones you offer. Are they reaching the limits of what they can trade away, or are you becoming the sort of customer no one likes to encourage?]]></story_4>
+            <story_5><![CDATA[<b>666 Rituals completed:</b> The face emerges from the blood with a grim expression. It says your offering will still be accepted today, but there can be no more bargains after this. No matter how much you probe, it refuses to explain. When the face sinks back into the drying pool, you are left staring at the altar and wondering what exactly decided your credit was finally exhausted.]]></story_5>
         </dark_ritual>
         <continue_on>
             <label>Continue On</label>
@@ -2425,16 +2424,16 @@
             <label>Get Drunk</label>
             <label_done>Rumors Heard</label_done>
             <tooltip><![CDATA[
-            Sometimes you just need a drink.<br>Requires a reputation above -4.<br>Has 3x exp/talent gain.<br>Costs 1 reputation.<br>Unlocked at 20% City Explored.
+            Taverns are where the city admits it has more than one road upward.<br>Requires a reputation above -4.<br>Has 3x exp/talent gain.<br>Costs 1 reputation.<br>Unlocked at 20% City Explored.
             ]]></tooltip>
-			<story_1><![CDATA[<b>1% Rumors Heard:</b>⮀ A mug of beer and a cheerful environment, it's equal parts relaxing and enjoyable. You leave without paying, but it's okay if you're not welcome there anymore, since they won't remember next loop.]]></story_1>
-			<story_2><![CDATA[<b>10% Rumors Heard:</b>⮀ Lots of people turn into rampant gossips after a few glasses. You're learning about all sorts of interesting places, as well as far too many cases of infidelity and other personal drama for your liking.]]></story_2>
-			<story_3><![CDATA[<b>20% Rumors Heard:</b>⮀ A dangerous-looking man shows up and orders the strongest drink they have, and as he drinks he loudly boasts about his adventures in the dungeon near town. With some prodding, he gives you directions instead to the Adventurer Guild, saying without a team you shouldn't even bother trying.]]></story_3>
-			<story_4><![CDATA[<b>30% Rumors Heard:</b>⮀ Today you sit next to a woodworker from the Crafting Guild. Apparently he spends his days building fine chairs and tables but his true passion is glasswork, which he sadly has no talent for. You commiserate, and get directions to the Crafting Guild before you leave.]]></story_4>
-			<story_5><![CDATA[<b>40% Rumors Heard:</b>⮀ As you watch a loud drunken argument unfold, you see that the man next to you is looking rather glum. You buy a drink for him and he opens up, telling you that he quit his apprenticeship because he couldn't stand his boss. Another drink and he gives you the name of the master who needs a new apprentice.]]></story_5>
-			<story_6><![CDATA[<b>60% Rumors Heard:</b>⮀ An infuriated man rants about the construction work near his house. Talking to him is difficult without provoking his anger, but after a while he tells you what street it's happening on.]]></story_6>
-			<story_7><![CDATA[<b>80% Rumors Heard:</b>⮀ In a more high-class bar, you catch wind of an architectural design competition, where various architects each design the same house and the one with the best design wins the contract to build it. A polite inquiry gets you the name of the person you need to know to enter the competition.]]></story_7>
-			<story_8><![CDATA[<b>100% Rumors Heard:</b>⮀ You've been to every bar and dinner party, and heard every bit of gossip there is to hear. While you've only met a tiny fraction of Merchanton's population you've had drinks with every rung of society, and you're starting to feel like the city's running out of secrets for you to uncover.]]></story_8>
+			<story_1><![CDATA[<b>1% Rumors Heard:</b> A mug of beer and a cheerful environment are equal parts relaxing and useful. People start talking faster once they decide you are worth talking to, and it does not take long to realize that taverns are where Merchanton stores its unofficial maps.]]></story_1>
+			<story_2><![CDATA[<b>10% Rumors Heard:</b> Lots of people turn into rampant gossips after a few glasses. You learn about interesting places, infidelity, petty drama, and one important fact: respectable streets and disreputable alleys often lead toward the same ambitions by different names.]]></story_2>
+			<story_3><![CDATA[<b>20% Rumors Heard:</b> A dangerous-looking man orders the strongest drink they have and loudly boasts about his adventures in the dungeon near town. With some prodding he gives you directions to the Adventurer Guild instead, saying that people who want glory can try the front door, but people who want to survive should at least bring company.]]></story_3>
+			<story_4><![CDATA[<b>30% Rumors Heard:</b> Today you sit next to a woodworker from the Crafting Guild. Apparently he spends his days building respectable furniture and his nights dreaming of glasswork he cannot quite master. Even the practical trades, it seems, are full of people wishing a different sort of talent had claimed them.]]></story_4>
+			<story_5><![CDATA[<b>40% Rumors Heard:</b> As you watch a loud drunken argument unfold, the man next to you looks glum enough that you buy him a drink. He opens up about leaving his apprenticeship because he could not stand his boss. Another drink later and he gives you the name of the master who needs a replacement. Cities sort people formally, but they re-sort them again every night over drinks.]]></story_5>
+			<story_6><![CDATA[<b>60% Rumors Heard:</b> An infuriated man rants about construction work near his house. Getting useful information out of him takes patience, but after a while he gives you the street name. Somewhere between complaint and confession, people keep sketching the city's hidden structure for you.]]></story_6>
+			<story_7><![CDATA[<b>80% Rumors Heard:</b> In a more high-class bar, you catch wind of an architectural design competition. The wealthy call it culture, but it sounds to you like another arena where recognition, contracts, and status are all fighting over the same table.]]></story_7>
+			<story_8><![CDATA[<b>100% Rumors Heard:</b> You've been to every bar and dinner party and heard every bit of gossip there is to hear. You have not met much of Merchanton's population, but you have listened across every rung of it, and by now you know that the city never really asks whether people matter. It asks who gets to matter where.]]></story_8>
         </get_drunk>
         <buy_mana_z3>
             <label>Buy Mana</label>
@@ -2460,17 +2459,17 @@
             <label>Adventure Guild</label>
             <label_done>Impressed</label_done>
             <tooltip><![CDATA[
-            The one-stop shop for all your adventuring needs.<br>Take their tests and get a rank!<br>You can only join 1 guild at a time, and only try once.<br>Gives 200 mana per rank.<br>Gives ((magic skill)/2 + (self combat)) * (1 + main stat / 100) * sqrt(1 + times completed / 1000) * (original mana cost / actual mana cost) progress points per mana.<br>Unlocked at 20% Rumors Heard.
+            Merchanton's preferred version of worth: measurable, ranked, and loudly discussed.<br>Take their tests and get a rank!<br>You can only join 1 guild at a time, and only try once.<br>Gives 200 mana per rank.<br>Gives ((magic skill)/2 + (self combat)) * (1 + main stat / 100) * sqrt(1 + times completed / 1000) * (original mana cost / actual mana cost) progress points per mana.<br>Unlocked at 20% Rumors Heard.
             ]]></tooltip>
-			<story_1><![CDATA[<b>Tests taken:</b>⮀ You've gone through the standardized tests of the guild, and you're a little surprised at how low you placed. It seems that what you've considered impressive up until now is just the bare minimum around here.]]></story_1>
-			<story_2><![CDATA[<b>E Rank achieved:</b>⮀ You've clawed your way out of the ranks of the common riffraff. You still don't stand out at all, but it feels good to not be on the bottom rung anymore.]]></story_2>
-			<story_3><![CDATA[<b>D Rank achieved:</b>⮀ They say you're good for a new recruit, but it's still with a bored tone and an apathetic face. It seems even though you're getting much better scores nobody actually cares yet. Well, at least you're better off than the people stuck in F-rank.]]></story_3>
-			<story_4><![CDATA[<b>C Rank achieved:</b>⮀ People seem to actually respect you now, all of a sudden. Apparently it's pretty common for people to fail to make it higher than E or D and quit, but those who make it to C-rank are in for the long haul. You're being treated like a comrade in arms now, and it feels good.]]></story_4>
-			<story_5><![CDATA[<b>B Rank achieved:</b>⮀ Now people are starting to take note. B-rank adventurers don't come around every day, and most of them started lower and climbed their way up. That you came out of nowhere and placed B-rank on arrival is stirring up quite a few rumours.]]></story_5>
-			<story_6><![CDATA[<b>A Rank achieved:</b>⮀ There are only about a dozen A-rank adventurers in Merchanton, and your arrival astonishes them all. Rumours fly, and some are even saying that you're an A-rank previously thought dead, disguised under a new identity. All the attention makes you uncomfortable, but at this point it's hard to avoid.]]></story_6>
-			<story_7><![CDATA[<b>S Rank achieved:</b>⮀ There's only one other S-rank adventurer around, Guildmaster Rannet himself. There aren't any rumours of you being a fake identity this time, because S-rank adventurers are so rare that Rannet personally knows all of them and he's convinced he's never seen you before. Instead, people whisper about everything from the legacy of heroes to divine blood and everything in-between. At this point the only things that could explain your existence are implausible, and you can't really disagree with that assessment.]]></story_7>
-			<story_8><![CDATA[<b>U Rank achieved:</b>⮀ You stand above even Rannet now, and you're told the only person who compares is the strongest Guildmaster, Diphon "Living Earthquake" Granwell. Word spreads like wildfire and you become an instant celebrity. Everyone seems to want you to go challenge Diphon to see who's the strongest, but you know that you'd run out of mana long before you even get close to his city.]]></story_8>
-			<story_9><![CDATA[<b>Godlike rank achieved:</b>⮀ This isn't really a formal rank, as much as it reflects how you're stronger than they have means to measure, stronger than they've thought possible. They tell you that you're the strongest human alive, perhaps the strongest to ever live, and while you hesitate to embrace such a status you can see that they honestly believe it.]]></story_9>
+			<story_1><![CDATA[<b>Tests taken:</b> You go through the standardized tests of the guild and place far lower than you expected. Around here, it seems, competence is not enough by itself; it has to be legible, rankable, and easy to compare.]]></story_1>
+			<story_2><![CDATA[<b>E Rank achieved:</b> You've clawed your way off the bottom rung. It is not glamorous, but the difference is immediate. Here, status is less a feeling than an administrative fact.]]></story_2>
+			<story_3><![CDATA[<b>D Rank achieved:</b> They say you are good for a new recruit, but still with bored faces. Better scores alone do not impress Merchanton for long; this place wants proof that can survive gossip, paperwork, and repetition.]]></story_3>
+			<story_4><![CDATA[<b>C Rank achieved:</b> People respect you now. Apparently many adventurers stall at E or D and quit, while those who reach C are seen as dependable enough to matter. The guild's esteem has less to do with drama than with proven durability.]]></story_4>
+			<story_5><![CDATA[<b>B Rank achieved:</b> Now people start paying attention. B-rank adventurers do not come around every day, and most of them climbed up the slow way. That you arrived from nowhere and placed here stirs rumors about what exactly made you worth noticing.]]></story_5>
+			<story_6><![CDATA[<b>A Rank achieved:</b> There are only about a dozen A-rank adventurers in Merchanton, and your arrival astonishes them all. Attention like this is not comfortable, but it does teach you something: cities remember some people for clean heroics, and others for surviving jobs nobody respectable wanted in the first place.]]></story_6>
+			<story_7><![CDATA[<b>S Rank achieved:</b> There is only one other S-rank adventurer around, Guildmaster Rannet himself. People whisper about everything from divine blood to heroic legacy. At this point the only explanations anyone can imagine are implausible, and the guild seems almost relieved to have a category dramatic enough to contain you.]]></story_7>
+			<story_8><![CDATA[<b>U Rank achieved:</b> You stand above even Rannet now, and people turn you into an instant celebrity. Some want you to go challenge the strongest guildmaster alive; others just want to claim they saw you first. Merchanton does love a legend, especially once a bureaucracy has stamped it as official.]]></story_8>
+			<story_9><![CDATA[<b>Godlike rank achieved:</b> This is not really a formal rank so much as an admission that you exceed their measuring tools. They call you the strongest human alive, perhaps the strongest to ever live. Even here, where everything gets sorted into tables and tiers, there comes a point where the institution can only gesture at what it has seen.]]></story_9>
         </adventure_guild>
         <gather_team>
             <label>Gather Team</label>
@@ -2645,7 +2644,7 @@
             <tooltip><![CDATA[
             Traversing the mountain will be difficult, but you can use your pickaxe as a makeshift climbing pick of sorts to help you get around. The higher you climb, the less it feels like travel and the more it feels like approaching a waiting answer.<br>2x progress with pickaxe.
             ]]></tooltip>
-			<story_1><![CDATA[<b>1% Mountain Explored:</b>⮀ You stand at the foot of the mountain and look up at the peak. It's so far away, so high up. You take a minute to just stare in awe before looking for a good route up.]]></story_1>
+			<story_1><![CDATA[<b>1% Mountain Explored:</b>⮀ You stand at the foot of the mountain and look up at the peak. It's so far away, so high up. You take a minute to just stare in awe before looking for some workable way up.]]></story_1>
 			<story_2><![CDATA[<b>10% Mountain Explored:</b>⮀ As you climb up the foothills you see old abandoned campsites and think of the rumours you've heard. You're obviously not the first person to try to scale the mountain, but you wonder how the other expeditions ended.]]></story_2>
 			<story_3><![CDATA[<b>20% Mountain Explored:</b>⮀ On the mountain proper, you start seeing odd symbols carved into stones here and there. It looks like the stories of an old civilization living here were true after all.]]></story_3>
 			<story_4><![CDATA[<b>40% Mountain Explored:</b>⮀ Hidden away in the side of the mountain, you find a tunnel that seems to go deep under the mountain. There's more of those odd symbols near the entrance, perhaps a warning not to go in?]]></story_4>
@@ -2834,7 +2833,7 @@
 			<story_1><![CDATA[<b>Judgement Faced:</b>⮀ Their civilization may have fallen, but their gods are still very real, and the weight of their attention nearly drives you to your knees. Seeking to justify your presence, you begin to speak. Of your life, your goals, your loyalties, your debts, the gifts you've taken and the costs you've accepted. Every act of kindness, every trespass, every bargain, every refusal, it all comes tumbling out one after another. The only secret you manage to withhold is the loops - you have a feeling that you'd be struck down immediately if you let that slip.]]></story_1>
             <story_4><![CDATA[<b>Met with Silence:</b>⮀ You finish your story and wait. The pressure at the altar does not become wrath so much as absence. No hand reaches for you, no door opens, no voice names you. Whatever measures govern this place, you have not yet become someone it chooses to answer. At last the attention withdraws, leaving you alone on the stone slab with the wind and your own heartbeat.]]></story_4>
 			<story_2><![CDATA[<b>Recognized by the Gods:</b>⮀ At the end of your story, a crack of lightning strikes behind the altar and leaves behind a cheerful man. Between the perfect bodily form and the power radiating from him, there's no doubt you're meeting a god in the flesh. He extends his hand, not as a reward but as recognition, and invites you to come where the ordered world has already made room for you.]]></story_2>
-			<story_3><![CDATA[<b>Claimed by the Shadow Realm:</b>⮀ The bright court does not claim you. The force that answers from the altar is rejection sharpened into violence, and the world drops out from beneath you. Yet something else answers before the fall can become annihilation. In the black turmoil below, another path catches you: twisted, familiar, and very much prepared to make use of what you've become.]]></story_3>
+			<story_3><![CDATA[<b>Answered from Below:</b>⮀ The bright court does not name you. Instead, the pressure at the altar tilts and the world beneath your feet opens into another continuity already moving below the gods' polished order. It is rough, familiar, and far from gentle, but it answers without hesitation. Before the drop can become destruction, that other route catches you and carries you toward the system that already knows what to do with the life you've become.]]></story_3>
         </face_judgement>
         <guru>
             <label>Guru</label>
@@ -3016,14 +3015,14 @@
             <label>Citizenship</label>
 			<label_done>Citizenship Exam Studied</label_done>
             <tooltip><![CDATA[
-            Right now, you're just visiting.  If you want to be accepted into their ranks for real, you'll need to study and pass a rigorous exam on Valhallan history and culture.<br>Unlocked at 80% of city toured.
+            Right now, you're only logged as a visitor. If you want Valhalla's institutions to recognize, register, and fold you into their civic order, you'll need to study and pass a rigorous exam on Valhallan history, law, and culture.<br>Unlocked at 80% of city toured.
             ]]></tooltip>
             <story_1><![CDATA[<b>Attempted Citizenship exam:</b>⮀ You confidently walk up to the large temple where the exam is held and set to work. You quickly realize you're in over your head as the multiple-choice section runs out and the essay section looms over you. By the end of it, the God acting as proctor gives you a level glare and asks if this is all a joke to you.]]></story_1>
             <story_2><![CDATA[<b>20% Citizenship Exam studied:</b>⮀ You figure out pretty early on that the multiple choice section doesn't change, and the examiner is gracious enough to let you have a look at your graded sheet after the test. Sadly, memorizing that section alone will never give you enough points to pass.]]></story_2>
             <story_3><![CDATA[<b>40% Citizenship Exam studied:</b>⮀ To better prepare for the exam, you make your way to Valhalla's library. You nearly get lost among the shelves, but manage to find a few reference works that help you do better on the test.]]></story_3>
             <story_4><![CDATA[<b>60% Citizenship Exam studied:</b>⮀ You've run into a few interesting facts during your studies: For one, Valhalla is currently in an ongoing conflict with the Frost Giants, but only registered citizens may enlist in order to prevent conflicts of interest. On the other hand, any citizen may construct housing in certain parts of Valhalla and collect taxes from the residents.]]></story_4>
             <story_5><![CDATA[<b>80% Citizenship Exam studied:</b>⮀ While you can by now recite the questions by heart, the Gods in charge of taking the test are very strict about plagiarism and failed you when you tried to turn in someone else's answers to the essay question. You guess you'll have to write your own after all.]]></story_5>
-            <story_6><![CDATA[<b>100% Citizenship Exam studied:</b>⮀ You grin as you hold up the little stone plaque declaring you a recognized citizen of Valhalla, an honour bestowed on very few mortals indeed! Now to make good use of the many hours of studying lawncare regulations that went into this.]]></story_6>
+            <story_6><![CDATA[<b>100% Citizenship Exam studied:</b>⮀ You grin as you hold up the little stone plaque declaring you a registered citizen of Valhalla. It is less a medal than an entry in a vast machine of names, rights, and obligations, but that still makes it one of the rarer pieces of stone a mortal can carry around. Now to make good use of the many hours of studying lawncare regulations that went into this.]]></story_6>
             <!--Note: figure out a way to have this properly trigger on the first 'Citizenship' action of a loop, when progress is already 100%.-->
             <!--<story_7><![CDATA[<b>Re-take Citizenship Exam:</b>⮀ Despite this being a new loop, you find that you don't have to re-take the Exam. Instead, the moment you state your name, the God in charge raises an eyebrow and asks for you to wait a moment as they head into the back. Upon returning, they pass you a quite familiar little stone plaque. "I suppose you lost that at some point, better take good care holding on to it from here on out," the God admonishes you gently.]]></story_7>-->
         </seek_citizenship>
@@ -3118,27 +3117,27 @@
         <fall_from_grace>
             <label>Fall From Grace</label>
             <tooltip><![CDATA[
-            Looks like the only way to leave this place is to make them dislike you enough to kick you out. Some moderate vandalism will probably do the job. Some people just want to watch something beyond the world burn. You'll be cast into the shadow realm and thrown back to the beginning of your journey.<br>Unlocked at 200 Pyromancy.
+            If you want out, the cleanest method is to rupture the compact that lets Valhalla keep you inside its order. Some moderate vandalism will probably do the job. This is not a punishment so much as an intentional breach: once they revoke your place here, you can drop back onto the rougher route that has been running beneath the world all along.<br>Unlocked at 200 Pyromancy.
             ]]></tooltip>
-			<story_1><![CDATA[<b>Fell From Grace:</b>⮀ As you brush the dust from your clothes, you silently marvel at how little effort it really took to get kicked out. Sure, you had big plans to go on a spree of madness and fire, but the Valkyries grabbed you by the time you finished burning down the first patch of flowers! Your court case afterward was just a formality as well, didn't even get to declare yourself guilty before the judge had you thrown into the Shadow Realm. It's kind of disappointing, you were looking forward to cutting loose.]]></story_1>
+			<story_1><![CDATA[<b>Severed Valhalla's compact:</b>⮀ As you brush the dust from your clothes, you silently marvel at how little effort it really took to make the arrangement collapse. Sure, you had big plans to go on a spree of madness and fire, but the Valkyries grabbed you by the time you finished burning down the first patch of flowers. The hearing afterward is barely a trial at all, just a terse declaration that your standing in Valhalla's order is revoked. A moment later you are routed downward through the lower channels the gods pretend not to need, and the other path of the world takes hold of you again.]]></story_1>
         </fall_from_grace>
         <!--town 6-->
         <meander>
             <label>Meander</label>
             <label_done>Explored</label_done>
             <tooltip><![CDATA[
-            This place seems familiar, and yet... not. Everything is twisted and wrong. Just being here hurts your head. You'll need to fortify your mind to make any progress here.<br>
+            This place resembles Beginnersville only the way a scar resembles skin. To make progress here, you need to read ruins, residue, and the habits of a town that kept functioning after being abandoned.<br>
             Gives exp equal to Imbue Mind level. (You make no progress with 0 Imbue Mind.)
             ]]></tooltip>
-            <story_1><![CDATA[<b>1% Explored:</b>⮀ This place is disgusting. Filthy rats scurry under rubble and the derelict roads are frequently marred by bloodstains. This place would set you on edge even without the headache-inducing mental effect that even now makes your mind swim. It takes all you have to keep walking forwards, onwards into this horrific landscape.]]></story_1>
-            <story_2><![CDATA[<b>2% Explored:</b>⮀ Your shambling walk comes to a halt as you reach a plaza with a well in the middle. You recognize places like this from Beginnersville: people loved to come to the well and gossip as they drew water for their houses. The plaza here is empty.]]></story_2>
-            <story_3><![CDATA[<b>5% Explored:</b>⮀ It's getting a little easier to keep your focus now, and you make your way to the obvious destination in town: the giant ominous spire. Needless to say, there wasn't anything like this in Beginnersville. You circle around the spire once, tracing your hand across the stone, only to pause as you suddenly feel something, a writhing, evil energy. This dungeon's drawing power from somewhere in town. But where?]]></story_3>
-            <story_4><![CDATA[<b>15% Explored:</b>⮀ The graveyard here is quite full, which surprises you somewhat. You haven't found any other humans around, but you also hadn't seen any corpses. In all honesty, you were starting to doubt there were ever humans here in the first place, despite the buildings and the bloodstains. But if someone is burying the dead, where are they?]]></story_4>
-            <story_5><![CDATA[<b>25% Explored:</b>⮀ Beginnersville has a shrine to the Valhallans, gods who watch over and protect them, though after seeing the forsaken civilization on Mt. Olympus you get the feeling they might not have much to do with mortals anymore. Here, though, is a shrine to the dark gods, those who lurk below. You can't imagine worshipping them was a wise choice, given the state of the town. You can't imagine anything being worth this destination.]]></story_5>
-            <story_6><![CDATA[<b>50% Explored:</b>⮀ You stumble across a human by sheer chance, near the outskirts of town, dressed in rags and deathly pale. He spooks upon noticing you and scrambles away under a particularly large piece of rubble. You follow, ignoring how the stale air smells even worse in these isolated pockets of the town. You don't like that you had to threaten the man to get him to tell you where else humans still live, and you don't like the answers he gives you. In a town this size... how many must have died, for there to be so few remaining?]]></story_6>
-            <story_7><![CDATA[<b>75% Explored:</b>⮀ You reach the last bastion of what might generously be called civilization here in Startington. A dozen-odd people, in a street with slightly less rubble than usual, trying to barter goods with a desperation you've only seen once or twice even in the slums of Merchanton. Food's running low and there don't seem to be any farmers around town. You can see it in their eyes, they all know that the only question left is who starves first.]]></story_7>
-            <story_8><![CDATA[<b>100% Explored:</b>⮀ You need to leave. You've seen enough of this revolting place to last ten lifetimes. All the rotten wood and crumbled houses, the vermin and vultures, every inch of this town is steeped in death and decay. The dark gods do not rule a kind domain, it seems. Some great misfortune pulled an ordinary town just like Beginnersville down into the shadow realm, and the more you wander these ruined streets the more you viscerally hate what this place has become.]]></story_8>
-            <story_9><![CDATA[<b>Meandered with 100 Imbue Mind:</b>⮀ If you focus, you can still feel the gloom pull on your thoughts, but by this point it feels like a gentle breeze getting upset you won't dance like the leaves it carries. It's still not a happy place, though, even without any supernatural influences.]]></story_9>
+            <story_1><![CDATA[<b>1% Explored:</b> The town hurts to look at. Not because it is merely filthy, but because so much of it is still recognizable while being wrong in every important way. Roads still lead somewhere. Doors still imply ownership. The place is not dead; it is operating under terms you do not yet understand.]]></story_1>
+            <story_2><![CDATA[<b>2% Explored:</b> Your shambling walk halts at a plaza with a well in the middle. You recognize the shape from Beginnersville. What unsettles you is the wear on the stone: people kept drawing from this well long after the town became what it is now. Someone adapted.]]></story_2>
+            <story_3><![CDATA[<b>5% Explored:</b> It gets a little easier to keep your focus and make your way to the giant ominous spire. Circling it once, hand against the stone, you feel the truth of the place: the tower is not simply standing over the town. The town is feeding it.]]></story_3>
+            <story_4><![CDATA[<b>15% Explored:</b> The graveyard is fuller than you expected, and more orderly too. Headstones are grouped, paths are maintained, and some graves show signs of recent use. Death here is not an interruption. It has been folded into the town's routines.]]></story_4>
+            <story_5><![CDATA[<b>25% Explored:</b> You find a shrine to the dark gods, but it is not wild or ecstatic. It is careful. Offerings are set out in measured quantities, old markings tally what was given, and the whole thing looks less like devotion than a civic technology for making loss do work.]]></story_5>
+            <story_6><![CDATA[<b>50% Explored:</b> By sheer chance you corner one of the surviving townsfolk under a slab of rubble. He is terrified, but once pressed he reveals where the other pockets of people trade, sleep, and hide. Beneath the ruin there is a network of routes, caches, and habits holding the remnant together.]]></story_6>
+            <story_7><![CDATA[<b>75% Explored:</b> You reach the closest thing Startington still has to a market street. A dozen or so people barter salvaged cloth, cracked tools, old stores of grain, and things stripped from buildings that no longer need them. It is ugly, desperate, and unmistakably an economy.]]></story_7>
+            <story_8><![CDATA[<b>100% Explored:</b> You have mapped the wells, the pylons, the graveyard, the refuge pockets, the shrine, and the routes that still carry goods through the rubble. Startington is not a pit where the unwanted are thrown away. It is a replacement order built from salvage, residue, death, and the refusal to stop organizing.]]></story_8>
+            <story_9><![CDATA[<b>Meandered with 100 Imbue Mind:</b> If you focus, the pressure on your thoughts still exists, but by now it feels like a current you can brace against. More importantly, you can finally read the place clearly. The town is miserable, yes, but it is also coherent.]]></story_9>
         </meander>
         <mana_well>
             <label>Mana Well</label>
@@ -3147,7 +3146,7 @@
             <info_text2>Spots with full wells total</info_text2>
             <info_text3>Spots to check for wells</info_text3>
             <tooltip><![CDATA[
-            Search the town for wells that still have any mana left. They seem to be rapidly draining.<br>
+            Search the town for wells that still have any mana left. What remains here is not clean spring mana, but compressed runoff and dangerous residue being dragged through old civic wells into the Spire.<br>
             Full wells have 5000 mana, but lose 10 mana for every second that has passed in the loop (based on effective time), currently
             ]]></tooltip>
             <tooltip2><![CDATA[
@@ -3155,10 +3154,10 @@
             Every 100 wells still has mana.<br>
             Unlocked with 2% town meandered.<br>
             ]]></tooltip2>
-            <story_1><![CDATA[<b>Mana Well drained:</b>⮀ There must have been a ley line beneath the town, because deep within the wells here you sense mana. It's fleeting though, fading rapidly with every moment you stand here. What's causing this? Where is the mana all going? With no time to waste, you begin hauling up water so you can start extracting mana before it's all gone.]]></story_1>
-            <story_2><![CDATA[<b>10 Mana Wells with mana found:</b>⮀ You can tell what's happening to all the mana now. It's all being siphoned into that great big spire in the middle of town, the same one that's drawing power from all those pylons. The entire town is being drained, crumbling to pieces as the evil structure takes and takes and takes. You don't know what will happen when there's nothing left to take, but there won't be much of a town left at that point.]]></story_2>
-            <story_3><![CDATA[<b>15 Mana Wells with mana found:</b>⮀ There are ruins beneath the rubble, and wells that have long since been dismantled and forgotten. Under a house's foundation or beneath the stones of an empty plaza, accessible with the right tools and knowledge. But yet, even here the mana is quickly drained away. You had hoped to see how much mana these wells had before the draining began, but it seems your dreams will be nothing more than dreams.]]></story_3>
-            <story_4><![CDATA[<b>Drawn from an empty well:</b>⮀ Nope, bone dry. There's still water in here, murky and probably very unhealthy water, but not a speck of mana. You toss the bucket back down the well and sigh. At least now you know: if you can't get here any faster than you did just now, just don't bother.]]></story_4>
+            <story_1><![CDATA[<b>Mana Well drained:</b> There must have been a ley line beneath the town, because deep inside the wells you can still feel mana. It is acrid, pressured, and already in motion, being hauled toward the Spire through channels never meant to carry this much strain. With no time to waste, you start extracting what you can before the system finishes drinking it.]]></story_1>
+            <story_2><![CDATA[<b>10 Mana Wells with mana found:</b> You can now tell where the town's power is going. The Spire is siphoning everything: the wells, the pylons, perhaps even the people. Startington is not merely decaying. It is being harvested.]]></story_2>
+            <story_3><![CDATA[<b>15 Mana Wells with mana found:</b> Beneath collapsed houses and forgotten plazas you find older wells, dismantled and covered over by later construction. Even those hidden reserves are being dragged dry. Whatever this place once used mana for, it has long since been replaced by the question of what can still be salvaged before the drain reaches it.]]></story_3>
+            <story_4><![CDATA[<b>Drawn from an empty well:</b> Bone dry. There is still water in the shaft, murky and likely unhealthy, but not a speck of mana. At least this teaches you something useful: in Startington, timing is part of scavenging.]]></story_4>
         </mana_well>
         <destroy_pylons>
             <label>Destroy Pylons</label>
@@ -3167,34 +3166,34 @@
             <info_text2>Buildings with pylons total</info_text2>
             <info_text3>Buildings to check for pylons</info_text3>
             <tooltip><![CDATA[
-            There are strange pylons humming with energy in the abandoned buildings of this town. You're not sure why, but you feel compelled to break them.<br>
+            Strange pylons hum in the abandoned buildings of this town. The more you study Startington, the less they look like decorations and the more they look like stabilizers keeping the whole ruin in its current shape. Breaking them feels less like vandalism and more like dismantling inherited infrastructure.<br>
             Every 100 abandon buildings have 1 breakable pylon.<br>Each pylon destroyed increases progress on The Spire by 10%.<br>
             Unlocked at 5% town meandered.<br>
             ]]></tooltip>
-            <story_1><![CDATA[<b>Pylon Destroyed:</b>⮀ As you pick up one of the Pylon's fragments, you wonder why you broke it. It didn't even feel particularly good, just like it had to be done. Shrugging, you put the fragment in your pocket. As a trophy.]]></story_1>
-            <story_2><![CDATA[<b>10 Pylons Destroyed:</b>⮀ The strange drive to smash those Pylons still lingers, even now that you've found and destroyed all that you can find in town. ...Maybe there are more after all, and it would be a good idea to go looking again when you have some new way of finding the blasted things.]]></story_2>
-            <story_3><![CDATA[<b>25 Pylons Destroyed:</b>⮀ You let out a sigh of relief while you pocket your final trophy-fragment. With that last, frustratingly well-hidden Pylon down, the drive to seek and destroy finally quiets down. Now, the Spire beckons you, inviting you to reach its apex.]]></story_3>
+            <story_1><![CDATA[<b>Pylon Destroyed:</b> As you pick up one of the pylon's fragments, you finally understand the compulsion. The thing was not merely standing there; it was regulating the flow of whatever curse-machinery grips this town. When it shatters, the pressure in the air eases for a heartbeat. You pocket a fragment, this time not as a trophy but as evidence.]]></story_1>
+            <story_2><![CDATA[<b>10 Pylons Destroyed:</b> The drive to smash more pylons still lingers, but now it feels analytical rather than instinctive. They form a distributed network around the Spire, old control points dressed up as forgotten junk in abandoned houses.]]></story_2>
+            <story_3><![CDATA[<b>25 Pylons Destroyed:</b> With the last well-hidden pylon broken, the town feels fractionally less bound. The Spire no longer seems like an untouchable landmark. It feels like the central machine of a system whose outer locks you have finally pried open.]]></story_3>
         </destroy_pylons>
         <raise_zombie>
             <label>Raise Zombie</label>
             <tooltip><![CDATA[
-            Upon stumbling by the local cemetery, you realize that those numerous tombstones could perhaps benefit you in ways besides acting as building materials. With your knowledge of dark magic and a hint of troll's blood, you might just be able to raise a zombie of your very own!<br>
+            The cemetery offers more than stone and silence. With enough dark magic and a little blood, you can tap into Startington's oldest labor reserve: the dead who were never fully allowed to stop being useful.<br>
             Costs 1 blood.<br>Each zombie adds (dark magic / 2) * max(1,dark ritual / 100) to your team combat.<br>Unlocked at 1000 dark magic.
             ]]></tooltip>
-            <story_1><![CDATA[<b>Zombie raised:</b>⮀ You experimentally dig up a recently-buried body, and notice how the ever-present miasma seeps into it. Interestingly, the miasma leaves the body in prime condition for puppeteering magics, which you've extensively studied under the witch. You carve a hole in the chest and add a drop of troll's blood, and your new minion seems to gain a life of its own. How fascinating...]]></story_1>
+            <story_1><![CDATA[<b>Zombie raised:</b> You experimentally dig up a recently buried body and watch the ever-present miasma seep into it. The corpse holds together unnervingly well here, as if the town has been preserving its dead for secondary use all along. One drop of troll blood later and your new laborer lurches upright.]]></story_1>
             <!-- Story 2 was deleted (Zombie raising attempt failed). Don't use that number or your story may not show in the action log properly for old saves. -->
-            <story_3><![CDATA[<b>10 Zombies raised in a loop:</b>⮀ The strength of a zombie has little to do with its form, you've found. The rotting remains of a young child claws at foes with the same strength as the lumberjack who died in the prime of his life. You have the town's amply stocked graveyard to thank for the variety of your minions. With each body you dig up you gain another chance to learn more about how to fully exploit your dark powers.]]></story_3>
-            <story_4><![CDATA[<b>25 Zombies raised in a loop:</b>⮀ Zombies don't bleed when you cut them, and retain perfect functionality as long as the meat keeps the bones connected. Your studies have shown, perhaps unsurprisingly, that fresh corpses are the most receptive to your magics. You've considered... procuring your own supplies, but there happen to be plenty of fresh corpses here just waiting to be used. A legion of soldiers, waiting for you to breathe unlife into them.]]></story_4>
+            <story_3><![CDATA[<b>10 Zombies raised in a loop:</b> The strength of a zombie has little to do with its original form. Child, laborer, soldier: once reanimated, each is simply another unit in a system that measures bodies by what work can still be extracted from them. Startington may not say it aloud, but its graveyards were always inventory.]]></story_3>
+            <story_4><![CDATA[<b>25 Zombies raised in a loop:</b> Zombies do not bleed when cut and retain functionality so long as flesh still binds bone. With enough of them, the distinction between army, workforce, and salvage crew begins to blur. That seems less like a corruption of Startington's logic and more like its natural conclusion.]]></story_4>
         </raise_zombie>
         <dark_sacrifice>
             <label>Dark Sacrifice</label>
             <tooltip><![CDATA[
-            You make a sacrifice of troll's blood to dark gods.<br>Costs 1 blood.<br>
+            Here, loss is a technique. Offer blood to the dark gods and turn deliberate sacrifice into leverage over the bargains that shaped this route.<br>Costs 1 blood.<br>
             Reduces the soulstone cost of dark ritual.<br>Unlocked at 60 dark ritual.
             ]]></tooltip>
-            <story_1><![CDATA[<b>Made a Dark Sacrifice:</b>⮀ The Dark Gods are a lot easier to reach in this world nearly without light, and you can feel their approval wash over you as you offer them the blood of an innocent creature, slain by your cruel hand. Maybe they'll accept a bit of haggling if you try a ritual now.]]></story_1>
-            <story_2><![CDATA[<b>100 Commune:</b>⮀ While the Dark Gods are still accepting your offerings, you can feel an undercurrent of boredom when you attempt the ritual now. Still, the discount to the number of Soul Stones you need for the other ritual is too good to pass up.]]></story_2>
-            <story_3><![CDATA[<b>1000 Commune:</b>⮀ Right as you finish the ritual, one of your Dark Masters manifests in front of you. You don't get a word in edgewise before he speaks up. "While we appreciate the free drinks, you really should stop this now. We'd rather have some Trolls left to drink later on, and you're going a long way to drive them extinct. Just give it a damn rest," he says before just disappearing into the puddle of freshly sacrificed blood.]]></story_3>
+            <story_1><![CDATA[<b>Made a Dark Sacrifice:</b> The dark gods are much easier to reach in this lightless world, and their approval washes over you the moment the blood hits the altar. The feeling is not rewarding so much as transactional. In Startington, giving something up is simply how one gains room to maneuver.]]></story_1>
+            <story_2><![CDATA[<b>100 Commune:</b> The dark gods still accept your offerings, but with a clear undercurrent of boredom. That hardly matters. The point of a practiced sacrifice is not drama. It is the steady conversion of cost into control.]]></story_2>
+            <story_3><![CDATA[<b>1000 Commune:</b> Right as you finish the ritual, one of your dark masters manifests in front of you and cuts you off before you can speak. "We appreciate the free drinks," he says, "but you really should stop this. We'd rather have some trolls left later." Even divine mockery cannot hide the point: repeated sacrifice has become a technical problem with measurable side effects.]]></story_3>
         </dark_sacrifice>
         <the_spire>
             <label>The Spire</label>
@@ -3202,7 +3201,7 @@
             <label_complete>Completed</label_complete>
             <label_part>The Spire</label_part>
             <tooltip><![CDATA[
-            Standing tall in the dead center of the town is the towering Spire. Surrounded by an eternal storm, it seems to drain the life from the shadowy world around it. This is surely your greatest task yet.<br>Gives (team combat) * (1 + main stat / 100) * sqrt(1 + times floor completed / 200) * (1 + pylons destroyed / 10) * (original mana cost / actual mana cost) progress points per mana.<br>Unlocked with 5% town meandered.<br>Gives 100 soulstones per completion - hover over Looted for info.
+            Standing in the dead center of town is the Spire: not a monument to worthiness, but a machine that turns Startington's leftovers into ascent. Here, you climb not because you were granted permission, but because you have learned how to survive what the town keeps feeding upward.<br>Gives (team combat) * (1 + main stat / 100) * sqrt(1 + times floor completed / 200) * (1 + pylons destroyed / 10) * (original mana cost / actual mana cost) progress points per mana.<br>Unlocked with 5% town meandered.<br>Gives 100 soulstones per completion - hover over Looted for info.
             ]]></tooltip>
             <completed_tooltip><![CDATA[
             Each soulstone improves a random stat's exp gain by (1+(soulstones)^.8/30).<br>Each floor has 100 soulstones that, when received, multiplies the chance you'll get the next one by 0.98.<br>Chance to receive soulstones recovers per floor at 0.00001% per mana.<br>
@@ -3220,20 +3219,20 @@
                 <name>Fight Dark Amalgamation</name>
                 <name>Cleanse Floor</name>
             </segment_names>
-            <story_1><![CDATA[<b>Spire attempted:</b>⮀ Even finding the entrance is something of a challenge, and it only gets worse as you make your way through the first floor of the Spire. If it wasn't for the bounty of Soul Stones surely waiting for you at the end, you wouldn't even have bothered.]]></story_1>
-            <story_2><![CDATA[<b>1000 floors looted:</b>⮀ The wild variations from loop to loop are starting to show their pattern to you, and you're beginning to figure out what kinds of changes can happen on the lower floors to the point where you can anticipate the worst of it. The spiders still get their webs all over your hair, though.]]></story_2>
-            <story_3><![CDATA[<b>5000 floors looted:</b>⮀ You no longer get lost in the Door Maze anymore, the subtle hints hidden in the wood grain of the doors standing out as much as signposts to your well-trained eye. Doesn't make it any easier when you have to back-track at the end of each floor to ensure none of the beasts come back, though.]]></story_3>
-            <story_4><![CDATA[<b>20 floors cleared in a loop:</b>⮀ You pant as you slump into the convenient park bench waiting at the very top of the spire. While your bag is heavy with Soul Stones, you silently hope you won't have to do this too many times before you run out of things to spend those stones on. At least the town is now lit with a much less gloomy light.]]></story_4>
-            <story_5><![CDATA[<b>Spire challenged with 10 destroyed Pylons:</b>⮀ Looks like keeping a trophy from those delightfully fragile Pylons was the right call. Somehow, climbing the stairs is significantly less taxing, nor does the air in the higher floors drain you as much anymore.]]></story_5>
-            <story_6><![CDATA[<b>Spire challenged with 25 destroyed Pylons:</b>⮀ The lower floors of the Spire are so welcoming to you now that you nearly trip an Explosive Rune, having forgotten for a moment that this is not the Small dungeon in Startington's brighter counterpart.]]></story_6>
+            <story_1><![CDATA[<b>Spire attempted:</b> Even finding the entrance is a challenge, and it only gets worse as you make your way through the first floor. If the Spire did not sit at the center of the town's whole unnatural metabolism, you would not have bothered. But this is where Startington hides both its hoarded power and the logic that keeps it running.]]></story_1>
+            <story_2><![CDATA[<b>1000 floors looted:</b> The wild variations from loop to loop are beginning to show a pattern. You can now anticipate the lower floors' worst shifts before they happen. The place still fights you, but it is no longer inscrutable. You are learning the grammar of an unstable machine.]]></story_2>
+            <story_3><![CDATA[<b>5000 floors looted:</b> You no longer get lost in the Door Maze. The hints in the wood grain stand out like signposts to your trained eye. Startington's route upward does not reward credentials; it rewards anyone stubborn enough to study how broken things continue to function.]]></story_3>
+            <story_4><![CDATA[<b>20 floors cleared in a loop:</b> You pant as you slump onto the bench waiting at the very top. While your bag is heavy with soulstones, the more meaningful change is outside: every successful climb seems to make the town's light a little less hungry. As if understanding the Spire also loosens its grip.]]></story_4>
+            <story_5><![CDATA[<b>Spire challenged with 10 destroyed Pylons:</b> Keeping fragments from those delightfully fragile pylons was the right call. They were not souvenirs. They were access keys. Somehow the stairs tax you less now, and the higher floors do not drain you nearly as hard.]]></story_5>
+            <story_6><![CDATA[<b>Spire challenged with 25 destroyed Pylons:</b> The lower floors of the Spire feel almost welcoming now. You still have to respect every trap, but the place no longer reads you as a stranger. By dismantling Startington's outer restraints, you have made yourself legible to its central engine.]]></story_6>
         </the_spire>
         <purchase_supplies>
         <label>Buy Supplies</label>
             <tooltip><![CDATA[
-            Prepare to move on.<br>This merchant doesn't seem to be willing to haggle with you though.<br>
+            Prepare to move on through a market built from salvage, hoarded stock, and things nobody else could afford to throw away.<br>
             Costs 500 gold.<br>You only need one set of supplies.<br>Unlocked with 75% town meandered.
             ]]></tooltip>
-            <story_1><![CDATA[<b>Supplies bought:</b>⮀ The man who sells you these supplies, you can tell that he doesn't have much more than what he sold you. You try not to think about it, but you can't forget the bone-deep weariness in his movements or the resolute expression on his face. He knows exactly what he's doing, and you understand why your best efforts couldn't drive the price down even a single gold. But you have places to be, and you very dearly want to get out of here. You buy the supplies, cursing the town's name under your breath.]]></story_1>
+            <story_1><![CDATA[<b>Supplies bought:</b> The man selling these supplies clearly has very little beyond what he just sold you. There is no room for haggling here because the price already includes danger, scarcity, and the knowledge that someone else may need the same goods tomorrow. You are not shopping in a normal town. You are participating in a ruin economy.]]></story_1>
         </purchase_supplies>
         <dead_trial>
             <label>Trial of the Dead</label>
@@ -3241,7 +3240,7 @@
             <label_part>Necropolis</label_part>
             <label_complete>Grave Defiled</label_complete>
             <tooltip><![CDATA[
-            You've found an old necropolis. It's <i>way</i> too haunted for you and your party, but you could probably send some zombies in to look for more bodies.<br>
+            You've found an old necropolis, less tomb than process. It is far too haunted for the living, but perfect for testing whether your undead workforce can turn abandoned bodies back into ordered function.<br>
             Only the combat gained from zombies counts toward this trial.<br>Rewards 1 Zombie per floor completion.<br>Unlocks when this zone is fully surveyed.
             ]]></tooltip>
             <segment_names>
@@ -3250,89 +3249,89 @@
                 <name>Avoid the Spikes</name>
                 <name>Transform the Dead</name>
             </segment_names>
-            <story_1><![CDATA[<b>Floor 1 completed:</b>⮀ Dungeon-crawling at a distance is a hassle, but watching one of your zombies get turned into undead shish-kebab very quickly convinces you this place isn't worth going in yourself. Besides, the corpse-filled alcoves just before the way down to the next floor let you refill (and then some) your army anyway.]]></story_1>
-            <story_2><![CDATA[<b>Floor 10 completed:</b>⮀ You can't help but feel that whoever made this place was looking into the future, what with how you always end up with exactly one more zombie than you started the floor with; whether you lose all but one or none at all, you've not even once got more than 1 additional zombie.]]></story_2>
-            <story_3><![CDATA[<b>Floor 25 completed:</b>⮀ With a sigh, you give your zombies a nod as they smash into the glowing sphere that's been ensuring this place is crawling with specters of every stripe for so very long. While having a larger workforce is nice and all, this still feels like a waste of time.]]></story_3>
+            <story_1><![CDATA[<b>Floor 1 completed:</b> Sending zombies into the necropolis is a hassle, but watching one get turned into undead shish-kebab very quickly convinces you this is not a place for the living. The corpse-filled alcoves near each descent are more interesting anyway. Whoever built this place expected the dead to be reused.]]></story_1>
+            <story_2><![CDATA[<b>Floor 10 completed:</b> You cannot help noticing the same outcome repeating over and over: one more zombie than you started with, no matter how messy the floor went. This place is not just haunted. It is calibrated. The discarded dead are being sorted, refined, and returned as usable labor.]]></story_2>
+            <story_3><![CDATA[<b>Floor 25 completed:</b> With a sigh, you give your zombies a nod as they smash into the glowing sphere that has kept this place full of specters for who knows how long. Breaking it feels less like clearing a dungeon and more like repossessing a machine that had been monopolizing Startington's dead.]]></story_3>
         </dead_trial>
         <journey_forth>
             <label>Journey Forth</label>
             <tooltip><![CDATA[
-            Follow the trail out of town. Anywhere has to be better than here, you think as you look at the looming Jungle ahead.<br>
+            No sanctioned road leaves this place. You follow a trail maintained by survivors, smugglers, and anyone else desperate enough to keep moving.<br>
             Requires (and costs) supplies.<br>Unlocked with 100% town meandered.
             ]]></tooltip>
-            <story_1><![CDATA[<b>Journeyed out of town:</b>⮀ You adjust the straps of your backpack as you head out. While the town felt like it was dying by itself, the air around you starts to feel <i>hungry</i> as you make your way into the dense jungle rising before you.]]></story_1>
+            <story_1><![CDATA[<b>Journeyed out of town:</b> You adjust the straps of your backpack and leave Startington behind. The route ahead does not feel approved so much as repeatedly re-opened by people who refused to stop. By the time the air around you starts to feel hungry and the jungle closes in, you know you are no longer traveling on a permitted map. You are following the version of the world abandoned people kept drawing for themselves.]]></story_1>
         </journey_forth>
         <!--town 7-->
         <fight_jungle_monsters>
             <label>Fight Jungle</label>
             <label_done>Creatures Defeated</label_done>
             <tooltip><![CDATA[
-            Even the basic creatures here are terrifying.<br>
+            Nothing here hunts for honor. The jungle presses like a siege, and every beast feels like one more part of a world trying to digest the people left in it.<br>
             Gives (self combat) * (1 + main stat / 100) * sqrt(1 + times completed / 1000) * (original mana cost / actual mana cost) progress points per mana.<br>Gives 1 blood per segment completed.
             ]]></tooltip>
-            <story_1><![CDATA[<b>Jungle creature fought:</b>⮀ Finding something to fight is the easy part, as you quickly find yourself face to face with a <i>very</i> hungry giant frog! You ready your weapon while preparing for a tough fight; far too little space between the dense trees to fight alongside anyone else.]]></story_1>
-            <story_2><![CDATA[<b>Sloth slain:</b>⮀ You wince as you quickly patch up your wounds and take careful note for next time: while the giant sloth you just killed didn't look like much of a problem at first, those claws can do a lot of damage if you ignore them.]]></story_2>
-            <story_3><![CDATA[<b>Python slain:</b>⮀ That was one hell of a strange fight. Sure, finding a snake large enough to swallow a pig whole is par for the course here, but seeing it nudge a rusted-out birdcage with some bones inside around the entire time you were fighting made things a lot weirder.]]></story_3>
-            <story_4><![CDATA[<b>Okapi slain:</b>⮀ This creature didn't feel like it belonged here. It was constantly stumbling while you fought it, and while it charged you like its life depended on it, the blunt teeth in its mouth suggest it couldn't eat you even if it wanted to. What was going on in this place?!]]></story_4>
-            <story_5><![CDATA[<b>Jaguar slain:</b>⮀ Leaning against a tree, you keep a wary eye on the body of the large feline you just barely managed to hit with a heavy branch. While this creature seems like the kind of thing you'd expect around here, the way it stalked you makes you feel like you just got lucky in killing it.]]></story_5>
-            <story_6><![CDATA[<b>Anaconda slain:</b>⮀ You swear as you push the long, muscular body of the now-dead snake off of you. That last snake wasn't nearly as much of a problem as this one, but at least as weird with how you couldn't shake the knowledge that her name is Anna.]]></story_6>
-            <story_7><![CDATA[<b>Tiger slain:</b>⮀ The fight is over, but you're still shaking with the adrenaline from being jumped. This time, you're certain that the beast was stalking you for a while and specifically struck while you were distracted by a noise further into the jungle.]]></story_7>
-            <story_8><![CDATA[<b>Crocodile slain:</b>⮀ You shake your head while looking at the tough-skinned animal that tried to jump you while crossing a river. Note to self: Nowhere is safe, assume the trees themselves are just animals waiting to swallow you whole.]]></story_8>
-            <story_9><![CDATA[<b>Gorilla slain:</b>⮀ This fight felt different. All the other beasts you've killed so far looked like they wanted you dead to eat, but this muscular ape felt a lot more malicious. As if it had taken grievous offense to you making eye contact...]]></story_9>
-            <story_10><![CDATA[<b>Elephant slain:</b>⮀ Something is extremely wrong. How did that massive beast even get into this jungle, let alone survive long enough to try and attack you too?! Whatever the case, that last kill must have set off some alarm bells for the other critters, because you hear trees getting uprooted and rocks smashed a little further in. Maybe it's time to leave, before you get stampeded over yourself.]]></story_10>
+            <story_1><![CDATA[<b>Jungle creature fought:</b> Finding something to fight is the easy part. A giant frog lunges at you from beside a collapsed stone marker, and you quickly realize the jungle does not separate nature from ruin nearly as neatly as you would like.]]></story_1>
+            <story_2><![CDATA[<b>Sloth slain:</b> You patch up your wounds and make a careful note: even a creature that looks slow here has adapted to desperation. The claws that nearly opened you up were not the weapons of a majestic beast, just of something that learned hunger too well.]]></story_2>
+            <story_3><![CDATA[<b>Python slain:</b> Finding a snake large enough to swallow a pig whole is already bad enough, but the way it kept nudging a rusted birdcage full of bones during the fight makes the whole encounter feel less natural and more scavenged from the wreckage of several ecosystems at once.]]></story_3>
+            <story_4><![CDATA[<b>Okapi slain:</b> This creature does not feel like it belongs here. It stumbles, charges, and fights as if the jungle assembled it from whatever was left over rather than letting it evolve in peace. The place is not wild in a clean sense. It is adaptive and mean.]]></story_4>
+            <story_5><![CDATA[<b>Jaguar slain:</b> Leaning against a tree, you keep a wary eye on the body of the large feline you barely managed to kill. It used old walls and fallen stone the way a trained hunter would use a fortification. Even the predators here have learned from abandoned structures.]]></story_5>
+            <story_6><![CDATA[<b>Anaconda slain:</b> You shove the long body of the snake off yourself and glare at the stagnant channel it came from. Once, this might have been drainage. Now it is part river, part grave, part hunting lane. The jungle keeps repurposing what civilization leaves behind.]]></story_6>
+            <story_7><![CDATA[<b>Tiger slain:</b> The fight is over, but you are still shaking from the way the beast coordinated its strike with noises deeper in the trees. Whether that was instinct or something worse, the message is the same: the jungle applies pressure intelligently.]]></story_7>
+            <story_8><![CDATA[<b>Crocodile slain:</b> You stare at the tough-skinned body that tried to drag you under while you crossed what used to be a road. Note to self: nowhere is neutral terrain here. Anything the jungle can flood, overgrow, or weaponize, it will.]]></story_8>
+            <story_9><![CDATA[<b>Gorilla slain:</b> This fight feels different. The ape's aggression is not simple hunger. It is territorial in the same way a sentry is territorial. Around the broken markers and survivor signs nearby, even animal violence starts to feel like governance by other means.]]></story_9>
+            <story_10><![CDATA[<b>Elephant slain:</b> Something is deeply wrong. That beast should never have fit through half the spaces it charged through, yet the jungle made room for it anyway. Trees crack, stone breaks, and the noise further ahead says this place can still escalate far beyond what one person should try to handle alone.]]></story_10>
         </fight_jungle_monsters>
         <explore_jungle>
             <label>Explore Jungle</label>
             <label_done>Explored</label_done>
             <tooltip><![CDATA[
-            It would be easier to explore here if there wasn't something waiting to jump out at you behind every tree.<br>
+            This is not untouched wilderness. It is what abandonment grows into once roads fail and people start hiding their own routes inside the overgrowth.<br>
             Gives progress based on Fight Jungle multiplier.<br>Gives 1 herb.
             ]]></tooltip>
-            <story_1><![CDATA[<b>1% Explored:</b>⮀ Even after taking out the worst of the beasts making this Jungle their home, you constantly have to watch out for even the smallest movement in the corner of your eye as you explore.]]></story_1>
-            <story_2><![CDATA[<b>10% Explored:</b>⮀ If the vibe of the jungle was "hungry" as you approached it, being among the densely growing trees feels like you've been swallowed by some impossibly massive monster that is taking its sweet time digesting you.]]></story_2>
-            <story_3><![CDATA[<b>20% Explored:</b>⮀ You've heard far-off cries for help off and on again while you're mapping out this place, but now you know their source. Coming around a tree, you find yourself face-to-face with a haggard-looking man, who bolts between the trees the moment his eyes lock with yours. Maybe you can help?]]></story_3>
-            <story_4><![CDATA[<b>40% Explored:</b>⮀ There is an odd irony to having a meal inside a jungle that's trying its level best to eat you, so you've gotten quite fond of organizing a small buffet for the people you've rescued. They all look like they can use a bite anyway.]]></story_4>
-            <story_5><![CDATA[<b>50% Explored:</b>⮀ While there are traces of civilisation and settlement spread all over the Jungle, finding the imposing totem in its small clearing was quite the surprise...]]></story_5>
-            <story_6><![CDATA[<b>60% Explored:</b>⮀ You have had your suspicions before, but now you're certain: the Jungle is actively trying to keep you from leaving! There was a path leading back to Startington, but barely a minute later the path is overgrown thicker than you can get through! ...good thing you just have to wait for your mana to run out in order to leave.]]></story_6>
-            <story_7><![CDATA[<b>80% Explored:</b>⮀ With every loop, you learn a little more about how the Jungle tries to keep you trapped, how even the most well-worn paths are drowned in foliage within minutes of your arrival. Getting through this place will be a matter of picking up the pace by a <i>lot</i>!]]></story_7>
-            <story_8><![CDATA[<b>100% Explored:</b>⮀ It took a lot of luck, but you're sure that you've found a way out! Up ahead, almost exactly directly across from your entry point to the Jungle, you can occasionally make out some muted sounds of a city! Making it there before the Jungle traps you is going to be a whole different matter, though.]]></story_8>
+            <story_1><![CDATA[<b>1% Explored:</b> Even after taking out the worst of the beasts, you constantly watch the edges of your vision. The jungle is dense, but not random. Broken stones, hacked roots, and half-hidden markers suggest people have been forcing paths through it for a long time.]]></story_1>
+            <story_2><![CDATA[<b>10% Explored:</b> If the jungle felt hungry from the outside, being inside it feels like standing inside a mouth that has learned patience. Ruins peek between roots, and every clearing looks like it used to be something else before the growth reclaimed it.]]></story_2>
+            <story_3><![CDATA[<b>20% Explored:</b> You keep hearing far-off cries for help while you map the place. Eventually you find their source: a haggard man who bolts the moment he sees you. The jungle has made everyone here suspicious, but the fact that survivors exist at all means this route is already trying to become a society.]]></story_3>
+            <story_4><![CDATA[<b>40% Explored:</b> There is an odd irony to organizing a meal inside a jungle trying to eat you, but campfire logic takes hold quickly out here. Once people gather in one place often enough, even a temporary camp starts acting like a settlement.]]></story_4>
+            <story_5><![CDATA[<b>50% Explored:</b> Traces of settlement are everywhere, but the imposing totem in its small clearing still surprises you. This is not just a ruin corridor. It is a place where people have started inventing new ways to negotiate with the world around them.]]></story_5>
+            <story_6><![CDATA[<b>60% Explored:</b> Your suspicions are confirmed: the jungle actively tries to keep you from leaving. Paths back toward Startington overgrow within minutes. The dangerous shortcut logic of the shadow route has not vanished out here; it has gone feral.]]></story_6>
+            <story_7><![CDATA[<b>80% Explored:</b> With every loop, you learn a little more about how the jungle tries to trap you. Even well-worn paths drown in foliage almost immediately. If you want through, you will need more than courage. You will need speed, preparation, and a willingness to trust routes that barely exist.]]></story_7>
+            <story_8><![CDATA[<b>100% Explored:</b> It took luck, patience, and a talent for reading what the jungle was trying to hide, but you are sure you have found a way out. Somewhere almost directly opposite your entry point, the muted sounds of a city drift through the trees. Reaching it before the path closes is another problem entirely.]]></story_8>
         </explore_jungle>
         <rescue_survivors>
             <label>Rescue Survivor</label>
             <label_done>Saved</label_done>
             <label_part>Survivor</label_part>
             <tooltip><![CDATA[
-            There are people lost wandering the jungle. If you can find them, you can patch them up and bring them back to camp.<br>Gives (magic skill) * (restoration skill / 100) * (1 + main stat / 100) * sqrt(1 + times completed / 100) * (original mana cost / actual mana cost) * (Jungle Explored %) progress points per mana.<br>Rescued survivors give 4 reputation.<br>Unlocked at 20% Jungle explored.
+            There are people lost in the jungle. If you can find them, heal them, and reassure them, you can turn scattered fear into a camp, and a camp into the beginning of a community.<br>Gives (magic skill) * (restoration skill / 100) * (1 + main stat / 100) * sqrt(1 + times completed / 100) * (original mana cost / actual mana cost) * (Jungle Explored %) progress points per mana.<br>Rescued survivors give 4 reputation.<br>Unlocked at 20% Jungle explored.
             ]]></tooltip>
             <segment_names>
                 <name>Find</name>
                 <name>Help</name>
                 <name>Assure</name>
             </segment_names>
-            <story_1><![CDATA[<b>Survivor rescued:</b>⮀ You're not sure what the harder part of this operation was; finding the man, or convincing him that you were not going to eat him. Still, helping him recover a little from the many wounds he suffered makes you feel a little better.]]></story_1>
-            <story_2><![CDATA[<b>6 Survivors rescued in one loop:</b>⮀ The last person you managed to coax into joining you was a little girl. While her clothes were mostly intact and she did confirm she hadn't been in the Jungle for long, the mean gash on her arm would almost definitely have gotten infected if you hadn't helped.]]></story_2>
-            <story_3><![CDATA[<b>20 Survivors rescued in one loop:</b>⮀ By now, the sheer number of people following you as their rescuer is getting in the way of finding further survivors. You can still occasionally catch a glimpse of someone bolting away from you, but most of the time they don't let you get a word in edgewise out of fear you're going to eat them.]]></story_3>
+            <story_1><![CDATA[<b>Survivor rescued:</b> You are not sure which part is harder: finding the man or convincing him you are not another predator. Once he accepts treatment and follows you back, the important thing is not just that one person lives. It is that there is one more person helping make camp feel real.]]></story_1>
+            <story_2><![CDATA[<b>6 Survivors rescued in one loop:</b> The last person you coax into joining you is a little girl with a nasty wound on her arm. By the time she is bandaged and fed, the older survivors have already started treating your makeshift camp like a place with rules, duties, and shared expectations.]]></story_2>
+            <story_3><![CDATA[<b>20 Survivors rescued in one loop:</b> By now, the sheer number of people following you as their rescuer gets in the way of finding further survivors. That is a good problem to have. What began as emergency aid is turning into a recognizable social unit, however rough and temporary.]]></story_3>
         </rescue_survivors>
         <prepare_buffet>
             <label>Prepare Buffet</label>
             <tooltip><![CDATA[
-            It's not quite the same as making potions, but you can use your alchemy skills to prepare food for the gathered group.<br>Costs 10 herbs and 1 blood.<br>Gives Gluttony exp equal to (Rescued Survivors * 5).<br>Unlocked at 20% Jungle explored
+            Use rough jungle ingredients and a little alchemical judgment to turn mere survival into a brief shared feast.<br>Costs 10 herbs and 1 blood.<br>Gives Gluttony exp equal to (Rescued Survivors * 5).<br>Unlocked at 20% Jungle explored
             ]]></tooltip>
-            <story_1><![CDATA[<b>Prepared a Buffet:</b>⮀ Sure, the meat is a little on the thin side and the herbs quite bitter, but even a simple meal like that feels better than most you've had in your life. Somehow, you feel more hungry after you finish eating.]]></story_1>
-            <story_2><![CDATA[<b>Held a Buffet with a Rescued Survivor:</b>⮀ The man looks at the meal with poorly disguised suspicion. When you ask, he explains that it feels dangerous to eat, no matter how many times you promise the food is not poisonous or anything. Honestly, you thought he'd be wolfing it down the moment you gave him a plate. Oh well, more for you.]]></story_2>
-            <story_3><![CDATA[<b>Held a Buffet with 6 Rescued Survivors:</b>⮀ There still is a lot of wariness on everyone's faces, but watching the little girl dig into the meal like it's a feast for royalty motivates some more people to have a bite. Afterward, they all ask for seconds too!]]></story_3>
-            <story_4><![CDATA[<b>10 Gluttony:</b>⮀ The food you manage to scrounge together is less and less filling, and you find yourself spending more and more time hunting for the sake of having something to eat. Maybe it's time to try and get something to eat from somewhere else?]]></story_4>
-            <story_5><![CDATA[<b>100 Gluttony:</b>⮀ Even as you stuff your face with every last morsel you can get your hands on, you feel emptier and emptier every time. You are so hungry, you could <i>genuinely</i> eat a horse.]]></story_5>
+            <story_1><![CDATA[<b>Prepared a Buffet:</b> The meat is thin and the herbs are bitter, but even a simple meal feels extraordinary after long enough in this place. For a short while, the camp stops feeling like a collection of frightened bodies and starts feeling like a group that expects to still be here tomorrow.]]></story_1>
+            <story_2><![CDATA[<b>Held a Buffet with a Rescued Survivor:</b> The man eyes the meal with poorly disguised suspicion. Fair enough. In a place like this, generosity can look like a trap. When he finally eats and does not die, the relief on his face is almost as important as the meal itself.]]></story_2>
+            <story_3><![CDATA[<b>Held a Buffet with 6 Rescued Survivors:</b> There is still a lot of wariness around the fire, but watching the little girl dig into the meal like it is a royal feast convinces the others to try it. Seconds are requested almost immediately. Hardship does not stop people from recognizing abundance when it finally appears.]]></story_3>
+            <story_4><![CDATA[<b>10 Gluttony:</b> The food you manage to scrounge together is less and less filling, and you find yourself spending more time hunting simply to maintain this fragile little pocket of plenty. Sustaining a feast, it turns out, is very different from improvising one.]]></story_4>
+            <story_5><![CDATA[<b>100 Gluttony:</b> Even as you stuff your face with every last morsel you can get your hands on, you feel emptier each time. A temporary abundance can hold a camp together, but appetite always learns to scale with hope.]]></story_5>
         </prepare_buffet>
         <totem>
             <label>Totem</label>
             <tooltip><![CDATA[
-            Deep within the jungle, you find a totem pulsing with energy. Just standing near it, you feel more capable. If you drink a looping potion here, perhaps some of that energy will stay with you on future loops.<br>Doubles the initial stat gain bonus of Imbue Body on first completion.<br>Requires a looping potion.<br>Unlocked at 50% Jungle Explored.<br>Grants 100 Wunderkind exp.
+            Deep within the jungle you find a totem pulsing with energy. It does not feel like academic magic. It feels like knowledge hammered into a shape that people could survive around, then passed along by repetition. If you drink a looping potion here, perhaps some of that practical understanding will stay with you.<br>Doubles the initial stat gain bonus of Imbue Body on first completion.<br>Requires a looping potion.<br>Unlocked at 50% Jungle Explored.<br>Grants 100 Wunderkind exp.
             ]]></tooltip>
-            <story_1><![CDATA[<b>Drank a looping potion:</b>⮀ After saying a quick prayer that this won't outright undo all your progress to escape the loops, you lean your back against the totem and down the potion in one swig. Almost immediately, you feel <i>something</i> inside shift, as if the lowest you can be has gotten a lot higher!]]></story_1>
-            <story_2><![CDATA[<b>5 Wunderkind:</b>⮀ While you don't get the dramatic increase that first swig earned you anymore, you can feel your mind getting a little clearer with every loop you fulfill the ritual and your understanding of the deeper mechanics of your abilities comes that much smoother too!]]></story_2>
-            <story_3><![CDATA[<b>60 Wunderkind:</b>⮀ You don't recall what loop you started doing so, but you've fallen into the habit of kneeling down and patting the head at the bottom of the totem after each looping potion you've drank. Stranger still, you're certain the face is smiling a lot brighter than the first time you found the totem...]]></story_3>
-            <story_4><![CDATA[<b>360 Wunderkind:</b>⮀ The totem is a familiar face to you now, and you even make a point of passing by it on the loops where you don't brew a looping potion. Whatever the reason it was placed there, you are happy it's there and you hope that it might bring some small relief to the many other people stuck in the Jungle.]]></story_4>
+            <story_1><![CDATA[<b>Drank a looping potion:</b> After a quick prayer that this will not undo all your progress, you lean against the totem and down the potion in one swallow. Almost immediately something inside you shifts, as if the lowest level your body can fall to has been raised by a ritual designed through experience rather than theory.]]></story_1>
+            <story_2><![CDATA[<b>5 Wunderkind:</b> The dramatic surge of the first drink does not repeat, but every later visit leaves your thinking a little clearer. The totem seems built on the idea that understanding should be embedded in practice until it becomes instinct.]]></story_2>
+            <story_3><![CDATA[<b>60 Wunderkind:</b> At some point you fall into the habit of kneeling and patting the face at the bottom of the totem after each potion. Stranger still, you are certain the expression looks brighter than when you first found it. Repetition here feels less like rote work and more like participation in a living tradition.]]></story_3>
+            <story_4><![CDATA[<b>360 Wunderkind:</b> The totem is a familiar face now, and you make a point of passing by it even on loops where you do not brew a potion. Whatever reason it was placed here, it has become proof that the shadow route can produce its own schools of knowledge without ever becoming a school in the formal sense.]]></story_4>
         </totem>
         <escape>
             <label>Escape</label>
@@ -3344,11 +3343,11 @@
         <open_portal>
             <label>Open Portal</label>
             <tooltip><![CDATA[
-            The Explorers' guild tells you of a secret grove within the Jungle, where the barrier between realms is weakest. With enough restoration skill, you might be able to open a rift back and leave the shadow realm. However, it seems quite a bit of time passes in the portal, and some merchants have closed up shop.<br>
+            The Explorers' guild tells you of a secret grove where the barrier between realms is weakest. With enough restoration skill, you can turn the shadow route's unstable shortcuts into a repeatable exit rather than a desperate tear in reality. The trip still costs time; mature techniques are safer, not free.<br>
             Unlocked with 75% of the world surveyed, and 1000 Restoration.<br>
             Travels to Forest Path.<br>Buy Mana actions can not be used for the rest of the current loop.
             ]]></tooltip>
-            <story_1><![CDATA[<b>Portal opened:</b>⮀ Despite the Veil being thin in this place, you still have to push quite a bit to get through. Whether it is due to the Gods trying to keep the Shadow Realm from invading or the simple physics of inter-realm travel, you can feel the hunger from the Jungle grow quiet as you approach the rippling portal you just created and step through to the forest on the other side. Looking at the sky, you're surprised to find that night is falling now!]]></story_1>
+            <story_1><![CDATA[<b>Portal opened:</b> Even in the grove where the veil is thin, you still have to force the opening into a shape stable enough to cross. The jungle's hunger quiets as you approach the rippling portal, and when you step through you realize how far this route has come: what began as dangerous improvised breaches has become a deliberate method of travel.]]></story_1>
         </open_portal>
         <!--town 8-->
         <excursion>

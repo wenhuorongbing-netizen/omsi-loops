@@ -1,0 +1,203 @@
+{
+  "generatedAt": "2026-04-14T02:19:00.507Z",
+  "ok": true,
+  "note": "Metadata-only capture log. Preview text intentionally omitted for audit readability.",
+  "captures": [
+    {
+      "group": "tooltip",
+      "lang": "en-EN",
+      "node": "seek_citizenship",
+      "file": "seek-citizenship-tooltip-en.png",
+      "path": "output/second-policy-qa/seek-citizenship-tooltip-en.png"
+    },
+    {
+      "group": "tooltip",
+      "lang": "zh-CN",
+      "node": "seek_citizenship",
+      "file": "seek-citizenship-tooltip-zh.png",
+      "path": "output/second-policy-qa/seek-citizenship-tooltip-zh.png"
+    },
+    {
+      "group": "tooltip",
+      "lang": "en-EN",
+      "node": "fall_from_grace",
+      "file": "fall-from-grace-tooltip-en.png",
+      "path": "output/second-policy-qa/fall-from-grace-tooltip-en.png"
+    },
+    {
+      "group": "tooltip",
+      "lang": "zh-CN",
+      "node": "fall_from_grace",
+      "file": "fall-from-grace-tooltip-zh.png",
+      "path": "output/second-policy-qa/fall-from-grace-tooltip-zh.png"
+    },
+    {
+      "group": "story",
+      "lang": "en-EN",
+      "node": "meander",
+      "file": "meander-story1-en.png",
+      "path": "output/second-policy-qa/runtime-story-captures/meander-story1-en.png"
+    },
+    {
+      "group": "story",
+      "lang": "zh-CN",
+      "node": "meander",
+      "file": "meander-story1-zh.png",
+      "path": "output/second-policy-qa/runtime-story-captures/meander-story1-zh.png"
+    },
+    {
+      "group": "story",
+      "lang": "en-EN",
+      "node": "dark_sacrifice",
+      "file": "dark_sacrifice-story1-en.png",
+      "path": "output/second-policy-qa/runtime-story-captures/dark_sacrifice-story1-en.png"
+    },
+    {
+      "group": "story",
+      "lang": "zh-CN",
+      "node": "dark_sacrifice",
+      "file": "dark_sacrifice-story1-zh.png",
+      "path": "output/second-policy-qa/runtime-story-captures/dark_sacrifice-story1-zh.png"
+    },
+    {
+      "group": "story",
+      "lang": "en-EN",
+      "node": "the_spire",
+      "file": "the_spire-story1-en.png",
+      "path": "output/second-policy-qa/runtime-story-captures/the_spire-story1-en.png"
+    },
+    {
+      "group": "story",
+      "lang": "zh-CN",
+      "node": "the_spire",
+      "file": "the_spire-story1-zh.png",
+      "path": "output/second-policy-qa/runtime-story-captures/the_spire-story1-zh.png"
+    },
+    {
+      "group": "story",
+      "lang": "en-EN",
+      "node": "dead_trial",
+      "file": "dead_trial-story1-en.png",
+      "path": "output/second-policy-qa/runtime-story-captures/dead_trial-story1-en.png"
+    },
+    {
+      "group": "story",
+      "lang": "zh-CN",
+      "node": "dead_trial",
+      "file": "dead_trial-story1-zh.png",
+      "path": "output/second-policy-qa/runtime-story-captures/dead_trial-story1-zh.png"
+    },
+    {
+      "group": "story",
+      "lang": "en-EN",
+      "node": "rescue_survivors",
+      "file": "rescue_survivors-story1-en.png",
+      "path": "output/second-policy-qa/runtime-story-captures/rescue_survivors-story1-en.png"
+    },
+    {
+      "group": "story",
+      "lang": "zh-CN",
+      "node": "rescue_survivors",
+      "file": "rescue_survivors-story1-zh.png",
+      "path": "output/second-policy-qa/runtime-story-captures/rescue_survivors-story1-zh.png"
+    },
+    {
+      "group": "story",
+      "lang": "en-EN",
+      "node": "open_portal",
+      "file": "open_portal-story1-en.png",
+      "path": "output/second-policy-qa/runtime-story-captures/open_portal-story1-en.png"
+    },
+    {
+      "group": "story",
+      "lang": "zh-CN",
+      "node": "open_portal",
+      "file": "open_portal-story1-zh.png",
+      "path": "output/second-policy-qa/runtime-story-captures/open_portal-story1-zh.png"
+    },
+    {
+      "group": "chapter",
+      "lang": "en-EN",
+      "node": "chapter_6",
+      "file": "chapter_6-en.png",
+      "path": "output/second-policy-qa/chapter-captures/chapter_6-en.png"
+    },
+    {
+      "group": "chapter",
+      "lang": "zh-CN",
+      "node": "chapter_6",
+      "file": "chapter_6-zh.png",
+      "path": "output/second-policy-qa/chapter-captures/chapter_6-zh.png"
+    },
+    {
+      "group": "chapter",
+      "lang": "en-EN",
+      "node": "chapter_7",
+      "file": "chapter_7-en.png",
+      "path": "output/second-policy-qa/chapter-captures/chapter_7-en.png"
+    },
+    {
+      "group": "chapter",
+      "lang": "zh-CN",
+      "node": "chapter_7",
+      "file": "chapter_7-zh.png",
+      "path": "output/second-policy-qa/chapter-captures/chapter_7-zh.png"
+    },
+    {
+      "group": "chapter",
+      "lang": "en-EN",
+      "node": "chapter_8",
+      "file": "chapter_8-en.png",
+      "path": "output/second-policy-qa/chapter-captures/chapter_8-en.png"
+    },
+    {
+      "group": "chapter",
+      "lang": "zh-CN",
+      "node": "chapter_8",
+      "file": "chapter_8-zh.png",
+      "path": "output/second-policy-qa/chapter-captures/chapter_8-zh.png"
+    },
+    {
+      "group": "town",
+      "lang": "en-EN",
+      "node": "town4",
+      "file": "town4-en.png",
+      "path": "output/second-policy-qa/town-captures/town4-en.png"
+    },
+    {
+      "group": "town",
+      "lang": "zh-CN",
+      "node": "town4",
+      "file": "town4-zh.png",
+      "path": "output/second-policy-qa/town-captures/town4-zh.png"
+    },
+    {
+      "group": "town",
+      "lang": "en-EN",
+      "node": "town5",
+      "file": "town5-en.png",
+      "path": "output/second-policy-qa/town-captures/town5-en.png"
+    },
+    {
+      "group": "town",
+      "lang": "zh-CN",
+      "node": "town5",
+      "file": "town5-zh.png",
+      "path": "output/second-policy-qa/town-captures/town5-zh.png"
+    },
+    {
+      "group": "town",
+      "lang": "en-EN",
+      "node": "town6",
+      "file": "town6-en.png",
+      "path": "output/second-policy-qa/town-captures/town6-en.png"
+    },
+    {
+      "group": "town",
+      "lang": "zh-CN",
+      "node": "town6",
+      "file": "town6-zh.png",
+      "path": "output/second-policy-qa/town-captures/town6-zh.png"
+    }
+  ]
+}

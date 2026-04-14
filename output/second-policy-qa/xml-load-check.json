@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-04-14T02:17:21.760Z",
+  "standardParse": {
+    "en": {
+      "ok": true,
+      "root": "body",
+      "command": "$ErrorActionPreference='Stop'; $doc = New-Object System.Xml.XmlDocument; $doc.Load('C:\\Users\\Jack\\Documents\\GitHub\\omsi-loops\\lang\\en-EN\\game.xml'); Write-Output $doc.DocumentElement.Name"
+    },
+    "zh": {
+      "ok": true,
+      "root": "body",
+      "command": "$ErrorActionPreference='Stop'; $doc = New-Object System.Xml.XmlDocument; $doc.Load('C:\\Users\\Jack\\Documents\\GitHub\\omsi-loops\\lang\\zh-CN\\game.xml'); Write-Output $doc.DocumentElement.Name"
+    }
+  },
+  "browserRuntimeLoad": {
+    "en": {
+      "ok": true,
+      "url": "http://127.0.0.1:4173/?lg=en-EN"
+    },
+    "zh": {
+      "ok": true,
+      "url": "http://127.0.0.1:4173/?lg=zh-CN"
+    }
+  }
+}

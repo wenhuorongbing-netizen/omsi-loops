@@ -1837,8 +1837,8 @@ class View {
 
     updateTrainingLimits() {
         for (let i = 0; i < statList.length; i++) {
-            const trainingDiv = document.getElementById(`trainingLimit${statList[i]}`);
-            if (trainingDiv) {
+            const trainingDivs = document.querySelectorAll(`[id='trainingLimit${statList[i]}']`);
+            for (const trainingDiv of trainingDivs) {
                 trainingDiv.textContent = String(trainingLimits);
             }
         }

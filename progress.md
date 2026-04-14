@@ -225,3 +225,40 @@ Original prompt: 你是一个游戏汉化师仔细思考这个游戏该如何汉
 - its `.showthisstory` computed style is `display:none`, `visibility:hidden`, `opacity:0` before hover
 - after hover, the same tooltip becomes `display:block`, `visibility:visible`, `opacity:1`
 - artifacts saved in `output/action-stories-visibility/results.json` with `before-hover.png` and `after-hover.png`
+- 2026-04-14 policy 2 closure pass, branch foreshadowing + Startington/Jungle identity rewrite:
+- Rewrote the remaining English source-of-truth text in `lang/en-EN/game.xml` for the early foreshadowing chain (`meet_people`, `warrior_lessons`, `mage_lessons`, `heal_the_sick`, `dark_magic`, `dark_ritual`, `sit_by_waterfall`, `bird_watching`, `adventure_guild`, `get_drunk`), plus chapter 8 and the `town4` / `town6` descriptions.
+- Rebuilt the English Startington / Jungle core identity layer in `lang/en-EN/game.xml` for `meander`, `mana_well`, `destroy_pylons`, `raise_zombie`, `purchase_supplies`, `dark_sacrifice`, `the_spire`, `dead_trial`, `journey_forth`, `explore_jungle`, `fight_jungle_monsters`, `rescue_survivors`, `prepare_buffet`, `totem`, and `open_portal`.
+- Synced the same narrative structure into `lang/zh-CN/game.xml`, including chapter 8, `town4`, `town6`, the early-foreshadowing nodes above, and the full Startington / Jungle action set.
+- Removed mixed-language and stale story headers in the zh-CN action stories while doing the block rewrites, so nodes like `raise_zombie`, `prepare_buffet`, `totem`, `fight_jungle_monsters`, `rescue_survivors`, and `open_portal` no longer surface English event names in the action log text.
+- Adjusted a few wording edge cases after the first pass so the strict forbidden-term scan would not false-positive on unrelated metaphor phrasing.
+- Verification:
+- UTF-8 XML parse succeeded for both `lang/en-EN/game.xml` and `lang/zh-CN/game.xml`.
+- Node-level text extracts were generated to `output/second-policy-qa/en-text-extract.json` and `output/second-policy-qa/zh-text-extract.json`.
+- Targeted forbidden-term scan results were written to `output/second-policy-qa/forbidden-terms.json` and came back clean for the route-language terms being checked.
+- Runtime `_txt(...)` screenshot captures were generated to:
+- `output/second-policy-qa/mt-olympus-tooltip.png`
+- `output/second-policy-qa/face-judgement-tooltip-en.png`
+- `output/second-policy-qa/face-judgement-tooltip-zh.png`
+- `output/second-policy-qa/startington-town-desc-en.png`
+- `output/second-policy-qa/startington-town-desc-zh.png`
+- `output/second-policy-qa/jungle-tooltip-en.png`
+- `output/second-policy-qa/jungle-tooltip-zh.png`
+- Screenshot run metadata was written to `output/second-policy-qa/results.json`.
+- 2026-04-14 changelog cleanup pass:
+- Replaced the temporary `Latest / 最新` changelog blocks in `lang/en-EN/game.xml` and `lang/zh-CN/game.xml` with a formal `4.01` entry for the recent loop-UX, failure-attribution, branch-text, and Action Stories UI fixes.
+- Left the existing `4.0` entry intact as the previous localization milestone so the changelog now reads as versioned releases instead of a mix of one-off "recent changes" notes and numbered updates.
+- 2026-04-14 policy 2 QA closure pass:
+- Patched the last branch-critical wording regressions in `lang/en-EN/game.xml` / `lang/zh-CN/game.xml`, including `seek_citizenship`, `fall_from_grace`, the lower-route result text in `face_judgement`, and the `climb_mountain` story phrase that still matched the configured `good route` forbidden term.
+- Generated the strict policy-2 QA artifact set in `output/second-policy-qa/`, including:
+- matrices: `branch-critical-node-matrix.md`, `pillar-coverage-matrix.md`, `parity-matrix.md`
+- scans: `targeted-node-scan.json`, `full-file-scan.json`, `scan-exceptions.json`, `forbidden-terms.json`, `xml-load-check.json`
+- review packet: `review-questionnaire.md`, `signoff.md`
+- runtime evidence: `seek-citizenship-tooltip-*.png`, `fall-from-grace-tooltip-*.png`, `runtime-story-captures/`, `chapter-captures/`, `town-captures/`
+- Split the scan conclusions explicitly instead of calling everything simply "clean":
+- targeted-node result: `output/second-policy-qa/targeted-node-scan.json` now shows zero P1 hits in branch-critical nodes
+- full-file result: `output/second-policy-qa/full-file-scan.json` classifies all configured hits, while `scan-exceptions.json` records the reviewed non-critical mechanical / world-reference matches
+- Rewrote `output/second-policy-qa/results.json` as metadata-only UTF-8 JSON so the audit log no longer depends on preview text that could render garbled for zh-CN.
+- Current closure status:
+- content implementation: complete for policy 2
+- automated QA package: complete
+- blind-review signoff: prepared but still pending external human reviewers; `signoff.md` intentionally does not claim a completed human signoff

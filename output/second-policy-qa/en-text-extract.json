@@ -1,0 +1,397 @@
+{
+  "generatedAt": "2026-04-14T02:17:21.760Z",
+  "language": "en",
+  "source": "lang/en-EN/game.xml",
+  "nodes": {
+    "chapter_6": {
+      "kind": "chapter",
+      "node": "chapter_6",
+      "lineStart": 1050,
+      "lineEnd": 1060,
+      "text": "<!--Good Reputation Story--> <!--Change 6 to Valhalla-->\n                You expected triumph, or at least some unmistakable verdict. Instead, you were handed forms. A clerk\n                with a halo and the patience of a career bureaucrat guided you through three hours of questions about\n                eligibility, provenance, and civic relevance before finally releasing you into what appears to be an\n                ordinary town, all manicured lawns and meandering sidewalks leading to tidy parks and immaculate\n                decorations. It isn't ordinary, though. The grass is just a little too green, the sky a little too\n                blue, and the literal deity walking a seven foot tall dog is hard to ignore. One god asks if you'd\n                like to contribute to a local charity, while another offers tours of 'Valhalla, the greatest city\n                above the world!' The lesson is obvious before you've taken ten steps inside: this place does not\n                merely welcome people. It categorizes them."
+    },
+    "chapter_7": {
+      "kind": "chapter",
+      "node": "chapter_7",
+      "lineStart": 1061,
+      "lineEnd": 1071,
+      "text": "<!--Bad Reputation Story--> <!--Change 7 to Startington-->\n                The answer from above is not silence, exactly. It is redirection. You find yourself in a land covered\n                in perpetual haze, with a deep red sky casting an eerie glow over everything. Alien and oppressive, it's\n                unlike anywhere you've ever been; it feels more claustrophobic here than in the shrouded thickets of the\n                forest or the deepest caves of Mt. Olympus. The place presses against the mind hard enough that it feels\n                hostile on principle, and yet beneath that hostility is structure. The road is familiar. The outskirts\n                are those of Beginnersville as surely as if you had walked them yesterday, only rewritten in ash,\n                cracks, and ruin. Where the village should be, there stands only a desecrated shell dominated by a\n                massive dark spire in the dead center of town. This is not a pit where the unwanted are dumped and\n                forgotten. It is a place that kept functioning after it was abandoned."
+    },
+    "chapter_8": {
+      "kind": "chapter",
+      "node": "chapter_8",
+      "lineStart": 1072,
+      "lineEnd": 1080,
+      "text": "<!--Change 8 to Jungle Path-->\n                Leaving Startington does not return you to anything normal. The jungle beyond it feels like the same abandoned logic taking a\n                different shape: less stone, more roots; less rubble, more things trying to grow over the wound before you can read it. You\n                still have to buy supplies from a trader who looks like he learned commerce by counting ration tins and coffin nails, and you\n                still have to choose which risks are worth paying for. When you finally step under the dense canopy, you notice ruined walls\n                threaded between the trunks and pathways that look half-made by refugees, half-made by animals. If Startington was a town that\n                kept functioning after being discarded, this jungle is what that same instinct looks like once it escapes the streets and starts\n                building with vines, fear, and whoever survives long enough to join in."
+    },
+    "town4": {
+      "kind": "town",
+      "node": "town4",
+      "lineStart": 1480,
+      "lineEnd": 1483,
+      "label": "Valhalla",
+      "desc": "A polished city of halls, colleges, charities, and offices, all built on the belief that worth should be recognized, named, and put to work. Valhalla is generous by the standards of gods, but it is not casual about anything: citizenship, blessing, rank, and reputation are all things to be earned, recorded, and administered."
+    },
+    "town5": {
+      "kind": "town",
+      "node": "town5",
+      "lineStart": 1484,
+      "lineEnd": 1487,
+      "label": "Startington",
+      "desc": "A once familiar place, now rewritten into ruin without being reduced to silence. Shadows crawl through the streets, a pillar of violet light rises from the great spire at the town's center, and weaker beams bind it to ten other places nearby. Whatever was abandoned here learned how to keep functioning on salvage, residue, and rules the shining cities above would rather forget. Maybe you should see how this place still works."
+    },
+    "town6": {
+      "kind": "town",
+      "node": "town6",
+      "lineStart": 1488,
+      "lineEnd": 1491,
+      "label": "Jungle Path",
+      "desc": "A borderland where Startington's harsh improvisations keep going after the streets run out. The jungle grows over ruins, survivor camps, ritual clearings, and paths that close almost as soon as they are found. It is dangerous, fertile, and crowded with signs that abandoned people have not stopped building a life here; they have simply started building it with stranger materials."
+    },
+    "talk_to_hermit": {
+      "kind": "action",
+      "node": "talk_to_hermit",
+      "lineStart": 2234,
+      "lineEnd": 2247,
+      "label": "Talk To Hermit",
+      "tooltip": "This old man is happy to have a listening ear. He knows more than he first lets on about roads, borders, and the way certain places answer different kinds of travelers. He's initially confrontational, but opens up once you start talking about the road.<br>Reduces mana cost of Gather Herbs, Practical Magic, and Learn Alchemy by 0.5% per 1% of Hermit Knowledge.<br>Unlocked with both 20% Shortcut Explored and 40 Magic.",
+      "stories": {
+        "story_1": "<b>1% Hermit knowledge learned:</b>⮀ The Hermit is old, scraggly and surprisingly, not bald. Looks old as dirt. He doesn't know the name of the surrounding provinces, but knows the names of the provinces before the current ones.",
+        "story_2": "<b>10% Hermit knowledge learned:</b>⮀ The old hermit is an absolute genius at using magic to speed things up and just in general make things quicker and easier. You have much information to wring from him. He doesn't tell you his name and insists you call him 'Old man', or 'Hermit'.",
+        "story_3": "<b>20% Hermit knowledge learned:</b>⮀ You've tried to worm it out of him over multiple loops, but he still won't tell you his name. He just seems amused at your attempts to get him to say it. Either way, you're steadily wringing more information out of him.",
+        "story_4": "<b>40% Hermit knowledge learned:</b>⮀ Apparently, the old man was here before this forest was a forest. He remembers the first seeds being sown. Then, almost absentmindedly, he remarks that the mountain was already old even then, and that it never asked the same question of every pilgrim. Just, what? How old would that even make him?",
+        "story_5": "<b>60% Hermit knowledge learned:</b>⮀ You learn more about his tells, when to push and when not to. You've angered him and seen him joyful, made him laugh and cry. Reminisce on old memories and curse bitterly. You've almost figured him out. You still don't know his name.",
+        "story_6": "<b>80% Hermit knowledge learned:</b>⮀ You've spent more time learning about this one man than you have most other things, you've come to see him almost as a familiar figure. With how much time you've spent with him, it's hard not to. You still don't know his name. One thing you do know is that he's been around a long time and has forgotten more about magic than you've learned.",
+        "story_7": "<b>100% Hermit knowledge learned:</b>⮀ He finally told you his name. Gelt. He seemed almost knowing as he told you."
+      }
+    },
+    "talk_to_witch": {
+      "kind": "action",
+      "node": "talk_to_witch",
+      "lineStart": 2338,
+      "lineEnd": 2352,
+      "label": "Talk To Witch",
+      "tooltip": "Talk to the witch to learn her secrets of the dark arts. She speaks readily of bargains, taboos, and doors that never open for the dutiful.<br>Unlocked with both 60% Thicket Explored and 80 Magic.<br>Reduces mana cost of Dark Magic and Dark Ritual by 0.5% per 1% of Witch Knowledge.",
+      "stories": {
+        "story_1": "<b>1% Witch knowledge learned:</b>⮀ You stumble across a small crooked hut and as you approach the boundary, a small slip of a woman step outs. She's stunning and you're immediately on guard. The area pulses with a heady hum of magic that sends shivers down your spine. She introduces herself as Evis.",
+        "story_2": "<b>10% Witch knowledge learned:</b>⮀ The Witch as you taken to referring to her as, seeing as she changes her name every time she introduces herself to you, is a veritable font of magical knowledge, of how to dominate the mana itself and make more from less.",
+        "story_3": "<b>20% Witch knowledge learned:</b>⮀ You continue to hunt down the Witch and drag more information out of her, the magic she teaches you is cruel, callous even. The witch is surprisingly personable for what you would consider a stereotypical 'Wicked Witch'.",
+        "story_4": "<b>40% Witch knowledge learned:</b>⮀ You start to learn more about the witch's daily routine as you spend more and more time around her, the relationship you manage to cultivate with her at the start of each loop grows more familiar with each repetition. She seems to be slightly more interested each time you reveal your knowledge of dark magic.",
+        "story_5": "<b>50% Witch knowledge learned:</b>⮀ You had apparently impressed her enough this time that she took you to a clearing she had found, and explained to you a ritual that would give you a boost, permanently through any circumstances by calling upon the dark gods. With ill concealed glee, she adds that some powers only answer those willing to offer what respectable people refuse to touch. The catch, she explains, is that you would need souls to sacrifice if you wanted to do this ritual.",
+        "story_6": "<b>60% Witch knowledge learned:</b>⮀ As you learn more and more about the witch and her varied names, one thing starts to become glaringly obvious. The Witch and The Hermit know one another. If her irritable grumbling about the old fool and his idiotic desires were anything to go by. You get the feeling that their relationship is complex.",
+        "story_7": "<b>80% Witch knowledge learned:</b>⮀ The witch is struck with a strange sense of melancholy one loop and you have no idea why, but the witch is strangely open with information and you manage to pry out more of the relationship between her and the Hermit. They were lovers once, and to your surprise, she used to be the one whom nature adores. She shuts up quickly after letting that slip. You're all the more determined to pry it out of her though.",
+        "story_8": "<b>100% Witch knowledge learned:</b>⮀ Somehow she seems to sense something about you this loop, and she tells you her name, and it's the name she gives for every loop after. Trisha. You manage to pry most of her relationship with the hermit from her. They were lovers once, this you knew, but what you didn't was that she was of nobility and he a common vagabond. She fell for him and he for her; it was a love for the ages, she tells you while drunk on the wine you brought along with you. He wanted to run away with her and she agreed, too lovestruck to question why. He was running from deals he had made and bargains he had forsaken, his glib tongue landing him in trouble of the otherworldly nature. Trisha seems frustrated with her youth's naïveté as she tells you how she was made a scapegoat for his failings and forfeits in his deals and bargains. How she was essentially sold to the dark gods as his forfeit. When you ask what she did in return, all Trisha does is smile with dark satisfaction, the fire flaring briefly."
+      }
+    },
+    "read_books": {
+      "kind": "action",
+      "node": "read_books",
+      "lineStart": 2581,
+      "lineEnd": 2591,
+      "label": "Read Books",
+      "tooltip": "There's a library! You always loved reading.<br>Discover new worlds and perspectives, get ideas from fiction characters, and leaf through myths and histories that cannot agree on what makes a person worth remembering.<br>Requires glasses.<br>Has 4x exp/talent gain, and can only be done <div id='trainingLimitInt'></div> times per reset.<br>Unlocked at 50% city explored.",
+      "stories": {
+        "story_1": "<b>Books read:</b>⮀ They do have it! You must have read this book a hundred times when you were a kid, and it's been a long time since you've found another copy. That's not all the library has to offer, far from it; the shelves around you are crowded with myths, chronicles, and travelogues that can't agree on what kind of person the world remembers. For now, though, you're happy to settle down with your favourite book for an afternoon of reading.",
+        "story_2": "<b>100 Intelligence Talent:</b>⮀ You've been rereading all of your old favourites, and it's like a completely new experience. There's a lot of subtext that went over your head and subtle themes you never quite picked up on. You thought stories for kids were just a bunch of silly words strung together, but you can see that there's more beneath the surface now that you know how to look.",
+        "story_3": "<b>1,000 Intelligence Talent:</b>⮀ You've grown a fondness for mystery novels recently. You like teasing through all the hints, laying out what you know of all the characters and their motivations, and trying to figure out the solution before it's revealed to you. You're getting it right more often with each book you read!",
+        "story_4": "<b>10,000 Intelligence Talent:</b>⮀ You finish reading the last book in the library. It's bad, there's a reason you left it for last, but you needed to read it. The ways that it's bad throws the better qualities of more successful stories into stark relief, and by analyzing its failures you can better appreciate what makes good stories good. The search for knowledge leaves no stone unturned.",
+        "story_5": "<b>100,000 Intelligence Talent:</b>⮀ You can't help it. You read a story and just know that it could've been done better. Every mistake sticks out like a challenge, and you'll soon find yourself quill in hand answering the challenge. Better endings, more immersive worldbuilding, clearer themes, there's always something that can be done better. Your rewrites vanish at the end of the loop, never to be read by anyone, but you know that you'll be back here for real once you're free."
+      }
+    },
+    "underworld": {
+      "kind": "action",
+      "node": "underworld",
+      "lineStart": 2630,
+      "lineEnd": 2639,
+      "label": "Underworld",
+      "tooltip": "Your knowledge in the explorers guild continues to open doors that polite maps pretend are not there. Grease the right hinges with a bit of gold, and who knows where you can end up.<br>\n            Unlocked with 50% of the world surveyed.<br>\n            Travels to Commerceville.<br>Costs\n\ngold.",
+      "stories": {
+        "story_1": "<b>Traveled through the Underworld:</b>⮀ Checking your map one more time, you make your way down the well-hidden alleyway and through a door that you're not quite sure is exactly <i>there.</i> Rather than any kind of room, you find yourself on the shore of an underground river, where a ferryman awaits you. \"...You live yet,\" the ferryman whispers louder than an earthquake, \"why do you seek passage?\" Rather than explaining yourself, you hold up a heavy pouch of coins. Charon, as you somehow know the ferryman is named, silently nods and gestures for you to board. It occurs to you that this route is less a secret than an omission: everyone important knows it exists, they just prefer not to say so out loud. The trip across the waters is silent, steady and... boring. However, the moment you set foot on the Far Shore, the world twists around you and you are suddenly standing in front of Commerceville's gates! ...If this is the afterlife, you'd rather stay alive a little longer."
+      }
+    },
+    "climb_mountain": {
+      "kind": "action",
+      "node": "climb_mountain",
+      "lineStart": 2641,
+      "lineEnd": 2654,
+      "label": "Climb Mountain",
+      "tooltip": "Traversing the mountain will be difficult, but you can use your pickaxe as a makeshift climbing pick of sorts to help you get around. The higher you climb, the less it feels like travel and the more it feels like approaching a waiting answer.<br>2x progress with pickaxe.",
+      "stories": {
+        "story_1": "<b>1% Mountain Explored:</b>⮀ You stand at the foot of the mountain and look up at the peak. It's so far away, so high up. You take a minute to just stare in awe before looking for some workable way up.",
+        "story_2": "<b>10% Mountain Explored:</b>⮀ As you climb up the foothills you see old abandoned campsites and think of the rumours you've heard. You're obviously not the first person to try to scale the mountain, but you wonder how the other expeditions ended.",
+        "story_3": "<b>20% Mountain Explored:</b>⮀ On the mountain proper, you start seeing odd symbols carved into stones here and there. It looks like the stories of an old civilization living here were true after all.",
+        "story_4": "<b>40% Mountain Explored:</b>⮀ Hidden away in the side of the mountain, you find a tunnel that seems to go deep under the mountain. There's more of those odd symbols near the entrance, perhaps a warning not to go in?",
+        "story_5": "<b>60% Mountain Explored:</b>⮀ The higher you climb the more remains of the ancient civilization you see. Even here at the outskirts you're finding bits of worked stone half-buried in the rocks. Time, it seems, has not been kind to their city.",
+        "story_6": "<b>80% Mountain Explored:</b>⮀ You're in the heart of the ruined city now, and there's no hiding what once was anymore. Houses, roads, a once-lovely fountain, it's all in ruins but you can picture what their city must have looked like in its prime.",
+        "story_7": "<b>100% Mountain Explored:</b>⮀ You reach the summit, and in front of you is a huge, magnificent temple. It, too, is in ruins, and the statues of the gods are worn and broken. Amidst the bleak scene, your attention is drawn to an inexplicably pristine altar in a position of prominence, and you feel strangely like you're being watched. Not judged yet, exactly. Sorted."
+      }
+    },
+    "guru": {
+      "kind": "action",
+      "node": "guru",
+      "lineStart": 2838,
+      "lineEnd": 2846,
+      "label": "Guru",
+      "tooltip": "The greatest explorer the guild has ever known was said to have found a path to Valhalla that never once passed beneath the altar's gaze. Now, as his equal, he is willing to show you the way if you bring him a few herbs.<br>\n            Unlocked with 100% of the world surveyed.<br>\n            Travels to Valhalla without relying on Face Judgement.<br>\n            Requires 1000 herbs.",
+      "stories": {
+        "story_1": "<b>Guru:</b>⮀ The gods were once explorers themselves, the guru explains, for how else could they have discovered Valhalla to make it their home? You toss another herb in the smoky fire, listening to him speak. The mountain watches with many eyes, he says, but not every gate waits at the altar. Seeking to rediscover the route found long ago, the guru had spent decades scouring the mountain that seems so connected to the gods. And at last, he found it. When you press him for details, he simply points upwards. You gaze at the sky and notice the smoke curve strangely around a spot in the air. An invisible gateway, high up in the sky above an unremarkable plateau on the mountain? You had wondered how it took the guru decades of work, but now you wonder how he ever managed it at all."
+      }
+    },
+    "face_judgement": {
+      "kind": "action",
+      "node": "face_judgement",
+      "lineStart": 2828,
+      "lineEnd": 2837,
+      "label": "Face Judgement",
+      "tooltip": "Stand before the altar and see what kind of world still answers to you. The summit does not weigh every life by the same measure.<br>Unlocked at 100% Mountain Explored.",
+      "stories": {
+        "story_1": "<b>Judgement Faced:</b>⮀ Their civilization may have fallen, but their gods are still very real, and the weight of their attention nearly drives you to your knees. Seeking to justify your presence, you begin to speak. Of your life, your goals, your loyalties, your debts, the gifts you've taken and the costs you've accepted. Every act of kindness, every trespass, every bargain, every refusal, it all comes tumbling out one after another. The only secret you manage to withhold is the loops - you have a feeling that you'd be struck down immediately if you let that slip.",
+        "story_4": "<b>Met with Silence:</b>⮀ You finish your story and wait. The pressure at the altar does not become wrath so much as absence. No hand reaches for you, no door opens, no voice names you. Whatever measures govern this place, you have not yet become someone it chooses to answer. At last the attention withdraws, leaving you alone on the stone slab with the wind and your own heartbeat.",
+        "story_2": "<b>Recognized by the Gods:</b>⮀ At the end of your story, a crack of lightning strikes behind the altar and leaves behind a cheerful man. Between the perfect bodily form and the power radiating from him, there's no doubt you're meeting a god in the flesh. He extends his hand, not as a reward but as recognition, and invites you to come where the ordered world has already made room for you.",
+        "story_3": "<b>Answered from Below:</b>⮀ The bright court does not name you. Instead, the pressure at the altar tilts and the world beneath your feet opens into another continuity already moving below the gods' polished order. It is rough, familiar, and far from gentle, but it answers without hesitation. Before the drop can become destruction, that other route catches you and carries you toward the system that already knows what to do with the life you've become."
+      }
+    },
+    "seek_citizenship": {
+      "kind": "action",
+      "node": "seek_citizenship",
+      "lineStart": 3014,
+      "lineEnd": 3028,
+      "label": "Citizenship",
+      "tooltip": "Right now, you're only logged as a visitor. If you want Valhalla's institutions to recognize, register, and fold you into their civic order, you'll need to study and pass a rigorous exam on Valhallan history, law, and culture.<br>Unlocked at 80% of city toured.",
+      "stories": {
+        "story_1": "<b>Attempted Citizenship exam:</b>⮀ You confidently walk up to the large temple where the exam is held and set to work. You quickly realize you're in over your head as the multiple-choice section runs out and the essay section looms over you. By the end of it, the God acting as proctor gives you a level glare and asks if this is all a joke to you.",
+        "story_2": "<b>20% Citizenship Exam studied:</b>⮀ You figure out pretty early on that the multiple choice section doesn't change, and the examiner is gracious enough to let you have a look at your graded sheet after the test. Sadly, memorizing that section alone will never give you enough points to pass.",
+        "story_3": "<b>40% Citizenship Exam studied:</b>⮀ To better prepare for the exam, you make your way to Valhalla's library. You nearly get lost among the shelves, but manage to find a few reference works that help you do better on the test.",
+        "story_4": "<b>60% Citizenship Exam studied:</b>⮀ You've run into a few interesting facts during your studies: For one, Valhalla is currently in an ongoing conflict with the Frost Giants, but only registered citizens may enlist in order to prevent conflicts of interest. On the other hand, any citizen may construct housing in certain parts of Valhalla and collect taxes from the residents.",
+        "story_5": "<b>80% Citizenship Exam studied:</b>⮀ While you can by now recite the questions by heart, the Gods in charge of taking the test are very strict about plagiarism and failed you when you tried to turn in someone else's answers to the essay question. You guess you'll have to write your own after all.",
+        "story_6": "<b>100% Citizenship Exam studied:</b>⮀ You grin as you hold up the little stone plaque declaring you a registered citizen of Valhalla. It is less a medal than an entry in a vast machine of names, rights, and obligations, but that still makes it one of the rarer pieces of stone a mortal can carry around. Now to make good use of the many hours of studying lawncare regulations that went into this.",
+        "story_7": "<b>Re-take Citizenship Exam:</b>⮀ Despite this being a new loop, you find that you don't have to re-take the Exam. Instead, the moment you state your name, the God in charge raises an eyebrow and asks for you to wait a moment as they head into the back. Upon returning, they pass you a quite familiar little stone plaque. \"I suppose you lost that at some point, better take good care holding on to it from here on out,\" the God admonishes you gently."
+      }
+    },
+    "fall_from_grace": {
+      "kind": "action",
+      "node": "fall_from_grace",
+      "lineStart": 3117,
+      "lineEnd": 3123,
+      "label": "Fall From Grace",
+      "tooltip": "If you want out, the cleanest method is to rupture the compact that lets Valhalla keep you inside its order. Some moderate vandalism will probably do the job. This is not a punishment so much as an intentional breach: once they revoke your place here, you can drop back onto the rougher route that has been running beneath the world all along.<br>Unlocked at 200 Pyromancy.",
+      "stories": {
+        "story_1": "<b>Severed Valhalla's compact:</b>⮀ As you brush the dust from your clothes, you silently marvel at how little effort it really took to make the arrangement collapse. Sure, you had big plans to go on a spree of madness and fire, but the Valkyries grabbed you by the time you finished burning down the first patch of flowers. The hearing afterward is barely a trial at all, just a terse declaration that your standing in Valhalla's order is revoked. A moment later you are routed downward through the lower channels the gods pretend not to need, and the other path of the world takes hold of you again."
+      }
+    },
+    "meander": {
+      "kind": "action",
+      "node": "meander",
+      "lineStart": 3125,
+      "lineEnd": 3141,
+      "label": "Meander",
+      "tooltip": "This place resembles Beginnersville only the way a scar resembles skin. To make progress here, you need to read ruins, residue, and the habits of a town that kept functioning after being abandoned.<br>\n            Gives exp equal to Imbue Mind level. (You make no progress with 0 Imbue Mind.)",
+      "stories": {
+        "story_1": "<b>1% Explored:</b> The town hurts to look at. Not because it is merely filthy, but because so much of it is still recognizable while being wrong in every important way. Roads still lead somewhere. Doors still imply ownership. The place is not dead; it is operating under terms you do not yet understand.",
+        "story_2": "<b>2% Explored:</b> Your shambling walk halts at a plaza with a well in the middle. You recognize the shape from Beginnersville. What unsettles you is the wear on the stone: people kept drawing from this well long after the town became what it is now. Someone adapted.",
+        "story_3": "<b>5% Explored:</b> It gets a little easier to keep your focus and make your way to the giant ominous spire. Circling it once, hand against the stone, you feel the truth of the place: the tower is not simply standing over the town. The town is feeding it.",
+        "story_4": "<b>15% Explored:</b> The graveyard is fuller than you expected, and more orderly too. Headstones are grouped, paths are maintained, and some graves show signs of recent use. Death here is not an interruption. It has been folded into the town's routines.",
+        "story_5": "<b>25% Explored:</b> You find a shrine to the dark gods, but it is not wild or ecstatic. It is careful. Offerings are set out in measured quantities, old markings tally what was given, and the whole thing looks less like devotion than a civic technology for making loss do work.",
+        "story_6": "<b>50% Explored:</b> By sheer chance you corner one of the surviving townsfolk under a slab of rubble. He is terrified, but once pressed he reveals where the other pockets of people trade, sleep, and hide. Beneath the ruin there is a network of routes, caches, and habits holding the remnant together.",
+        "story_7": "<b>75% Explored:</b> You reach the closest thing Startington still has to a market street. A dozen or so people barter salvaged cloth, cracked tools, old stores of grain, and things stripped from buildings that no longer need them. It is ugly, desperate, and unmistakably an economy.",
+        "story_8": "<b>100% Explored:</b> You have mapped the wells, the pylons, the graveyard, the refuge pockets, the shrine, and the routes that still carry goods through the rubble. Startington is not a pit where the unwanted are thrown away. It is a replacement order built from salvage, residue, death, and the refusal to stop organizing.",
+        "story_9": "<b>Meandered with 100 Imbue Mind:</b> If you focus, the pressure on your thoughts still exists, but by now it feels like a current you can brace against. More importantly, you can finally read the place clearly. The town is miserable, yes, but it is also coherent."
+      }
+    },
+    "mana_well": {
+      "kind": "action",
+      "node": "mana_well",
+      "lineStart": 3142,
+      "lineEnd": 3161,
+      "label": "Mana Well",
+      "tooltip": "Search the town for wells that still have any mana left. What remains here is not clean spring mana, but compressed runoff and dangerous residue being dragged through old civic wells into the Spire.<br>\n            Full wells have 5000 mana, but lose 10 mana for every second that has passed in the loop (based on effective time), currently\n\nmana.<br>\n            Every 100 wells still has mana.<br>\n            Unlocked with 2% town meandered.<br>",
+      "stories": {
+        "story_1": "<b>Mana Well drained:</b> There must have been a ley line beneath the town, because deep inside the wells you can still feel mana. It is acrid, pressured, and already in motion, being hauled toward the Spire through channels never meant to carry this much strain. With no time to waste, you start extracting what you can before the system finishes drinking it.",
+        "story_2": "<b>10 Mana Wells with mana found:</b> You can now tell where the town's power is going. The Spire is siphoning everything: the wells, the pylons, perhaps even the people. Startington is not merely decaying. It is being harvested.",
+        "story_3": "<b>15 Mana Wells with mana found:</b> Beneath collapsed houses and forgotten plazas you find older wells, dismantled and covered over by later construction. Even those hidden reserves are being dragged dry. Whatever this place once used mana for, it has long since been replaced by the question of what can still be salvaged before the drain reaches it.",
+        "story_4": "<b>Drawn from an empty well:</b> Bone dry. There is still water in the shaft, murky and likely unhealthy, but not a speck of mana. At least this teaches you something useful: in Startington, timing is part of scavenging."
+      }
+    },
+    "destroy_pylons": {
+      "kind": "action",
+      "node": "destroy_pylons",
+      "lineStart": 3162,
+      "lineEnd": 3176,
+      "label": "Destroy Pylons",
+      "tooltip": "Strange pylons hum in the abandoned buildings of this town. The more you study Startington, the less they look like decorations and the more they look like stabilizers keeping the whole ruin in its current shape. Breaking them feels less like vandalism and more like dismantling inherited infrastructure.<br>\n            Every 100 abandon buildings have 1 breakable pylon.<br>Each pylon destroyed increases progress on The Spire by 10%.<br>\n            Unlocked at 5% town meandered.<br>",
+      "stories": {
+        "story_1": "<b>Pylon Destroyed:</b> As you pick up one of the pylon's fragments, you finally understand the compulsion. The thing was not merely standing there; it was regulating the flow of whatever curse-machinery grips this town. When it shatters, the pressure in the air eases for a heartbeat. You pocket a fragment, this time not as a trophy but as evidence.",
+        "story_2": "<b>10 Pylons Destroyed:</b> The drive to smash more pylons still lingers, but now it feels analytical rather than instinctive. They form a distributed network around the Spire, old control points dressed up as forgotten junk in abandoned houses.",
+        "story_3": "<b>25 Pylons Destroyed:</b> With the last well-hidden pylon broken, the town feels fractionally less bound. The Spire no longer seems like an untouchable landmark. It feels like the central machine of a system whose outer locks you have finally pried open."
+      }
+    },
+    "raise_zombie": {
+      "kind": "action",
+      "node": "raise_zombie",
+      "lineStart": 3177,
+      "lineEnd": 3187,
+      "label": "Raise Zombie",
+      "tooltip": "The cemetery offers more than stone and silence. With enough dark magic and a little blood, you can tap into Startington's oldest labor reserve: the dead who were never fully allowed to stop being useful.<br>\n            Costs 1 blood.<br>Each zombie adds (dark magic / 2) * max(1,dark ritual / 100) to your team combat.<br>Unlocked at 1000 dark magic.",
+      "stories": {
+        "story_1": "<b>Zombie raised:</b> You experimentally dig up a recently buried body and watch the ever-present miasma seep into it. The corpse holds together unnervingly well here, as if the town has been preserving its dead for secondary use all along. One drop of troll blood later and your new laborer lurches upright.",
+        "story_3": "<b>10 Zombies raised in a loop:</b> The strength of a zombie has little to do with its original form. Child, laborer, soldier: once reanimated, each is simply another unit in a system that measures bodies by what work can still be extracted from them. Startington may not say it aloud, but its graveyards were always inventory.",
+        "story_4": "<b>25 Zombies raised in a loop:</b> Zombies do not bleed when cut and retain functionality so long as flesh still binds bone. With enough of them, the distinction between army, workforce, and salvage crew begins to blur. That seems less like a corruption of Startington's logic and more like its natural conclusion."
+      }
+    },
+    "purchase_supplies": {
+      "kind": "action",
+      "node": "purchase_supplies",
+      "lineStart": 3229,
+      "lineEnd": 3236,
+      "label": "Buy Supplies",
+      "tooltip": "Prepare to move on through a market built from salvage, hoarded stock, and things nobody else could afford to throw away.<br>\n            Costs 500 gold.<br>You only need one set of supplies.<br>Unlocked with 75% town meandered.",
+      "stories": {
+        "story_1": "<b>Supplies bought:</b> The man selling these supplies clearly has very little beyond what he just sold you. There is no room for haggling here because the price already includes danger, scarcity, and the knowledge that someone else may need the same goods tomorrow. You are not shopping in a normal town. You are participating in a ruin economy."
+      }
+    },
+    "dark_sacrifice": {
+      "kind": "action",
+      "node": "dark_sacrifice",
+      "lineStart": 3188,
+      "lineEnd": 3197,
+      "label": "Dark Sacrifice",
+      "tooltip": "Here, loss is a technique. Offer blood to the dark gods and turn deliberate sacrifice into leverage over the bargains that shaped this route.<br>Costs 1 blood.<br>\n            Reduces the soulstone cost of dark ritual.<br>Unlocked at 60 dark ritual.",
+      "stories": {
+        "story_1": "<b>Made a Dark Sacrifice:</b> The dark gods are much easier to reach in this lightless world, and their approval washes over you the moment the blood hits the altar. The feeling is not rewarding so much as transactional. In Startington, giving something up is simply how one gains room to maneuver.",
+        "story_2": "<b>100 Commune:</b> The dark gods still accept your offerings, but with a clear undercurrent of boredom. That hardly matters. The point of a practiced sacrifice is not drama. It is the steady conversion of cost into control.",
+        "story_3": "<b>1000 Commune:</b> Right as you finish the ritual, one of your dark masters manifests in front of you and cuts you off before you can speak. \"We appreciate the free drinks,\" he says, \"but you really should stop this. We'd rather have some trolls left later.\" Even divine mockery cannot hide the point: repeated sacrifice has become a technical problem with measurable side effects."
+      }
+    },
+    "the_spire": {
+      "kind": "action",
+      "node": "the_spire",
+      "lineStart": 3198,
+      "lineEnd": 3228,
+      "label": "The Spire",
+      "tooltip": "Standing in the dead center of town is the Spire: not a monument to worthiness, but a machine that turns Startington's leftovers into ascent. Here, you climb not because you were granted permission, but because you have learned how to survive what the town keeps feeding upward.<br>Gives (team combat) * (1 + main stat / 100) * sqrt(1 + times floor completed / 200) * (1 + pylons destroyed / 10) * (original mana cost / actual mana cost) progress points per mana.<br>Unlocked with 5% town meandered.<br>Gives 100 soulstones per completion - hover over Looted for info.",
+      "stories": {
+        "story_1": "<b>Spire attempted:</b> Even finding the entrance is a challenge, and it only gets worse as you make your way through the first floor. If the Spire did not sit at the center of the town's whole unnatural metabolism, you would not have bothered. But this is where Startington hides both its hoarded power and the logic that keeps it running.",
+        "story_2": "<b>1000 floors looted:</b> The wild variations from loop to loop are beginning to show a pattern. You can now anticipate the lower floors' worst shifts before they happen. The place still fights you, but it is no longer inscrutable. You are learning the grammar of an unstable machine.",
+        "story_3": "<b>5000 floors looted:</b> You no longer get lost in the Door Maze. The hints in the wood grain stand out like signposts to your trained eye. Startington's route upward does not reward credentials; it rewards anyone stubborn enough to study how broken things continue to function.",
+        "story_4": "<b>20 floors cleared in a loop:</b> You pant as you slump onto the bench waiting at the very top. While your bag is heavy with soulstones, the more meaningful change is outside: every successful climb seems to make the town's light a little less hungry. As if understanding the Spire also loosens its grip.",
+        "story_5": "<b>Spire challenged with 10 destroyed Pylons:</b> Keeping fragments from those delightfully fragile pylons was the right call. They were not souvenirs. They were access keys. Somehow the stairs tax you less now, and the higher floors do not drain you nearly as hard.",
+        "story_6": "<b>Spire challenged with 25 destroyed Pylons:</b> The lower floors of the Spire feel almost welcoming now. You still have to respect every trap, but the place no longer reads you as a stranger. By dismantling Startington's outer restraints, you have made yourself legible to its central engine."
+      }
+    },
+    "dead_trial": {
+      "kind": "action",
+      "node": "dead_trial",
+      "lineStart": 3237,
+      "lineEnd": 3255,
+      "label": "Trial of the Dead",
+      "tooltip": "You've found an old necropolis, less tomb than process. It is far too haunted for the living, but perfect for testing whether your undead workforce can turn abandoned bodies back into ordered function.<br>\n            Only the combat gained from zombies counts toward this trial.<br>Rewards 1 Zombie per floor completion.<br>Unlocks when this zone is fully surveyed.",
+      "stories": {
+        "story_1": "<b>Floor 1 completed:</b> Sending zombies into the necropolis is a hassle, but watching one get turned into undead shish-kebab very quickly convinces you this is not a place for the living. The corpse-filled alcoves near each descent are more interesting anyway. Whoever built this place expected the dead to be reused.",
+        "story_2": "<b>Floor 10 completed:</b> You cannot help noticing the same outcome repeating over and over: one more zombie than you started with, no matter how messy the floor went. This place is not just haunted. It is calibrated. The discarded dead are being sorted, refined, and returned as usable labor.",
+        "story_3": "<b>Floor 25 completed:</b> With a sigh, you give your zombies a nod as they smash into the glowing sphere that has kept this place full of specters for who knows how long. Breaking it feels less like clearing a dungeon and more like repossessing a machine that had been monopolizing Startington's dead."
+      }
+    },
+    "journey_forth": {
+      "kind": "action",
+      "node": "journey_forth",
+      "lineStart": 3256,
+      "lineEnd": 3263,
+      "label": "Journey Forth",
+      "tooltip": "No sanctioned road leaves this place. You follow a trail maintained by survivors, smugglers, and anyone else desperate enough to keep moving.<br>\n            Requires (and costs) supplies.<br>Unlocked with 100% town meandered.",
+      "stories": {
+        "story_1": "<b>Journeyed out of town:</b> You adjust the straps of your backpack and leave Startington behind. The route ahead does not feel approved so much as repeatedly re-opened by people who refused to stop. By the time the air around you starts to feel hungry and the jungle closes in, you know you are no longer traveling on a permitted map. You are following the version of the world abandoned people kept drawing for themselves."
+      }
+    },
+    "explore_jungle": {
+      "kind": "action",
+      "node": "explore_jungle",
+      "lineStart": 3283,
+      "lineEnd": 3298,
+      "label": "Explore Jungle",
+      "tooltip": "This is not untouched wilderness. It is what abandonment grows into once roads fail and people start hiding their own routes inside the overgrowth.<br>\n            Gives progress based on Fight Jungle multiplier.<br>Gives 1 herb.",
+      "stories": {
+        "story_1": "<b>1% Explored:</b> Even after taking out the worst of the beasts, you constantly watch the edges of your vision. The jungle is dense, but not random. Broken stones, hacked roots, and half-hidden markers suggest people have been forcing paths through it for a long time.",
+        "story_2": "<b>10% Explored:</b> If the jungle felt hungry from the outside, being inside it feels like standing inside a mouth that has learned patience. Ruins peek between roots, and every clearing looks like it used to be something else before the growth reclaimed it.",
+        "story_3": "<b>20% Explored:</b> You keep hearing far-off cries for help while you map the place. Eventually you find their source: a haggard man who bolts the moment he sees you. The jungle has made everyone here suspicious, but the fact that survivors exist at all means this route is already trying to become a society.",
+        "story_4": "<b>40% Explored:</b> There is an odd irony to organizing a meal inside a jungle trying to eat you, but campfire logic takes hold quickly out here. Once people gather in one place often enough, even a temporary camp starts acting like a settlement.",
+        "story_5": "<b>50% Explored:</b> Traces of settlement are everywhere, but the imposing totem in its small clearing still surprises you. This is not just a ruin corridor. It is a place where people have started inventing new ways to negotiate with the world around them.",
+        "story_6": "<b>60% Explored:</b> Your suspicions are confirmed: the jungle actively tries to keep you from leaving. Paths back toward Startington overgrow within minutes. The dangerous shortcut logic of the shadow route has not vanished out here; it has gone feral.",
+        "story_7": "<b>80% Explored:</b> With every loop, you learn a little more about how the jungle tries to trap you. Even well-worn paths drown in foliage almost immediately. If you want through, you will need more than courage. You will need speed, preparation, and a willingness to trust routes that barely exist.",
+        "story_8": "<b>100% Explored:</b> It took luck, patience, and a talent for reading what the jungle was trying to hide, but you are sure you have found a way out. Somewhere almost directly opposite your entry point, the muted sounds of a city drift through the trees. Reaching it before the path closes is another problem entirely."
+      }
+    },
+    "fight_jungle_monsters": {
+      "kind": "action",
+      "node": "fight_jungle_monsters",
+      "lineStart": 3265,
+      "lineEnd": 3282,
+      "label": "Fight Jungle",
+      "tooltip": "Nothing here hunts for honor. The jungle presses like a siege, and every beast feels like one more part of a world trying to digest the people left in it.<br>\n            Gives (self combat) * (1 + main stat / 100) * sqrt(1 + times completed / 1000) * (original mana cost / actual mana cost) progress points per mana.<br>Gives 1 blood per segment completed.",
+      "stories": {
+        "story_1": "<b>Jungle creature fought:</b> Finding something to fight is the easy part. A giant frog lunges at you from beside a collapsed stone marker, and you quickly realize the jungle does not separate nature from ruin nearly as neatly as you would like.",
+        "story_2": "<b>Sloth slain:</b> You patch up your wounds and make a careful note: even a creature that looks slow here has adapted to desperation. The claws that nearly opened you up were not the weapons of a majestic beast, just of something that learned hunger too well.",
+        "story_3": "<b>Python slain:</b> Finding a snake large enough to swallow a pig whole is already bad enough, but the way it kept nudging a rusted birdcage full of bones during the fight makes the whole encounter feel less natural and more scavenged from the wreckage of several ecosystems at once.",
+        "story_4": "<b>Okapi slain:</b> This creature does not feel like it belongs here. It stumbles, charges, and fights as if the jungle assembled it from whatever was left over rather than letting it evolve in peace. The place is not wild in a clean sense. It is adaptive and mean.",
+        "story_5": "<b>Jaguar slain:</b> Leaning against a tree, you keep a wary eye on the body of the large feline you barely managed to kill. It used old walls and fallen stone the way a trained hunter would use a fortification. Even the predators here have learned from abandoned structures.",
+        "story_6": "<b>Anaconda slain:</b> You shove the long body of the snake off yourself and glare at the stagnant channel it came from. Once, this might have been drainage. Now it is part river, part grave, part hunting lane. The jungle keeps repurposing what civilization leaves behind.",
+        "story_7": "<b>Tiger slain:</b> The fight is over, but you are still shaking from the way the beast coordinated its strike with noises deeper in the trees. Whether that was instinct or something worse, the message is the same: the jungle applies pressure intelligently.",
+        "story_8": "<b>Crocodile slain:</b> You stare at the tough-skinned body that tried to drag you under while you crossed what used to be a road. Note to self: nowhere is neutral terrain here. Anything the jungle can flood, overgrow, or weaponize, it will.",
+        "story_9": "<b>Gorilla slain:</b> This fight feels different. The ape's aggression is not simple hunger. It is territorial in the same way a sentry is territorial. Around the broken markers and survivor signs nearby, even animal violence starts to feel like governance by other means.",
+        "story_10": "<b>Elephant slain:</b> Something is deeply wrong. That beast should never have fit through half the spaces it charged through, yet the jungle made room for it anyway. Trees crack, stone breaks, and the noise further ahead says this place can still escalate far beyond what one person should try to handle alone."
+      }
+    },
+    "rescue_survivors": {
+      "kind": "action",
+      "node": "rescue_survivors",
+      "lineStart": 3299,
+      "lineEnd": 3314,
+      "label": "Rescue Survivor",
+      "tooltip": "There are people lost in the jungle. If you can find them, heal them, and reassure them, you can turn scattered fear into a camp, and a camp into the beginning of a community.<br>Gives (magic skill) * (restoration skill / 100) * (1 + main stat / 100) * sqrt(1 + times completed / 100) * (original mana cost / actual mana cost) * (Jungle Explored %) progress points per mana.<br>Rescued survivors give 4 reputation.<br>Unlocked at 20% Jungle explored.",
+      "stories": {
+        "story_1": "<b>Survivor rescued:</b> You are not sure which part is harder: finding the man or convincing him you are not another predator. Once he accepts treatment and follows you back, the important thing is not just that one person lives. It is that there is one more person helping make camp feel real.",
+        "story_2": "<b>6 Survivors rescued in one loop:</b> The last person you coax into joining you is a little girl with a nasty wound on her arm. By the time she is bandaged and fed, the older survivors have already started treating your makeshift camp like a place with rules, duties, and shared expectations.",
+        "story_3": "<b>20 Survivors rescued in one loop:</b> By now, the sheer number of people following you as their rescuer gets in the way of finding further survivors. That is a good problem to have. What began as emergency aid is turning into a recognizable social unit, however rough and temporary."
+      }
+    },
+    "prepare_buffet": {
+      "kind": "action",
+      "node": "prepare_buffet",
+      "lineStart": 3315,
+      "lineEnd": 3325,
+      "label": "Prepare Buffet",
+      "tooltip": "Use rough jungle ingredients and a little alchemical judgment to turn mere survival into a brief shared feast.<br>Costs 10 herbs and 1 blood.<br>Gives Gluttony exp equal to (Rescued Survivors * 5).<br>Unlocked at 20% Jungle explored",
+      "stories": {
+        "story_1": "<b>Prepared a Buffet:</b> The meat is thin and the herbs are bitter, but even a simple meal feels extraordinary after long enough in this place. For a short while, the camp stops feeling like a collection of frightened bodies and starts feeling like a group that expects to still be here tomorrow.",
+        "story_2": "<b>Held a Buffet with a Rescued Survivor:</b> The man eyes the meal with poorly disguised suspicion. Fair enough. In a place like this, generosity can look like a trap. When he finally eats and does not die, the relief on his face is almost as important as the meal itself.",
+        "story_3": "<b>Held a Buffet with 6 Rescued Survivors:</b> There is still a lot of wariness around the fire, but watching the little girl dig into the meal like it is a royal feast convinces the others to try it. Seconds are requested almost immediately. Hardship does not stop people from recognizing abundance when it finally appears.",
+        "story_4": "<b>10 Gluttony:</b> The food you manage to scrounge together is less and less filling, and you find yourself spending more time hunting simply to maintain this fragile little pocket of plenty. Sustaining a feast, it turns out, is very different from improvising one.",
+        "story_5": "<b>100 Gluttony:</b> Even as you stuff your face with every last morsel you can get your hands on, you feel emptier each time. A temporary abundance can hold a camp together, but appetite always learns to scale with hope."
+      }
+    },
+    "totem": {
+      "kind": "action",
+      "node": "totem",
+      "lineStart": 3326,
+      "lineEnd": 3335,
+      "label": "Totem",
+      "tooltip": "Deep within the jungle you find a totem pulsing with energy. It does not feel like academic magic. It feels like knowledge hammered into a shape that people could survive around, then passed along by repetition. If you drink a looping potion here, perhaps some of that practical understanding will stay with you.<br>Doubles the initial stat gain bonus of Imbue Body on first completion.<br>Requires a looping potion.<br>Unlocked at 50% Jungle Explored.<br>Grants 100 Wunderkind exp.",
+      "stories": {
+        "story_1": "<b>Drank a looping potion:</b> After a quick prayer that this will not undo all your progress, you lean against the totem and down the potion in one swallow. Almost immediately something inside you shifts, as if the lowest level your body can fall to has been raised by a ritual designed through experience rather than theory.",
+        "story_2": "<b>5 Wunderkind:</b> The dramatic surge of the first drink does not repeat, but every later visit leaves your thinking a little clearer. The totem seems built on the idea that understanding should be embedded in practice until it becomes instinct.",
+        "story_3": "<b>60 Wunderkind:</b> At some point you fall into the habit of kneeling and patting the face at the bottom of the totem after each potion. Stranger still, you are certain the expression looks brighter than when you first found it. Repetition here feels less like rote work and more like participation in a living tradition.",
+        "story_4": "<b>360 Wunderkind:</b> The totem is a familiar face now, and you make a point of passing by it even on loops where you do not brew a potion. Whatever reason it was placed here, it has become proof that the shadow route can produce its own schools of knowledge without ever becoming a school in the formal sense."
+      }
+    },
+    "open_portal": {
+      "kind": "action",
+      "node": "open_portal",
+      "lineStart": 3343,
+      "lineEnd": 3351,
+      "label": "Open Portal",
+      "tooltip": "The Explorers' guild tells you of a secret grove where the barrier between realms is weakest. With enough restoration skill, you can turn the shadow route's unstable shortcuts into a repeatable exit rather than a desperate tear in reality. The trip still costs time; mature techniques are safer, not free.<br>\n            Unlocked with 75% of the world surveyed, and 1000 Restoration.<br>\n            Travels to Forest Path.<br>Buy Mana actions can not be used for the rest of the current loop.",
+      "stories": {
+        "story_1": "<b>Portal opened:</b> Even in the grove where the veil is thin, you still have to force the opening into a shape stable enough to cross. The jungle's hunger quiets as you approach the rippling portal, and when you step through you realize how far this route has come: what began as dangerous improvised breaches has become a deliberate method of travel."
+      }
+    }
+  }
+}

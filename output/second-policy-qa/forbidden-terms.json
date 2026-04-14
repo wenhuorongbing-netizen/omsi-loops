@@ -1,0 +1,17 @@
+{
+  "generatedAt": "2026-04-14T02:17:21.760Z",
+  "conclusion": {
+    "targetedNodes": "targeted-node clean for P1 branch-critical terms",
+    "fullFile": "full-file scan classified with no P1 branch-critical violations"
+  },
+  "summary": {
+    "targetedHits": 0,
+    "targetedP1Violations": 0,
+    "fullHits": 15,
+    "exceptionHits": 14,
+    "unresolvedP1Violations": 0
+  },
+  "targetedScanPath": "output/second-policy-qa/targeted-node-scan.json",
+  "fullFileScanPath": "output/second-policy-qa/full-file-scan.json",
+  "exceptionsPath": "output/second-policy-qa/scan-exceptions.json"
+}
