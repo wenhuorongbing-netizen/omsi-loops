@@ -1,0 +1,17 @@
+{
+  "browser": {
+    "summaryPills": 3,
+    "visibleBeforeSearch": 2,
+    "searchQuery": 1,
+    "visibleAfterSearch": 1,
+    "travelTrialFilterActive": true,
+    "visibleAfterTravelTrial": 0
+  },
+  "queue": {
+    "rowCount": 4,
+    "zoneBreaks": 2,
+    "activeSegmentRows": 2,
+    "hasZoneLabel": true
+  },
+  "consoleErrors": []
+}

@@ -312,3 +312,50 @@ Original prompt: 你是一个游戏汉化师仔细思考这个游戏该如何汉
 - P1 queue region separators / stronger row affordances
 - P1 loadout management panel instead of pure hover popup
 - P2 mobile drawer treatment and predictor deep integration
+- 2026-04-14 GUI/QOL P1 browse/planner pass:
+- Scope implemented:
+- Added a Town-side browser tools strip in `views/main.view.js` / `stylesheet.css` with:
+- a summary strip for current visible actions, unread stories, and shortcut routes
+- a persistent search box for seen actions in the current town
+- quick filters for `new`, `unread story`, and `travel/trial`
+- The new Town filters are intentionally reduction-only: they hide matching action/story cards for readability without changing the authored action order.
+- Hooked the Town browser tools into the existing category legend flow so the town summary and filters refresh on:
+- town changes
+- actions/story view toggles
+- story unlock updates
+- locked/hidden refreshes
+- Added queue readability segmentation in `views/main.view.js` / `stylesheet.css`:
+- next-action rows now mark the start of each zone segment with a visible zone label
+- the currently active action's town segment is highlighted across matching queued rows
+- queue rows now carry stable `data-town-num` / `data-zone-name` metadata for later GUI/QOL passes
+- Fixed a Town filter regression during implementation: when no quick filters were active, `town-browser-hidden` could still be toggled on because the filter result was `undefined`; the logic now normalizes to a strict boolean before updating classes.
+- Tightened QA auditability for this pass:
+- `output/gui-qol-p1/results.json` was written as metadata-only UTF-8 JSON with counts/booleans instead of localized preview text, to avoid the review friction that the earlier P0 Chinese text fields caused in PowerShell logs.
+- Verification:
+- `node --check views/main.view.js`
+- Local static server run on `http://127.0.0.1:5500`
+- Playwright interaction regression artifacts saved to `output/gui-qol-p1/`
+- `town-search.png`
+- `town-filter-travel-trial.png`
+- `queue-zone-separators.png`
+- `results.json`
+- Runtime checks recorded in `output/gui-qol-p1/results.json`:
+- Town summary strip rendered 3 pills
+- current-town visible actions narrowed from `2` to `1` under search
+- travel/trial quick filter activated successfully and reduced visible actions in the current town to `0`
+- queue test produced `4` rows, `2` zone breaks, `2` active-segment highlights, and zone labels on the separators
+- no new runtime console/page errors during the P1 browser regression
+- Remaining GUI/QOL scope after this pass:
+- P1 loadout management panel instead of pure hover popup
+- stronger queue row controls/affordances beyond the new segment labels
+- P2 predictor deep integration, mobile/bottom-drawer treatment, chapter/story management upgrades, and layout presets
+- 2026-04-14 tooltip spacing fix:
+- Fixed the action-role tooltip wrapper in `stylesheet.css` by forcing `.actionCategoryTooltipText` itself to render as a block element. The earlier fix only made the heading/description/note children block-level, but the wrapper still inherited the global `div { display:inline-block; }`, which let the first line of the action description crowd against the role header.
+- Verification:
+- Browser hover regression artifacts saved to `output/gui-qol-tooltip-fix/`
+- `wander-tooltip.png`
+- `results.json`
+- Runtime check confirms:
+- `.actionCategoryTooltipText` now computes as `display: block`
+- the description block starts below the heading block (`descStartsBelowHeading: true`)
+- no new runtime console/page errors in the hover regression

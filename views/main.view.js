@@ -15,6 +15,7 @@ class View {
         this.updateTotalTicks();
         this.updateAddAmount(1);
         this.initializeActionCategoryLegend();
+        this.initializeTownBrowserTools();
         this.createTownActions();
         this.updateProgressActions();
         this.updateLockedHidden();
@@ -79,6 +80,12 @@ class View {
         this.predictorState = /** @type {"off"|"running"|"ready"|"stale"} */("off");
         this.inspectorSelection = null;
         this.guiLanguage = "";
+        this.townActionSearch = window.localStorage.getItem("townActionSearch") ?? "";
+        try {
+            this.townQuickFilters = JSON.parse(window.localStorage.getItem("townQuickFilters") ?? "{}");
+        } catch {
+            this.townQuickFilters = {};
+        }
     }
 
     /** @param {UIEvent} event */
@@ -221,7 +228,30 @@ class View {
                 chapterPrefix: "Chapter ",
                 chapterSuffix: "",
             };
-        return texts[key] ?? key;
+        const extraTexts = this.isChineseLanguage()
+            ? {
+                townSummaryVisible: "当前可见",
+                townSummaryUnread: "未读故事",
+                townSummaryShortcut: "快捷路线",
+                townSearchPlaceholder: "搜索已见行动",
+                townFilterNew: "仅看新内容",
+                townFilterUnread: "仅看未读故事",
+                townFilterTravelTrial: "仅看旅行/试炼",
+                townFilterOff: "未启用",
+                queueZoneSeparator: "区域",
+            }
+            : {
+                townSummaryVisible: "Visible",
+                townSummaryUnread: "Unread Stories",
+                townSummaryShortcut: "Shortcuts",
+                townSearchPlaceholder: "Search seen actions",
+                townFilterNew: "New Only",
+                townFilterUnread: "Unread Stories",
+                townFilterTravelTrial: "Travel / Trial",
+                townFilterOff: "Off",
+                queueZoneSeparator: "Zone",
+            };
+        return texts[key] ?? extraTexts[key] ?? key;
     }
 
     initializeReadingShell() {
@@ -258,6 +288,7 @@ class View {
         htmlElement("chronicleTabStories").textContent = this.getGuiText("stories");
         htmlElement("inspectorEmpty").textContent = this.getGuiText("inspectorEmpty");
         this.updatePlannerStatus();
+        this.updateTownBrowserTools();
         this.renderChronicleChapters();
         this.renderChronicleStories();
         this.renderInspector();
@@ -720,6 +751,18 @@ class View {
             selectionLabel = `${this.getGuiText("selected")}: ${this.getGuiText("log")} #${this.inspectorSelection.index + 1}`;
         }
         selectionState.textContent = selectionLabel;
+    }
+
+    getActiveQueueTownNum() {
+        return actions.currentAction?.townNum ?? actions.current[actions.currentPos]?.townNum ?? -1;
+    }
+
+    updateQueueSegmentHighlight() {
+        const activeTownNum = this.getActiveQueueTownNum();
+        for (const element of document.querySelectorAll(".nextActionContainer")) {
+            if (!(element instanceof HTMLElement)) continue;
+            element.classList.toggle("zone-active-segment", Number(element.dataset.townNum) === activeTownNum);
+        }
     }
 
     createStats() {
@@ -1297,10 +1340,24 @@ class View {
         if (options.predictor) {
             Koviko.preUpdateHandler(nextActionsDiv);
         }
+        const activeTownNum = this.getActiveQueueTownNum();
+        const queuedActions = actions.next.map((a, index, allActions) => {
+            const action = getActionPrototype(a.name);
+            const previousAction = index > 0 ? getActionPrototype(allActions[index - 1].name) : null;
+            return {
+                ...a,
+                actionId: a.actionId /* not enumerable by design */,
+                index,
+                action,
+                startsNewZone: index === 0 || previousAction?.townNum !== action.townNum,
+                zoneName: getTownName(action.townNum),
+                isActiveZone: action.townNum === activeTownNum,
+            };
+        });
 
         const actionContainers = d3.select(nextActionsDiv)
             .selectAll(".nextActionContainer")
-            .data(actions.next.map((a, index) => ({...a, actionId: a.actionId /* not enumerable by design */, index, action: getActionPrototype(a.name)})), a => a.actionId)
+            .data(queuedActions, a => a.actionId)
             .join(enter => enter
                 .append(({action, actionId: i}) => Rendered.html`
                     <div
@@ -1345,6 +1402,8 @@ class View {
             })
             .attr("data-action-category", a => a.action.category)
             .attr("data-action-var-name", a => a.action.varName)
+            .attr("data-town-num", a => String(a.action.townNum))
+            .attr("data-zone-name", a => a.zoneName)
             .classed("action-has-limit", a => hasLimit(a.name))
             .classed("action-is-training", a => isTraining(a.name))
             .classed("action-is-singular", a => a.action.allowed?.() === 1)
@@ -1352,6 +1411,8 @@ class View {
             .classed("action-disabled", a => !actions.isValidAndEnabled(a))
             .classed("user-disabled", a => !!a.disabled)
             .classed("user-collapsed", a => !!a.collapsed)
+            .classed("starts-new-zone", a => a.startsNewZone)
+            .classed("zone-active-segment", a => a.isActiveZone)
             .classed("zone-collapsed", a => actions.zoneSpanAtIndex(a.index).isCollapsed)
             .classed("action-is-collapsing-zone", a => {
                 const zoneSpan = actions.zoneSpanAtIndex(a.index);
@@ -1384,6 +1445,7 @@ class View {
             Koviko.postUpdateHandler(actions.next, nextActionsDiv);
         }
         nextActionsDiv.scrollTop = Math.max(nextActionsDiv.scrollTop, scrollTop); // scrolling down to see the new thing added is okay, scrolling up when you click an action button is not
+        this.updateQueueSegmentHighlight();
         this.applyInspectorSelectionHighlight();
         this.renderInspector();
         this.updatePlannerStatus();
@@ -1513,6 +1575,7 @@ class View {
             }
             expGainDiv.innerHTML = statExpGain;
         }
+        this.updateQueueSegmentHighlight();
     };
 
     /** @typedef {{lastScroll:Pick<HTMLElement,'scrollTop'|'scrollHeight'|'clientHeight'>}} LastScrollRecord */
@@ -1691,6 +1754,8 @@ class View {
         }
         this.updateActionCategoryLegend();
         this.applyActionCategoryFilter();
+        this.applyTownBrowserFilters();
+        this.updateTownBrowserTools();
     };
 
     updateGlobalStory(num) {
@@ -1747,6 +1812,8 @@ class View {
                             document.getElementById(divName).classList.remove("storyContainerCompleted");
                         }
                         this.renderChronicleStories();
+                        this.applyTownBrowserFilters();
+                        this.updateTownBrowserTools();
                         this.renderInspector();
                     }
                 }
@@ -1784,6 +1851,8 @@ class View {
         townShowing = townNum;
         this.updateActionCategoryLegend();
         this.applyActionCategoryFilter();
+        this.applyTownBrowserFilters();
+        this.updateTownBrowserTools();
         this.renderChronicleStories();
     };
 
@@ -1807,6 +1876,8 @@ class View {
         actionStoriesShowing = stories;
         this.updateActionCategoryLegend();
         this.applyActionCategoryFilter();
+        this.applyTownBrowserFilters();
+        this.updateTownBrowserTools();
         this.renderChronicleStories();
     };
 
@@ -1847,6 +1918,47 @@ class View {
         this.updateActionCategoryLegend();
     }
 
+    initializeTownBrowserTools() {
+        if (document.getElementById("townBrowserTools")) return;
+        document.getElementById("townActionTitle").append(Rendered.html`
+            <div id="townBrowserTools" class="townBrowserTools">
+                <div id="townSummaryStrip" class="townSummaryStrip">
+                    <span id="townSummaryVisible" class="townSummaryPill"></span>
+                    <span id="townSummaryUnread" class="townSummaryPill"></span>
+                    <span id="townSummaryShortcut" class="townSummaryPill"></span>
+                </div>
+                <div id="townFilterBar" class="townFilterBar">
+                    <input
+                        id="townActionSearch"
+                        class="townActionSearch"
+                        type="search"
+                        autocomplete="off"
+                        oninput="view.setTownActionSearch(this.value)"
+                    >
+                    <button
+                        type="button"
+                        id="townFilterNew"
+                        class="button townQuickFilter"
+                        onclick="view.toggleTownQuickFilter('new')"
+                    ></button>
+                    <button
+                        type="button"
+                        id="townFilterUnread"
+                        class="button townQuickFilter"
+                        onclick="view.toggleTownQuickFilter('unread')"
+                    ></button>
+                    <button
+                        type="button"
+                        id="townFilterTravelTrial"
+                        class="button townQuickFilter"
+                        onclick="view.toggleTownQuickFilter('travelTrial')"
+                    ></button>
+                </div>
+            </div>
+        `);
+        this.updateTownBrowserTools();
+    }
+
     /** @param {AnyAction} action @param {"action"|"story"|"queue"} [variant] */
     renderActionCategoryBadge(action, variant="action") {
         const category = action.category;
@@ -1875,6 +1987,7 @@ class View {
         }
         this.updateActionCategoryLegend();
         this.applyActionCategoryFilter();
+        this.updateTownBrowserTools();
     }
 
     toggleActionCategoryLegend() {
@@ -1934,6 +2047,93 @@ class View {
                     && !element.classList.contains("hidden")
                     && element.dataset.actionCategory !== activeCategory;
                 element.classList.toggle("category-dimmed", shouldDim);
+            }
+        }
+    }
+
+    setTownActionSearch(value) {
+        this.townActionSearch = value.trim().toLocaleLowerCase();
+        window.localStorage.setItem("townActionSearch", value);
+        this.applyTownBrowserFilters();
+        this.updateTownBrowserTools();
+    }
+
+    toggleTownQuickFilter(filter) {
+        this.townQuickFilters[filter] = !this.townQuickFilters[filter];
+        window.localStorage.setItem("townQuickFilters", JSON.stringify(this.townQuickFilters));
+        this.applyTownBrowserFilters();
+        this.updateTownBrowserTools();
+    }
+
+    isTravelOrTrialAction(action) {
+        return getPossibleTravel(action.name).length > 0
+            || action.name.includes("Trial")
+            || ["SDungeon", "LDungeon", "TheSpire"].includes(action.varName);
+    }
+
+    getTownBrowserStats() {
+        const shownTown = towns[townShowing] ?? towns[0];
+        const unreadStories = Array.isArray(globalThis.unreadActionStories) ? globalThis.unreadActionStories : [];
+        const visibleActions = shownTown?.totalActionList?.filter(action => action.visible()) ?? [];
+        return {
+            visibleCount: visibleActions.length,
+            unreadCount: visibleActions.filter(action => unreadStories.includes(`storyContainer${action.varName}`)).length,
+            shortcutCount: visibleActions.filter(action => action.category === "shortcut").length,
+        };
+    }
+
+    updateTownBrowserTools() {
+        const searchInput = document.getElementById("townActionSearch");
+        if (searchInput instanceof HTMLInputElement) {
+            if (searchInput.value !== this.townActionSearch) searchInput.value = this.townActionSearch;
+            searchInput.placeholder = this.getGuiText("townSearchPlaceholder");
+        }
+
+        const {visibleCount, unreadCount, shortcutCount} = this.getTownBrowserStats();
+        htmlElement("townSummaryVisible").textContent = `${this.getGuiText("townSummaryVisible")}: ${visibleCount}`;
+        htmlElement("townSummaryUnread").textContent = `${this.getGuiText("townSummaryUnread")}: ${unreadCount}`;
+        htmlElement("townSummaryShortcut").textContent = `${this.getGuiText("townSummaryShortcut")}: ${shortcutCount}`;
+
+        /** @type {[keyof View["townQuickFilters"], string][]} */
+        const buttons = [
+            ["new", "townFilterNew"],
+            ["unread", "townFilterUnread"],
+            ["travelTrial", "townFilterTravelTrial"],
+        ];
+        for (const [filter, id] of buttons) {
+            const button = htmlElement(id);
+            button.classList.toggle("is-active", !!this.townQuickFilters[filter]);
+            button.textContent = this.getGuiText(id);
+        }
+    }
+
+    applyTownBrowserFilters() {
+        const shownTown = towns[townShowing] ?? towns[0];
+        const unreadStories = Array.isArray(globalThis.unreadActionStories) ? globalThis.unreadActionStories : [];
+        for (const action of shownTown?.totalActionList ?? []) {
+            const actionElement = document.getElementById(`container${action.varName}`);
+            const storyElement = document.getElementById(`storyContainer${action.varName}`);
+            const isNew = !completedActions.includes(action.varName);
+            const hasUnreadStory = unreadStories.includes(`storyContainer${action.varName}`);
+            const isTravelTrial = this.isTravelOrTrialAction(action);
+            const searchable = `${action.label} ${getActionCategoryLabel(action.category)} ${this.getActionTypeLabel(action.type)} ${getTownName(action.townNum)}`.toLocaleLowerCase();
+            const searchMiss = !!this.townActionSearch && !searchable.includes(this.townActionSearch);
+            const quickFilterMiss = (this.townQuickFilters.new && !isNew)
+                || (this.townQuickFilters.unread && !hasUnreadStory)
+                || (this.townQuickFilters.travelTrial && !isTravelTrial);
+            const shouldHide = !!(searchMiss || quickFilterMiss);
+
+            if (actionElement instanceof HTMLElement) {
+                actionElement.classList.toggle("town-browser-hidden", shouldHide);
+                actionElement.classList.toggle("action-is-new", isNew);
+                actionElement.classList.toggle("action-has-unread-story", hasUnreadStory);
+                actionElement.classList.toggle("action-is-travel-trial", isTravelTrial);
+            }
+            if (storyElement instanceof HTMLElement) {
+                storyElement.classList.toggle("town-browser-hidden", shouldHide);
+                storyElement.classList.toggle("action-is-new", isNew);
+                storyElement.classList.toggle("action-has-unread-story", hasUnreadStory);
+                storyElement.classList.toggle("action-is-travel-trial", isTravelTrial);
             }
         }
     }
@@ -2007,6 +2207,8 @@ class View {
         if (options.highlightNew) this.highlightIncompleteActions();
         this.updateActionCategoryLegend();
         this.applyActionCategoryFilter();
+        this.applyTownBrowserFilters();
+        this.updateTownBrowserTools();
     };
 
     /** @param {ActionOfType<"progress">} action  */
