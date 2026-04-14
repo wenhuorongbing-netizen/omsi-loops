@@ -46,6 +46,7 @@ class View {
         this.initActionLog();
         this.initializeReadingShell();
         this.initializePlannerShell();
+        this.initializeLoadoutManager();
         document.body.removeEventListener("mouseover", this.mouseoverHandler);
         document.body.addEventListener("mouseover", this.mouseoverHandler, {passive: true});
         document.body.removeEventListener("focusin", this.mouseoverHandler);
@@ -56,6 +57,8 @@ class View {
         document.addEventListener("keydown", this.keydownHandler);
         document.removeEventListener("predictor-update", this.predictorUpdateHandler);
         document.addEventListener("predictor-update", this.predictorUpdateHandler);
+        window.removeEventListener("resize", this.responsiveLayoutHandler);
+        window.addEventListener("resize", this.responsiveLayoutHandler, {passive: true});
         window.addEventListener("modifierkeychange", this.modifierkeychangeHandler);
         /** @type {WeakMap<HTMLElement, Element | false>} */
         this.tooltipTriggerMap = new WeakMap();
@@ -68,6 +71,7 @@ class View {
         this.documentClickHandler = this.documentClickHandler.bind(this);
         this.keydownHandler = this.keydownHandler.bind(this);
         this.predictorUpdateHandler = this.predictorUpdateHandler.bind(this);
+        this.responsiveLayoutHandler = this.responsiveLayoutHandler.bind(this);
         const savedFilter = window.localStorage.getItem("actionCategoryFilter");
         this.actionCategoryFilter = actionCategories.includes(/** @type {ActionCategory} */(savedFilter))
             ? /** @type {ActionCategory} */(savedFilter)
@@ -77,6 +81,8 @@ class View {
         this.inspectorTab = /** @type {"summary"|"story"|"numbers"} */("summary");
         this.chronicleTab = /** @type {"log"|"chapters"|"stories"} */("log");
         this.chronicleChapter = 0;
+        this.chronicleLogFilter = /** @type {"all"|"story"|"chapter"|"growth"|"soulstone"} */(window.localStorage.getItem("chronicleLogFilter") || "all");
+        this.chronicleStoryFilter = /** @type {"all"|"unread"|"incomplete"|"currentTown"} */(window.localStorage.getItem("chronicleStoryFilter") || "all");
         this.predictorState = /** @type {"off"|"running"|"ready"|"stale"} */("off");
         this.inspectorSelection = null;
         this.guiLanguage = "";
@@ -85,6 +91,29 @@ class View {
             this.townQuickFilters = JSON.parse(window.localStorage.getItem("townQuickFilters") ?? "{}");
         } catch {
             this.townQuickFilters = {};
+        }
+        try {
+            this.loadoutSaveTimes = JSON.parse(window.localStorage.getItem("loadoutSaveTimes") ?? "{}");
+        } catch {
+            this.loadoutSaveTimes = {};
+        }
+        this.loadoutManagerOpen = window.localStorage.getItem("loadoutManagerOpen") === "true";
+        const savedPreset = window.localStorage.getItem("uiPreset");
+        this.uiPreset = ["classic", "planner", "reader", "compact"].includes(savedPreset)
+            ? savedPreset
+            : "classic";
+        const savedDensity = window.localStorage.getItem("uiDensity");
+        this.uiDensity = ["compact", "standard", "large"].includes(savedDensity)
+            ? savedDensity
+            : "standard";
+        this.queueCompactRepeats = window.localStorage.getItem("queueCompactRepeats") === "true";
+        try {
+            const pinnedTrackedResources = JSON.parse(window.localStorage.getItem("pinnedTrackedResources") ?? "[]");
+            this.pinnedTrackedResources = Array.isArray(pinnedTrackedResources)
+                ? pinnedTrackedResources.filter(resource => typeof resource === "string")
+                : [];
+        } catch {
+            this.pinnedTrackedResources = [];
         }
     }
 
@@ -251,11 +280,99 @@ class View {
                 townFilterOff: "Off",
                 queueZoneSeparator: "Zone",
             };
-        return texts[key] ?? extraTexts[key] ?? key;
+        const panelTexts = this.isChineseLanguage()
+            ? {
+                loadoutNoSelection: "未选择预设",
+                loadoutSelected: "当前预设",
+                loadoutEmpty: "空预设",
+                loadoutActions: "项行动",
+                loadoutSavedAt: "上次保存",
+                loadoutMatchesCurrent: "与当前队列一致",
+                loadoutDiffersCurrent: "与当前队列不同",
+                loadoutReplaceWarning: "从预设载入会替换当前队列。",
+                quickSettingOn: "开",
+                quickSettingOff: "关",
+                queueCapAction: "封顶",
+                queueAddLoop: "增加次数",
+                queueRemoveLoop: "减少次数",
+                queueSplit: "拆分",
+                queueCollapse: "折叠区域",
+                queueMoveUp: "上移",
+                queueMoveDown: "下移",
+                queueDisable: "启用/停用",
+                queueRemove: "移除",
+                buffGroupTrials: "试炼 / 高塔",
+                buffGroupRitual: "献祭 / 灌注",
+                buffGroupFeast: "盛宴",
+                buffGroupPrestige: "威望",
+            }
+            : {
+                loadoutNoSelection: "No loadout selected",
+                loadoutSelected: "Selected Loadout",
+                loadoutEmpty: "Empty Slot",
+                loadoutActions: "actions",
+                loadoutSavedAt: "Saved",
+                loadoutMatchesCurrent: "Matches the current queue",
+                loadoutDiffersCurrent: "Differs from the current queue",
+                loadoutReplaceWarning: "Loading a loadout will replace the current queue.",
+                quickSettingOn: "On",
+                quickSettingOff: "Off",
+                queueCapAction: "Cap action",
+                queueAddLoop: "Add loops",
+                queueRemoveLoop: "Remove loops",
+                queueSplit: "Split row",
+                queueCollapse: "Collapse zone",
+                queueMoveUp: "Move up",
+                queueMoveDown: "Move down",
+                queueDisable: "Enable or disable",
+                queueRemove: "Remove action",
+                buffGroupTrials: "Trials / Spire",
+                buffGroupRitual: "Sacrifice / Imbuement",
+                buffGroupFeast: "Feast",
+                buffGroupPrestige: "Prestige",
+            };
+        panelTexts.plannerPredictorHeading = this.isChineseLanguage() ? "\u9884\u6d4b\u5668" : "Predictor";
+        panelTexts.plannerViewHeading = this.isChineseLanguage() ? "\u5e03\u5c40" : "Layout";
+        panelTexts.quickSettingsToggles = this.isChineseLanguage() ? "\u5e38\u7528\u5f00\u5173" : "Toggles";
+        panelTexts.quickSettingsDensity = this.isChineseLanguage() ? "\u754c\u9762\u5bc6\u5ea6" : "Density";
+        panelTexts.densityCompact = this.isChineseLanguage() ? "\u7d27\u51d1" : "Compact";
+        panelTexts.densityStandard = this.isChineseLanguage() ? "\u6807\u51c6" : "Standard";
+        panelTexts.densityLarge = this.isChineseLanguage() ? "\u5927\u5b57" : "Large";
+        panelTexts.chronicleLogAll = this.isChineseLanguage() ? "\u5168\u90e8" : "All";
+        panelTexts.chronicleLogStory = this.isChineseLanguage() ? "\u884c\u52a8\u6545\u4e8b" : "Stories";
+        panelTexts.chronicleLogChapter = this.isChineseLanguage() ? "\u4e3b\u7ebf\u7ae0\u8282" : "Chapters";
+        panelTexts.chronicleLogGrowth = this.isChineseLanguage() ? "\u6210\u957f" : "Growth";
+        panelTexts.chronicleLogSoulstone = this.isChineseLanguage() ? "\u9b42\u77f3" : "Soulstones";
+        panelTexts.chronicleStoriesAll = this.isChineseLanguage() ? "\u5168\u90e8" : "All";
+        panelTexts.chronicleStoriesUnread = this.isChineseLanguage() ? "\u672a\u8bfb" : "Unread";
+        panelTexts.chronicleStoriesIncomplete = this.isChineseLanguage() ? "\u672a\u8865\u5b8c" : "Incomplete";
+        panelTexts.chronicleStoriesCurrentTown = this.isChineseLanguage() ? "\u5f53\u524d\u533a\u57df" : "Current Area";
+        panelTexts.chronicleVisible = this.isChineseLanguage() ? "\u53ef\u89c1" : "Visible";
+        panelTexts.chronicleCompleted = this.isChineseLanguage() ? "\u5df2\u8865\u5b8c" : "Completed";
+        panelTexts.chronicleZones = this.isChineseLanguage() ? "\u533a\u57df" : "Areas";
+        panelTexts.chronicleMatching = this.isChineseLanguage() ? "\u5339\u914d" : "Matching";
+        panelTexts.chronicleEntries = this.isChineseLanguage() ? "\u6761\u76ee" : "Entries";
+        panelTexts.noChronicleLog = this.isChineseLanguage() ? "\u5f53\u524d\u8fc7\u6ee4\u6761\u4ef6\u4e0b\u6682\u65e0\u65e5\u5fd7\u6761\u76ee\u3002" : "No log entries match the current filter.";
+        panelTexts.quickSettingsHelp = this.isChineseLanguage() ? "\u5e2e\u52a9" : "Help";
+        panelTexts.simpleTooltips = this.isChineseLanguage() ? "\u7b80\u5316\u63d0\u793a" : "Simple Tooltips";
+        panelTexts.simpleTooltipsTooltip = this.isChineseLanguage()
+            ? "\u4e00\u952e\u964d\u4f4e hover \u63d0\u793a\u7684\u5bc6\u5ea6\uff0c\u5b8c\u6574\u6570\u503c\u4ecd\u4fdd\u7559\u5728 Inspector \u91cc\u3002"
+            : "Reduce hover tooltip density in one click. Full detail stays available in the Inspector.";
+        panelTexts.simpleTooltipHint = this.isChineseLanguage()
+            ? "\u5df2\u542f\u7528\u7b80\u5316\u63d0\u793a\uff1a\u8fd9\u91cc\u53ea\u4fdd\u7559\u57fa\u7840\u4fe1\u606f\uff0c\u5b8c\u6574\u6570\u503c\u8bf7\u5728 Inspector \u91cc\u67e5\u770b\u3002"
+            : "Simple Tooltips is on: hover shows only the essentials. Open the Inspector for the full numeric breakdown.";
+        panelTexts.viewHotkeys = this.isChineseLanguage() ? "\u67e5\u770b\u952e\u4f4d" : "View Hotkeys";
+        panelTexts.hotkeyReferenceTitle = this.isChineseLanguage() ? "\u952e\u4f4d\u53c2\u8003" : "Hotkey Reference";
+        panelTexts.hotkeyReferenceIntro = this.isChineseLanguage()
+            ? "\u70ed\u952e\u53ea\u5728\u5f00\u542f Hotkeys\uff0c\u4e14\u672a\u805a\u7126\u6587\u672c\u8f93\u5165\u6846\u65f6\u751f\u6548\u3002"
+            : "Hotkeys work when Hotkeys is enabled and text inputs are not focused.";
+        panelTexts.hotkeyStatusOn = this.isChineseLanguage() ? "\u5df2\u542f\u7528" : "Enabled";
+        panelTexts.hotkeyStatusOff = this.isChineseLanguage() ? "\u5df2\u5173\u95ed" : "Disabled";
+        return texts[key] ?? extraTexts[key] ?? panelTexts[key] ?? key;
     }
 
     initializeReadingShell() {
-        const chronicleLogPane = htmlElement("chronicleLogPane");
+        const chronicleLogPane = htmlElement("chronicleLogBody");
         const actionLogContainer = htmlElement("actionLogContainer");
         if (actionLogContainer.parentElement !== chronicleLogPane) {
             chronicleLogPane.appendChild(actionLogContainer);
@@ -264,14 +381,558 @@ class View {
         this.setReadingPane(this.readingPane);
         this.setInspectorTab(this.inspectorTab);
         this.setChronicleTab(this.chronicleTab);
+        this.renderChronicleLogControls();
         this.renderChronicleChapters();
         this.renderChronicleStories();
         this.renderInspector();
+        this.updateMobileReadingState();
     }
 
     initializePlannerShell() {
+        this.applyUiPreset();
+        this.applyUiDensity();
         this.setPredictorState(options.predictor ? "running" : "off");
+        this.updateUiPresetButtons();
+        this.updateUiDensityButtons();
+        this.updateQueueRepeatToggle();
         this.updatePlannerStatus();
+        this.updateQuickSettings();
+        this.updateHotkeyReferencePanels();
+    }
+
+    getHotkeyReferenceSections() {
+        if (this.isChineseLanguage()) {
+            return [
+                {
+                    title: "\u64ad\u653e\u4e0e\u5faa\u73af",
+                    items: [
+                        ["Space", "\u6682\u505c / \u7ee7\u7eed"],
+                        ["R", "\u624b\u52a8\u91cd\u542f\u5faa\u73af"],
+                        ["B", "\u5207\u6362\u79bb\u7ebf\u6536\u76ca"],
+                    ],
+                },
+                {
+                    title: "\u6392\u8868\u4e0e\u6570\u91cf",
+                    items: [
+                        ["1-9", "\u5feb\u901f\u8bbe\u5b9a\u6dfb\u52a0\u6b21\u6570"],
+                        ["0", "\u628a\u5f53\u524d\u6b21\u6570 x10"],
+                        ["Backspace", "\u628a\u5f53\u524d\u6b21\u6570 /10"],
+                        ["=", "\u961f\u5217\u5bb9\u91cf +100"],
+                        ["-", "\u961f\u5217\u5bb9\u91cf -100"],
+                        ["Shift+S / L / C", "\u4fdd\u5b58 / \u8f7d\u5165 / \u6e05\u7a7a\u961f\u5217"],
+                        ["Shift+Z", "\u64a4\u9500\u4e0a\u4e00\u6b65"],
+                    ],
+                },
+                {
+                    title: "\u9884\u8bbe\u4e0e\u5bfc\u822a",
+                    items: [
+                        ["Shift+1..5", "\u8f7d\u5165 1-5 \u53f7 Loadout"],
+                        ["Left / A", "\u5207\u5230\u4e0a\u4e00\u4e2a\u533a\u57df"],
+                        ["Right / D", "\u5207\u5230\u4e0b\u4e00\u4e2a\u533a\u57df"],
+                        ["Shift+Left / A", "\u5207\u5230\u884c\u52a8\u9762"],
+                        ["Shift+Right / D", "\u5207\u5230\u6545\u4e8b\u9762"],
+                    ],
+                },
+            ];
+        }
+        return [
+            {
+                title: "Playback",
+                items: [
+                    ["Space", "Pause or resume the loop"],
+                    ["R", "Restart the current loop"],
+                    ["B", "Toggle offline bonus time"],
+                ],
+            },
+            {
+                title: "Queue and Amounts",
+                items: [
+                    ["1-9", "Set the add amount directly"],
+                    ["0", "Multiply the current add amount by 10"],
+                    ["Backspace", "Divide the current add amount by 10"],
+                    ["=", "Increase queue capacity by 100"],
+                    ["-", "Decrease queue capacity by 100"],
+                    ["Shift+S / L / C", "Save, load, or clear the current queue"],
+                    ["Shift+Z", "Undo the last queue edit"],
+                ],
+            },
+            {
+                title: "Loadouts and Navigation",
+                items: [
+                    ["Shift+1..5", "Load loadouts 1 through 5"],
+                    ["Left / A", "Move to the previous area"],
+                    ["Right / D", "Move to the next area"],
+                    ["Shift+Left / A", "Switch to the action list"],
+                    ["Shift+Right / D", "Switch to the story list"],
+                ],
+            },
+        ];
+    }
+
+    renderHotkeyReferenceHtml() {
+        const statusKey = options.hotkeys ? "hotkeyStatusOn" : "hotkeyStatusOff";
+        const statusClass = options.hotkeys ? "is-active" : "is-inactive";
+        const sections = this.getHotkeyReferenceSections();
+        return `
+            <div class="hotkeyReferenceHeader">
+                <div class="hotkeyReferenceTitle">${this.getGuiText("hotkeyReferenceTitle")}</div>
+                <span class="hotkeyReferenceStatus ${statusClass}">${this.getGuiText(statusKey)}</span>
+            </div>
+            <div class="hotkeyReferenceIntro">${this.getGuiText("hotkeyReferenceIntro")}</div>
+            <div class="hotkeyReferenceGrid">
+                ${sections.map(section => `
+                    <section class="hotkeyReferenceGroup">
+                        <div class="hotkeyReferenceGroupTitle">${section.title}</div>
+                        <ul class="hotkeyReferenceList">
+                            ${section.items.map(([key, description]) => `
+                                <li class="hotkeyReferenceRow">
+                                    <kbd>${key}</kbd>
+                                    <span>${description}</span>
+                                </li>
+                            `).join("")}
+                        </ul>
+                    </section>
+                `).join("")}
+            </div>
+        `;
+    }
+
+    updateHotkeyReferencePanels() {
+        const optionLabel = document.getElementById("simpleTooltipsOptionLabel");
+        if (optionLabel instanceof HTMLElement) {
+            optionLabel.textContent = this.getGuiText("simpleTooltips");
+        }
+        const optionTooltip = document.getElementById("simpleTooltipsOptionTooltip");
+        if (optionTooltip instanceof HTMLElement) {
+            optionTooltip.textContent = this.getGuiText("simpleTooltipsTooltip");
+        }
+        const helpHeading = document.getElementById("quickSettingsHelpHeading");
+        if (helpHeading instanceof HTMLElement) {
+            helpHeading.textContent = this.getGuiText("quickSettingsHelp");
+        }
+        const buttonIds = ["optionsHotkeyReferenceButton", "quickSettingHotkeyReference"];
+        for (const id of buttonIds) {
+            const button = document.getElementById(id);
+            if (button instanceof HTMLElement) {
+                button.textContent = this.getGuiText("viewHotkeys");
+            }
+        }
+        const panelHtml = this.renderHotkeyReferenceHtml();
+        for (const id of ["hotkeyReferencePanelOptions", "hotkeyReferencePanelQuick"]) {
+            const panel = document.getElementById(id);
+            if (panel instanceof HTMLElement) {
+                panel.innerHTML = panelHtml;
+            }
+        }
+    }
+
+    closeHotkeyReferencePanels() {
+        const pairs = [
+            ["optionsHotkeyReferenceButton", "hotkeyReferencePanelOptions"],
+            ["quickSettingHotkeyReference", "hotkeyReferencePanelQuick"],
+        ];
+        for (const [buttonId, panelId] of pairs) {
+            const button = document.getElementById(buttonId);
+            const panel = document.getElementById(panelId);
+            if (button instanceof HTMLElement) {
+                button.classList.remove("is-active");
+                button.setAttribute("aria-expanded", "false");
+            }
+            if (panel instanceof HTMLElement) {
+                panel.classList.add("hidden");
+            }
+        }
+    }
+
+    toggleHotkeyReference(source) {
+        const isOptions = source === "options";
+        const buttonId = isOptions ? "optionsHotkeyReferenceButton" : "quickSettingHotkeyReference";
+        const panelId = isOptions ? "hotkeyReferencePanelOptions" : "hotkeyReferencePanelQuick";
+        const button = document.getElementById(buttonId);
+        const panel = document.getElementById(panelId);
+        if (!(button instanceof HTMLElement) || !(panel instanceof HTMLElement)) return;
+        const shouldOpen = panel.classList.contains("hidden");
+        this.closeHotkeyReferencePanels();
+        if (shouldOpen) {
+            this.updateHotkeyReferencePanels();
+            panel.classList.remove("hidden");
+            button.classList.add("is-active");
+            button.setAttribute("aria-expanded", "true");
+        }
+    }
+
+    getTrackedStatLabel() {
+        const select = document.getElementById("predictorTrackedStatInput");
+        if (select instanceof HTMLSelectElement) {
+            const selectedOption = select.selectedOptions[0];
+            const label = selectedOption?.textContent?.trim();
+            if (label) return label;
+        }
+        const trackedStat = globalThis.Koviko?.trackedStats?.[options.predictorTrackedStat];
+        if (trackedStat) return `(${trackedStat.type}) ${trackedStat.display_name}`;
+        return options.predictorTrackedStat;
+    }
+
+    getUiPresetLabel(preset) {
+        const labels = this.isChineseLanguage()
+            ? {
+                classic: "\u7ecf\u5178",
+                planner: "\u89c4\u5212",
+                reader: "\u9605\u8bfb",
+                compact: "\u7d27\u51d1",
+            }
+            : {
+                classic: "Classic",
+                planner: "Planner",
+                reader: "Reader",
+                compact: "Compact",
+        };
+        return labels[preset] ?? preset;
+    }
+
+    getUiDensityLabel(density) {
+        return this.getGuiText(`density${density[0].toUpperCase()}${density.slice(1)}`);
+    }
+
+    getQueueRepeatToggleLabel() {
+        if (this.queueCompactRepeats) {
+            return this.isChineseLanguage() ? "\u91cd\u590d\u9879\uff1a\u6298\u53e0" : "Repeat Rows: Compact";
+        }
+        return this.isChineseLanguage() ? "\u91cd\u590d\u9879\uff1a\u5c55\u5f00" : "Repeat Rows: Full";
+    }
+
+    getTrackedResourcePinLabel(isPinned) {
+        if (this.isChineseLanguage()) {
+            return isPinned ? "\u53d6\u6d88\u7f6e\u9876" : "\u7f6e\u9876\u8d44\u6e90";
+        }
+        return isPinned ? "Unpin resource" : "Pin resource";
+    }
+
+    getInspectorPredictorLabel() {
+        return this.isChineseLanguage() ? "\u5c40\u90e8\u9884\u6d4b" : "Local Predictor";
+    }
+
+    isMobileReadingUi() {
+        return options.responsiveUI && window.matchMedia("(max-width: 810px)").matches;
+    }
+
+    updateMobileReadingState() {
+        const isMobileReadingUi = this.isMobileReadingUi();
+        const isDrawerOpen = isMobileReadingUi && this.readingPane !== "character";
+        document.body.classList.toggle("mobile-reading-ui", isMobileReadingUi);
+        document.body.classList.toggle("mobile-reading-open", isDrawerOpen);
+        htmlElement("statsColumn").dataset.readingDrawer = isDrawerOpen ? "open" : "closed";
+    }
+
+    responsiveLayoutHandler() {
+        this.updateMobileReadingState();
+    }
+
+    handlePredictorTrackedStatChange(value) {
+        setOption("predictorTrackedStat", value);
+        if (options.predictor) {
+            this.setPredictorState("stale");
+        } else {
+            this.updatePlannerStatus();
+        }
+        this.renderInspector();
+    }
+
+    setUiPreset(preset) {
+        if (!["classic", "planner", "reader", "compact"].includes(preset)) return;
+        this.uiPreset = preset;
+        window.localStorage.setItem("uiPreset", preset);
+        this.applyUiPreset();
+        this.updateUiPresetButtons();
+    }
+
+    applyUiPreset() {
+        for (const preset of ["classic", "planner", "reader", "compact"]) {
+            document.body.classList.toggle(`ui-preset-${preset}`, this.uiPreset === preset);
+        }
+        document.body.dataset.uiPreset = this.uiPreset;
+    }
+
+    setUiDensity(density) {
+        if (!["compact", "standard", "large"].includes(density)) return;
+        this.uiDensity = density;
+        window.localStorage.setItem("uiDensity", density);
+        this.applyUiDensity();
+        this.updateUiDensityButtons();
+    }
+
+    applyUiDensity() {
+        for (const density of ["compact", "standard", "large"]) {
+            document.body.classList.toggle(`ui-density-${density}`, this.uiDensity === density);
+        }
+        document.body.dataset.uiDensity = this.uiDensity;
+    }
+
+    updateUiPresetButtons() {
+        /** @type {[string, string][]} */
+        const presets = [
+            ["uiPresetClassic", "classic"],
+            ["uiPresetPlanner", "planner"],
+            ["uiPresetReader", "reader"],
+            ["uiPresetCompact", "compact"],
+        ];
+        for (const [id, preset] of presets) {
+            const button = document.getElementById(id);
+            if (!(button instanceof HTMLElement)) continue;
+            const isActive = this.uiPreset === preset;
+            button.textContent = this.getUiPresetLabel(preset);
+            button.classList.toggle("is-active", isActive);
+            button.setAttribute("aria-pressed", String(isActive));
+            button.dataset.state = isActive ? "active" : "inactive";
+            button.setAttribute("title", this.getUiPresetLabel(preset));
+        }
+    }
+
+    updateUiDensityButtons() {
+        /** @type {[string, string][]} */
+        const densities = [
+            ["uiDensityCompact", "compact"],
+            ["uiDensityStandard", "standard"],
+            ["uiDensityLarge", "large"],
+        ];
+        for (const [id, density] of densities) {
+            const button = document.getElementById(id);
+            if (!(button instanceof HTMLElement)) continue;
+            const isActive = this.uiDensity === density;
+            button.textContent = this.getUiDensityLabel(density);
+            button.classList.toggle("is-active", isActive);
+            button.setAttribute("aria-pressed", String(isActive));
+            button.setAttribute("title", this.getUiDensityLabel(density));
+        }
+    }
+
+    toggleQueueCompactRepeats() {
+        this.queueCompactRepeats = !this.queueCompactRepeats;
+        window.localStorage.setItem("queueCompactRepeats", String(this.queueCompactRepeats));
+        this.updateQueueRepeatToggle();
+        this.updateNextActions();
+    }
+
+    updateQueueRepeatToggle() {
+        const button = document.getElementById("queueRepeatToggle");
+        if (!(button instanceof HTMLElement)) return;
+        const label = this.getQueueRepeatToggleLabel();
+        button.textContent = label;
+        button.classList.toggle("is-active", this.queueCompactRepeats);
+        button.setAttribute("aria-pressed", String(this.queueCompactRepeats));
+        button.setAttribute("title", label);
+    }
+
+    initializeLoadoutManager() {
+        const managerPanel = document.getElementById("loadoutManagerPanel");
+        const slotGrid = document.getElementById("loadoutSlotGrid");
+        const actionsBar = document.getElementById("loadoutManagerActions");
+        const legacyShell = document.querySelector(".showthatloadout");
+        const legacyPanel = legacyShell?.querySelector(".showthisloadout");
+        const renameInput = document.getElementById("renameLoadout");
+        if (!(managerPanel instanceof HTMLElement) || !(slotGrid instanceof HTMLElement) || !(actionsBar instanceof HTMLElement) || !(legacyPanel instanceof HTMLElement) || !(renameInput instanceof HTMLElement)) return;
+
+        const saveButton = legacyPanel.querySelector("button[data-lockey='actions>tooltip>save_loadout']");
+        const loadButton = legacyPanel.querySelector("button[data-lockey='actions>tooltip>load_loadout']");
+        const renameButton = legacyPanel.querySelector("button[data-lockey='actions>tooltip>rename']");
+
+        slotGrid.innerHTML = "";
+        for (let i = 1; i <= 15; i++) {
+            const loadButtonElement = document.getElementById(`load${i}`);
+            if (!(loadButtonElement instanceof HTMLElement)) continue;
+            loadButtonElement.classList.add("loadoutSlotButton");
+            loadButtonElement.removeAttribute("style");
+            slotGrid.appendChild(loadButtonElement);
+        }
+        if (saveButton instanceof HTMLElement) {
+            saveButton.id = "saveLoadoutButton";
+            actionsBar.appendChild(saveButton);
+        }
+        if (loadButton instanceof HTMLElement) {
+            loadButton.id = "loadLoadoutButton";
+            actionsBar.appendChild(loadButton);
+        }
+        if (renameButton instanceof HTMLElement) {
+            renameButton.id = "renameLoadoutButton";
+            actionsBar.appendChild(renameButton);
+        }
+        actionsBar.appendChild(renameInput);
+        renameInput.removeAttribute("style");
+        if (legacyShell instanceof HTMLElement) {
+            legacyShell.classList.add("legacy-loadout-shell");
+            legacyShell.setAttribute("aria-hidden", "true");
+        }
+        this.toggleLoadoutManager(this.loadoutManagerOpen);
+        this.updateLoadoutManager();
+    }
+
+    toggleLoadoutManager(force) {
+        if (typeof force === "boolean") {
+            this.loadoutManagerOpen = force;
+        } else {
+            this.loadoutManagerOpen = !this.loadoutManagerOpen;
+        }
+        window.localStorage.setItem("loadoutManagerOpen", String(this.loadoutManagerOpen));
+        const panel = document.getElementById("loadoutManagerPanel");
+        const toggle = document.getElementById("loadoutManagerToggle");
+        if (panel instanceof HTMLElement) panel.classList.toggle("hidden", !this.loadoutManagerOpen);
+        if (toggle instanceof HTMLElement) toggle.setAttribute("aria-expanded", String(this.loadoutManagerOpen));
+    }
+
+    formatLoadoutSavedAt(timestamp) {
+        if (!timestamp) return "";
+        try {
+            return new Date(timestamp).toLocaleString(Localization.currentLang || undefined, {dateStyle: "short", timeStyle: "short"});
+        } catch {
+            return new Date(timestamp).toLocaleString();
+        }
+    }
+
+    simplifyActionRecord(record) {
+        return {
+            name: record.name,
+            loops: record.loops,
+            disabled: !!record.disabled,
+            collapsed: !!record.collapsed,
+        };
+    }
+
+    areActionRecordsEquivalent(left=[], right=[]) {
+        if (left.length !== right.length) return false;
+        return left.every((record, index) => {
+            const comparison = right[index];
+            if (!comparison) return false;
+            const a = this.simplifyActionRecord(record);
+            const b = this.simplifyActionRecord(comparison);
+            return a.name === b.name
+                && a.loops === b.loops
+                && a.disabled === b.disabled
+                && a.collapsed === b.collapsed;
+        });
+    }
+
+    noteLoadoutSaved(num) {
+        this.loadoutSaveTimes[num] = new Date().toISOString();
+        window.localStorage.setItem("loadoutSaveTimes", JSON.stringify(this.loadoutSaveTimes));
+        this.updateLoadoutManager();
+    }
+
+    updateLoadoutManager() {
+        const selectionSummary = document.getElementById("loadoutSelectionSummary");
+        const differenceSummary = document.getElementById("loadoutDifferenceSummary");
+        const loadButton = document.getElementById("loadLoadoutButton");
+        const saveButton = document.getElementById("saveLoadoutButton");
+        const renameButton = document.getElementById("renameLoadoutButton");
+        const renameInput = document.getElementById("renameLoadout");
+        if (!(selectionSummary instanceof HTMLElement) || !(differenceSummary instanceof HTMLElement)) return;
+
+        for (let i = 1; i <= 15; i++) {
+            const button = document.getElementById(`load${i}`);
+            if (!(button instanceof HTMLElement)) continue;
+            const records = loadouts?.[i] ?? [];
+            const isEmpty = !records || records.length === 0;
+            const matchesCurrent = !isEmpty && this.areActionRecordsEquivalent(records, actions.next);
+            const savedAt = this.formatLoadoutSavedAt(this.loadoutSaveTimes[i]);
+            const loadoutName = loadoutnames[i - 1] ?? getDefaultLoadoutName(i);
+            const actionCountText = isEmpty
+                ? this.getGuiText("loadoutEmpty")
+                : `${records.length} ${this.getGuiText("loadoutActions")}`;
+            const savedAtText = savedAt
+                ? `${this.getGuiText("loadoutSavedAt")}: ${savedAt}`
+                : `${this.getGuiText("loadoutSavedAt")}: -`;
+            button.classList.toggle("unused", curLoadout !== i);
+            button.classList.toggle("loadout-slot-empty", isEmpty);
+            button.classList.toggle("loadout-slot-dirty", curLoadout === i && !isEmpty && !matchesCurrent);
+            button.classList.toggle("loadout-slot-match", curLoadout === i && matchesCurrent);
+            button.setAttribute("data-count", String(records?.length ?? 0));
+            button.innerHTML = `
+                <span class="loadoutSlotName">${loadoutName}</span>
+                <span class="loadoutSlotMeta">${actionCountText}</span>
+                <span class="loadoutSlotSaved">${savedAtText}</span>
+            `;
+            button.setAttribute("title", `${loadoutName} / ${actionCountText} / ${savedAtText}`);
+            button.setAttribute("aria-label", `${loadoutName}. ${actionCountText}. ${savedAtText}.`);
+        }
+
+        if (curLoadout === 0) {
+            selectionSummary.textContent = this.getGuiText("loadoutNoSelection");
+            differenceSummary.textContent = this.getGuiText("loadoutReplaceWarning");
+            if (loadButton instanceof HTMLButtonElement) loadButton.disabled = true;
+            if (saveButton instanceof HTMLButtonElement) saveButton.disabled = true;
+            if (renameButton instanceof HTMLButtonElement) renameButton.disabled = true;
+            if (renameInput instanceof HTMLInputElement && document.activeElement !== renameInput) {
+                renameInput.value = getLoadoutNameDefault();
+            }
+            return;
+        }
+
+        const selectedRecords = loadouts?.[curLoadout] ?? [];
+        const isEmpty = !selectedRecords || selectedRecords.length === 0;
+        const matchesCurrent = !isEmpty && this.areActionRecordsEquivalent(selectedRecords, actions.next);
+        const savedAt = this.formatLoadoutSavedAt(this.loadoutSaveTimes[curLoadout]);
+        selectionSummary.textContent = `${this.getGuiText("loadoutSelected")}: ${loadoutnames[curLoadout - 1] ?? getDefaultLoadoutName(curLoadout)}`;
+        differenceSummary.textContent = isEmpty
+            ? this.getGuiText("loadoutEmpty")
+            : `${selectedRecords.length} ${this.getGuiText("loadoutActions")} / ${matchesCurrent ? this.getGuiText("loadoutMatchesCurrent") : this.getGuiText("loadoutDiffersCurrent")}${savedAt ? ` / ${this.getGuiText("loadoutSavedAt")}: ${savedAt}` : ""}`;
+        if (loadButton instanceof HTMLButtonElement) loadButton.disabled = isEmpty;
+        if (saveButton instanceof HTMLButtonElement) saveButton.disabled = false;
+        if (renameButton instanceof HTMLButtonElement) renameButton.disabled = false;
+        if (renameInput instanceof HTMLInputElement && document.activeElement !== renameInput) {
+            renameInput.value = loadoutnames[curLoadout - 1] ?? getLoadoutNameDefault();
+        }
+    }
+
+    toggleQuickSetting(option) {
+        if (!(option in options)) return;
+        setOption(option, !options[option], true);
+        if (option === "predictor") {
+            this.setPredictorState(options.predictor ? "stale" : "off");
+        } else {
+            this.updatePlannerStatus();
+        }
+        this.updateQuickSettings();
+        this.updateMobileReadingState();
+        this.renderInspector();
+    }
+
+    updateQuickSettings() {
+        /** @type {[string, string, string][]} */
+        const quickSettings = [
+            ["quickSettingResponsiveUI", "responsiveUI", "menu>options>responsive_ui"],
+            ["quickSettingActionLog", "actionLog", "menu>options>action_log"],
+            ["quickSettingPredictor", "predictor", "menu>options>predictor"],
+            ["quickSettingStatColors", "statColors", "menu>options>stat_colors"],
+            ["quickSettingHighlightNew", "highlightNew", "menu>options>highlight_new"],
+            ["quickSettingHotkeys", "hotkeys", "menu>options>hotkeys"],
+            ["quickSettingSimpleTooltips", "simpleTooltips", "gui:simpleTooltips"],
+        ];
+        for (const [id, option, locKey] of quickSettings) {
+            const button = document.getElementById(id);
+            if (!(button instanceof HTMLElement)) continue;
+            const active = !!options[option];
+            button.textContent = locKey.startsWith("gui:") ? this.getGuiText(locKey.slice(4)) : _txt(locKey);
+            button.classList.toggle("is-active", active);
+            button.setAttribute("aria-pressed", String(active));
+            button.dataset.state = active ? "on" : "off";
+            button.title = `${button.textContent?.trim() ?? ""}: ${this.getGuiText(active ? "quickSettingOn" : "quickSettingOff")}`;
+        }
+    }
+
+    getBuffGroupLabel(group) {
+        return this.getGuiText(`buffGroup${group[0].toUpperCase()}${group.slice(1)}`);
+    }
+
+    updateBuffGroups() {
+        const groups = ["trials", "ritual", "feast", "prestige"];
+        for (const group of groups) {
+            const groupElement = document.getElementById(`buffGroup${group}`);
+            const header = document.getElementById(`buffGroupHeader${group}`);
+            if (!(groupElement instanceof HTMLElement)) continue;
+            if (header instanceof HTMLElement) header.textContent = this.getBuffGroupLabel(group);
+            const hasVisibleBuff = Array.from(groupElement.querySelectorAll(".buffContainer"))
+                .some(element => element instanceof HTMLElement && element.style.display !== "none");
+            groupElement.classList.toggle("hidden", !hasVisibleBuff);
+        }
     }
 
     refreshGuiLanguage(force=false) {
@@ -287,14 +948,43 @@ class View {
         htmlElement("chronicleTabChapters").textContent = this.getGuiText("chapters");
         htmlElement("chronicleTabStories").textContent = this.getGuiText("stories");
         htmlElement("inspectorEmpty").textContent = this.getGuiText("inspectorEmpty");
+        const quickSettingsMenuLabel = document.getElementById("quickSettingsMenuLabel");
+        if (quickSettingsMenuLabel instanceof HTMLElement) {
+            quickSettingsMenuLabel.textContent = this.isChineseLanguage() ? "\u5feb\u6377\u8bbe\u7f6e" : "Quick Settings";
+        }
+        const trackedStatLabel = document.getElementById("plannerTrackedStatLabel");
+        if (trackedStatLabel instanceof HTMLElement) {
+            trackedStatLabel.textContent = this.isChineseLanguage() ? "\u8ddf\u8e2a\u9879" : "Tracked";
+        }
+        const quickSettingsToggleHeading = document.getElementById("quickSettingsToggleHeading");
+        if (quickSettingsToggleHeading instanceof HTMLElement) {
+            quickSettingsToggleHeading.textContent = this.getGuiText("quickSettingsToggles");
+        }
+        const quickSettingsDensityHeading = document.getElementById("quickSettingsDensityHeading");
+        if (quickSettingsDensityHeading instanceof HTMLElement) {
+            quickSettingsDensityHeading.textContent = this.getGuiText("quickSettingsDensity");
+        }
+        this.updateHotkeyReferencePanels();
+        this.updateUiPresetButtons();
+        this.updateUiDensityButtons();
+        this.updateQueueRepeatToggle();
         this.updatePlannerStatus();
         this.updateTownBrowserTools();
+        this.updateQuickSettings();
+        this.updateLoadoutManager();
+        this.updateBuffGroups();
+        this.applyTrackedResourcePins();
+        this.renderChronicleLogControls();
         this.renderChronicleChapters();
         this.renderChronicleStories();
         this.renderInspector();
+        this.updateMobileReadingState();
     }
 
     setReadingPane(pane) {
+        if (this.isMobileReadingUi() && pane === this.readingPane && pane !== "character") {
+            pane = "character";
+        }
         this.readingPane = pane;
         const statsColumn = htmlElement("statsColumn");
         const panes = {
@@ -308,6 +998,7 @@ class View {
         htmlElement("readingTabInspector").classList.toggle("is-active", pane === "inspector");
         htmlElement("readingTabChronicle").classList.toggle("is-active", pane === "chronicle");
         htmlElement("readingTabCharacter").classList.toggle("is-active", pane === "character");
+        this.updateMobileReadingState();
     }
 
     setInspectorTab(tab) {
@@ -328,6 +1019,7 @@ class View {
         htmlElement("chronicleLogPane").classList.toggle("hidden", tab !== "log");
         htmlElement("chronicleChaptersPane").classList.toggle("hidden", tab !== "chapters");
         htmlElement("chronicleStoriesPane").classList.toggle("hidden", tab !== "stories");
+        if (tab === "log") this.renderChronicleLogControls();
         if (tab === "chapters") this.renderChronicleChapters();
         if (tab === "stories") this.renderChronicleStories();
     }
@@ -351,6 +1043,9 @@ class View {
 
     predictorUpdateHandler() {
         this.setPredictorState("ready");
+        if (this.inspectorSelection?.kind === "action" && this.inspectorSelection.source === "queue") {
+            this.renderInspector();
+        }
     }
 
     documentClickHandler(event) {
@@ -366,15 +1061,6 @@ class View {
         }
 
         if (insidePopup) return;
-
-        const queueRow = target.closest(".nextActionContainer");
-        if (queueRow && !target.closest(".nextActionButtons")) {
-            const actionId = Number(queueRow.getAttribute("data-action-id"));
-            if (Number.isFinite(actionId)) {
-                this.openInspectorForQueue(actionId);
-            }
-            return;
-        }
 
         const storyContainer = target.closest(".storyContainer");
         if (storyContainer instanceof HTMLElement) {
@@ -443,6 +1129,7 @@ class View {
     }
 
     closeOpenMenus() {
+        this.closeHotkeyReferencePanels();
         for (const menu of document.querySelectorAll("#menu > li.showthatH.menu-open")) {
             if (!(menu instanceof HTMLElement)) continue;
             menu.classList.remove("menu-open");
@@ -483,6 +1170,26 @@ class View {
     getActionStoryHTML(varName) {
         const storyContent = document.getElementById(`storyContent${varName}`);
         return storyContent instanceof HTMLElement ? storyContent.innerHTML : "";
+    }
+
+    getQueuePredictorDetails(actionId) {
+        if (!options.predictor) return "";
+        const actionElement = document.getElementById(`nextActionContainer${actionId}`);
+        if (!(actionElement instanceof HTMLElement)) return "";
+        const predictorList = actionElement.querySelector("ul.koviko");
+        if (!(predictorList instanceof HTMLElement)) return "";
+        const chips = Array.from(predictorList.querySelectorAll(":scope > li")).map(item => item.outerHTML).join("");
+        const tooltip = predictorList.querySelector(":scope > .showthis");
+        const tooltipHTML = tooltip instanceof HTMLElement ? tooltip.innerHTML : "";
+        if (!chips && !tooltipHTML) return "";
+        const classes = Array.from(predictorList.classList).join(" ");
+        return `
+            <div class="inspectorPredictorBlock">
+                <div class="inspectorPredictorHeader">${this.getInspectorPredictorLabel()}: ${this.getTrackedStatLabel()}</div>
+                ${chips ? `<ul class="${classes} inspectorPredictorList">${chips}</ul>` : ""}
+                ${tooltipHTML ? `<div class="inspectorPredictorTooltip">${tooltipHTML}</div>` : ""}
+            </div>
+        `;
     }
 
     getInspectorSelectionKey(selection=this.inspectorSelection) {
@@ -545,7 +1252,14 @@ class View {
     }
 
     openInspectorForAction(varName, preferredTab="summary") {
-        this.setInspectorSelection({kind: "action", source: "action", varName}, preferredTab);
+        let nextTab = preferredTab;
+        if (preferredTab === "summary") {
+            const storyText = this.getActionStoryHTML(varName).replace(/<[^>]*>/g, "").trim();
+            const action = this.getActionByVarName(varName);
+            const numberText = action ? this.getActionTooltipHTML(action).replace(/<[^>]*>/g, "").trim() : "";
+            nextTab = storyText ? "story" : (numberText ? "numbers" : "summary");
+        }
+        this.setInspectorSelection({kind: "action", source: "action", varName}, nextTab);
     }
 
     openInspectorForStory(varName) {
@@ -556,7 +1270,7 @@ class View {
         const queuedAction = actions.next.find(action => action.actionId === actionId);
         const action = queuedAction ? getActionPrototype(queuedAction.name) : null;
         if (!queuedAction || !action) return;
-        this.setInspectorSelection({kind: "action", source: "queue", varName: action.varName, actionId}, "summary");
+        this.setInspectorSelection({kind: "action", source: "queue", varName: action.varName, actionId}, "numbers");
     }
 
     openInspectorForLog(index) {
@@ -628,7 +1342,8 @@ class View {
             const storyHTML = this.getActionStoryHTML(action.varName);
             if (storyHTML) story = `<div class="inspectorRichText">${storyHTML}</div>`;
             const tooltipHTML = this.getActionTooltipHTML(action);
-            if (tooltipHTML) numbers = `<div class="inspectorRichText">${tooltipHTML}</div>`;
+            const predictorHTML = queuedAction ? this.getQueuePredictorDetails(queuedAction.actionId) : "";
+            if (tooltipHTML || predictorHTML) numbers = `<div class="inspectorRichText">${predictorHTML}${tooltipHTML}</div>`;
         } else if (this.inspectorSelection.kind === "log") {
             const entry = actionLog.getEntry(this.inspectorSelection.index);
             if (!entry) {
@@ -709,22 +1424,270 @@ class View {
             pane.innerHTML = `<p>${this.getGuiText("noChronicleStories")}</p>`;
             return;
         }
+
+        /** @type {Map<number, AnyAction[]>} */
+        const groupedStories = new Map();
+        for (const action of storyActions) {
+            const existing = groupedStories.get(action.townNum) ?? [];
+            existing.push(action);
+            groupedStories.set(action.townNum, existing);
+        }
+
         pane.innerHTML = `
-            <div class="chronicleStoryList">
-                ${storyActions.map(action => {
-                    const unread = unreadStories.includes(`storyContainer${action.varName}`);
-                    const storyTexts = action.getStoryTexts();
-                    const unlockedCount = storyTexts.filter(({num}) => action.storyReqs(num)).length;
+            <div class="chronicleStorySections">
+                ${[...groupedStories.entries()].sort(([leftTown], [rightTown]) => leftTown - rightTown).map(([townNum, actionsInTown]) => {
+                    const unreadCount = actionsInTown.filter(action => unreadStories.includes(`storyContainer${action.varName}`)).length;
+                    const sectionMeta = this.isChineseLanguage()
+                        ? `${actionsInTown.length} 条 · 未读 ${unreadCount}`
+                        : `${actionsInTown.length} stories · ${unreadCount} unread`;
                     return `
-                        <button
-                            type="button"
-                            class="chronicleStoryCard action-category-${action.category}${unread ? " has-unread" : ""}"
-                            onclick="view.openInspectorForStory('${action.varName}')"
-                        >
-                            <span class="chronicleStoryBadge">${getActionCategoryShortLabel(action.category)}</span>
-                            <span class="chronicleStoryName">${action.label}</span>
-                            <span class="chronicleStoryCount">${unlockedCount}/${storyTexts.length}</span>
-                        </button>
+                        <section class="chronicleStorySection zone-${townNum + 1}">
+                            <div class="chronicleStorySectionHeader">
+                                <div class="chronicleStorySectionTitle">${getTownName(townNum)}</div>
+                                <div class="chronicleStorySectionMeta">${sectionMeta}</div>
+                            </div>
+                            <div class="chronicleStoryList">
+                                ${actionsInTown.map(action => {
+                                    const unread = unreadStories.includes(`storyContainer${action.varName}`);
+                                    const storyTexts = action.getStoryTexts();
+                                    const unlockedCount = storyTexts.filter(({num}) => action.storyReqs(num)).length;
+                                    const storyProgress = this.isChineseLanguage()
+                                        ? `故事 ${unlockedCount}/${storyTexts.length}`
+                                        : `Story ${unlockedCount}/${storyTexts.length}`;
+                                    return `
+                                        <button
+                                            type="button"
+                                            class="chronicleStoryCard action-category-${action.category}${unread ? " has-unread" : ""}"
+                                            onclick="view.openInspectorForStory('${action.varName}')"
+                                        >
+                                            <div class="chronicleStoryTopline">
+                                                <span class="chronicleStoryName">${action.label}</span>
+                                                ${unread ? `<span class="chronicleStoryUnread">${this.isChineseLanguage() ? "未读" : "Unread"}</span>` : ""}
+                                            </div>
+                                            <div class="chronicleStoryMetaRow">
+                                                <span class="chronicleStoryMetaChip action-category-${action.category}">${getActionCategoryLabel(action.category)}</span>
+                                                <span class="chronicleStoryMetaChip">${this.getActionTypeLabel(action.type)}</span>
+                                                <span class="chronicleStoryCount">${storyProgress}</span>
+                                            </div>
+                                        </button>
+                                    `;
+                                }).join("")}
+                            </div>
+                        </section>
+                    `;
+                }).join("")}
+            </div>
+        `;
+    }
+
+    getChronicleLogFilterLabel(filter) {
+        return this.getGuiText(`chronicleLog${filter[0].toUpperCase()}${filter.slice(1)}`);
+    }
+
+    setChronicleLogFilter(filter) {
+        if (!["all", "story", "chapter", "growth", "soulstone"].includes(filter)) return;
+        this.chronicleLogFilter = filter;
+        window.localStorage.setItem("chronicleLogFilter", filter);
+        this.renderChronicleLogControls();
+    }
+
+    classifyChronicleLogEntry(entry) {
+        if (entry instanceof ActionStoryEntry) return "story";
+        if (entry instanceof GlobalStoryEntry) return "chapter";
+        if (entry instanceof SkillEntry || entry instanceof BuffEntry) return "growth";
+        if (entry instanceof SoulstoneEntry) return "soulstone";
+        return "all";
+    }
+
+    renderChronicleLogControls() {
+        const statsElement = document.getElementById("chronicleLogStats");
+        const filterElement = document.getElementById("chronicleLogFilters");
+        const logBody = document.getElementById("actionLog");
+        if (!(statsElement instanceof HTMLElement) || !(filterElement instanceof HTMLElement) || !(logBody instanceof HTMLElement)) return;
+
+        /** @type {const} */
+        const filterOrder = ["all", "story", "chapter", "growth", "soulstone"];
+        const entries = actionLog.entries ?? [];
+        /** @type {Record<string, number>} */
+        const counts = {all: entries.length, story: 0, chapter: 0, growth: 0, soulstone: 0};
+        for (const entry of entries) {
+            const category = this.classifyChronicleLogEntry(entry);
+            if (category !== "all") counts[category] += 1;
+        }
+
+        const visibleEntries = Array.from(logBody.querySelectorAll(".actionLogEntry"))
+            .filter(element => element instanceof HTMLElement);
+        let visibleCount = 0;
+        for (const element of visibleEntries) {
+            const index = Number(element.id.replace("actionLogEntry", ""));
+            const entry = Number.isFinite(index) ? actionLog.entries[index] : null;
+            const category = entry ? this.classifyChronicleLogEntry(entry) : "all";
+            const matches = this.chronicleLogFilter === "all" || category === this.chronicleLogFilter;
+            element.classList.toggle("chronicle-log-hidden", !matches);
+            element.dataset.chronicleFilter = category;
+            if (matches) visibleCount += 1;
+        }
+
+        statsElement.innerHTML = `
+            <span class="chronicleStatChip">${this.getGuiText("chronicleVisible")}: ${visibleCount}</span>
+            <span class="chronicleStatChip">${this.getGuiText("chronicleMatching")}: ${this.chronicleLogFilter === "all" ? counts.all : counts[this.chronicleLogFilter]}</span>
+            <span class="chronicleStatChip">${this.getGuiText("chronicleEntries")}: ${counts.all}</span>
+        `;
+
+        filterElement.innerHTML = filterOrder.map(filter => `
+            <button
+                type="button"
+                class="button chronicleFilterButton${this.chronicleLogFilter === filter ? " is-active" : ""}"
+                onclick="view.setChronicleLogFilter('${filter}')"
+                aria-pressed="${this.chronicleLogFilter === filter}"
+                title="${this.getChronicleLogFilterLabel(filter)}"
+            >${this.getChronicleLogFilterLabel(filter)} <span class="chronicleFilterCount">${filter === "all" ? counts.all : counts[filter]}</span></button>
+        `).join("");
+
+        const emptyNoticeId = "chronicleLogEmptyNotice";
+        let emptyNotice = document.getElementById(emptyNoticeId);
+        if (visibleCount === 0) {
+            if (!(emptyNotice instanceof HTMLElement)) {
+                emptyNotice = document.createElement("div");
+                emptyNotice.id = emptyNoticeId;
+                emptyNotice.className = "chronicleEmptyNotice";
+                logBody.appendChild(emptyNotice);
+            }
+            emptyNotice.textContent = this.getGuiText("noChronicleLog");
+        } else if (emptyNotice instanceof HTMLElement) {
+            emptyNotice.remove();
+        }
+    }
+
+    getChronicleStoryFilterLabel(filter) {
+        return this.getGuiText(`chronicleStories${filter[0].toUpperCase()}${filter.slice(1)}`);
+    }
+
+    setChronicleStoryFilter(filter) {
+        if (!["all", "unread", "incomplete", "currentTown"].includes(filter)) return;
+        this.chronicleStoryFilter = filter;
+        window.localStorage.setItem("chronicleStoryFilter", filter);
+        this.renderChronicleStories();
+    }
+
+    getChronicleStoryItems() {
+        const unreadStories = Array.isArray(globalThis.unreadActionStories) ? globalThis.unreadActionStories : [];
+        return totalActionList
+            .filter(action => action.storyReqs !== undefined)
+            .filter(action => {
+                const storyContainer = document.getElementById(`storyContainer${action.varName}`);
+                return storyContainer instanceof HTMLElement && !storyContainer.classList.contains("hidden");
+            })
+            .map(action => {
+                const storyTexts = action.getStoryTexts();
+                const unlockedCount = storyTexts.filter(({num}) => action.storyReqs(num)).length;
+                const totalCount = storyTexts.length;
+                const unread = unreadStories.includes(`storyContainer${action.varName}`);
+                return {
+                    action,
+                    unread,
+                    unlockedCount,
+                    totalCount,
+                    complete: totalCount > 0 && unlockedCount >= totalCount,
+                };
+            });
+    }
+
+    renderChronicleStories() {
+        const statsElement = document.getElementById("chronicleStoryStats");
+        const filterElement = document.getElementById("chronicleStoryFilters");
+        const contentElement = document.getElementById("chronicleStoriesContent");
+        if (!(statsElement instanceof HTMLElement) || !(filterElement instanceof HTMLElement) || !(contentElement instanceof HTMLElement)) return;
+
+        /** @type {const} */
+        const filterOrder = ["all", "unread", "incomplete", "currentTown"];
+        const storyItems = this.getChronicleStoryItems();
+        /** @type {Record<string, number>} */
+        const counts = {all: storyItems.length, unread: 0, incomplete: 0, currentTown: 0};
+        for (const item of storyItems) {
+            if (item.unread) counts.unread += 1;
+            if (!item.complete) counts.incomplete += 1;
+            if (item.action.townNum === townShowing) counts.currentTown += 1;
+        }
+
+        const visibleItems = storyItems.filter(item => {
+            switch (this.chronicleStoryFilter) {
+                case "unread":
+                    return item.unread;
+                case "incomplete":
+                    return !item.complete;
+                case "currentTown":
+                    return item.action.townNum === townShowing;
+                default:
+                    return true;
+            }
+        });
+
+        const completedVisibleCount = visibleItems.filter(item => item.complete).length;
+        const visibleAreaCount = new Set(visibleItems.map(item => item.action.townNum)).size;
+        statsElement.innerHTML = `
+            <span class="chronicleStatChip">${this.getGuiText("chronicleVisible")}: ${visibleItems.length}</span>
+            <span class="chronicleStatChip">${this.getGuiText("chronicleCompleted")}: ${completedVisibleCount}</span>
+            <span class="chronicleStatChip">${this.getGuiText("chronicleZones")}: ${visibleAreaCount}</span>
+        `;
+
+        filterElement.innerHTML = filterOrder.map(filter => `
+            <button
+                type="button"
+                class="button chronicleFilterButton${this.chronicleStoryFilter === filter ? " is-active" : ""}"
+                onclick="view.setChronicleStoryFilter('${filter}')"
+                aria-pressed="${this.chronicleStoryFilter === filter}"
+                title="${this.getChronicleStoryFilterLabel(filter)}"
+            >${this.getChronicleStoryFilterLabel(filter)} <span class="chronicleFilterCount">${counts[filter]}</span></button>
+        `).join("");
+
+        if (storyItems.length === 0 || visibleItems.length === 0) {
+            contentElement.innerHTML = `<p class="chronicleEmptyNotice">${this.getGuiText("noChronicleStories")}</p>`;
+            return;
+        }
+
+        /** @type {Map<number, ReturnType<View["getChronicleStoryItems"]>>} */
+        const groupedStories = new Map();
+        for (const item of visibleItems) {
+            const action = item.action;
+            const existing = groupedStories.get(action.townNum) ?? [];
+            existing.push(item);
+            groupedStories.set(action.townNum, existing);
+        }
+
+        contentElement.innerHTML = `
+            <div class="chronicleStorySections">
+                ${[...groupedStories.entries()].sort(([leftTown], [rightTown]) => leftTown - rightTown).map(([townNum, actionsInTown]) => {
+                    const unreadCount = actionsInTown.filter(item => item.unread).length;
+                    const completedCount = actionsInTown.filter(item => item.complete).length;
+                    const sectionMeta = `${actionsInTown.length} ${this.getGuiText("stories")} / ${unreadCount} ${this.getChronicleStoryFilterLabel("unread")} / ${completedCount} ${this.getGuiText("chronicleCompleted")}`;
+                    return `
+                        <section class="chronicleStorySection zone-${townNum + 1}">
+                            <div class="chronicleStorySectionHeader">
+                                <div class="chronicleStorySectionTitle">${getTownName(townNum)}</div>
+                                <div class="chronicleStorySectionMeta">${sectionMeta}</div>
+                            </div>
+                            <div class="chronicleStoryList">
+                                ${actionsInTown.map(({action, unread, unlockedCount, totalCount, complete}) => `
+                                    <button
+                                        type="button"
+                                        class="chronicleStoryCard action-category-${action.category}${unread ? " has-unread" : ""}${complete ? " is-complete" : ""}"
+                                        onclick="view.openInspectorForStory('${action.varName}')"
+                                    >
+                                        <div class="chronicleStoryTopline">
+                                            <span class="chronicleStoryName">${action.label}</span>
+                                            ${unread ? `<span class="chronicleStoryUnread">${this.getChronicleStoryFilterLabel("unread")}</span>` : ""}
+                                        </div>
+                                        <div class="chronicleStoryMetaRow">
+                                            <span class="chronicleStoryMetaChip action-category-${action.category}">${getActionCategoryLabel(action.category)}</span>
+                                            <span class="chronicleStoryMetaChip">${this.getActionTypeLabel(action.type)}</span>
+                                            <span class="chronicleStoryCount">${unlockedCount}/${totalCount}</span>
+                                            ${complete ? `<span class="chronicleStoryMetaChip chronicleStoryComplete">${this.getGuiText("chronicleCompleted")}</span>` : ""}
+                                        </div>
+                                    </button>
+                                `).join("")}
+                            </div>
+                        </section>
                     `;
                 }).join("")}
             </div>
@@ -733,6 +1696,7 @@ class View {
 
     updatePlannerStatus() {
         const predictorState = htmlElement("plannerPredictorState");
+        const trackedStatState = htmlElement("plannerTrackedStatState");
         const selectionState = htmlElement("plannerSelectionState");
         const predictorLabel = {
             off: this.getGuiText("predictorOff"),
@@ -742,6 +1706,8 @@ class View {
         }[options.predictor ? this.predictorState : "off"];
         predictorState.textContent = `${this.getGuiText("predictor")}: ${predictorLabel}`;
         predictorState.dataset.state = options.predictor ? this.predictorState : "off";
+        trackedStatState.textContent = `${this.isChineseLanguage() ? "\u8ddf\u8e2a\u9879" : "Tracked"}: ${this.getTrackedStatLabel()}`;
+        trackedStatState.dataset.state = options.predictor ? this.predictorState : "off";
 
         let selectionLabel = this.getGuiText("nothingSelected");
         if (this.inspectorSelection?.kind === "action") {
@@ -751,6 +1717,51 @@ class View {
             selectionLabel = `${this.getGuiText("selected")}: ${this.getGuiText("log")} #${this.inspectorSelection.index + 1}`;
         }
         selectionState.textContent = selectionLabel;
+        this.updatePredictorPlannerPanel();
+    }
+
+    handleQueueRowClick(actionId, event) {
+        if (event?.target instanceof HTMLElement && event.target.closest(".nextActionButtons")) return;
+        this.openInspectorForQueue(actionId);
+    }
+
+    handleQueueControlClick(actionId, callback, event) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        callback(actionId);
+    }
+
+    updatePredictorPlannerPanel() {
+        const panel = document.getElementById("plannerPredictorPanel");
+        const heading = document.getElementById("plannerPredictorHeading");
+        const viewHeading = document.getElementById("plannerViewHeading");
+        const trackedStatLabel = document.getElementById("plannerTrackedStatLabel");
+        const trackedStatInput = document.getElementById("predictorTrackedStatInput");
+        const totalDisplay = document.getElementById("predictorTotalDisplay");
+        const statisticDisplay = document.getElementById("predictorStatisticDisplay");
+        if (heading instanceof HTMLElement) {
+            heading.textContent = this.getGuiText("plannerPredictorHeading");
+        }
+        if (viewHeading instanceof HTMLElement) {
+            viewHeading.textContent = this.getGuiText("plannerViewHeading");
+        }
+        if (trackedStatLabel instanceof HTMLElement) {
+            trackedStatLabel.textContent = this.isChineseLanguage() ? "\u8ddf\u8e2a\u9879" : "Tracked";
+        }
+        if (trackedStatInput instanceof HTMLSelectElement) {
+            trackedStatInput.value = options.predictorTrackedStat;
+            trackedStatInput.title = `${this.getTrackedStatLabel()}`;
+        }
+        if (!options.predictor) {
+            if (totalDisplay instanceof HTMLElement) totalDisplay.textContent = "";
+            if (statisticDisplay instanceof HTMLElement) statisticDisplay.textContent = "";
+        }
+        if (panel instanceof HTMLElement) {
+            panel.classList.toggle("is-disabled", !options.predictor);
+            panel.dataset.state = options.predictor ? this.predictorState : "off";
+        }
     }
 
     getActiveQueueTownNum() {
@@ -887,6 +1898,8 @@ class View {
 
         if (dungeonShowing !== undefined) this.updateSoulstoneChance(dungeonShowing);
         if (this.updateStatGraphNeeded) statGraph.update();
+        this.updateQuickSettings();
+        this.updatePlannerStatus();
         this.updateTime();
     };
 
@@ -1149,6 +2162,7 @@ class View {
     updateBuff(buff) {
         if (buffs[buff].amt === 0) {
             document.getElementById(`buff${buff}Container`).style.display = "none";
+            this.updateBuffGroups();
             return;
         }
         let container = document.getElementById(`buff${buff}Container`);
@@ -1158,12 +2172,14 @@ class View {
             this.updateTrainingLimits();
         }
         this.adjustTooltipPosition(container.querySelector("div.showthis"));
+        this.updateBuffGroups();
     };
 
     updateBuffs() {
         for (const buff of buffList) {
             this.updateBuff(buff);
         }
+        this.updateBuffGroups();
     };
 
     /** @param {string|gapi.client.drive.File} fileOrText */
@@ -1269,9 +2285,50 @@ class View {
         document.getElementById("totalTicks").textContent = `${formatNumber(actions.completedTicks)} | ${formatTime(timeCounter)}`;
         document.getElementById("effectiveTime").textContent = `${formatTime(effectiveTime)}`;
     };
+    toggleTrackedResourcePin(resource, event) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        const index = this.pinnedTrackedResources.indexOf(resource);
+        if (index >= 0) {
+            this.pinnedTrackedResources.splice(index, 1);
+        } else {
+            this.pinnedTrackedResources.unshift(resource);
+        }
+        window.localStorage.setItem("pinnedTrackedResources", JSON.stringify(this.pinnedTrackedResources));
+        this.applyTrackedResourcePins();
+    }
+    applyTrackedResourcePins() {
+        const container = document.getElementById("trackedResources");
+        if (!(container instanceof HTMLElement)) return;
+        const pinnedSet = new Set(this.pinnedTrackedResources);
+        const resourceElements = Array.from(container.querySelectorAll(".resource[data-resource-id]"))
+            .filter(element => element instanceof HTMLElement);
+        resourceElements.sort((left, right) => {
+            const leftPinned = pinnedSet.has(left.dataset.resourceId ?? "");
+            const rightPinned = pinnedSet.has(right.dataset.resourceId ?? "");
+            if (leftPinned !== rightPinned) return leftPinned ? -1 : 1;
+            return Number(left.dataset.resourceOrder ?? "0") - Number(right.dataset.resourceOrder ?? "0");
+        });
+        for (const element of resourceElements) {
+            container.appendChild(element);
+            const resourceId = element.dataset.resourceId ?? "";
+            const isPinned = pinnedSet.has(resourceId);
+            element.classList.toggle("resource-pinned", isPinned);
+            const button = element.querySelector(".trackedResourcePinButton");
+            if (button instanceof HTMLElement) {
+                button.classList.toggle("is-active", isPinned);
+                button.textContent = isPinned ? "\u2605" : "\u2606";
+                const label = this.getTrackedResourcePinLabel(isPinned);
+                button.setAttribute("title", label);
+                button.setAttribute("aria-label", label);
+            }
+        }
+    }
     updateResource(resource) {
         const element = htmlElement(`${resource}Div`, false, false);
-        if (element) element.style.display = resources[resource] ? "inline-block" : "none";
+        if (element) element.style.display = resources[resource] ? "inline-flex" : "none";
 
         if (resource === "supplies") {
             const suppliesCostElement = document.getElementById("suppliesCost");
@@ -1287,6 +2344,7 @@ class View {
     };
     updateResources() {
         for (const resource in resources) this.updateResource(resource);
+        this.applyTrackedResourcePins();
     };
     updateActionTooltips() {
         document.getElementById("goldInvested").textContent = intToStringRound(goldInvested);
@@ -1334,6 +2392,40 @@ class View {
             inline: "nearest",
         })
     };
+    getQueuedActionRepeatKey(queuedAction) {
+        return [
+            queuedAction.name,
+            queuedAction.loops,
+            queuedAction.disabled ? 1 : 0,
+            queuedAction.collapsed ? 1 : 0,
+            queuedAction.action.townNum,
+        ].join("|");
+    }
+    annotateQueuedActionsForDisplay(queuedActions) {
+        const selectedQueueActionId = this.inspectorSelection?.source === "queue"
+            ? this.inspectorSelection.actionId
+            : -1;
+        for (let start = 0; start < queuedActions.length;) {
+            let end = start + 1;
+            const repeatKey = this.getQueuedActionRepeatKey(queuedActions[start]);
+            while (end < queuedActions.length && this.getQueuedActionRepeatKey(queuedActions[end]) === repeatKey) {
+                end++;
+            }
+            const repeatGroupSize = end - start;
+            for (let index = start; index < end; index++) {
+                const queuedAction = queuedActions[index];
+                queuedAction.repeatGroupSize = repeatGroupSize;
+                queuedAction.repeatGroupIndex = index - start;
+                queuedAction.isRepeatLeader = repeatGroupSize > 1 && index === start;
+                queuedAction.hideInRepeatGroup = this.queueCompactRepeats
+                    && repeatGroupSize > 1
+                    && index > start
+                    && queuedAction.actionId !== selectedQueueActionId;
+            }
+            start = end;
+        }
+        return queuedActions;
+    }
     updateNextActions() {
         const {scrollTop} = nextActionsDiv; // save the current scroll position
         this.setPredictorState(options.predictor ? "running" : "off");
@@ -1354,6 +2446,7 @@ class View {
                 isActiveZone: action.townNum === activeTownNum,
             };
         });
+        this.annotateQueuedActionsForDisplay(queuedActions);
 
         const actionContainers = d3.select(nextActionsDiv)
             .selectAll(".nextActionContainer")
@@ -1363,6 +2456,7 @@ class View {
                     <div
                         id='nextActionContainer${i}'
                         class='nextActionContainer small showthat'
+                        onclick=${this.handleQueueRowClick.bind(this, i)}
                         ondragover=${handleDragOver}
                         ondrop=${handleDragDrop}
                         ondragstart=${handleDragStart}
@@ -1372,18 +2466,18 @@ class View {
                         draggable='true' tabindex='0' role='button' data-action-id='${i}'
                     >
                         <div class='nextActionLoops'><img class='smallIcon imageDragFix'> ×
-                        <div class='bold'></div></div>
+                        <div class='bold'></div><span class='nextActionRepeatBadge hidden'></span></div>
                         <div class='nextActionCategoryMark'></div>
                         <div class='nextActionButtons'>
-                            <button onclick=${capAction.bind(null, i)}      class='capButton actionIcon far fa-circle'></button>
-                            <button onclick=${addLoop.bind(null, i)}        class='plusButton actionIcon fas fa-plus'></button>
-                            <button onclick=${removeLoop.bind(null, i)}     class='minusButton actionIcon fas fa-minus'></button>
-                            <button onclick=${split.bind(null, i)}          class='splitButton actionIcon fas fa-arrows-alt-h'></button>
-                            <button onclick=${collapse.bind(null, i)}       class='collapseButton actionIcon fas fa-compress-alt'></button>
-                            <button onclick=${moveUp.bind(null, i)}         class='upButton actionIcon fas fa-sort-up'></button>
-                            <button onclick=${moveDown.bind(null, i)}       class='downButton actionIcon fas fa-sort-down'></button>
-                            <button onclick=${disableAction.bind(null, i)}  class='skipButton actionIcon far fa-times-circle'></button>
-                            <button onclick=${removeAction.bind(null, i)}   class='removeButton actionIcon fas fa-times'></button>
+                            <button onclick=${this.handleQueueControlClick.bind(this, i, capAction)}      class='capButton actionIcon far fa-circle'></button>
+                            <button onclick=${this.handleQueueControlClick.bind(this, i, addLoop)}        class='plusButton actionIcon fas fa-plus'></button>
+                            <button onclick=${this.handleQueueControlClick.bind(this, i, removeLoop)}     class='minusButton actionIcon fas fa-minus'></button>
+                            <button onclick=${this.handleQueueControlClick.bind(this, i, split)}          class='splitButton actionIcon fas fa-arrows-alt-h'></button>
+                            <button onclick=${this.handleQueueControlClick.bind(this, i, collapse)}       class='collapseButton actionIcon fas fa-compress-alt'></button>
+                            <button onclick=${this.handleQueueControlClick.bind(this, i, moveUp)}         class='upButton actionIcon fas fa-sort-up'></button>
+                            <button onclick=${this.handleQueueControlClick.bind(this, i, moveDown)}       class='downButton actionIcon fas fa-sort-down'></button>
+                            <button onclick=${this.handleQueueControlClick.bind(this, i, disableAction)}  class='skipButton actionIcon far fa-times-circle'></button>
+                            <button onclick=${this.handleQueueControlClick.bind(this, i, removeAction)}   class='removeButton actionIcon fas fa-times'></button>
                         </div>
                         <ul class='koviko'></ul>
                     </div>
@@ -1414,6 +2508,8 @@ class View {
             .classed("starts-new-zone", a => a.startsNewZone)
             .classed("zone-active-segment", a => a.isActiveZone)
             .classed("zone-collapsed", a => actions.zoneSpanAtIndex(a.index).isCollapsed)
+            .classed("repeat-group-leader", a => !!a.isRepeatLeader)
+            .classed("repeat-group-hidden", a => !!a.hideInRepeatGroup)
             .classed("action-is-collapsing-zone", a => {
                 const zoneSpan = actions.zoneSpanAtIndex(a.index);
                 return zoneSpan.end === a.index && zoneSpan.isCollapsed;
@@ -1440,12 +2536,37 @@ class View {
                 .select("div.nextActionLoops > div.bold")
                 .text(action => action.loops > 99999 ? toSuffix(action.loops) : formatNumber(action.loops))
             )
+            .call(container => container
+                .select("span.nextActionRepeatBadge")
+                .classed("hidden", action => !(action.repeatGroupSize > 1 && action.isRepeatLeader))
+                .text(action => action.repeatGroupSize > 1 ? `x${action.repeatGroupSize}` : "")
+                .attr("title", action => action.repeatGroupSize > 1 ? `${action.repeatGroupSize} matching rows` : "")
+            )
+            .call(container => {
+                const buttonTitles = [
+                    ["button.capButton", this.getGuiText("queueCapAction")],
+                    ["button.plusButton", this.getGuiText("queueAddLoop")],
+                    ["button.minusButton", this.getGuiText("queueRemoveLoop")],
+                    ["button.splitButton", this.getGuiText("queueSplit")],
+                    ["button.collapseButton", this.getGuiText("queueCollapse")],
+                    ["button.upButton", this.getGuiText("queueMoveUp")],
+                    ["button.downButton", this.getGuiText("queueMoveDown")],
+                    ["button.skipButton", this.getGuiText("queueDisable")],
+                    ["button.removeButton", this.getGuiText("queueRemove")],
+                ];
+                for (const [selector, label] of buttonTitles) {
+                    container.selectAll(selector)
+                        .attr("title", label)
+                        .attr("aria-label", label);
+                }
+            });
 
         if (options.predictor) {
             Koviko.postUpdateHandler(actions.next, nextActionsDiv);
         }
         nextActionsDiv.scrollTop = Math.max(nextActionsDiv.scrollTop, scrollTop); // scrolling down to see the new thing added is okay, scrolling up when you click an action button is not
         this.updateQueueSegmentHighlight();
+        this.updateLoadoutManager();
         this.applyInspectorSelectionHighlight();
         this.renderInspector();
         this.updatePlannerStatus();
@@ -1643,6 +2764,7 @@ class View {
             // element.scrollIntoView({block: "nearest", inline: "nearest", behavior: "auto"});
             setTimeout(() => element.classList.remove("highlight"), 1);
         }
+        this.renderChronicleLogControls();
         this.applyInspectorSelectionHighlight();
         this.renderInspector();
     }
@@ -1923,9 +3045,15 @@ class View {
         document.getElementById("townActionTitle").append(Rendered.html`
             <div id="townBrowserTools" class="townBrowserTools">
                 <div id="townSummaryStrip" class="townSummaryStrip">
-                    <span id="townSummaryVisible" class="townSummaryPill"></span>
-                    <span id="townSummaryUnread" class="townSummaryPill"></span>
-                    <span id="townSummaryShortcut" class="townSummaryPill"></span>
+                    <div class="townSummaryPrimary">
+                        <span id="townSummaryVisible" class="townSummaryPill"></span>
+                        <span id="townSummaryUnread" class="townSummaryPill"></span>
+                    </div>
+                    <div id="townSummaryCategoryRow" class="townSummaryCategoryRow">
+                        ${actionCategories.map(category => `
+                            <span id="townSummaryCategory${category}" class="townSummaryPill townSummaryCategoryPill action-category-${category}"></span>
+                        `).join("")}
+                    </div>
                 </div>
                 <div id="townFilterBar" class="townFilterBar">
                     <input
@@ -2075,10 +3203,21 @@ class View {
         const shownTown = towns[townShowing] ?? towns[0];
         const unreadStories = Array.isArray(globalThis.unreadActionStories) ? globalThis.unreadActionStories : [];
         const visibleActions = shownTown?.totalActionList?.filter(action => action.visible()) ?? [];
+        /** @type {Record<ActionCategory, number>} */
+        const categoryCounts = {
+            advance: 0,
+            growth: 0,
+            resource: 0,
+            shortcut: 0,
+            side: 0,
+        };
+        for (const action of visibleActions) {
+            categoryCounts[action.category]++;
+        }
         return {
             visibleCount: visibleActions.length,
             unreadCount: visibleActions.filter(action => unreadStories.includes(`storyContainer${action.varName}`)).length,
-            shortcutCount: visibleActions.filter(action => action.category === "shortcut").length,
+            categoryCounts,
         };
     }
 
@@ -2089,10 +3228,19 @@ class View {
             searchInput.placeholder = this.getGuiText("townSearchPlaceholder");
         }
 
-        const {visibleCount, unreadCount, shortcutCount} = this.getTownBrowserStats();
+        const {visibleCount, unreadCount, categoryCounts} = this.getTownBrowserStats();
         htmlElement("townSummaryVisible").textContent = `${this.getGuiText("townSummaryVisible")}: ${visibleCount}`;
         htmlElement("townSummaryUnread").textContent = `${this.getGuiText("townSummaryUnread")}: ${unreadCount}`;
-        htmlElement("townSummaryShortcut").textContent = `${this.getGuiText("townSummaryShortcut")}: ${shortcutCount}`;
+        for (const category of actionCategories) {
+            const pill = htmlElement(`townSummaryCategory${category}`);
+            const count = categoryCounts[category];
+            pill.innerHTML = `
+                <span class="townSummaryCategoryLabel">${getActionCategoryShortLabel(category)}</span>
+                <span class="townSummaryCategoryCount">${count}</span>
+            `;
+            pill.title = `${getActionCategoryLabel(category)}: ${count}`;
+            pill.classList.toggle("is-empty", count === 0);
+        }
 
         /** @type {[keyof View["townQuickFilters"], string][]} */
         const buttons = [
@@ -2181,6 +3329,7 @@ class View {
         if (elem) {
             removeClassFromDiv(document.getElementById(`load${num}`), "unused");
         }
+        this.updateLoadoutManager();
     };
 
     updateLoadoutNames() {
@@ -2188,6 +3337,7 @@ class View {
             document.getElementById(`load${i + 1}`).textContent = loadoutnames[i];
         }
         inputElement("renameLoadout").value = loadoutnames[curLoadout - 1] ?? getLoadoutNameDefault();
+        this.updateLoadoutManager();
     };
 
     createTownActions() {
@@ -2361,21 +3511,29 @@ class View {
                 ${statPie}
                 <div class='showthis when-unlocked' draggable='false'>
                     ${categoryTooltip}
-                    ${action.tooltip}<span id='goldCost${action.varName}'></span>
-                    ${(action.goldCost === undefined) ? "" : action.tooltip2}
-                    <br>
-                    ${actionSkills}
-                    <div class='bold'>${_txt("actions>tooltip>mana_cost")}:</div> <div id='manaCost${action.varName}'>${formatNumber(action.manaCost())}</div><br>
-                    <dl class='action-stats'>${actionStats}</dl>
-                    <div class='bold'>${_txt("actions>tooltip>exp_multiplier")}:</div><div id='expMult${action.varName}'>${action.expMult * 100}</div>%<br>
-                    ${skillDetails}
+                    <div class='tooltipPrimary'>
+                        ${action.tooltip}<span id='goldCost${action.varName}'></span>
+                        ${(action.goldCost === undefined) ? "" : action.tooltip2}
+                    </div>
+                    <div class='tooltipSimpleHint'>${this.getGuiText("simpleTooltipHint")}</div>
+                    <div class='tooltipAdvanced'>
+                        ${actionSkills}
+                        <div class='bold'>${_txt("actions>tooltip>mana_cost")}:</div> <div id='manaCost${action.varName}'>${formatNumber(action.manaCost())}</div><br>
+                        <dl class='action-stats'>${actionStats}</dl>
+                        <div class='bold'>${_txt("actions>tooltip>exp_multiplier")}:</div><div id='expMult${action.varName}'>${action.expMult * 100}</div>%<br>
+                        ${skillDetails}
+                    </div>
                 </div>
                 <div class='showthis when-locked' draggable='false'>
                     ${categoryTooltip}
-                    ${lockedText}
-                    <br>
-                    ${lockedSkills}
-                    ${lockedStats}
+                    <div class='tooltipPrimary'>
+                        ${lockedText}
+                    </div>
+                    <div class='tooltipSimpleHint'>${this.getGuiText("simpleTooltipHint")}</div>
+                    <div class='tooltipAdvanced'>
+                        ${lockedSkills}
+                        ${lockedStats}
+                    </div>
                 </div>
             </button>`;
 

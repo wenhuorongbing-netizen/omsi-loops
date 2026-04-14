@@ -1,0 +1,34 @@
+{
+  "desktop": {
+    "predictorEnabled": true,
+    "predictorState": "ready",
+    "queueSelectionSource": "queue",
+    "queueSelectionActionId": 1,
+    "predictorBlockCount": 1,
+    "predictorTooltipTableCount": 1,
+    "plannerHeaderVisible": true,
+    "plannerPredictorHeadingPresent": true,
+    "plannerViewHeadingPresent": true,
+    "uiPreset": "planner",
+    "repeatTogglePressed": "false",
+    "repeatBadges": [
+      "x3"
+    ]
+  },
+  "mobile": {
+    "responsiveUi": true,
+    "readingPane": "inspector",
+    "drawerState": "open",
+    "bodyClasses": [
+      "mobile-reading-ui",
+      "mobile-reading-open"
+    ],
+    "readingShellPosition": "fixed",
+    "readingShellBottom": "50px",
+    "readingShellTransform": "matrix(1, 0, 0, 1, 0, 0)",
+    "visibleReadingPanes": [
+      "inspectorPane"
+    ]
+  },
+  "errors": []
+}

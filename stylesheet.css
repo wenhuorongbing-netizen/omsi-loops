@@ -583,6 +583,100 @@ input[type="checkbox"][disabled] + label {
     margin: 3px;
 }
 
+.legacy-loadout-shell {
+    display: none !important;
+}
+
+#loadoutManagerShell {
+    margin-top: 6px;
+    text-align: left;
+}
+
+#loadoutManagerToggle {
+    width: 100%;
+    margin-right: 0;
+}
+
+#loadoutManagerPanel {
+    margin-top: 8px;
+    padding: 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--popup-background) 82%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--button-shadow) 30%, transparent);
+}
+
+.loadoutManagerSummary {
+    font-size: 0.75rem;
+    line-height: 1.35;
+    margin-bottom: 4px;
+}
+
+#loadoutSlotGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    margin: 8px 0;
+}
+
+.loadoutSlotButton {
+    width: 100%;
+    min-height: 68px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 2px;
+    padding: 8px;
+    text-align: left;
+    white-space: normal;
+    line-height: 1.2;
+}
+
+.loadoutSlotName {
+    font-weight: 700;
+}
+
+.loadoutSlotMeta,
+.loadoutSlotSaved {
+    font-size: 0.7rem;
+    opacity: 0.85;
+}
+
+.loadoutSlotSaved {
+    opacity: 0.75;
+}
+
+.loadoutSlotButton.loadout-slot-match {
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--button-background) 70%, white);
+}
+
+.loadoutSlotButton.loadout-slot-dirty {
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--alert-color) 60%, transparent);
+}
+
+#loadoutManagerActions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    margin: 8px 0 6px;
+}
+
+#loadoutManagerActions .loadoutbutton {
+    width: 100%;
+    margin: 0;
+}
+
+#renameLoadout {
+    width: 100%;
+    height: 24px;
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    padding: 0 8px;
+    background: var(--input-background);
+    color: var(--input-color);
+}
+
 #bonusIsActiveInput:not(:checked) + .button,
 .unused {
     background-color: var(--button-inactive-background);
@@ -622,7 +716,11 @@ input[type="checkbox"][disabled] + label {
 .readingTab.is-active,
 .readingSubTab.is-active,
 .chronicleChapterButton.is-active {
-    background-color: var(--button-hover-background);
+    background-color: color-mix(in srgb, var(--button-background) 22%, var(--body-background));
+    border-color: color-mix(in srgb, var(--button-background) 55%, var(--input-border));
+    color: var(--default-color);
+    text-shadow: none;
+    font-weight: 700;
     box-shadow: 0 3px var(--button-shadow);
 }
 
@@ -700,6 +798,69 @@ input[type="checkbox"][disabled] + label {
     margin-bottom: 0;
 }
 
+#chronicleLogPane,
+#chronicleStoriesPane {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chronicleToolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.chronicleStatsBar,
+.chronicleFilterBar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.chronicleStatChip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 22px;
+    padding: 0 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--popup-background) 78%, transparent);
+    font-size: 0.74rem;
+    font-weight: 700;
+}
+
+.chronicleFilterButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 28px;
+}
+
+.chronicleFilterCount {
+    min-width: 1.25em;
+    opacity: 0.82;
+    font-size: 0.78em;
+}
+
+.chronicleEmptyNotice {
+    display: block;
+    padding: 10px 2px;
+    opacity: 0.8;
+    line-height: 1.45;
+}
+
+#chronicleStoriesContent,
+#chronicleLogBody {
+    display: block;
+}
+
+.chronicle-log-hidden {
+    display: none !important;
+}
+
 #chronicleChapterRail {
     display: flex;
     flex-wrap: wrap;
@@ -724,16 +885,48 @@ input[type="checkbox"][disabled] + label {
 }
 
 .chronicleStoryList {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+}
+
+.chronicleStorySections {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 12px;
+}
+
+.chronicleStorySection {
+    border: 1px solid var(--input-border);
+    border-radius: 10px;
+    padding: 10px;
+    background: color-mix(in srgb, var(--body-background) 88%, var(--popup-background));
+}
+
+.chronicleStorySectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.chronicleStorySectionTitle {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.chronicleStorySectionMeta {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    text-align: right;
 }
 
 .chronicleStoryCard {
-    display: grid;
-    grid-template-columns: max-content 1fr max-content;
-    gap: 8px;
-    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: stretch;
     width: 100%;
     padding: 8px 10px;
     border: 1px solid var(--input-border);
@@ -748,24 +941,57 @@ input[type="checkbox"][disabled] + label {
     box-shadow: inset 0 0 0 2px var(--story-highlight-border);
 }
 
-.chronicleStoryBadge {
-    display: inline-flex;
+.chronicleStoryCard.is-complete {
+    border-color: color-mix(in srgb, var(--button-background) 40%, var(--input-border));
+}
+
+.chronicleStoryTopline {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    min-width: 22px;
-    height: 18px;
-    padding: 0 4px;
-    border: 2px var(--action-category-border-style) var(--action-category-accent);
-    border-radius: 999px;
-    color: var(--action-category-accent);
-    font-size: 0.6rem;
+    gap: 8px;
+}
+
+.chronicleStoryName {
     font-weight: 700;
 }
 
+.chronicleStoryMetaRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.chronicleStoryMetaChip,
+.chronicleStoryCount,
+.chronicleStoryUnread {
+    display: inline-flex;
+    align-items: center;
+    min-height: 20px;
+    padding: 0 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--body-background) 82%, transparent);
+    font-size: 0.72rem;
+}
+
+.chronicleStoryMetaChip {
+    color: var(--default-color);
+}
+
 .chronicleStoryCount {
-    font-size: 0.75rem;
     font-weight: 700;
-    opacity: 0.8;
+    opacity: 0.85;
+}
+
+.chronicleStoryUnread {
+    border-color: color-mix(in srgb, var(--story-highlight-border) 65%, var(--input-border));
+    background: color-mix(in srgb, var(--story-highlight-background) 40%, var(--body-background));
+}
+
+.chronicleStoryComplete {
+    border-color: color-mix(in srgb, var(--button-background) 55%, var(--input-border));
+    background: color-mix(in srgb, var(--button-background) 14%, var(--body-background));
 }
 
 #statsWindow {
@@ -827,6 +1053,34 @@ input[type="checkbox"][disabled] + label {
     width:100%;
     position:relative;
     text-align:left;
+}
+
+.buffGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 6px 0;
+    border-top: 1px solid color-mix(in srgb, var(--input-border) 70%, transparent);
+}
+
+.buffGroup:first-child {
+    border-top: none;
+    padding-top: 0;
+}
+
+.buffGroupHeader {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    padding-left: 4px;
+}
+
+.buffGroupList {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .buffContainer {
@@ -1164,6 +1418,13 @@ input[type="checkbox"][disabled] + label {
 
 .townSummaryStrip {
     display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.townSummaryPrimary,
+.townSummaryCategoryRow {
+    display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 6px;
@@ -1180,6 +1441,25 @@ input[type="checkbox"][disabled] + label {
     background: color-mix(in srgb, var(--popup-background) 80%, transparent);
     font-size: 0.75rem;
     font-weight: 700;
+}
+
+.townSummaryCategoryPill {
+    min-width: 46px;
+    padding: 0 6px;
+    gap: 6px;
+    font-size: 0.7rem;
+}
+
+.townSummaryCategoryPill.is-empty {
+    opacity: 0.55;
+}
+
+.townSummaryCategoryLabel {
+    color: var(--action-category-accent);
+}
+
+.townSummaryCategoryCount {
+    font-variant-numeric: tabular-nums;
 }
 
 .townFilterBar {
@@ -1779,6 +2059,274 @@ li#actionLogLatest {
     border-color: var(--alert-color);
 }
 
+#plannerMetaBar {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+#plannerPredictorPanel {
+    display: grid;
+    gap: 6px;
+    padding: 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--popup-background) 70%, transparent);
+}
+
+#plannerViewControls {
+    display: grid;
+    gap: 6px;
+    align-content: start;
+    padding: 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--popup-background) 70%, transparent);
+}
+
+.plannerMetaHeading {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.78;
+}
+
+#plannerPredictorPanel.is-disabled {
+    opacity: 0.75;
+}
+
+#plannerPredictorSummary {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+#plannerPredictorPanel #predictorTotalDisplay,
+#plannerPredictorPanel #predictorStatisticDisplay {
+    display: inline-flex;
+    min-height: 22px;
+    align-items: center;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--body-background) 80%, transparent);
+    font-weight: 700;
+}
+
+#plannerPredictorControls {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+#plannerTrackedStatLabel {
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+#plannerPredictorPanel #predictorTrackedStatInput {
+    display: inline-block;
+    min-width: 180px;
+    max-width: 100%;
+}
+
+.plannerPresetBar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+}
+
+.plannerPresetButton,
+.plannerToggleButton {
+    width: 100%;
+    min-height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+@media (min-width: 1220px) {
+    #plannerMetaBar {
+        grid-template-columns: minmax(0, 1.35fr) minmax(250px, 0.95fr);
+        align-items: start;
+    }
+}
+
+.plannerPresetButton.is-active,
+.plannerToggleButton.is-active {
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--button-background) 70%, white), 0 3px var(--button-shadow);
+}
+
+.quickSettingsPanel {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    min-width: 260px;
+}
+
+.quickSettingsSection {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.quickSettingsSupportSection {
+    grid-column: 1 / -1;
+}
+
+.quickSettingsHeading {
+    font-size: 0.78rem;
+    font-weight: 700;
+    opacity: 0.84;
+}
+
+.quickSettingsToggleGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.quickSettingsDensityBar {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.quickSettingsDensityButton {
+    min-height: 30px;
+}
+
+.quickSettingButton {
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    white-space: normal;
+    line-height: 1.2;
+}
+
+.quickSettingButton::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--default-color) 25%, transparent);
+    flex-shrink: 0;
+}
+
+.quickSettingButton.is-active::after {
+    background: var(--button-background);
+}
+
+.quickSettingUtilityButton::after {
+    display: none;
+}
+
+.hotkeyReferenceToggle {
+    margin-top: 4px;
+}
+
+.hotkeyReferencePanel {
+    display: grid;
+    gap: 10px;
+    margin-top: 8px;
+    padding: 10px;
+    border: 1px solid var(--input-border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--popup-background) 78%, transparent);
+}
+
+.hotkeyReferenceHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.hotkeyReferenceTitle {
+    font-weight: 700;
+    font-size: 0.84rem;
+}
+
+.hotkeyReferenceStatus {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 74px;
+    min-height: 24px;
+    padding: 0 8px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.hotkeyReferenceStatus.is-active {
+    background: color-mix(in srgb, var(--button-background) 22%, transparent);
+    color: var(--button-background);
+}
+
+.hotkeyReferenceStatus.is-inactive {
+    background: color-mix(in srgb, var(--default-color) 12%, transparent);
+    color: var(--default-color);
+    opacity: 0.8;
+}
+
+.hotkeyReferenceIntro {
+    font-size: 0.75rem;
+    line-height: 1.35;
+    opacity: 0.88;
+}
+
+.hotkeyReferenceGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+}
+
+.hotkeyReferenceGroup {
+    display: grid;
+    gap: 8px;
+}
+
+.hotkeyReferenceGroupTitle {
+    font-weight: 700;
+    font-size: 0.76rem;
+}
+
+.hotkeyReferenceList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+}
+
+.hotkeyReferenceRow {
+    display: grid;
+    grid-template-columns: minmax(72px, auto) minmax(0, 1fr);
+    gap: 8px;
+    align-items: start;
+    font-size: 0.75rem;
+    line-height: 1.3;
+}
+
+.hotkeyReferenceRow kbd {
+    display: inline-flex;
+    justify-content: center;
+    min-height: 22px;
+    padding: 2px 6px;
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--body-background) 85%, transparent);
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
 #plannerControls {
     display: flex;
     flex-direction: column;
@@ -1857,7 +2405,14 @@ li#actionLogLatest {
 .nextActionContainer:focus-visible,
 .actionLogEntry:focus-visible,
 .storyContainer:focus-visible,
-.chronicleStoryCard:focus-visible {
+.chronicleStoryCard:focus-visible,
+.readingTab:focus-visible,
+.readingSubTab:focus-visible,
+.chronicleChapterButton:focus-visible,
+.chronicleFilterButton:focus-visible,
+.quickSettingsDensityButton:focus-visible,
+.quickSettingButton:focus-visible,
+.hotkeyReferenceToggle:focus-visible {
     outline: 2px solid var(--button-background);
     outline-offset: 2px;
 }
@@ -1888,6 +2443,24 @@ li#actionLogLatest {
     align-items: center;
     gap: 4px;
     margin-left: 26px;
+}
+
+.nextActionRepeatBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 14px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--button-background) 20%, var(--body-background));
+    font-size: 0.6rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.nextActionContainer.repeat-group-hidden {
+    display: none;
 }
 .nextActionContainer.zone-collapsed:not(.action-is-collapsing-zone) {
     display: none;
@@ -1927,12 +2500,104 @@ li#actionLogLatest {
     display: flex;
     gap: 2px;
     justify-content: end;
+    padding: 2px;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--popup-background) 60%, transparent);
 }
 .nextActionButtons > * {
     flex-shrink:0;
 }
 
+.nextActionButtons > button {
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--body-background) 86%, transparent);
+    color: inherit;
+    cursor: pointer;
+}
+
+.nextActionButtons > button:hover,
+.nextActionButtons > button:focus-visible {
+    background: color-mix(in srgb, var(--button-background) 30%, var(--body-background));
+}
+
+.inspectorPredictorBlock {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--popup-background) 70%, transparent);
+}
+
+.inspectorPredictorHeader {
+    font-weight: 700;
+    font-size: 0.78rem;
+}
+
+.inspectorPredictorList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.inspectorPredictorList > li {
+    display: inline-flex;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--body-background) 75%, transparent);
+}
+
+.inspectorPredictorTooltip {
+    overflow: auto;
+}
+
+.inspectorPredictorTooltip table {
+    width: 100%;
+}
+
 .town-browser-hidden {
+    display: none !important;
+}
+
+.tooltipPrimary {
+    display: block;
+}
+
+.tooltipAdvanced {
+    display: block;
+    margin-top: 6px;
+}
+
+.tooltipSimpleHint {
+    display: none;
+    margin-top: 6px;
+    padding: 6px 8px;
+    border-left: 3px solid var(--button-background);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--popup-background) 75%, transparent);
+    font-size: 0.74rem;
+    line-height: 1.35;
+}
+
+.use-simple-tooltips :is(.actionOrTravelContainer .showthis, #actionTooltipContainer) .tooltipAdvanced {
+    display: none;
+}
+
+.use-simple-tooltips :is(.actionOrTravelContainer .showthis, #actionTooltipContainer) .tooltipSimpleHint {
+    display: block;
+}
+
+.inspectorRichText .tooltipSimpleHint {
     display: none !important;
 }
 
@@ -2197,8 +2862,169 @@ li#actionLogLatest {
 #trackedResources {
     display: flex;
     justify-content: center;
-    margin-bottom: -15px;
-    height: 16px;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: -10px;
+    min-height: 24px;
+    height: auto;
+}
+
+#trackedResources .resource {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 22px;
+    padding: 0 8px 0 24px;
+    border: 1px solid color-mix(in srgb, var(--input-border) 75%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--popup-background) 78%, transparent);
+}
+
+#trackedResources .resource.resource-pinned {
+    border-color: color-mix(in srgb, var(--button-background) 70%, var(--input-border));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--button-background) 40%, transparent);
+}
+
+.trackedResourcePinButton {
+    position: absolute;
+    left: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+}
+
+.trackedResourcePinButton.is-active {
+    color: var(--button-background);
+}
+
+.trackedResourcePinButton:hover,
+.trackedResourcePinButton:focus-visible {
+    background: color-mix(in srgb, var(--button-background) 18%, transparent);
+}
+
+body.ui-preset-planner #statsColumn {
+    width: 286px !important;
+}
+
+body.ui-preset-planner #actionsColumn {
+    width: 396px !important;
+}
+
+body.ui-preset-planner #townColumn {
+    width: 519px !important;
+}
+
+body.ui-preset-reader #statsColumn {
+    width: 372px !important;
+}
+
+body.ui-preset-reader #actionsColumn {
+    width: 320px !important;
+}
+
+body.ui-preset-reader #townColumn {
+    width: 509px !important;
+}
+
+body.ui-preset-reader #readingShell {
+    margin-bottom: 16px;
+}
+
+body.ui-preset-compact {
+    font-size: 0.95rem;
+    --action-list-height: 455px;
+}
+
+body.ui-preset-compact #plannerHeader {
+    padding-bottom: 4px;
+}
+
+body.ui-preset-compact .readingPane,
+body.ui-preset-compact #plannerPredictorPanel,
+body.ui-preset-compact #loadoutManagerPanel {
+    padding: 8px;
+}
+
+body.ui-preset-compact .nextActionContainer,
+body.ui-preset-compact .curActionContainer {
+    min-height: 18px;
+}
+
+body.ui-density-compact {
+    font-size: 0.94rem;
+}
+
+body.ui-density-compact .readingPane,
+body.ui-density-compact #plannerPredictorPanel,
+body.ui-density-compact #plannerViewControls,
+body.ui-density-compact #loadoutManagerPanel,
+body.ui-density-compact .chronicleStorySection {
+    padding: 8px;
+}
+
+body.ui-density-compact .readingTabs,
+body.ui-density-compact .readingSubTabs,
+body.ui-density-compact .chronicleToolbar,
+body.ui-density-compact .chronicleStorySections {
+    gap: 6px;
+}
+
+body.ui-density-compact .chronicleStoryCard,
+body.ui-density-compact .nextActionContainer,
+body.ui-density-compact .curActionContainer {
+    min-height: 18px;
+}
+
+body.ui-density-compact .quickSettingButton,
+body.ui-density-compact .quickSettingsDensityButton,
+body.ui-density-compact .chronicleFilterButton {
+    min-height: 28px;
+}
+
+body.ui-density-large {
+    font-size: 1.08rem;
+}
+
+body.ui-density-large .readingPane,
+body.ui-density-large #plannerPredictorPanel,
+body.ui-density-large #plannerViewControls,
+body.ui-density-large #loadoutManagerPanel,
+body.ui-density-large .chronicleStorySection {
+    padding: 12px;
+}
+
+body.ui-density-large .readingTabs,
+body.ui-density-large .readingSubTabs,
+body.ui-density-large .chronicleToolbar,
+body.ui-density-large .chronicleStorySections {
+    gap: 10px;
+}
+
+body.ui-density-large .quickSettingButton,
+body.ui-density-large .quickSettingsDensityButton,
+body.ui-density-large .chronicleFilterButton,
+body.ui-density-large .readingTab,
+body.ui-density-large .readingSubTab {
+    min-height: 34px;
+}
+
+body.ui-density-large .chronicleStatChip,
+body.ui-density-large .chronicleStoryMetaChip,
+body.ui-density-large .chronicleStoryCount,
+body.ui-density-large .chronicleStoryUnread {
+    min-height: 24px;
+}
 }
 
 /* Unused
@@ -2307,7 +3133,7 @@ li#actionLogLatest {
     flex-direction: column;
     height: 100%;
     }
-    & #actionList > *:not(.showthat, #actionChanges, #expandableList) {
+    & #actionList > *:not(.showthat, #plannerHeader, #actionChanges, #expandableList) {
         display: none;
     }
 
@@ -2876,6 +3702,41 @@ li#actionLogLatest {
 
         & #statsColumn {
             order: 4;
+        }
+
+        & #readingShell {
+            position: fixed;
+            inset: auto 0 calc(50px + env(safe-area-inset-bottom, 0px)) 0;
+            z-index: 1001;
+            width: auto;
+            margin: 0;
+            padding: 8px 10px 10px;
+            border-top: 1px solid var(--input-border);
+            border-top-left-radius: 14px;
+            border-top-right-radius: 14px;
+            background: color-mix(in srgb, var(--body-background) 92%, var(--popup-background));
+            box-shadow: 0 -10px 24px color-mix(in srgb, var(--button-shadow) 22%, transparent);
+            transform: translateY(calc(100% - 46px));
+            transition: transform 160ms ease;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        & body.mobile-reading-open #readingShell {
+            transform: translateY(0);
+        }
+
+        & body.mobile-reading-ui:not(.mobile-reading-open) #readingShell .readingPane {
+            display: none !important;
+        }
+
+        & body.mobile-reading-ui #readingTabs {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            padding-bottom: 4px;
+            background: linear-gradient(var(--body-background) 75%, var(--body-background-transparent) 100%);
         }
     
         & #statsColumn {

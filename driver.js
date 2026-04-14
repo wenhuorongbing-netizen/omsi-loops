@@ -458,6 +458,7 @@ function saveList() {
     }
     nameList(false);
     loadouts[curLoadout] = copyArray(actions.next);
+    view.noteLoadoutSaved(curLoadout);
     save();
     if ((inputElement("renameLoadout").value !== _txt("actions>tooltip>loadout_saved"))) globalCustomInput = inputElement("renameLoadout").value;
     inputElement("renameLoadout").value = _txt("actions>tooltip>loadout_saved");
@@ -481,6 +482,7 @@ function nameList(saveGame) {
         inputElement("renameLoadout").value = _txt("actions>tooltip>loadout_enter_name");
     }
     document.getElementById(`load${curLoadout}`).textContent = loadoutnames[curLoadout -1];
+    view.updateLoadoutManager();
     if (saveGame) save();
 }
 

@@ -2,8 +2,16 @@ const buffsView = Views.registerView("buffsContainer", {
     selector: "#buffsContainer",
     html() {
         const fullNames = Buff.fullNames;
+        const groups = [
+            {id: "trials", buffs: ["Heroism", "Aspirant"]},
+            {id: "ritual", buffs: ["Ritual", "Imbuement", "Imbuement2", "Imbuement3"]},
+            {id: "feast", buffs: ["Feast"]},
+            {id: "prestige", buffs: ["PrestigePhysical", "PrestigeMental", "PrestigeCombat", "PrestigeSpatiomancy", "PrestigeChronomancy", "PrestigeBartering", "PrestigeExpOverflow"]},
+        ];
         let html = "";
-        for (const buff of buffList) {
+        for (const group of groups) {
+            html += `<section class="buffGroup" id="buffGroup${group.id}"><div class="buffGroupHeader" id="buffGroupHeader${group.id}"></div><div class="buffGroupList">`;
+            for (const buff of group.buffs) {
             const fullName = fullNames[buff];
             const XMLName = getXMLName(fullName);
             const desc2 = _txtsObj(`buffs>${XMLName}`)[0].innerHTML.includes("desc2");
@@ -23,6 +31,8 @@ const buffsView = Views.registerView("buffsContainer", {
                         <input type="number" id="buff${buff}Cap" class="buffmaxinput" value="${buffHardCaps[buff]}" onchange="updateBuffCaps()">
                     </div>
                 </div>`;
+            }
+            html += "</div></section>";
         }
         return html;
     },

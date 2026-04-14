@@ -1,0 +1,54 @@
+{
+  "desktop": {
+    "presets": [
+      {
+        "preset": "classic",
+        "statsWidth": "360px",
+        "actionsWidth": "332px",
+        "townWidth": "720px",
+        "plannerHeaderVisible": true
+      },
+      {
+        "preset": "planner",
+        "statsWidth": "286px",
+        "actionsWidth": "396px",
+        "townWidth": "519px",
+        "plannerHeaderVisible": true
+      },
+      {
+        "preset": "reader",
+        "statsWidth": "372px",
+        "actionsWidth": "320px",
+        "townWidth": "509px",
+        "plannerHeaderVisible": true
+      },
+      {
+        "preset": "compact",
+        "statsWidth": "360px",
+        "actionsWidth": "333.406px",
+        "townWidth": "720px",
+        "plannerHeaderVisible": true
+      }
+    ]
+  },
+  "mobile": {
+    "chronicleDrawer": {
+      "responsiveUi": true,
+      "readingPane": "chronicle",
+      "drawerOpen": true,
+      "drawerFixed": "fixed",
+      "chronicleVisible": true,
+      "visibleReadingPanes": [
+        "chroniclePane"
+      ]
+    },
+    "characterReturn": {
+      "readingPane": "character",
+      "drawerOpen": false,
+      "mobileReadingUi": true,
+      "characterVisible": true,
+      "chronicleHidden": true
+    }
+  },
+  "errors": []
+}

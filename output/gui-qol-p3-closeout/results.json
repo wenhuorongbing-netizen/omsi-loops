@@ -1,0 +1,26 @@
+{
+  "optionsHotkeyPanel": {
+    "visible": true,
+    "rowCount": 15,
+    "expanded": "true"
+  },
+  "quickHotkeyPanel": {
+    "visible": true,
+    "statusBefore": "hotkeyReferenceStatus is-active",
+    "statusAfterDisable": "hotkeyReferenceStatus is-inactive"
+  },
+  "simpleTooltips": {
+    "off": {
+      "advancedDisplay": "block",
+      "hintDisplay": "none"
+    },
+    "on": {
+      "advancedDisplay": "none",
+      "hintDisplay": "block",
+      "optionChecked": true,
+      "bodyClass": true,
+      "quickSettingPressed": "true"
+    }
+  },
+  "errors": []
+}

@@ -8,12 +8,37 @@ const menuView = Views.registerView("menu", {
         html += Views.menu.htmlSaveMenu();
         html += Views.menu.htmlFAQMenu();
         html += Views.menu.htmlOptionsMenu();
+        html += Views.menu.htmlQuickSettingsMenu();
         html += Views.menu.htmlExtrasMenu();
         html += Views.menu.htmlChallengeMenu();
         html += Views.menu.htmlTotalsMenu();
         html += Views.menu.htmlPrestigeMenu();
         html += Views.menu.htmlWarningMenu();
         return html;
+    },
+    isChineseLanguage() {
+        return Localization.currentLang?.startsWith("zh");
+    },
+    uiText(key) {
+        const texts = this.isChineseLanguage()
+            ? {
+                quickSettingsTitle: "\u5feb\u6377\u8bbe\u7f6e",
+                quickSettingsHelp: "\u5e2e\u52a9",
+                simpleTooltips: "\u7b80\u5316\u63d0\u793a",
+                simpleTooltipsTooltip: "\u4e00\u952e\u964d\u4f4e hover \u63d0\u793a\u7684\u5bc6\u5ea6\uff0c\u5b8c\u6574\u6570\u503c\u4ecd\u4fdd\u7559\u5728 Inspector \u91cc\u3002",
+                viewHotkeys: "\u67e5\u770b\u952e\u4f4d",
+            }
+            : {
+                quickSettingsTitle: "Quick Settings",
+                quickSettingsHelp: "Help",
+                simpleTooltips: "Simple Tooltips",
+                simpleTooltipsTooltip: "Reduce hover tooltip density in one click. Full detail stays available in the Inspector.",
+                viewHotkeys: "View Hotkeys",
+            };
+        return texts[key] ?? key;
+    },
+    quickSettingsTitle() {
+        return this.uiText("quickSettingsTitle");
     },
     htmlMenusMenu() {
         const menus = [
@@ -173,6 +198,11 @@ const menuView = Views.registerView("menu", {
                 <input id='statHintsInput' type='checkbox' onchange='setOption("statHints", this.checked)'/>
                     <label for='statHintsInput'>${_txt("menu>options>stat_hints")}</label>
                 <br>
+                <input id='simpleTooltipsInput' type='checkbox' onchange='setOption("simpleTooltips", this.checked)'/>
+                    <label class='showthat' for='simpleTooltipsInput'><span id='simpleTooltipsOptionLabel'>${this.uiText("simpleTooltips")}</span>
+                    <div class='showthis'><span id='simpleTooltipsOptionTooltip'>${this.uiText("simpleTooltipsTooltip")}</span></div>
+                </label>
+                <br>
                 <input id='pingOnPauseInput' type='checkbox' onchange='setOption("pingOnPause", this.checked)'/>
                     <label for='pingOnPauseInput'>${_txt("menu>options>pause_audio_cue")}</label>
                 <br>
@@ -187,6 +217,9 @@ const menuView = Views.registerView("menu", {
                     <div class='showthis'>${_txt("menu>options>hotkeys_tooltip")}</div>
                 </label>
                 <br>
+                <button id='optionsHotkeyReferenceButton' type='button' class='button hotkeyReferenceToggle' onclick='view.toggleHotkeyReference("options")' aria-expanded='false'>${this.uiText("viewHotkeys")}</button>
+                <div id='hotkeyReferencePanelOptions' class='hotkeyReferencePanel hidden'></div>
+                <br>
                 ${_txt("menu>options>update_rate")}
                 <input id='updateRateInput' type='number' value='50' min='1' style='width: 50px;transform: translateY(-2px);' oninput='setOption("updateRate", parseInt(this.value))' />
                 <br>
@@ -196,6 +229,39 @@ const menuView = Views.registerView("menu", {
             </div>
         </li>`;
         return html;
+    },
+    htmlQuickSettingsMenu() {
+        return `
+        <li id='quickSettingsMenu' tabindex='0' style='display:inline-block;height:30px;margin-left:10px;' class='showthatH'>
+            <span id='quickSettingsMenuLabel'>${this.quickSettingsTitle()}</span>
+            <div class='showthisH quickSettingsPanel'>
+                <div class='quickSettingsSection'>
+                    <div id='quickSettingsToggleHeading' class='quickSettingsHeading'></div>
+                    <div class='quickSettingsToggleGrid'>
+                        <button id='quickSettingResponsiveUI' type='button' class='button quickSettingButton' onclick='view.toggleQuickSetting("responsiveUI")'>${_txt("menu>options>responsive_ui")}</button>
+                        <button id='quickSettingActionLog' type='button' class='button quickSettingButton' onclick='view.toggleQuickSetting("actionLog")'>${_txt("menu>options>action_log")}</button>
+                        <button id='quickSettingPredictor' type='button' class='button quickSettingButton' onclick='view.toggleQuickSetting("predictor")'>${_txt("menu>options>predictor")}</button>
+                        <button id='quickSettingStatColors' type='button' class='button quickSettingButton' onclick='view.toggleQuickSetting("statColors")'>${_txt("menu>options>stat_colors")}</button>
+                        <button id='quickSettingHighlightNew' type='button' class='button quickSettingButton' onclick='view.toggleQuickSetting("highlightNew")'>${_txt("menu>options>highlight_new")}</button>
+                        <button id='quickSettingHotkeys' type='button' class='button quickSettingButton' onclick='view.toggleQuickSetting("hotkeys")'>${_txt("menu>options>hotkeys")}</button>
+                        <button id='quickSettingSimpleTooltips' type='button' class='button quickSettingButton' onclick='view.toggleQuickSetting("simpleTooltips")'>${this.uiText("simpleTooltips")}</button>
+                    </div>
+                </div>
+                <div class='quickSettingsSection'>
+                    <div id='quickSettingsDensityHeading' class='quickSettingsHeading'></div>
+                    <div id='quickSettingsDensityBar' class='quickSettingsDensityBar' role='group' aria-label='UI Density'>
+                        <button id='uiDensityCompact' type='button' class='button quickSettingsDensityButton' onclick='view.setUiDensity("compact")'></button>
+                        <button id='uiDensityStandard' type='button' class='button quickSettingsDensityButton' onclick='view.setUiDensity("standard")'></button>
+                        <button id='uiDensityLarge' type='button' class='button quickSettingsDensityButton' onclick='view.setUiDensity("large")'></button>
+                    </div>
+                </div>
+                <div class='quickSettingsSection quickSettingsSupportSection'>
+                    <div id='quickSettingsHelpHeading' class='quickSettingsHeading'>${this.uiText("quickSettingsHelp")}</div>
+                    <button id='quickSettingHotkeyReference' type='button' class='button quickSettingButton quickSettingUtilityButton' onclick='view.toggleHotkeyReference("quick")' aria-expanded='false'>${this.uiText("viewHotkeys")}</button>
+                    <div id='hotkeyReferencePanelQuick' class='hotkeyReferencePanel hidden'></div>
+                </div>
+            </div>
+        </li>`;
     },
     htmlLocalizationMenu() {
         const lg = Localization.supportedLang;

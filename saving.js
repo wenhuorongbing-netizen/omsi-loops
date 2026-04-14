@@ -598,14 +598,127 @@ const globalVariables = virtualizeGlobalVariables({
     trials,
 });
 
+function getGlobalBindingAccessors() {
+    const appContextFactory = globalThis.IdleLoopsAppContext;
+    if (!appContextFactory || typeof appContextFactory.getLegacyAppContext !== "function") {
+        return null;
+    }
+    try {
+        return appContextFactory.getLegacyAppContext().globalBindings ?? null;
+    } catch {
+        return null;
+    }
+}
+
+function getLegacyAppContext() {
+    const appContextFactory = globalThis.IdleLoopsAppContext;
+    if (!appContextFactory || typeof appContextFactory.getLegacyAppContext !== "function") {
+        return null;
+    }
+    try {
+        return appContextFactory.getLegacyAppContext();
+    } catch {
+        return null;
+    }
+}
+
+function captureAppContextGlobals(names) {
+    const appContext = getLegacyAppContext();
+    if (!appContext || typeof appContext.captureGlobalState !== "function") {
+        return null;
+    }
+    try {
+        return appContext.captureGlobalState(names);
+    } catch {
+        return null;
+    }
+}
+
+function applyAppContextGlobals(patch) {
+    const appContext = getLegacyAppContext();
+    if (!appContext || typeof appContext.applyGlobalState !== "function") {
+        return null;
+    }
+    try {
+        return appContext.applyGlobalState(patch);
+    } catch {
+        return null;
+    }
+}
+
+function captureSaveGlobals() {
+    return captureAppContextGlobals([
+        "totalTalent",
+        "goldInvested",
+        "stonesUsed",
+        "storyMax",
+        "unreadActionStories",
+    ]) ?? {
+        totalTalent,
+        goldInvested,
+        stonesUsed,
+        storyMax,
+        unreadActionStories,
+    };
+}
+
+function loadPrimarySaveGlobals(toLoad) {
+    let loadedTotalTalent = toLoad.totalTalent;
+    if (loadedTotalTalent === undefined) {
+        loadedTotalTalent = 0;
+        for (const property in toLoad.stats) {
+            if (toLoad.stats.hasOwnProperty(property)) {
+                loadedTotalTalent += toLoad.stats[property].talent * 100;
+            }
+        }
+    }
+    const loadedGlobals = {
+        totalTalent: loadedTotalTalent,
+        trainingLimits: 10 + getBuffLevel("Imbuement"),
+        goldInvested: toLoad.goldInvested === undefined ? 0 : toLoad.goldInvested,
+        stonesUsed: toLoad.stonesUsed === undefined ? {1:0, 3:0, 5:0, 6:0} : toLoad.stonesUsed,
+    };
+    applyAppContextGlobals(loadedGlobals) ?? (() => {
+        totalTalent = loadedGlobals.totalTalent;
+        trainingLimits = loadedGlobals.trainingLimits;
+        goldInvested = loadedGlobals.goldInvested;
+        stonesUsed = loadedGlobals.stonesUsed;
+    })();
+    return loadedGlobals;
+}
+
+function loadStorySaveGlobals(toLoad) {
+    const loadedGlobals = {
+        storyMax: toLoad.storyMax === undefined ? 0 : toLoad.storyMax,
+        unreadActionStories: toLoad.unreadActionStories === undefined
+            || toLoad.unreadActionStories.find(s => !s.includes("storyContainer"))
+            ? []
+            : toLoad.unreadActionStories,
+    };
+    for (const name of loadedGlobals.unreadActionStories) {
+        showNotification(name);
+    }
+    applyAppContextGlobals(loadedGlobals) ?? (() => {
+        storyMax = loadedGlobals.storyMax;
+        unreadActionStories = loadedGlobals.unreadActionStories;
+    })();
+    return loadedGlobals;
+}
+
+function createVirtualGlobalAccessor(name) {
+    const get = /** @type {() => any} */(new Function(`return ${name};`));
+    const set = /** @type {(any) => void} */(new Function("v__", `${name} = v__`));
+    return {get, set};
+}
+
 function virtualizeGlobalVariables(variables) {
     const globals = Data.rootObjects.globals ?? {};
+    const bindingAccessors = getGlobalBindingAccessors();
     for (const name in variables) {
-        const get = /** @type {() => any} */(new Function(`return ${name};`));
-        const set = /** @type {(any) => void} */(new Function("v__", `${name} = v__`));
+        const accessor = bindingAccessors?.[name] ?? createVirtualGlobalAccessor(name);
         Object.defineProperty(globals, name, {
-            get,
-            set,
+            get: accessor.get,
+            set: accessor.set,
             enumerable: true,
             configurable: true,
         });
@@ -637,6 +750,7 @@ const options = {
     highlightNew: true,
     statColors: true,
     statHints: false,
+    simpleTooltips: false,
     pingOnPause: false,
     notifyOnPause: false,
     autoMaxTraining: false,
@@ -756,6 +870,7 @@ const isStandardOption = {
     highlightNew: true,
     statColors: true,
     statHints: false,
+    simpleTooltips: false,
     pingOnPause: true,
     notifyOnPause: false,
     autoMaxTraining: true,
@@ -780,8 +895,19 @@ const optionIndicatorClasses = {
     responsiveUI: "responsive",
     statColors: "use-stat-colors",
     statHints: "show-stat-hints",
+    simpleTooltips: "use-simple-tooltips",
     predictor: "usePredictor",
 };
+
+const quickSettingOptions = new Set([
+    "responsiveUI",
+    "actionLog",
+    "predictor",
+    "statColors",
+    "highlightNew",
+    "hotkeys",
+    "simpleTooltips",
+]);
 
  /** @type {{[K in OptionName]?: (value: OptionType<K>, init: boolean, getInput: () => HTMLValueElement) => void}} */
 const optionValueHandlers = {
@@ -887,6 +1013,18 @@ function handleOption(option, value, init, getInput) {
     // The handler can change the value of the option. Recheck when setting or clearing the indicator class.
     if (option in optionIndicatorClasses) {
         document.documentElement.classList.toggle(optionIndicatorClasses[option], !!options[option]);
+    }
+    if (selfIsGame && typeof view?.updateQuickSettings === "function" && quickSettingOptions.has(option)) {
+        view.updateQuickSettings();
+    }
+    if (selfIsGame && typeof view?.updateHotkeyReferencePanels === "function" && option === "hotkeys") {
+        view.updateHotkeyReferencePanels();
+    }
+    if (selfIsGame && typeof view?.updateMobileReadingState === "function" && option === "responsiveUI") {
+        view.updateMobileReadingState();
+    }
+    if (selfIsGame && typeof view?.renderInspector === "function" && option === "simpleTooltips") {
+        view.renderInspector();
     }
 }
 
@@ -1072,17 +1210,7 @@ function doLoad(toLoad) {
         actionLog.addGlobalStory(0);
     }
 
-    if (toLoad.totalTalent === undefined) {
-        let temptotalTalent = 0;
-        for (const property in toLoad.stats) {
-            if (toLoad.stats.hasOwnProperty(property)) {
-                temptotalTalent += toLoad.stats[property].talent * 100;
-            }
-        }
-        totalTalent = temptotalTalent;
-    } else {
-        totalTalent = toLoad.totalTalent;
-    }
+    loadPrimarySaveGlobals(toLoad);
 
     if (toLoad.maxTown) {
         townsUnlocked = [0];
@@ -1098,10 +1226,6 @@ function doLoad(toLoad) {
             completedActions.push(action);
         });
     completedActions.push("FoundGlasses");
-    trainingLimits = 10 + getBuffLevel("Imbuement");
-    goldInvested = toLoad.goldInvested === undefined ? 0 : toLoad.goldInvested;
-    stonesUsed = toLoad.stonesUsed === undefined ? {1:0, 3:0, 5:0, 6:0} : toLoad.stonesUsed;
-
     actions.clearActions();
     if (toLoad.nextList) {
         for (const action of toLoad.nextList) {
@@ -1283,16 +1407,7 @@ function doLoad(toLoad) {
         loadOption(option, options[option]);
     }
     storyShowing = toLoad.storyShowing === undefined ? 0 : toLoad.storyShowing;
-    storyMax = toLoad.storyMax === undefined ? 0 : toLoad.storyMax;
-    if (toLoad.unreadActionStories === undefined
-        || toLoad.unreadActionStories.find(s => !s.includes('storyContainer'))) {
-        unreadActionStories = [];
-    } else {
-        unreadActionStories = toLoad.unreadActionStories;
-        for (const name of unreadActionStories) {
-            showNotification(name);
-        }
-    }
+    loadStorySaveGlobals(toLoad);
 
     if (toLoad.totals != undefined) {
         totals.time = toLoad.totals.time === undefined ? 0 : toLoad.totals.time;
@@ -1351,6 +1466,7 @@ function doLoad(toLoad) {
 
 function doSave() {
     const toSave = {};
+    const saveGlobals = captureSaveGlobals();
     toSave.curLoadout = curLoadout;
     toSave.dungeons = dungeons;
     toSave.trials = trials;
@@ -1358,12 +1474,12 @@ function doSave() {
     toSave.completedActions = completedActions;
 
     toSave.stats = stats;
-    toSave.totalTalent = totalTalent;
+    toSave.totalTalent = saveGlobals?.totalTalent ?? totalTalent;
     toSave.skills = skills;
     toSave.buffs = buffs;
     toSave.prestigeValues = prestigeValues;
-    toSave.goldInvested = goldInvested;
-    toSave.stonesUsed = stonesUsed;
+    toSave.goldInvested = saveGlobals?.goldInvested ?? goldInvested;
+    toSave.stonesUsed = saveGlobals?.stonesUsed ?? stonesUsed;
     toSave.version75 = true;
 
     /** @type {string[][]} */
@@ -1402,10 +1518,10 @@ function doSave() {
         }
     }
     toSave.storyShowing = storyShowing;
-    toSave.storyMax = storyMax;
+    toSave.storyMax = saveGlobals?.storyMax ?? storyMax;
     toSave.storyReqs = storyFlags; // save uses the legacy name "storyReqs" for compatibility
     toSave.storyVars = storyVars;
-    toSave.unreadActionStories = unreadActionStories;
+    toSave.unreadActionStories = saveGlobals?.unreadActionStories ?? unreadActionStories;
     toSave.actionLog = actionLog;
     toSave.buffCaps = buffCaps;
 

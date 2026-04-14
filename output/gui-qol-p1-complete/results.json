@@ -1,0 +1,132 @@
+{
+  "loadoutState": {
+    "panelVisible": true,
+    "slotCount": 15,
+    "selectedSummaryPresent": true,
+    "differenceSummaryPresent": true,
+    "saveDisabled": false,
+    "loadDisabled": false,
+    "slotOneCount": "2"
+  },
+  "quickSettingsState": {
+    "buttonCount": 6,
+    "actionLogHidden": true,
+    "actionLogRestored": true,
+    "pressedStates": [
+      {
+        "id": "quickSettingResponsiveUI",
+        "pressed": "true",
+        "state": "on",
+        "hasTitle": true
+      },
+      {
+        "id": "quickSettingActionLog",
+        "pressed": "true",
+        "state": "on",
+        "hasTitle": true
+      },
+      {
+        "id": "quickSettingPredictor",
+        "pressed": "false",
+        "state": "off",
+        "hasTitle": true
+      },
+      {
+        "id": "quickSettingStatColors",
+        "pressed": "true",
+        "state": "on",
+        "hasTitle": true
+      },
+      {
+        "id": "quickSettingHighlightNew",
+        "pressed": "true",
+        "state": "on",
+        "hasTitle": true
+      },
+      {
+        "id": "quickSettingHotkeys",
+        "pressed": "true",
+        "state": "on",
+        "hasTitle": true
+      }
+    ]
+  },
+  "buffGroups": [
+    {
+      "id": "buffGrouptrials",
+      "hidden": false,
+      "headerPresent": true,
+      "visibleBuffs": 1
+    },
+    {
+      "id": "buffGroupritual",
+      "hidden": false,
+      "headerPresent": true,
+      "visibleBuffs": 2
+    },
+    {
+      "id": "buffGroupfeast",
+      "hidden": false,
+      "headerPresent": true,
+      "visibleBuffs": 1
+    },
+    {
+      "id": "buffGroupprestige",
+      "hidden": false,
+      "headerPresent": true,
+      "visibleBuffs": 1
+    }
+  ],
+  "queueOperations": {
+    "rowCount": 2,
+    "titledButtons": [
+      {
+        "cls": "capButton actionIcon far fa-circle",
+        "hasTitle": true,
+        "hasAria": true
+      },
+      {
+        "cls": "plusButton actionIcon fas fa-plus",
+        "hasTitle": true,
+        "hasAria": true
+      },
+      {
+        "cls": "minusButton actionIcon fas fa-minus",
+        "hasTitle": true,
+        "hasAria": true
+      },
+      {
+        "cls": "splitButton actionIcon fas fa-arrows-alt-h",
+        "hasTitle": true,
+        "hasAria": true
+      },
+      {
+        "cls": "collapseButton actionIcon fas fa-compress-alt",
+        "hasTitle": true,
+        "hasAria": true
+      },
+      {
+        "cls": "upButton actionIcon fas fa-sort-up",
+        "hasTitle": true,
+        "hasAria": true
+      },
+      {
+        "cls": "downButton actionIcon fas fa-sort-down",
+        "hasTitle": true,
+        "hasAria": true
+      },
+      {
+        "cls": "skipButton actionIcon far fa-times-circle",
+        "hasTitle": true,
+        "hasAria": true
+      },
+      {
+        "cls": "removeButton actionIcon fas fa-times",
+        "hasTitle": true,
+        "hasAria": true
+      }
+    ],
+    "controlsVisible": true
+  },
+  "consoleErrors": []
+}

@@ -1,0 +1,40 @@
+{
+  "screenshots": {
+    "predictorInspector": "predictor-inspector.png",
+    "queueRepeatCompact": "queue-repeat-compact.png",
+    "readerPreset": "reader-preset.png",
+    "plannerPreset": "planner-preset.png",
+    "trackedResourcePins": "tracked-resource-pins.png"
+  },
+  "checks": {
+    "predictorState": "ready",
+    "trackedStatText": "Tracked: (R) SS Equi %",
+    "predictorPanelDisabled": false,
+    "predictorSummaryText": "0.00 SS/min",
+    "inspectorPredictorVisible": false,
+    "inspectorPredictorHeader": "",
+    "repeatTogglePressed": "true",
+    "visibleQueueRows": 2,
+    "hiddenRepeatRows": 2,
+    "firstRepeatBadge": "×3",
+    "uiPreset": "planner",
+    "bodyClasses": [
+      "ui-preset-planner"
+    ],
+    "statsWidth": "286px",
+    "actionsWidth": "396px",
+    "pinnedResources": [
+      "gold",
+      "herbs"
+    ],
+    "trackedOrder": [
+      "gold",
+      "herbs",
+      "timer",
+      "reputation"
+    ],
+    "firstTrackedResource": "gold",
+    "secondTrackedResource": "herbs"
+  },
+  "errors": []
+}

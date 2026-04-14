@@ -91,12 +91,24 @@
                         <button id="chronicleTabChapters" class="button readingSubTab" type="button" onclick="view.setChronicleTab('chapters')"></button>
                         <button id="chronicleTabStories" class="button readingSubTab" type="button" onclick="view.setChronicleTab('stories')"></button>
                     </div>
-                    <div id="chronicleLogPane" class="readingSubPane"></div>
+                    <div id="chronicleLogPane" class="readingSubPane">
+                        <div id="chronicleLogToolbar" class="chronicleToolbar">
+                            <div id="chronicleLogStats" class="chronicleStatsBar"></div>
+                            <div id="chronicleLogFilters" class="chronicleFilterBar" role="group" aria-label="Chronicle Log Filters"></div>
+                        </div>
+                        <div id="chronicleLogBody"></div>
+                    </div>
                     <div id="chronicleChaptersPane" class="readingSubPane hidden">
                         <div id="chronicleChapterRail"></div>
                         <div id="chronicleChapterViewer"></div>
                     </div>
-                    <div id="chronicleStoriesPane" class="readingSubPane hidden"></div>
+                    <div id="chronicleStoriesPane" class="readingSubPane hidden">
+                        <div id="chronicleStoriesToolbar" class="chronicleToolbar">
+                            <div id="chronicleStoryStats" class="chronicleStatsBar"></div>
+                            <div id="chronicleStoryFilters" class="chronicleFilterBar" role="group" aria-label="Chronicle Story Filters"></div>
+                        </div>
+                        <div id="chronicleStoriesContent"></div>
+                    </div>
                 </section>
             </div>
             <!-- The stat view starts out in radar mode so that init() can get text lengths -->
@@ -370,8 +382,6 @@
             <div id="actionList" style="width:100%;text-align:center;">
                 <div class="showthat">
                     <div class="large bold localized" style="margin-right: -49px;" data-lockey="actions>title_list"></div>
-                    <span id="predictorTotalDisplay" class="koviko"></span>
-                    <span id="predictorStatisticDisplay" class="koviko"></span>
                     <div class="showthis">
                         <i class='actionIcon far fa-circle'></i> <span class='localized' data-lockey="actions>tooltip>icons>circle"></span><br>
                         <i class='actionIcon fas fa-plus'></i> <span class='localized' data-lockey="actions>tooltip>icons>plus"></span><br>
@@ -392,7 +402,31 @@
                 <div id="plannerHeader">
                     <div id="plannerStatusBar">
                         <div id="plannerPredictorState" class="plannerStatusPill"></div>
+                        <div id="plannerTrackedStatState" class="plannerStatusPill"></div>
                         <div id="plannerSelectionState" class="plannerStatusPill"></div>
+                    </div>
+                    <div id="plannerMetaBar">
+                        <div id="plannerPredictorPanel">
+                            <div id="plannerPredictorHeading" class="plannerMetaHeading"></div>
+                            <div id="plannerPredictorSummary">
+                                <span id="predictorTotalDisplay" class="koviko"></span>
+                                <span id="predictorStatisticDisplay" class="koviko"></span>
+                            </div>
+                            <div id="plannerPredictorControls">
+                                <label for="predictorTrackedStatInput" id="plannerTrackedStatLabel"></label>
+                                <select id='predictorTrackedStatInput' class='button' onchange="view.handlePredictorTrackedStatChange(this.value)"></select>
+                            </div>
+                        </div>
+                        <div id="plannerViewControls">
+                            <div id="plannerViewHeading" class="plannerMetaHeading"></div>
+                            <div id="plannerPresetBar" class="plannerPresetBar" role="group" aria-label="UI Presets">
+                                <button id="uiPresetClassic" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('classic')"></button>
+                                <button id="uiPresetPlanner" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('planner')"></button>
+                                <button id="uiPresetReader" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('reader')"></button>
+                                <button id="uiPresetCompact" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('compact')"></button>
+                            </div>
+                            <button id="queueRepeatToggle" type="button" class="button plannerToggleButton" onclick="view.toggleQueueCompactRepeats()"></button>
+                        </div>
                     </div>
                     <div id="plannerControls">
                         <div id="nextActionsAmountButtons">
@@ -430,6 +464,15 @@
                     <div id="actionChangeButtons" style="margin-left:-4px;text-align:right;width:50%;">
                         <button id="maxTraining" class="button localized" style="margin-right:0px;display:none" onclick="capAllTraining()" data-lockey="actions>tooltip>max_training"></button>
                         <button id="clearList" class="button localized" style="margin-right:0px;" onclick="clearList()" data-lockey="actions>tooltip>clear_list"></button>
+                        <div id="loadoutManagerShell">
+                            <button id="loadoutManagerToggle" type="button" class="button localized" onclick="view.toggleLoadoutManager()" aria-expanded="false" data-lockey="actions>tooltip>manage_loadouts"></button>
+                            <div id="loadoutManagerPanel" class="hidden">
+                                <div id="loadoutSelectionSummary" class="loadoutManagerSummary"></div>
+                                <div id="loadoutDifferenceSummary" class="loadoutManagerSummary"></div>
+                                <div id="loadoutSlotGrid"></div>
+                                <div id="loadoutManagerActions"></div>
+                            </div>
+                        </div>
                         <div tabindex="0" class="showthatloadout"><span class="localized" data-lockey="actions>tooltip>manage_loadouts">管理预设</span>
                             <div class="showthisloadout">
                                 <button class="loadoutbutton unused" id="load1" onclick="selectLoadout(1)" style="width:200px">预设 1</button>
@@ -469,7 +512,6 @@
                                 <button class="loadoutbutton localized" style="margin-bottom:5px;margin-top:3px;margin-right:-4px;" onclick="nameList(true)" data-lockey="actions>tooltip>rename">重命名</button>
                             </div>
                         </div>
-                        <select id='predictorTrackedStatInput' class='button' onchange="setOption('predictorTrackedStat', this.value)"></select>
                     </div>
                 </div>
             </div>
@@ -588,6 +630,9 @@
     <script src="town.js"></script>
     <script src="talents.js"></script>
     <script src="prestige.js"></script>
+    <script src="src/app/legacy-globals.js"></script>
+    <script src="src/app/app-context.js"></script>
+    <script src="src/app/game-session.js"></script>
     <script src="saving.js"></script>
     <script src="challenges.js"></script>
     <script src="hotkeys.js"></script>
@@ -598,13 +643,11 @@
     <script src="views/timecontrols.view.js"></script>
     <script src="views/buffs.view.js"></script>
     <script src="views/talenttree.view.js"></script>
+    <script src="src/app/bootstrap.js"></script>
     <script>
-        loadDefaults();
-        Localization.ready.then(() => {
-            Views.draw();
-            Localization.localizePage("game");
-            localStorage["loadingText"] = document.getElementById("loadingText").textContent;
-            startGame();
+        IdleLoopsBootstrap.bootstrapGame().catch(error => {
+            console.error("Failed to bootstrap game", error);
+            throw error;
         });
     </script>
 </body>

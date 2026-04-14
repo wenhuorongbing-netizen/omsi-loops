@@ -1,0 +1,43 @@
+{
+  "categoryPillCount": 5,
+  "categoryCounts": [
+    1,
+    0,
+    1,
+    0,
+    0
+  ],
+  "categoryNonZeroCount": 2,
+  "categoryTitleCount": 5,
+  "inspectorTabAfterAction": "inspectorTabStory",
+  "loadoutSlotMetrics": [
+    {
+      "lineCount": 3,
+      "savedLineLength": 21,
+      "hasSavedLine": true
+    },
+    {
+      "lineCount": 3,
+      "savedLineLength": 7,
+      "hasSavedLine": true
+    },
+    {
+      "lineCount": 3,
+      "savedLineLength": 7,
+      "hasSavedLine": true
+    }
+  ],
+  "activeTabStyles": {
+    "color": "rgb(0, 0, 0)",
+    "backgroundColor": "rgb(62, 142, 65)",
+    "borderColor": "color(srgb 0.163922 0.377451 0.172549)"
+  },
+  "storyMetrics": {
+    "sectionCount": 9,
+    "cardCount": 19,
+    "unreadBadgeCount": 0,
+    "topLineCount": 19,
+    "metaChipCount": 38
+  },
+  "consoleErrors": []
+}

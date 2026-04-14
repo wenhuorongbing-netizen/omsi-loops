@@ -359,3 +359,182 @@ Original prompt: 你是一个游戏汉化师仔细思考这个游戏该如何汉
 - `.actionCategoryTooltipText` now computes as `display: block`
 - the description block starts below the heading block (`descStartsBelowHeading: true`)
 - no new runtime console/page errors in the hover regression
+- 2026-04-14 GUI/QOL P1 completion pass:
+- Scope implemented:
+- Replaced the old hover-only loadout popup with a stable `Loadout Manager` shell in `index.html` / `views/main.view.js` / `driver.js` / `stylesheet.css`:
+- the planner area now has an explicit toggle button and persistent management panel instead of depending on hover stickiness
+- all 15 loadout slots are rendered into a dedicated grid
+- the panel now shows a selected-slot summary, a current-queue difference summary, and a local saved-at timestamp per slot
+- save/load/rename actions were kept on the existing backend functions, so the QOL change does not alter loadout data semantics
+- Added `Quick Settings` as a dedicated top-menu panel in `views/menu.view.js` / `views/main.view.js`:
+- high-frequency toggles for `Responsive UI`, `Action Log`, `Predictor`, `Stat Colors`, `Highlight New`, and `Hotkeys`
+- buttons expose pressed state via `aria-pressed`, carry an explicit on/off tooltip, and do not expose deeper balance-changing extras
+- Strengthened queue-row control readability in `views/main.view.js` / `stylesheet.css`:
+- queue control buttons now render inside a stable control strip instead of reading like bare floating icons
+- each queue control button now exposes an explicit `title` and `aria-label`
+- the control strip remains visible without needing hover-discovery
+- Grouped buff presentation in `views/buffs.view.js` / `views/main.view.js` / `stylesheet.css`:
+- buffs are now rendered under explicit sections for `Trials / Spire`, `Sacrifice / Imbuement`, `Feast`, and `Prestige`
+- group headers localize through the GUI text layer and empty groups collapse automatically
+- Verification:
+- `node --check views/main.view.js`
+- `node --check views/menu.view.js`
+- `node --check views/buffs.view.js`
+- `node --check driver.js`
+- Local static server run on `http://127.0.0.1:5500`
+- Playwright interaction regression artifacts saved to `output/gui-qol-p1-complete/`
+- `loadout-manager.png`
+- `quick-settings.png`
+- `buff-groups.png`
+- `queue-operations.png`
+- `results.json`
+- Runtime checks recorded in `output/gui-qol-p1-complete/results.json`:
+- loadout panel rendered and stayed open, with `15` slot buttons and live summary rows
+- saving to slot `1` updated the slot metadata to `2` queued actions
+- quick settings rendered `6` buttons, successfully hid and restored `Action Log`, and exposed pressed/title metadata on every button
+- buff grouping exposed all `4` intended sections with visible headers and visible buff rows after synthetic buff-state setup
+- queue controls rendered with visible control strip plus explicit `title` and `aria-label` metadata on all `9` row buttons
+- no new runtime console/page errors in the P1 completion regression
+- GUI/QOL status after this pass:
+- P0: complete
+- P1: complete
+- Remaining fourth-item work is now P2/P3 only: predictor deep integration, mobile/bottom-drawer treatment, layout presets, and denser accessibility options
+- 2026-04-14 GUI/QOL P1 polish pass:
+- Scope implemented:
+- Closed the remaining P1 spec gaps in `views/main.view.js` / `stylesheet.css`:
+- moved the five role-count pills into the Town summary strip itself instead of leaving them only in the adjacent legend
+- changed Loadout slot cards from a badge-only count to a stable three-line layout with per-slot saved-at text rendered directly in each slot
+- improved active-state contrast for the right-side `Inspector / Chronicle / Character` tabs and sub-tabs so the selected tab no longer renders as low-contrast white-on-light
+- reworked Chronicle `Action Stories` into grouped zone sections with readable card rows, clearer story progress chips, and less compressed layout density
+- softened the role-count presentation without removing the `shortcut` category from the underlying design language
+- de-emphasized the `Summary` tab in practice by making direct action clicks open `Story` when story text exists, otherwise `Numbers`
+- Verification:
+- `node --check views/main.view.js`
+- Local static server run on `http://127.0.0.1:5500`
+- develop-web-game client smoke run saved to `output/gui-qol-p1-polish/client-smoke/`
+- Targeted Playwright verification artifacts saved to `output/gui-qol-p1-polish/`
+- `town-summary-categories.png`
+- `loadout-slot-times.png`
+- `reading-tab-contrast.png`
+- `chronicle-stories.png`
+- `results.json`
+- Runtime checks recorded in `output/gui-qol-p1-polish/results.json`:
+- summary strip rendered all `5` category pills inside the strip, with `5` titled pills and non-zero counts present for the visible town
+- clicking an action now opened `inspectorTabStory` by default in the current regression scenario
+- sampled loadout slots all rendered `3` visible text lines and a dedicated saved-at row
+- Chronicle stories rendered `9` grouped sections and `19` story cards with no new console/page errors
+- Status correction:
+- the previous P1 completion note overstated two details: role counts were still legend-dependent, and per-slot saved time was not yet stably visible in-slot until this polish pass
+- 2026-04-14 GUI/QOL P2 deep pass:
+- Scope implemented in `index.html` / `views/main.view.js` / `views/trackedresources.view.js` / `stylesheet.css`:
+- completed the planner-side P2 features rather than leaving them as wiring-only:
+- `Predictor` now has a dedicated planner panel with stable heading text, tracked-stat controls, and clearer disabled/ready state treatment
+- fixed the responsive desktop rule that was still hiding `#plannerHeader`, so the new planner meta controls are actually visible in the default responsive layout instead of only existing in DOM
+- queue-selected actions now surface a local predictor block inside Inspector `Numbers`, so the tracked stat can be read in object context instead of only from the queue hover
+- fixed the queue-row selection regression introduced by the new click affordance: queue rows now own click-to-inspect directly, queue control buttons stop propagation, and the old delegated queue click path no longer double-toggles the selection off
+- queue repeat compaction now audits cleanly with ASCII `xN` badges instead of a glyph that degraded in JSON/terminal output
+- UI presets, queue repeat compaction, and tracked-resource pinning are now part of the stable planner shell rather than experimental hidden state
+- added a first-pass mobile reading drawer: on responsive narrow screens, `Inspector` / `Chronicle` now open as a fixed bottom drawer above the mobile nav while `Character` closes the drawer back to the main stats panel
+- Verification:
+- `node --check views/main.view.js`
+- `node --check views/trackedresources.view.js`
+- `node --check predictor.js`
+- Local static server run on `http://127.0.0.1:5500`
+- develop-web-game client smoke run saved to `output/gui-qol-p2-deep/client-smoke/`
+- Targeted Playwright verification artifacts saved to `output/gui-qol-p2-deep/`
+- `predictor-queue-inspector.png`
+- `planner-header.png`
+- `mobile-reading-drawer.png`
+- `results.json`
+- Runtime checks recorded in `output/gui-qol-p2-deep/results.json`:
+- desktop regression now reports `queueSelectionSource: "queue"` and `predictorBlockCount: 1`, confirming queue selection and local predictor rendering are both active
+- predictor planner shell reports a live `ready` state with both heading slots present
+- repeat-row compaction renders an ASCII badge (`x3` in the current regression)
+- responsive mobile regression reports `readingShellPosition: "fixed"`, `drawerState: "open"`, and only the active reading pane visible in the drawer
+- no new console/page errors in the P2 regression
+- GUI/QOL status after this pass:
+- P0: complete
+- P1: complete
+- P2: complete
+- Remaining fourth-item work is now P3 only: denser accessibility options, additional density presets, deeper mobile polish, and extra Chronicle/log filtering depth
+- 2026-04-14 GUI/QOL P3 accessibility and Chronicle pass:
+- Scope implemented in `views/main.view.js` / `views/menu.view.js` / `stylesheet.css`:
+- completed the planned P3 follow-through on readability and auditability rather than adding new gameplay-facing systems:
+- wired Chronicle `Log` into a real filtered reading surface with counts for `all / story / chapter / growth / soulstone`, matching-count stats, and empty-state handling that does not rely on hover-only reading
+- upgraded Chronicle `Action Stories` from a static grouped list into a filtered/stat-driven reader with `all / unread / incomplete / current area`, visible/completed/area counters, and cleaner story-card state chips
+- finished the `Quick Settings` density section so `compact / standard / large` are fully wired, visibly stateful, and reflected through stable `body.ui-density-*` classes instead of being inert menu buttons
+- added density-aware spacing and sizing rules across reading panes, planner panels, Chronicle toolbars, quick settings, and row/button targets so the density controls materially change readability rather than only toggling a class name
+- added keyboard-visible focus treatment to the new reading tabs, Chronicle filter buttons, density buttons, and existing queue/log/story surfaces so the GUI/QOL pass is no longer mouse-only in the new panels
+- kept the mobile reading drawer integrated with the new density states and Chronicle panes, so responsive mode still opens the reading shell as a fixed bottom drawer above the nav
+- Verification:
+- `node --check views/main.view.js`
+- `node --check views/menu.view.js`
+- `node --check views/trackedresources.view.js`
+- Local static server run on `http://127.0.0.1:5500`
+- develop-web-game client smoke run saved to `output/gui-qol-p3/client-smoke/`
+- Targeted Playwright verification artifacts saved to `output/gui-qol-p3/`
+- `chronicle-log-filters.png`
+- `chronicle-story-filters.png`
+- `quick-settings-density.png`
+- `mobile-density-drawer.png`
+- `results.json`
+- Runtime checks recorded in `output/gui-qol-p3/results.json`:
+- desktop regression reports Chronicle open on the `stories` tab with `growth` log filtering, `unread` story filtering, `5` log filter buttons, `4` story filter buttons, and `uiDensity: "large"`
+- quick settings regression confirms the density group is open and the `large` density button is the sole active/pressed density control
+- mobile regression reports `responsiveUi: true`, `readingPane: "chronicle"`, `drawerOpen: true`, `drawerFixed: "fixed"`, and `uiDensity: "compact"`
+- no new console/page errors in the P3 regression
+- GUI/QOL status after this pass:
+- P0: complete
+- P1: complete
+- P2: complete
+- P3: complete
+- Fourth-item GUI/QOL roadmap is now implemented end-to-end in the planned scope; any further UI work would be additional polish, not unfinished roadmap baseline
+- 2026-04-14 GUI/QOL P2 strict-QA closeout pass:
+- Scope implemented:
+- no product code changes; this pass only closed the two remaining strict-QA gaps called out after the earlier P2 completion note
+- added a dedicated P2 closeout regression set in `output/gui-qol-p2-closeout/` to prove the mobile drawer branches and all four UI presets in one auditable baseline
+- Verification:
+- `node --check views/main.view.js`
+- `node --check views/trackedresources.view.js`
+- `node --check predictor.js`
+- Local static server run on `http://127.0.0.1:5500`
+- develop-web-game client smoke run saved to `output/gui-qol-p2-closeout/client-smoke/`
+- Targeted Playwright verification artifacts saved to `output/gui-qol-p2-closeout/`
+- `mobile-chronicle-drawer.png`
+- `mobile-character-closed.png`
+- `preset-classic.png`
+- `preset-planner.png`
+- `preset-reader.png`
+- `preset-compact.png`
+- `results.json`
+- Runtime checks recorded in `output/gui-qol-p2-closeout/results.json`:
+- mobile closeout now proves both missing drawer branches: `readingPane: "chronicle"` opens the fixed drawer with `visibleReadingPanes: ["chroniclePane"]`, and switching back to `readingPane: "character"` clears `mobile-reading-open` while restoring the main character pane
+- desktop closeout now records all four presets in one baseline: `classic`, `planner`, `reader`, and `compact`, each with explicit column-width snapshots and `plannerHeaderVisible: true`
+- no new console/page errors in the P2 closeout regression
+- Status correction:
+- P2 was already functionally complete before this pass; this closeout upgrades the earlier “function complete / strict QA incomplete” state to “strict QA closed”
+- 2026-04-14 GUI/QOL P3 closeout pass for original-spec gaps:
+- Scope implemented:
+- added a stable hotkey reference entry in both `Options` and `Quick Settings`; the reference is no longer only a checkbox plus hover tooltip, and now opens a readable panel with grouped keybinds and live enabled/disabled state
+- added a real `Simple Tooltips` mode as a first-class option and quick setting; hover tooltips now split into primary vs advanced sections so the mode can actually reduce density while keeping full numbers in the Inspector
+- synchronized the two entry surfaces: toggling `Simple Tooltips` from Quick Settings now updates the matching Options checkbox, and changing `Hotkeys` updates the reference panel status pill
+- Verification:
+- `node --check views/main.view.js`
+- `node --check views/menu.view.js`
+- `node --check saving.js`
+- Local static server run on `http://127.0.0.1:4173`
+- develop-web-game client smoke run saved to `output/gui-qol-p3-closeout/client-smoke/`
+- Targeted Playwright verification artifacts saved to `output/gui-qol-p3-closeout/`
+- `hotkeys-options-panel.png`
+- `hotkeys-quick-panel.png`
+- `hotkeys-quick-panel-disabled.png`
+- `simple-tooltips-off.png`
+- `simple-tooltips-on.png`
+- `results.json`
+- Runtime checks recorded in `output/gui-qol-p3-closeout/results.json`:
+- the Options-side hotkey reference opens as a stable panel with `rowCount: 15` grouped bindings and `aria-expanded: "true"`
+- the Quick Settings hotkey reference also opens as a stable panel, and its status chip changes from `is-active` to `is-inactive` when `Hotkeys` is toggled off in-place
+- `Simple Tooltips` now has a real behavior delta: the hover tooltip advanced block changes from `display: "block"` to `display: "none"`, the simplification hint changes from `display: "none"` to `display: "block"`, and the Quick Settings toggle plus Options checkbox stay in sync
+- no new console/page errors in the P3 closeout regression
+- Status correction:
+- P3 was already complete in the narrowed implementation scope; this closeout covers the two original-spec leftovers (`Hotkeys` stable entry and `Simple Tooltips` beginner mode), so the fourth-item GUI/QOL roadmap is now closed against the original P3 checklist as well

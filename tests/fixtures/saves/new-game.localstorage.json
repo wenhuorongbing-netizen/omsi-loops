@@ -1,0 +1,8 @@
+{
+  "name": "new-game",
+  "description": "Fresh boot with empty default and challenge saves.",
+  "localStorage": {
+    "idleLoops1": "",
+    "idleLoopsChallenge": ""
+  }
+}

@@ -1,6 +1,10 @@
 {
   "scripts": {
-    "serve": "node tools/static-server.mjs"
+    "serve": "node tools/static-server.mjs",
+    "smoke": "node tools/run-smoke.mjs",
+    "baseline:update": "node tools/update-fixture-baselines.mjs",
+    "baseline:check": "node tools/check-fixture-baselines.mjs",
+    "regression": "npm run smoke && npm run baseline:check"
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",
@@ -8,6 +12,7 @@
     "@types/gapi.client.drive-v3": "^0.0.4",
     "@types/google.accounts": "^0.0.14",
     "@types/jquery": "^3.5.29",
-    "@types/lz-string": "^1.5.0"
+    "@types/lz-string": "^1.5.0",
+    "playwright": "^1.59.1"
   }
 }

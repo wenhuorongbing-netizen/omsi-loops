@@ -1,0 +1,41 @@
+{
+  "desktop": {
+    "readingPane": "chronicle",
+    "chronicleTab": "stories",
+    "chronicleLogFilter": "growth",
+    "chronicleStoryFilter": "unread",
+    "uiDensity": "large",
+    "densityButtons": [
+      {
+        "id": "uiDensityCompact",
+        "pressed": "false",
+        "active": false
+      },
+      {
+        "id": "uiDensityStandard",
+        "pressed": "false",
+        "active": false
+      },
+      {
+        "id": "uiDensityLarge",
+        "pressed": "true",
+        "active": true
+      }
+    ],
+    "logVisibleEntries": 1,
+    "logFilterButtons": 5,
+    "storyVisibleCards": 1,
+    "storyFilterButtons": 4,
+    "quickSettingsOpen": true
+  },
+  "mobile": {
+    "responsiveUi": true,
+    "uiDensity": "compact",
+    "readingPane": "chronicle",
+    "drawerOpen": true,
+    "drawerFixed": "fixed",
+    "chronicleVisible": true,
+    "tabCount": 3
+  },
+  "errors": []
+}

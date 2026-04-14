@@ -8,8 +8,12 @@ importScripts(
     "actions.js",
     "town.js",
     "prestige.js",
+    "src/app/legacy-globals.js",
+    "src/app/app-context.js",
+    "src/app/game-session.js",
     "saving.js",
-    "predictor.js"
+    "predictor.js",
+    "src/app/bootstrap.js"
 );
 
 /**
@@ -50,9 +54,7 @@ importScripts(
 
 console.log("starting predictor worker");
 
-loadDefaults();
-
-const predictor = Koviko.initWorkerPredictor();
+const predictor = IdleLoopsBootstrap.bootstrapPredictorWorker();
 /** @type {MessageToPredictor} */
 let queuedUpdate;
 
