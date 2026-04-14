@@ -104,13 +104,18 @@ body {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    font-family:Arial, Helvetica, serif;
+    font-family: Arial, "Segoe UI", "Helvetica Neue", Helvetica, "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC", sans-serif;
     color: var(--default-color);
     font-size: 1rem;
     height:100%;
     margin:0;
     background-color: var(--body-background);
     cursor:default;
+}
+
+input, select, textarea {
+    font: inherit;
+    font-family: inherit;
 }
 
 /* These are only used in mobile view  */
@@ -201,11 +206,13 @@ body:not(.loading) > .hideWhenLoaded {
 }
 
 .showthis, .showthis2, .showthisH {
+    display: none;
     visibility: hidden;
     opacity: 0;
     width: max-content;
     max-width: 400px;
     max-width: min(400px,95svw);
+    overflow-wrap: anywhere;
     position: fixed;
     color: var(--popup-color);
     background-color: var(--popup-background);
@@ -289,6 +296,7 @@ ul#faq > li {
     margin-bottom:2px;
 }
 .showthisloadout {
+    display: none;
     visibility: hidden;
     opacity: 0;
     position: fixed;
@@ -308,6 +316,7 @@ ul#faq > li {
 }
 
 .showthisstory {
+    display: none;
     visibility: hidden;
     opacity: 0;
     position: fixed;
@@ -325,10 +334,10 @@ ul#faq > li {
     z-index: 999999;
     text-align:left;
     pointer-events: none;
-    & > p {
-        margin-left:1em;
-        text-indent:-1em;
-    }
+}
+.storyTooltipContent > p {
+    margin-left: 1em;
+    text-indent: -1em;
 }
 .showthatstory:focus-within .showthisstory {
     pointer-events: all;
@@ -936,6 +945,102 @@ input[type="checkbox"][disabled] + label {
     width: 100%;
 }
 
+.actionCategoryLegend {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 0 10px;
+}
+.actionCategoryLegendHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.actionCategoryLegendTitle {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+.actionCategoryLegendToggle {
+    min-width: 24px;
+    min-height: 24px;
+    line-height: 1;
+    padding: 0;
+}
+.actionCategoryLegendButtons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+}
+.actionCategoryLegendHint {
+    font-size: 0.75rem;
+    opacity: 0.75;
+}
+.actionCategoryLegend.collapsed .actionCategoryLegendButtons,
+.actionCategoryLegend.collapsed .actionCategoryLegendHint {
+    display: none;
+}
+.actionCategoryFilterButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 8px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: var(--action-category-accent, var(--default-border));
+    color: var(--default-color);
+    background: color-mix(in srgb, var(--body-background) 88%, var(--action-category-accent, var(--default-background)) 12%);
+    line-height: 1.2;
+    font-size: 0.75rem;
+    text-shadow: none;
+}
+.actionCategoryFilterButton:hover:not([disabled]) {
+    color: var(--default-color);
+    background: color-mix(in srgb, var(--body-background) 76%, var(--action-category-accent, var(--default-background)) 24%);
+}
+.actionCategoryFilterButton:active:not([disabled]) {
+    color: var(--default-color);
+}
+.actionCategoryFilterButton[disabled] {
+    color: color-mix(in srgb, var(--default-color) 55%, transparent);
+    border-color: color-mix(in srgb, var(--action-category-accent, var(--default-border)) 35%, transparent);
+    background: color-mix(in srgb, var(--body-background) 94%, var(--default-background) 6%);
+    box-shadow: 0 3px var(--button-disabled-shadow);
+}
+.actionCategoryFilterButton.is-active {
+    color: var(--default-color);
+    background: color-mix(in srgb, var(--body-background) 68%, var(--action-category-accent, var(--default-background)) 32%);
+    box-shadow: inset 0 0 0 1px currentColor;
+}
+.actionCategoryFilterCount {
+    min-width: 1.5em;
+    text-align: right;
+    font-weight: bold;
+}
+
+.action-category-advance {
+    --action-category-accent: #3366cc;
+    --action-category-border-style: solid;
+}
+.action-category-growth {
+    --action-category-accent: #2f8f53;
+    --action-category-border-style: double;
+}
+.action-category-resource {
+    --action-category-accent: #b87314;
+    --action-category-border-style: dashed;
+}
+.action-category-shortcut {
+    --action-category-accent: #0f8d9d;
+    --action-category-border-style: dotted;
+}
+.action-category-side {
+    --action-category-accent: #6c7280;
+    --action-category-border-style: solid;
+}
+
 #hideVarsButton, .hideVarButton {
     position: absolute;
     cursor: pointer;
@@ -1126,6 +1231,32 @@ div.townInfoContainer > .numeric {
     border: 3px solid transparent;
     border-radius: 10px;
 }
+.actionCategoryBadge {
+    position: absolute;
+    z-index: 1;
+    left: 4px;
+    top: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 14px;
+    padding: 0 4px;
+    border: 2px var(--action-category-border-style) var(--action-category-accent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--body-background) 88%, transparent);
+    color: var(--action-category-accent);
+    font-size: 0.55rem;
+    font-weight: bold;
+    line-height: 1;
+    pointer-events: none;
+}
+.travelContainer .actionCategoryBadge {
+    top: 4px;
+}
+.storyContainer .actionCategoryBadge {
+    top: 4px;
+}
 .actionContainer {
     width:96px;
     margin:0 2px;
@@ -1138,6 +1269,11 @@ div.townInfoContainer > .numeric {
 
 .actionOrTravelContainer:hover {
     background-color: var(--action-hover-background);
+}
+.actionOrTravelContainer.category-dimmed,
+.storyContainer.category-dimmed {
+    opacity: 0.4;
+    filter: saturate(0.65);
 }
 .actionHighlight {
     background: var(--action-highlight-background);
@@ -1252,6 +1388,7 @@ dl.action-stats {
 .actionOrTravelContainer:has(.stat-pie .pie-slice.stat-Soul:hover) dl.action-stats .stat-Soul {font-weight: bold;}
 
 .storyContainer {
+    position: relative;
     width: 102px;
     height: 50px;
     vertical-align: top;
@@ -1271,6 +1408,31 @@ dl.action-stats {
 .storyContainerCompleted {
     color: var(--story-button-completed-color);
     background: var(--story-completed-background);
+}
+.actionCategoryTooltipText {
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid color-mix(in srgb, var(--action-category-accent) 35%, var(--action-separator-border));
+    color: var(--text-color);
+}
+.actionCategoryTooltipText-action:last-of-type {
+    margin-bottom: 8px;
+}
+.actionCategoryTooltipHeading {
+    color: var(--action-category-accent);
+}
+.actionCategoryTooltipHeading,
+.actionCategoryTooltipDescription,
+.actionCategoryTooltipNote {
+    display: block;
+    white-space: normal;
+}
+.actionCategoryTooltipDescription,
+.actionCategoryTooltipNote {
+    margin-top: 2px;
+}
+.actionCategoryTooltipNote {
+    font-style: italic;
 }
 
 #actionLog {
@@ -1380,6 +1542,30 @@ li#actionLogLatest {
     justify-content: space-between;
     width: 205px;
     height: 20px;
+}
+.nextActionCategoryMark {
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 14px;
+    padding: 0 3px;
+    border: 2px var(--action-category-border-style) var(--action-category-accent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--body-background) 88%, transparent);
+    color: var(--action-category-accent);
+    font-size: 0.5rem;
+    font-weight: bold;
+    line-height: 1;
+}
+.nextActionLoops {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 26px;
 }
 .nextActionContainer.zone-collapsed:not(.action-is-collapsing-zone) {
     display: none;

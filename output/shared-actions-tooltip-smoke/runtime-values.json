@@ -1,0 +1,15 @@
+{
+  "pageErrors": [],
+  "consoleErrors": [],
+  "values": {
+    "actions>survey>label": "勘测",
+    "actions>survey>label_done": "已勘测",
+    "actions>survey>label_global": "世界勘测",
+    "actions>survey>tooltip": "\n            探险者公会教会你的，不只是看路，更是看见别人会直接忽略的东西。带着地图慢慢把一个区域摸透后，你往后再来时就能从里面榨出更多资源与线索。<br>\n每次行动给予 max(1, floor(sqrt(平均勘测进度))) 经验。（当前 <div class='surveySkill'></div>）<br>\n区域每提升 1% 勘测度，该区域额外增加 0.5% 可发现物品（与空间魔法叠加）。<br>\n消耗 1 张地图，并产出 1 张完成地图；若该区域已勘测到 100%，则不会再消耗地图。\n            \n      ",
+    "actions>map>tooltip": "探险者公会已经教会你怎么用制图工具把走过的地方画成地图。有了地图，你才能系统地勘测区域，也更容易把以前漏看的角落和秘密重新翻出来。<br>\n新手镇这家店会以相当便宜的价格出售地图，单价 \n      ",
+    "actions>map>tooltip2": "金币 1 张。",
+    "actions>found_glasses>label": "找回眼镜",
+    "actions>found_glasses>tooltip": "\n            你明明记得自己还有一副备用眼镜。等把整个镇子翻到不能再翻时，你终于在最离谱、也最明显的地方找到了它们：一直就在你自己头顶上。<br>从现在起，你会在每一轮开始时就戴着眼镜。\n            ",
+    "actions>buy_mana_z1>tooltip2": "\n            点法力。会按你当前买得起的额度一次买满。<br>对普通人来说，这只是图个省事；对现在的你来说，这几乎就是最直接的续命手段。<br>探索度达到 20% 后解锁。\n            \n      "
+  }
+}

@@ -1,0 +1,213 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - list [ref=e4]:
+      - listitem [ref=e5]:
+        - generic [ref=e6]: 
+      - listitem [ref=e7]: Changelog
+      - listitem [ref=e8]: Saving
+      - listitem [ref=e9]: FAQ
+      - listitem [ref=e10]:
+        - text: Options
+        - option "Normal" [selected]
+        - option "Dark"
+        - option "Cubic"
+        - option "Cubic Dark"
+        - option "Zen"
+        - option "Zen Dark"
+        - option "简体中文"
+        - option "英语" [selected]
+      - listitem [ref=e11]: Extras
+      - listitem [ref=e12]: Challenges
+      - listitem [ref=e13]: Totals
+      - listitem [ref=e14]: Prestige Perks
+      - listitem [ref=e15]: Critical Alert
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - generic [ref=e19]: 
+          - text: "Mana:"
+        - generic [ref=e20]: 0 | 0s
+      - generic [ref=e21]:
+        - generic [ref=e22]: "Gold:"
+        - generic [ref=e23]: "0"
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - button "Play" [ref=e26] [cursor=pointer]
+        - button "Restart" [ref=e27] [cursor=pointer]
+        - button "Bonus Seconds" [ref=e28] [cursor=pointer]
+        - generic [ref=e31]: Story
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - checkbox "Pause before restart" [ref=e34] [cursor=pointer]
+          - text: Pause before restart
+        - generic [ref=e35]:
+          - checkbox "Pause on failed loop" [ref=e36] [cursor=pointer]
+          - text: Pause on failed loop
+        - generic [ref=e37]:
+          - checkbox "Pause on progress complete" [ref=e38] [cursor=pointer]
+          - text: Pause on progress complete
+  - main [ref=e39]:
+    - generic [ref=e41]:
+      - generic [ref=e43]: Stats
+      - generic [ref=e44]:
+        - radio "Regular View" [checked] [ref=e45] [cursor=pointer]
+        - text: Regular View
+        - radio "Radar Chart" [ref=e46] [cursor=pointer]
+        - text: Radar Chart
+      - generic [ref=e47]:
+        - generic [ref=e49]:
+          - generic [ref=e50]: Dexterity
+          - generic [ref=e55]: "0"
+          - generic [ref=e58]: "0"
+        - generic [ref=e63]:
+          - generic [ref=e64]: Strength
+          - generic [ref=e69]: "0"
+          - generic [ref=e72]: "0"
+        - generic [ref=e77]:
+          - generic [ref=e78]: Constitution
+          - generic [ref=e83]: "0"
+          - generic [ref=e86]: "0"
+        - generic [ref=e91]:
+          - generic [ref=e92]: Speed
+          - generic [ref=e97]: "0"
+          - generic [ref=e100]: "0"
+        - generic [ref=e105]:
+          - generic [ref=e106]: Perception
+          - generic [ref=e111]: "0"
+          - generic [ref=e114]: "0"
+        - generic [ref=e119]:
+          - generic [ref=e120]: Charisma
+          - generic [ref=e125]: "0"
+          - generic [ref=e128]: "0"
+        - generic [ref=e133]:
+          - generic [ref=e134]: Intelligence
+          - generic [ref=e139]: "0"
+          - generic [ref=e142]: "0"
+        - generic [ref=e147]:
+          - generic [ref=e148]: Luck
+          - generic [ref=e153]: "0"
+          - generic [ref=e156]: "0"
+        - generic [ref=e161]:
+          - generic [ref=e162]: Soul
+          - generic [ref=e167]: "0"
+          - generic [ref=e170]: "0"
+        - generic [ref=e175]:
+          - generic [ref=e176]: Total
+          - generic [ref=e177]: "0"
+          - generic [ref=e178]: "0"
+      - generic [ref=e179]:
+        - generic [ref=e181]: Skills
+        - generic [ref=e182]:
+          - generic [ref=e183]: Self Combat
+          - generic [ref=e185]: "0"
+        - generic [ref=e186]:
+          - generic [ref=e187]: Team Combat
+          - generic [ref=e189]: "0"
+    - generic [ref=e191]:
+      - generic [ref=e193]: Action List
+      - text:  
+      - generic [ref=e194]:
+        - generic [ref=e197]:
+          - generic [ref=e198]: Mana Used
+          - generic [ref=e199]: 0 | 0s
+        - generic [ref=e202]:
+          - generic [ref=e203]: Amount
+          - button "1" [ref=e204] [cursor=pointer]
+          - button "5" [ref=e205] [cursor=pointer]
+          - button "10" [ref=e206] [cursor=pointer]
+          - textbox [ref=e207] [cursor=pointer]: "1"
+      - generic [ref=e208]:
+        - generic [ref=e209]:
+          - checkbox "Keep current list active" [ref=e210] [cursor=pointer]
+          - text: Keep current list active
+          - checkbox "Repeat last action on list" [ref=e211] [cursor=pointer]
+          - text: Repeat last action on list
+          - checkbox "Add action to top of list" [ref=e212] [cursor=pointer]
+          - text: Add action to top of list
+        - generic [ref=e213]:
+          - button "Clear List" [ref=e214] [cursor=pointer]
+          - generic [ref=e215] [cursor=pointer]: Manage Loadouts
+    - generic [ref=e216]:
+      - generic [ref=e217]:
+        - generic [ref=e218]:
+          - combobox [ref=e221]:
+            - text: "\""
+            - option "Beginnersville" [selected]
+            - text: "\" \" \" \" \" \" \" \""
+          - generic [ref=e222] [cursor=pointer]: 
+        - generic [ref=e223]:
+          - generic [ref=e224]:
+            - text:   
+            - generic [ref=e226]:
+              - generic [ref=e227]: Explored
+              - generic [ref=e228]: "0"
+              - generic [ref=e229]: "%"
+              - text: 
+            - generic [ref=e234]:
+              - generic [ref=e235]: Pots Smashed
+              - generic [ref=e236]: "0"
+              - generic [ref=e237]: 
+              - generic [ref=e238]: "0"
+              - generic [ref=e239]: 
+              - generic [ref=e240]: "0"
+              - checkbox "Lootable first" [ref=e241] [cursor=pointer]
+              - generic [ref=e242] [cursor=pointer]: Lootable first
+              - text: 
+            - text:              
+          - text:                                                                                                                   
+        - generic [ref=e243]:
+          - generic [ref=e244]: Action Options
+          - generic [ref=e245] [cursor=pointer]: 
+          - generic [ref=e246]:
+            - generic [ref=e247]:
+              - generic [ref=e248]: View by role
+              - button "Hide role legend" [ref=e249] [cursor=pointer]: "-"
+            - generic [ref=e250]:
+              - button "Advance 1" [ref=e251] [cursor=pointer]:
+                - generic [ref=e252]: Advance
+                - generic [ref=e253]: "1"
+              - button "Growth 0" [disabled] [ref=e254] [cursor=pointer]:
+                - generic [ref=e255]: Growth
+                - generic [ref=e256]: "0"
+              - button "Resource 1" [ref=e257] [cursor=pointer]:
+                - generic [ref=e258]: Resource
+                - generic [ref=e259]: "1"
+              - button "Shortcut 0" [disabled] [ref=e260] [cursor=pointer]:
+                - generic [ref=e261]: Shortcut
+                - generic [ref=e262]: "0"
+              - button "Side 0" [disabled] [ref=e263] [cursor=pointer]:
+                - generic [ref=e264]: Side
+                - generic [ref=e265]: "0"
+            - generic [ref=e266]: Dim actions by role without hiding them.
+        - generic [ref=e269]:
+          - button "Adv Wander" [ref=e271] [cursor=pointer]:
+            - generic "Advance": Adv
+            - text: Wander
+            - generic [ref=e272]:
+              - img [ref=e273]
+              - img [ref=e274]
+          - button "Res Smash Pots" [ref=e276] [cursor=pointer]:
+            - generic "Resource": Res
+            - text: Smash Pots
+            - img [ref=e278]
+      - generic [ref=e280]:
+        - generic [ref=e281]: Action Log
+        - list [ref=e282]:
+          - listitem [ref=e283]: "Loop 0: You're a simple courier, on a long trip to deliver a high priority package. Just as you entered town, you tripped - breaking your glasses - and the package burst open, spilling a strange liquid on you. Immediately, your meager amount of mana started draining rapidly. Right as your mana completely ran out, you found yourself back in the moment the liquid was absorbed into your skin, with your tiny reserves filled... yet draining just as before. This happened again and again, the world resetting with you, until you decided you had to figure out a way to prolong how long these 'loops' were. Mana crystals are often stored in pottery around town, perhaps you'll start there ..."
+          - listitem [ref=e284]: End of log
+  - generic [ref=e287]:
+    - generic [ref=e288]:
+      - text: "TUTORIAL:"
+      - text: Click the Wander action and click Play to start.
+      - text: Wander for a bit, then smash pots.
+      - text: Watch the numbers change, read all the tooltips.
+      - text: Complete the town, go to the next one.
+      - text: Hey there, it looks like you're starting the game on a site other than stopsign.github.io.
+      - text: Before you start, you should know that this is a fanmade modification
+      - text: for the original game, located
+      - link "here" [ref=e289] [cursor=pointer]:
+        - /url: https://stopsign.github.io/idleLoops/
+      - text: . You can import your save from the
+      - text: original, but if you import it back to the original, you'll lose any progress in features specific to this version.
+      - text: Thanks for playing, and have fun!
+    - button "OK" [ref=e290] [cursor=pointer]

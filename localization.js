@@ -4,9 +4,10 @@ const Localization = self["Localization"] = {
     // config
     // set to true for more console.log
     debug: false,
-    defaultLang: "en-EN",
+    defaultLang: "zh-CN",
     supportedLang: {
-        "en-EN": "English",
+        "zh-CN": "简体中文",
+        "en-EN": "英语",
         //"fr-FR": "Français",
     },
     // key used in the get parameter of the URL to set a specific language
@@ -32,6 +33,7 @@ const Localization = self["Localization"] = {
         Localization.currentLang = Localization.getUrlVars()[Localization.getKey];
         if (typeof(Localization.currentLang) === "undefined")
             Localization.currentLang = Localization.defaultLang;
+        Localization.applyDocumentLanguage();
     },
     // to load a specific lib and have an optional callback
     loadLib(libName, callback) {
@@ -67,13 +69,22 @@ const Localization = self["Localization"] = {
     // lib can be ignored to use the last used lib. returns the texts for the given key as objects
     /** @returns {JQuery<Element>} */
     txtsObj(path, lib) {
-        if (typeof(lib) === "undefined") return $(Localization.libs[Localization.lastLib]).find(path);
+        if (typeof(lib) === "undefined") return $(Localization.libs.game ?? Localization.libs[Localization.lastLib]).find(path);
         return $(Localization.libs[lib]).find(path);
     },
     // will update every dom element using the .localized class, with a valid js-data "lockey"
     localizePage(lib) {
         $(".localized").each((_index, localizedElement) => {
             $(localizedElement).html(Localization.txt($(localizedElement).data("lockey"), lib));
+        });
+        $("[data-locvalue]").each((_index, localizedElement) => {
+            localizedElement.value = Localization.txt($(localizedElement).data("locvalue"), lib);
+        });
+        $("[data-locplaceholder]").each((_index, localizedElement) => {
+            localizedElement.placeholder = Localization.txt($(localizedElement).data("locplaceholder"), lib);
+        });
+        $("[data-loctitle]").each((_index, localizedElement) => {
+            localizedElement.title = Localization.txt($(localizedElement).data("loctitle"), lib);
         });
     },
 
@@ -82,13 +93,18 @@ const Localization = self["Localization"] = {
         if (Localization.debug)
             console.log(`Loaded lib ${libName} : `, xmlData);
         Localization.libs[libName] = xmlData;
-        Localization.lastLib = Localization.lastLib === null ? libName : Localization.lastLib;
+        Localization.lastLib = libName;
     },
     // function triggered by the localization menu
     change() {
         const vars = Localization.getUrlVars();
         vars.lg = $(Localization.handle).val();
         window.location.href = `${window.location.origin + window.location.pathname}?${$.param(vars)}`;
+    },
+    applyDocumentLanguage() {
+        if (typeof document === "undefined") return;
+        document.documentElement.lang = Localization.currentLang ?? Localization.defaultLang;
+        document.body?.setAttribute("data-lang", Localization.currentLang ?? Localization.defaultLang);
     },
     loadXML(libName, callback) {
         if (libName === "fallback") $.get("lang/en-EN/game.xml", null, callback, "xml");

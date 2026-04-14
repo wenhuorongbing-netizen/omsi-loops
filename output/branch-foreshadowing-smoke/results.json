@@ -1,0 +1,68 @@
+[
+  {
+    "url": "http://127.0.0.1:4173/",
+    "xml": [
+      {
+        "url": "http://127.0.0.1:4173/lang/en-EN/game.xml",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:4173/lang/zh-CN/game.xml",
+        "status": 200
+      }
+    ],
+    "errors": [],
+    "pageErrors": [],
+    "failed": [
+      {
+        "url": "https://region1.google-analytics.com/g/collect?v=2&tid=G-D7MKZE2ZZH&gtm=45je64a1v9172230330za200zd9172230330&_p=1776118317313&gcd=13l3l3l2l1l1&npa=1&dma_cps=a&dma=1&are=1&cid=142552323.1776118318&frm=0&pscdl=noapi&rcb=3&sr=1280x720&uaa=x86&uab=64&uafvl=HeadlessChrome%3B147.0.7727.15%7CNot.A%252FBrand%3B8.0.0.0%7CChromium%3B147.0.7727.15&uam=&uamb=0&uap=Windows&uapv=19.0.0&uaw=0&ul=zh-cn&_s=1&tag_exp=0~115616985~115938465~115938468~117266401~118289195&sid=1776118317&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F&dt=*PAUSED*%20Idle%20Loops&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=541",
+        "error": "net::ERR_ABORTED"
+      }
+    ],
+    "bodySnippet": "更新日志\n存档\n常见问题\n选项\n额外设置\n挑战\n累计统计\n转生加成\n严重警告\n 法力： 0 | 0s\n金币： 0\n开始 重启 奖励时间 剧情\n 重启前暂停  在循环失败时暂停  进度完成时暂停\n属性\n 常规视图  雷达图\n灵巧\n0\n0\n力量\n0\n0\n体质\n0\n0\n速度\n0\n0\n感知\n0\n0\n魅力\n0\n0\n智力\n0\n0\n运气\n0\n0\n灵魂\n0\n0\n总计\n0\n0\n技能\n\n\n个人战斗 \n0\n团队战斗 \n"
+  },
+  {
+    "url": "http://127.0.0.1:4173/?lg=en-EN",
+    "xml": [
+      {
+        "url": "http://127.0.0.1:4173/lang/en-EN/game.xml",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:4173/lang/en-EN/game.xml",
+        "status": 200
+      }
+    ],
+    "errors": [],
+    "pageErrors": [],
+    "failed": [
+      {
+        "url": "https://region1.google-analytics.com/g/collect?v=2&tid=G-D7MKZE2ZZH&gtm=45je64a1v9172230330za200zd9172230330&_p=1776118318553&gcd=13l3l3l2l1l1&npa=1&dma_cps=a&dma=1&are=1&cid=1314603842.1776118319&frm=0&pscdl=noapi&rcb=16&sr=1280x720&uaa=x86&uab=64&uafvl=HeadlessChrome%3B147.0.7727.15%7CNot.A%252FBrand%3B8.0.0.0%7CChromium%3B147.0.7727.15&uam=&uamb=0&uap=Windows&uapv=19.0.0&uaw=0&ul=zh-cn&_s=1&tag_exp=0~115616986~115938465~115938468~116363097~117266401&sid=1776118318&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F%3Flg%3Den-EN&dt=*PAUSED*%20Idle%20Loops&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=447",
+        "error": "net::ERR_ABORTED"
+      }
+    ],
+    "bodySnippet": "Changelog\nSaving\nFAQ\nOptions\nExtras\nChallenges\nTotals\nPrestige Perks\nCritical Alert\n Mana: 0 | 0s\nGold: 0\nPlay Restart Bonus Seconds Story\n Pause before restart  Pause on failed loop  Pause on progres"
+  },
+  {
+    "url": "http://127.0.0.1:4173/?lg=zh-CN",
+    "xml": [
+      {
+        "url": "http://127.0.0.1:4173/lang/en-EN/game.xml",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:4173/lang/zh-CN/game.xml",
+        "status": 200
+      }
+    ],
+    "errors": [],
+    "pageErrors": [],
+    "failed": [
+      {
+        "url": "https://region1.google-analytics.com/g/collect?v=2&tid=G-D7MKZE2ZZH&gtm=45je64a1v9172230330za200zd9172230330&_p=1776118319718&gcd=13l3l3l2l1l1&npa=1&dma_cps=a&dma=1&are=1&cid=591543442.1776118320&frm=0&pscdl=noapi&rcb=17&sr=1280x720&uaa=x86&uab=64&uafvl=HeadlessChrome%3B147.0.7727.15%7CNot.A%252FBrand%3B8.0.0.0%7CChromium%3B147.0.7727.15&uam=&uamb=0&uap=Windows&uapv=19.0.0&uaw=0&ul=zh-cn&_s=1&tag_exp=0~115938465~115938468~117266400~117384405&sid=1776118320&sct=1&seg=0&dl=http%3A%2F%2F127.0.0.1%2F%3Flg%3Dzh-CN&dt=*PAUSED*%20Idle%20Loops&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=481",
+        "error": "net::ERR_ABORTED"
+      }
+    ],
+    "bodySnippet": "更新日志\n存档\n常见问题\n选项\n额外设置\n挑战\n累计统计\n转生加成\n严重警告\n 法力： 0 | 0s\n金币： 0\n开始 重启 奖励时间 剧情\n 重启前暂停  在循环失败时暂停  进度完成时暂停\n属性\n 常规视图  雷达图\n灵巧\n0\n0\n力量\n0\n0\n体质\n0\n0\n速度\n0\n0\n感知\n0\n0\n魅力\n0\n0\n智力\n0\n0\n运气\n0\n0\n灵魂\n0\n0\n总计\n0\n0\n技能\n\n\n个人战斗 \n0\n团队战斗 \n"
+  }
+]

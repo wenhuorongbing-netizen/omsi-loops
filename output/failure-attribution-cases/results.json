@@ -1,0 +1,65 @@
+{
+  "results": [
+    {
+      "label": "brew-reputation",
+      "name": "Brew Potions",
+      "kind": "condition",
+      "detail": "reputationLow",
+      "severity": "hard",
+      "countsAsFailure": true,
+      "pauseEligible": true,
+      "typeText": "Condition unmet",
+      "reasonText": "Your current reputation did not meet this action's requirement.",
+      "pauseCheck": true
+    },
+    {
+      "label": "brew-herbs",
+      "name": "Brew Potions",
+      "kind": "cost",
+      "detail": "herbsLow",
+      "severity": "hard",
+      "countsAsFailure": true,
+      "pauseEligible": true,
+      "typeText": "Resource shortage",
+      "reasonText": "Your current loop did not have enough herbs for this action.",
+      "pauseCheck": true
+    },
+    {
+      "label": "escape-timing",
+      "name": "Escape",
+      "kind": "timing",
+      "detail": "escapeWindow",
+      "severity": "hard",
+      "countsAsFailure": true,
+      "pauseEligible": true,
+      "typeText": "Bad timing",
+      "reasonText": "This action can only begin during its early-loop time window.",
+      "pauseCheck": true
+    },
+    {
+      "label": "gods-model",
+      "name": "Gods Trial",
+      "kind": "model",
+      "detail": "teamModel",
+      "severity": "hard",
+      "countsAsFailure": true,
+      "pauseEligible": true,
+      "typeText": "Build mismatch",
+      "reasonText": "Your current team build could not generate progress for this action.",
+      "pauseCheck": true
+    },
+    {
+      "label": "spire-soft",
+      "name": "The Spire",
+      "kind": "exhausted",
+      "detail": "completed",
+      "severity": "soft",
+      "countsAsFailure": false,
+      "pauseEligible": false,
+      "typeText": "No current target",
+      "reasonText": "This action has no remaining target right now.",
+      "pauseCheck": false
+    }
+  ],
+  "errors": []
+}

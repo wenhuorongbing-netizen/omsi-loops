@@ -14,6 +14,7 @@ class View {
         this.updateCurrentActionsDivs();
         this.updateTotalTicks();
         this.updateAddAmount(1);
+        this.initializeActionCategoryLegend();
         this.createTownActions();
         this.updateProgressActions();
         this.updateLockedHidden();
@@ -55,6 +56,11 @@ class View {
     constructor() {
         this.mouseoverHandler = this.mouseoverHandler.bind(this);
         this.modifierkeychangeHandler = this.modifierkeychangeHandler.bind(this);
+        const savedFilter = window.localStorage.getItem("actionCategoryFilter");
+        this.actionCategoryFilter = actionCategories.includes(/** @type {ActionCategory} */(savedFilter))
+            ? /** @type {ActionCategory} */(savedFilter)
+            : "";
+        this.actionCategoryLegendCollapsed = window.localStorage.getItem("actionCategoryLegendCollapsed") === "true";
     }
 
     /** @param {UIEvent} event */
@@ -602,10 +608,17 @@ class View {
         const element = htmlElement(`${resource}Div`, false, false);
         if (element) element.style.display = resources[resource] ? "inline-block" : "none";
 
-        if (resource === "supplies") document.getElementById("suppliesCost").textContent = String(towns[0].suppliesCost);
-        if (resource === "teamMembers") document.getElementById("teamCost").textContent = `${(resources.teamMembers + 1) * 100}`;
+        if (resource === "supplies") {
+            const suppliesCostElement = document.getElementById("suppliesCost");
+            if (suppliesCostElement) suppliesCostElement.textContent = String(towns[0].suppliesCost);
+        }
+        if (resource === "teamMembers") {
+            const teamCostElement = document.getElementById("teamCost");
+            if (teamCostElement) teamCostElement.textContent = `${(resources.teamMembers + 1) * 100}`;
+        }
 
-        if (Number.isFinite(resources[resource])) htmlElement(resource).textContent = resources[resource];
+        const valueElement = htmlElement(resource, false, false);
+        if (Number.isFinite(resources[resource]) && valueElement) valueElement.textContent = resources[resource];
     };
     updateResources() {
         for (const resource in resources) this.updateResource(resource);
@@ -680,6 +693,7 @@ class View {
                     >
                         <div class='nextActionLoops'><img class='smallIcon imageDragFix'> ×
                         <div class='bold'></div></div>
+                        <div class='nextActionCategoryMark'></div>
                         <div class='nextActionButtons'>
                             <button onclick=${capAction.bind(null, i)}      class='capButton actionIcon far fa-circle'></button>
                             <button onclick=${addLoop.bind(null, i)}        class='plusButton actionIcon fas fa-plus'></button>
@@ -702,7 +716,11 @@ class View {
                 for (const type of actionTypes) {
                     container.classed(`action-type-${type}`, a => a.action.type === type);
                 }
+                for (const category of actionCategories) {
+                    container.classed(`action-category-${category}`, a => a.action.category === category);
+                }
             })
+            .attr("data-action-category", a => a.action.category)
             .classed("action-has-limit", a => hasLimit(a.name))
             .classed("action-is-training", a => isTraining(a.name))
             .classed("action-is-singular", a => a.action.allowed?.() === 1)
@@ -726,6 +744,10 @@ class View {
                 }
                 return color;
             })
+            .call(container => container
+                .select("div.nextActionCategoryMark")
+                .text(({action}) => getActionCategoryShortLabel(action.category))
+                .property("title", ({action}) => getActionCategoryLabel(action.category)))
             .call(container => container
                 .select("div.nextActionLoops > img")
                 .property("src", a => `img/${a.action.imageName}.svg`))
@@ -778,8 +800,13 @@ class View {
                     `<br>` +
                     `<div id='action${i}ExpGain'></div>` +
                     `<div id='action${i}HasFailed' style='display:none'>` +
-                        `<b>${_txt("actions>current_action>failed_attempts")}</b> <div id='action${i}Failed'></div><br>` +
-                        `<b>${_txt("actions>current_action>error")}</b> <div id='action${i}Error'></div>` +
+                        `<div id='action${i}FailedAttemptsRow'>` +
+                            `<b>${_txt("actions>current_action>failed_attempts")}</b> <div id='action${i}Failed'></div><br>` +
+                        `</div>` +
+                        `<b>${getActionFailureTypeLabelText()}</b> <div id='action${i}FailureType'></div><br>` +
+                        `<div id='action${i}FailureReasonRow'>` +
+                            `<b>${getActionFailureReasonLabelText()}</b> <div id='action${i}Error'></div>` +
+                        `</div>` +
                     `</div>` +
                 `</div>`;
         }
@@ -797,29 +824,44 @@ class View {
         if (!action) {
             return;
         }
-        if (action.errorMessage) {
+        const failureInfo = action.failureInfo;
+        if (failureInfo) {
             document.getElementById(`action${index}Failed`).textContent = `${action.loopsLeft}`;
-            document.getElementById(`action${index}Error`).textContent = action.errorMessage;
+            document.getElementById(`action${index}FailureType`).textContent = getActionFailureKindLabel(failureInfo.kind);
+            document.getElementById(`action${index}Error`).textContent = action.errorMessage ?? getActionFailureReason(failureInfo, action);
+            document.getElementById(`action${index}FailedAttemptsRow`).style.display = failureInfo.countsAsFailure ? "" : "none";
+            document.getElementById(`action${index}FailureReasonRow`).style.display = action.errorMessage ? "" : "none";
             document.getElementById(`action${index}HasFailed`).style.display = "";
             div.style.width = "100%";
-            div.style.backgroundColor = "var(--cur-action-error-indicator)";
+            div.style.backgroundColor = failureInfo.severity === "soft"
+                ? "var(--button-warning-background)"
+                : "var(--cur-action-error-indicator)";
             div.style.height = "30%";
             div.style.marginTop = "5px";
-            if (action.name === "Heal The Sick") setStoryFlag("failedHeal");
-            if (action.name === "Brew Potions" && resources.reputation >= 0 && resources.herbs >= 10) setStoryFlag("failedBrewPotions");
-            if (action.name === "Brew Potions" && resources.reputation < 0 && resources.herbs >= 10) setStoryFlag("failedBrewPotionsNegativeRep");
-            if (action.name === "Gamble" && resources.reputation < -5) setStoryFlag("failedGamble");
-            if (action.name === "Gamble" && resources.gold < 20 && resources.reputation > -6) setStoryFlag("failedGambleLowMoney");
-            if (action.name === "Gather Team") setStoryFlag("failedGatherTeam");
-            if (action.name === "Craft Armor") setStoryFlag("failedCraftArmor");
-            if (action.name === "Imbue Body") setStoryFlag("failedImbueBody");
-            if (action.name === "Accept Donations") setStoryFlag("failedReceivedDonations");
-            if (action.name === "Raise Zombie") setStoryFlag("failedRaiseZombie")
+            if (failureInfo.countsAsFailure) {
+                if (action.name === "Heal The Sick") setStoryFlag("failedHeal");
+                if (action.name === "Brew Potions" && failureInfo.detail === "reputationLow" && resources.reputation >= 0 && resources.herbs >= 10) setStoryFlag("failedBrewPotions");
+                if (action.name === "Brew Potions" && failureInfo.detail === "reputationLow" && resources.reputation < 0 && resources.herbs >= 10) setStoryFlag("failedBrewPotionsNegativeRep");
+                if (action.name === "Gamble" && failureInfo.detail === "reputationLow") setStoryFlag("failedGamble");
+                if (action.name === "Gamble" && failureInfo.detail === "goldLow" && resources.reputation > -6) setStoryFlag("failedGambleLowMoney");
+                if (action.name === "Gather Team") setStoryFlag("failedGatherTeam");
+                if (action.name === "Craft Armor") setStoryFlag("failedCraftArmor");
+                if (action.name === "Imbue Body") setStoryFlag("failedImbueBody");
+                if (action.name === "Accept Donations") setStoryFlag("failedReceivedDonations");
+                if (action.name === "Raise Zombie") setStoryFlag("failedRaiseZombie");
+            }
         } else if (action.loopsLeft === 0) {
+            document.getElementById(`action${index}HasFailed`).style.display = "none";
             div.style.width = "100%";
             div.style.backgroundColor = "var(--cur-action-completed-background)";
+            div.style.height = "";
+            div.style.marginTop = "";
         } else {
+            document.getElementById(`action${index}HasFailed`).style.display = "none";
             div.style.width = `${100 * action.ticks / action.adjustedTicks}%`;
+            div.style.backgroundColor = "";
+            div.style.height = "";
+            div.style.marginTop = "";
         }
 
         // only update tooltip if it's open
@@ -1014,6 +1056,8 @@ class View {
         } else {
             document.getElementById("buffList").style.display = "none";
         }
+        this.updateActionCategoryLegend();
+        this.applyActionCategoryFilter();
     };
 
     updateGlobalStory(num) {
@@ -1027,7 +1071,9 @@ class View {
                 // greatly reduces/nullifies the cost of checking actions with all stories unlocked, which is nice,
                 // since you're likely to have more stories unlocked at end game, which is when performance is worse
                 const divName = `storyContainer${action.varName}`;
-                if (init || document.getElementById(divName).innerHTML.includes("???")) {
+                const storyContentDiv = document.getElementById(`storyContent${action.varName}`);
+                const storyContentHTML = storyContentDiv?.innerHTML ?? "";
+                if (init || storyContentHTML.includes("???")) {
                     let storyTooltipText = "";
                     let lastInBranch = false;
                     let allStoriesForActionUnlocked = true;
@@ -1054,8 +1100,8 @@ class View {
                             storyTooltipText += "</p>\n";
                     }
 
-                    if (document.getElementById(divName).children[2].innerHTML !== storyTooltipText) {
-                        document.getElementById(divName).children[2].innerHTML = storyTooltipText;
+                    if (storyContentDiv && storyContentDiv.innerHTML !== storyTooltipText) {
+                        storyContentDiv.innerHTML = storyTooltipText;
                         if (!init) {
                             showNotification(divName);
                             if (!unreadActionStories.includes(divName)) unreadActionStories.push(divName);
@@ -1099,6 +1145,8 @@ class View {
         htmlElement("shortTownColumn").classList.add(`zone-${townNum+1}`);
         document.getElementById("townDesc").textContent = _txt(`towns>town${townNum}>desc`);
         townShowing = townNum;
+        this.updateActionCategoryLegend();
+        this.applyActionCategoryFilter();
     };
 
     showActions(stories) {
@@ -1119,7 +1167,137 @@ class View {
 
         document.getElementById("actionsTitle").textContent = _txt(`actions>title${(stories) ? "_stories" : ""}`);
         actionStoriesShowing = stories;
+        this.updateActionCategoryLegend();
+        this.applyActionCategoryFilter();
     };
+
+    initializeActionCategoryLegend() {
+        if (document.getElementById("actionCategoryLegend")) return;
+
+        document.getElementById("townActionTitle").append(Rendered.html`
+            <div id="actionCategoryLegend" class="actionCategoryLegend">
+                <div class="actionCategoryLegendHeader">
+                    <span id="actionCategoryLegendTitle" class="actionCategoryLegendTitle"></span>
+                    <button
+                        type="button"
+                        id="actionCategoryLegendToggle"
+                        class="button actionCategoryLegendToggle"
+                        onclick="view.toggleActionCategoryLegend()"
+                    ></button>
+                </div>
+                <div id="actionCategoryLegendButtons" class="actionCategoryLegendButtons"></div>
+                <div id="actionCategoryLegendHint" class="actionCategoryLegendHint"></div>
+            </div>
+        `);
+
+        const buttons = document.getElementById("actionCategoryLegendButtons");
+        for (const category of actionCategories) {
+            buttons.append(Rendered.html`
+                <button
+                    type="button"
+                    class="button actionCategoryFilterButton action-category-${category}"
+                    data-category="${category}"
+                    onclick="view.toggleActionCategoryFilter('${category}')"
+                >
+                    <span class="actionCategoryFilterLabel"></span>
+                    <span class="actionCategoryFilterCount">0</span>
+                </button>
+            `);
+        }
+
+        this.updateActionCategoryLegend();
+    }
+
+    /** @param {AnyAction} action @param {"action"|"story"|"queue"} [variant] */
+    renderActionCategoryBadge(action, variant="action") {
+        const category = action.category;
+        return `<span class="actionCategoryBadge actionCategoryBadge-${variant} action-category-${category}" title="${getActionCategoryLabel(category)}">${getActionCategoryShortLabel(category)}</span>`;
+    }
+
+    /** @param {AnyAction} action @param {"action"|"story"} [variant] */
+    renderActionCategoryTooltip(action, variant="action") {
+        const category = action.category;
+        const note = getActionCategoryNote(action);
+        return `
+            <div class="actionCategoryTooltipText actionCategoryTooltipText-${variant} action-category-${category}">
+                <div class="actionCategoryTooltipHeading"><span class="bold">${getActionCategoryPrimaryRoleText()}:</span> ${getActionCategoryLabel(category)}</div>
+                <div class="actionCategoryTooltipDescription">${getActionCategoryDescription(category)}</div>
+                ${note ? `<div class="actionCategoryTooltipNote">${note}</div>` : ""}
+            </div>
+        `;
+    }
+
+    toggleActionCategoryFilter(category) {
+        this.actionCategoryFilter = this.actionCategoryFilter === category ? "" : category;
+        if (this.actionCategoryFilter) {
+            window.localStorage.setItem("actionCategoryFilter", this.actionCategoryFilter);
+        } else {
+            window.localStorage.removeItem("actionCategoryFilter");
+        }
+        this.updateActionCategoryLegend();
+        this.applyActionCategoryFilter();
+    }
+
+    toggleActionCategoryLegend() {
+        this.actionCategoryLegendCollapsed = !this.actionCategoryLegendCollapsed;
+        window.localStorage.setItem("actionCategoryLegendCollapsed", String(this.actionCategoryLegendCollapsed));
+        this.updateActionCategoryLegend();
+    }
+
+    updateActionCategoryLegend() {
+        const legend = document.getElementById("actionCategoryLegend");
+        if (!legend) return;
+
+        legend.classList.toggle("collapsed", this.actionCategoryLegendCollapsed);
+        document.getElementById("actionCategoryLegendTitle").textContent = getActionCategoryLegendTitle();
+
+        /** @type {Record<ActionCategory, number>} */
+        const counts = {
+            advance: 0,
+            growth: 0,
+            resource: 0,
+            shortcut: 0,
+            side: 0,
+        };
+
+        const shownTown = towns[townShowing] ?? towns[0];
+        if (shownTown) {
+            for (const action of shownTown.totalActionList) {
+                if (action.visible()) counts[action.category]++;
+            }
+        }
+
+        for (const button of document.querySelectorAll(".actionCategoryFilterButton")) {
+            if (!(button instanceof HTMLButtonElement)) continue;
+            const category = /** @type {ActionCategory} */(button.dataset.category);
+            button.querySelector(".actionCategoryFilterLabel").textContent = getActionCategoryLabel(category);
+            button.querySelector(".actionCategoryFilterCount").textContent = String(counts[category]);
+            button.classList.toggle("is-active", this.actionCategoryFilter === category);
+            button.disabled = counts[category] === 0 && this.actionCategoryFilter !== category;
+            button.title = `${getActionCategoryLabel(category)}: ${getActionCategoryDescription(category)}`;
+        }
+
+        const legendToggle = document.getElementById("actionCategoryLegendToggle");
+        const toggleTitle = getActionCategoryLegendToggleText(this.actionCategoryLegendCollapsed);
+        legendToggle.textContent = this.actionCategoryLegendCollapsed ? "+" : "-";
+        legendToggle.title = toggleTitle;
+        legendToggle.setAttribute("aria-label", toggleTitle);
+
+        document.getElementById("actionCategoryLegendHint").textContent = getActionCategoryLegendHint(this.actionCategoryFilter || undefined);
+    }
+
+    applyActionCategoryFilter() {
+        const activeCategory = this.actionCategoryFilter;
+        for (const container of [...actionOptionsTown, ...actionStoriesTown]) {
+            for (const element of container.querySelectorAll("[data-action-category]")) {
+                if (!(element instanceof HTMLElement)) continue;
+                const shouldDim = !!activeCategory
+                    && !element.classList.contains("hidden")
+                    && element.dataset.actionCategory !== activeCategory;
+                element.classList.toggle("category-dimmed", shouldDim);
+            }
+        }
+    }
 
     toggleHiding() {
         document.documentElement.classList.toggle("editing-hidden-vars");
@@ -1170,7 +1348,7 @@ class View {
         for (let i = 0; i < loadoutnames.length; i++) {
             document.getElementById(`load${i + 1}`).textContent = loadoutnames[i];
         }
-        inputElement("renameLoadout").value = loadoutnames[curLoadout - 1];
+        inputElement("renameLoadout").value = loadoutnames[curLoadout - 1] ?? getLoadoutNameDefault();
     };
 
     createTownActions() {
@@ -1188,6 +1366,8 @@ class View {
             if (isActionOfType(action, "multipart")) this.createMultiPartPBar(action);
         }
         if (options.highlightNew) this.highlightIncompleteActions();
+        this.updateActionCategoryLegend();
+        this.applyActionCategoryFilter();
     };
 
     /** @param {ActionOfType<"progress">} action  */
@@ -1314,12 +1494,16 @@ class View {
         const isTravel = getTravelNum(action.name) != 0;
         const divClass = `${isTravel ? "travelContainer" : "actionContainer"} ${isTraining(action.name) || hasLimit(action.name) ? "cappableActionContainer" : ""}`;
         const imageName = action.name.startsWith("Assassin") ? "assassin" : camelize(action.name);
+        const category = action.category;
+        const categoryBadge = this.renderActionCategoryBadge(action);
+        const categoryTooltip = this.renderActionCategoryTooltip(action);
         const unlockConditions = /<br>\s*Unlocked (.*?)(?:<br>|$)/is.exec(`${action.tooltip}${action.goldCost === undefined ? "" : action.tooltip2}`)?.[1]; // I hate this but wygd
-        const lockedText = unlockConditions ? `${_txt("actions>tooltip>locked_tooltip")}<br>Will unlock ${unlockConditions}` : `${action.tooltip}${action.goldCost === undefined ? "" : action.tooltip2}`;
+        const lockedText = unlockConditions ? `${_txt("actions>tooltip>locked_tooltip")}<br>${_txt("actions>tooltip>will_unlock")} ${unlockConditions}` : `${action.tooltip}${action.goldCost === undefined ? "" : action.tooltip2}`;
         const totalDivText =
             `<button
                 id='container${action.varName}'
-                class='${divClass} actionOrTravelContainer ${action.type}ActionContainer showthat'
+                class='${divClass} actionOrTravelContainer ${action.type}ActionContainer showthat action-category-${category}'
+                data-action-category='${category}'
                 draggable='true'
                 ondragover='handleDragOver(event)'
                 ondragstart='handleDirectActionDragStart(event, "${action.name}", ${action.townNum}, "${action.varName}", false)'
@@ -1328,12 +1512,14 @@ class View {
                 onmouseover='view.updateAction("${action.varName}")'
                 onmouseout='view.updateAction(undefined)'
             >
+                ${categoryBadge}
                 <label>${action.label}</label><br>
                 <div style='position:relative'>
                     <img src='img/${imageName}.svg' class='superLargeIcon' draggable='false'>${extraImage}
                 </div>
                 ${statPie}
                 <div class='showthis when-unlocked' draggable='false'>
+                    ${categoryTooltip}
                     ${action.tooltip}<span id='goldCost${action.varName}'></span>
                     ${(action.goldCost === undefined) ? "" : action.tooltip2}
                     <br>
@@ -1344,6 +1530,7 @@ class View {
                     ${skillDetails}
                 </div>
                 <div class='showthis when-locked' draggable='false'>
+                    ${categoryTooltip}
                     ${lockedText}
                     <br>
                     ${lockedSkills}
@@ -1373,15 +1560,20 @@ class View {
                     storyTooltipText += "</p>";
             }
 
+            const storyCategoryBadge = this.renderActionCategoryBadge(action, "story");
+            const storyCategoryTooltip = this.renderActionCategoryTooltip(action, "story");
             const storyDivText =
-                `<div id='storyContainer${action.varName}' tabindex='0' class='storyContainer showthatstory' draggable='false' onmouseover='hideNotification("storyContainer${action.varName}")'>${action.label}
+                `<div id='storyContainer${action.varName}' tabindex='0' class='storyContainer showthatstory action-category-${category}' data-action-category='${category}' draggable='false' onmouseover='hideNotification("storyContainer${action.varName}")'>
+                    ${storyCategoryBadge}
+                    ${action.label}
                     <br>
                     <div style='position:relative'>
                         <img src='img/${camelize(action.name)}.svg' class='superLargeIcon' draggable='false'>
                         <div id='storyContainer${action.varName}Notification' class='notification storyNotification'></div>
                     </div>
                     <div class='showthisstory' draggable='false'>
-                        ${storyTooltipText}
+                        ${storyCategoryTooltip}
+                        <div id='storyContent${action.varName}' class='storyTooltipContent'>${storyTooltipText}</div>
                     </div>
                 </div>`;
 
@@ -1446,7 +1638,7 @@ class View {
                 <div class='numeric good' id='good${action.varName}'>0</div> <i class='fa fa-arrow-left'></i>
                 <div class='numeric unchecked' id='unchecked${action.varName}'>0</div>
                 <input type='checkbox' id='searchToggler${action.varName}' style='margin-left:10px;'>
-                <label for='searchToggler${action.varName}'> Lootable first</label>
+                <label for='searchToggler${action.varName}'> ${_txt("actions>tooltip>lootable_first")}</label>
                 <div class='showthis'>${action.infoText()}</div>
                 <div class='hideVarButton far' onclick='view.toggleHidden("${action.varName}")'></div>
             </div><br>`;
@@ -1472,8 +1664,8 @@ class View {
                         <div id='expBar${i}${varName}' class='segmentBar'></div>
                         <div class='showthis' id='tooltip${i}${varName}'>
                             <div id='segmentName${i}${varName}'></div><br>
-                            <div class='bold'>Main Stat</div> <div id='mainStat${i}${varName}'></div><br>
-                            <div class='bold'>Progress</div> <div id='progress${i}${varName}'></div> / <div id='progressNeeded${i}${varName}'></div>
+                            <div class='bold'>${_txt("actions>tooltip>main_stat")}</div> <div id='mainStat${i}${varName}'></div><br>
+                            <div class='bold'>${_txt("actions>tooltip>progress_label")}</div> <div id='progress${i}${varName}'></div> / <div id='progressNeeded${i}${varName}'></div>
                         </div>
                     </div>`;
         }
@@ -1713,7 +1905,7 @@ class View {
     createTravelMenu() {
         let travelMenu = $("#TownSelect");
         travelMenu.empty()
-        townNames.forEach((town, index) => {
+        getTownNames().forEach((town, index) => {
             travelMenu.append(`"<option value=${index} class='zone-${index+1}' hidden=''>${town}</option>`);
         });
         travelMenu.change(function() {
@@ -1731,7 +1923,7 @@ class View {
 
     adjustDarkRitualText() {
         let DRdesc = document.getElementById("DRText");
-        DRdesc.innerHTML = `Actions are:<br>`;
+        DRdesc.innerHTML = `${_txt("actions>tooltip>dark_ritual_actions_are")}<br>`;
         townsUnlocked.forEach(townNum => {
             DRdesc.innerHTML += DarkRitualDescription[townNum];
         });

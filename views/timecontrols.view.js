@@ -5,7 +5,7 @@ const timeControlsView = Views.registerView("timeControls", {
         // eslint-disable-next-line no-unused-vars
         _txtsObj("time_controls>stories>story").each((index, story) => {
             html +=
-            `<div id='story${$(story).attr("num")}'>
+            `<div id='story${$(story).attr("num")}' style='display:none;'>
                 ${$(story).text()}
             </div>`;
         });

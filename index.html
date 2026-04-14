@@ -47,12 +47,12 @@
 <body id="theBody" style="min-width:1210px">
     <div id="loadingBox" class="showWhileLoading hideWhenLoaded">
         <!-- This will only be visible if the localization has never been loaded in this browser -->
-        <div id="loadingText" class="localized" data-lockey="misc>loading">Initial load (this may take a while)...</div>
+        <div id="loadingText" class="localized" data-lockey="misc>loading">初次加载（可能需要一点时间）...</div>
     </div>
     <canvas id="talentTreeCanvas" style="display: none;"></canvas>
     <div id="talentTree" style="display: none;"></div>
     <header id="timeInfo" style="width:100%;text-align:center;">
-        <button id="cheat" class="button showthat control" style="display: none; margin-top: 5px;" onclick="cheat()">Cheat</button>
+        <button id="cheat" class="button showthat control localized" style="display: none; margin-top: 5px;" onclick="cheat()" data-lockey="misc>cheat">作弊</button>
         <div id="timeBarContainer" style="width:100%;height:10px;background:var(--progress-bar-background);text-align:center;position:relative;">
             <div id="timeBar" style="height:100%;width:20%;background-color:var(--progress-bar-mana-color);display:block;margin:auto;"></div>
         </div>
@@ -387,43 +387,43 @@
                     <div id="actionChangeButtons" style="margin-left:-4px;text-align:right;width:50%;">
                         <button id="maxTraining" class="button localized" style="margin-right:0px;display:none" onclick="capAllTraining()" data-lockey="actions>tooltip>max_training"></button>
                         <button id="clearList" class="button localized" style="margin-right:0px;" onclick="clearList()" data-lockey="actions>tooltip>clear_list"></button>
-                        <div tabindex="0" class="showthatloadout">Manage Loadouts
+                        <div tabindex="0" class="showthatloadout"><span class="localized" data-lockey="actions>tooltip>manage_loadouts">管理预设</span>
                             <div class="showthisloadout">
-                                <button class="loadoutbutton unused" id="load1" onclick="selectLoadout(1)" style="width:200px">Loadout 1</button>
+                                <button class="loadoutbutton unused" id="load1" onclick="selectLoadout(1)" style="width:200px">预设 1</button>
                                 <br>
-                                <button class="loadoutbutton unused" id="load2" onclick="selectLoadout(2)" style="width:200px">Loadout 2</button>
+                                <button class="loadoutbutton unused" id="load2" onclick="selectLoadout(2)" style="width:200px">预设 2</button>
                                 <br>
-                                <button class="loadoutbutton unused" id="load3" onclick="selectLoadout(3)" style="width:200px">Loadout 3</button>
+                                <button class="loadoutbutton unused" id="load3" onclick="selectLoadout(3)" style="width:200px">预设 3</button>
                                 <br>
-                                <button class="loadoutbutton unused" id="load4" onclick="selectLoadout(4)" style="width:200px">Loadout 4</button>
+                                <button class="loadoutbutton unused" id="load4" onclick="selectLoadout(4)" style="width:200px">预设 4</button>
                                 <br>
-                                <button class="loadoutbutton unused" id="load5" onclick="selectLoadout(5)" style="width:200px">Loadout 5</button>
+                                <button class="loadoutbutton unused" id="load5" onclick="selectLoadout(5)" style="width:200px">预设 5</button>
                                 <br>
-                                <button class="loadoutbutton unused" id="load6" onclick="selectLoadout(6)" style="width:200px">Loadout 6</button>
+                                <button class="loadoutbutton unused" id="load6" onclick="selectLoadout(6)" style="width:200px">预设 6</button>
                                 <br>
-                                <button class="loadoutbutton unused" id="load7" onclick="selectLoadout(7)" style="width:200px">Loadout 7</button>
+                                <button class="loadoutbutton unused" id="load7" onclick="selectLoadout(7)" style="width:200px">预设 7</button>
                                 <br>
-                                <button class="loadoutbutton unused" id="load8" onclick="selectLoadout(8)" style="width:200px">Loadout 8</button>
+                                <button class="loadoutbutton unused" id="load8" onclick="selectLoadout(8)" style="width:200px">预设 8</button>
                                 <br>
-                                <button class="loadoutbutton unused" id="load9" onclick="selectLoadout(9)" style="width:200px">Loadout 9</button>
+                                <button class="loadoutbutton unused" id="load9" onclick="selectLoadout(9)" style="width:200px">预设 9</button>
                                 <br>
-                                <button class="loadoutbutton unused" id="load10" onclick="selectLoadout(10)" style="width:200px">Loadout 10</button>
+                                <button class="loadoutbutton unused" id="load10" onclick="selectLoadout(10)" style="width:200px">预设 10</button>
                                 <br>
-                                <button class="loadoutbutton unused" id="load11" onclick="selectLoadout(11)" style="width:200px">Loadout 11</button>
+                                <button class="loadoutbutton unused" id="load11" onclick="selectLoadout(11)" style="width:200px">预设 11</button>
                                 <br>
-                                <button class="loadoutbutton unused" id="load12" onclick="selectLoadout(12)" style="width:200px">Loadout 12</button>
+                                <button class="loadoutbutton unused" id="load12" onclick="selectLoadout(12)" style="width:200px">预设 12</button>
                                 <br>
-                                <button class="loadoutbutton unused" id="load13" onclick="selectLoadout(13)" style="width:200px">Loadout 13</button>
+                                <button class="loadoutbutton unused" id="load13" onclick="selectLoadout(13)" style="width:200px">预设 13</button>
                                 <br>
-                                <button class="loadoutbutton unused" id="load14" onclick="selectLoadout(14)" style="width:200px">Loadout 14</button>
+                                <button class="loadoutbutton unused" id="load14" onclick="selectLoadout(14)" style="width:200px">预设 14</button>
                                 <br>
-                                <button class="loadoutbutton unused" id="load15" onclick="selectLoadout(15)" style="width:200px">Loadout 15</button>
+                                <button class="loadoutbutton unused" id="load15" onclick="selectLoadout(15)" style="width:200px">预设 15</button>
                                 <br>
                                 <button class="loadoutbutton localized" style="margin-bottom:5px;margin-top:3px;" onclick="saveList()" data-lockey="actions>tooltip>save_loadout"></button>
                                 <button class="loadoutbutton localized" style="margin-bottom:5px;" onclick="loadList()" data-lockey="actions>tooltip>load_loadout"></button>
                                 <br>
-                                <input id="renameLoadout" value="Loadout Name" style="width: 100px; height: 16px; border: 1px solid var(--input-border); margin-left: 5px; margin-bottom: 2px;">
-                                <button class="loadoutbutton" style="margin-bottom:5px;margin-top:3px;margin-right:-4px;" onclick="nameList(true)">Rename</button>
+                                <input id="renameLoadout" value="预设名称" data-locvalue="actions>tooltip>loadout_name_default" data-locplaceholder="actions>tooltip>loadout_name_default" style="width: 100px; height: 16px; border: 1px solid var(--input-border); margin-left: 5px; margin-bottom: 2px;">
+                                <button class="loadoutbutton localized" style="margin-bottom:5px;margin-top:3px;margin-right:-4px;" onclick="nameList(true)" data-lockey="actions>tooltip>rename">重命名</button>
                             </div>
                         </div>
                         <select id='predictorTrackedStatInput' class='button' onchange="setOption('predictorTrackedStat', this.value)"></select>
@@ -516,7 +516,7 @@
         <div style="width:100%;height:100%;background-color:grey;position:relative;opacity:.5"></div>
         <div style="padding:20px;background-color:var(--body-background);border:1px solid var(--input-border);position:absolute;text-align:left;left:150px;top:150px;">
             <span class="localized" data-lockey="tutorial"></span>
-            <button class="button" onclick="closeTutorial()">OK</button>
+            <button class="button localized" onclick="closeTutorial()" data-lockey="misc>ok">确定</button>
         </div>
     </div>
     

@@ -2,6 +2,8 @@
 <body>
     <misc>
         <loading>Loading...</loading>
+        <ok>OK</ok>
+        <cheat>Cheat</cheat>
     </misc>
     <menu>
         <changelog>
@@ -14,6 +16,13 @@
             <b>Recent changes</b>
             ]]></version>
             -->
+            <version verNum="4.0"><![CDATA[
+            <b>Apr 13th, 2026</b>
+            • Added a focused Chinese localization pass for stats, early-game actions, menus, and story text.<br>
+            • Reworked Beginnersville limited-action explanations so the three counters clearly describe known-good, total, and unchecked targets.<br>
+            • Localized the Challenges, Totals, and Prestige menus, and added a dedicated 4.0 changelog entry for the translation update.<br>
+            • Hardened tooltip hiding so action and story popovers stay hidden until hover or focus.<br>
+            ]]></version>
             <version caption="Latest"><![CDATA[
             <b>Recent changes</b>
             • Fixed the first Wander action failing when fractional mana consumption is enabled in Extras.<br>
@@ -603,7 +612,26 @@
             <cloud_saved>Saved as {name}</cloud_saved>
             <delete_button>Delete</delete_button>
             <confirm_button>Confirm?</confirm_button>
+            <notification_permission_denied>Notification permission denied. You may need to allow this site to send you notifications manually.</notification_permission_denied>
+            <copy_failed>Copying the save to the clipboard failed! You will need to copy the highlighted value yourself.</copy_failed>
+            <confirm_delete>Importing nothing will delete your save. Are you sure you want to delete your save?</confirm_delete>
+            <quota_exceeded><![CDATA[The game's save file has exceeded this browser's storage quota.<br>
+            This is EXTREMELY unusual and means something has gone very wrong.<br><br>
+            YOU ARE AT RISK OF LOSING GAME PROGRESS.<br><br>
+            Attempting to proceed anyway. You should export your save and keep it somewhere safe, and if possible, please report this bug in the Discord (link under Options)!]]></quota_exceeded>
         </save>
+        <browser_warning>
+            <title>Critical Alert</title>
+            <body><![CDATA[<p>
+            There is currently a bug in the latest versions of Chrome (and browsers based on it, like Edge; your browser counts)
+            which can cause the game to fail unexpectedly. There is nothing we can do about this other than hope Google fixes what
+            they broke; if you have issues, export your save and import it into another browser like Firefox. If your game is working
+            and you have not updated this browser recently, do not update it right now or your game may break!
+            </p><p>
+            If you would like to help Google realize what they have accidentally broken, you can report that you are affected by
+            clicking the +1 button on <a href="https://issues.chromium.org/issues/401652934">the issue page</a>.
+            </p>]]></body>
+        </browser_warning>
         <faq>
             <meta>
                 <title>FAQ</title>
@@ -741,21 +769,50 @@
             <meta>
                 <title>Challenges</title>
             </meta>
+            <intro>Challenges are optional modes with extra restrictions and special rules.</intro>
+            <no_rewards>They do not give rewards; they are mainly for self-imposed runs and experimentation.</no_rewards>
+            <recommendation>They are best attempted after clearing the main game at least once.</recommendation>
+            <save_warning>Please export and back up your save locally before starting.</save_warning>
+            <delete_warning>Beginning a new challenge will clear the existing challenge save.</delete_warning>
+            <exit_challenge>Exit Challenge</exit_challenge>
+            <resume_challenge>Resume Challenge</resume_challenge>
+            <mana_drought_name>Mana Drought</mana_drought_name>
+            <noodle_arms_name>Noodle Arms</noodle_arms_name>
+            <mana_burn_name>Mana Burn</mana_burn_name>
             <standard_game>The original experience, as the game was meant to be played.</standard_game>
-            <mana_drought>The mana merchant in Beginnersville only has 5k mana to sell, and they're charging double the usual price. No other mana merchants exist.</mana_drought>
+            <mana_drought>The mana merchant in Beginnersville only has 7500 mana to sell, and they're charging double the usual price. No other mana merchants exist.</mana_drought>
             <noodle_arms>You have no base Self-Combat ability. All combat is based on followers. Self combat is half of your team member or zombie strength (whichever is higher).</noodle_arms>
             <mana_burn>You have a day's worth of mana that persists through loops, but once that runs out, you'll be stuck in time. How far can you make it?</mana_burn>
+            <confirm_begin>Beginning a new challenge will delete your current challenge save. Are you sure you want to begin?</confirm_begin>
         </challenges>
         <totals>
             <meta>
                 <title>Totals</title>
             </meta>
+            <effective_time>Effective Time:</effective_time>
+            <running_time>Running Time:</running_time>
+            <loops>Loops:</loops>
+            <actions>Actions:</actions>
         </totals>
 
         <prestige_bonus>
             <meta>
                 <title>Prestige Perks</title>
             </meta>
+            <intro>Prestige bonuses are always active.</intro>
+            <points_reward>Each full clear grants 90 points to spend on these bonuses.</points_reward>
+            <export_warning>Please export and save your data locally before attempting a prestige.</export_warning>
+            <reset_warning>You can spec into prestige bonuses at any time, but doing so resets ALL current progress.</reset_warning>
+            <imbue_carryover>Imbue Soul levels carry over between prestiges, up to the number of prestiges you've completed.</imbue_carryover>
+            <max_carryover>Max carryover possible:</max_carryover>
+            <total_completed>Total Prestiges Completed:</total_completed>
+            <available_points>Available points:</available_points>
+            <upgrade_cost_header>Upgrade costs follow this progression:</upgrade_cost_header>
+            <upgrade_cost_example>30 → 40 → 55 → 75 → 100 → 130 → ...</upgrade_cost_example>
+            <current_bonus>Current Bonus:</current_bonus>
+            <next_level_cost>Next level cost:</next_level_cost>
+            <points>points</points>
+            <reset_button>Reset All Prestiges</reset_button>
             <PrestigePhysical>Increases Experience gain of all Physical stats (Dex, Str, Con, Spd, Per) by 20% per level.</PrestigePhysical>
             <PrestigeMental>Increases Experience gain of all Mental stats (Cha, Int, Soul, Luck) by 20% per level.</PrestigeMental>
             <PrestigeCombat>Increases Self and Team Combat by 20% per level.</PrestigeCombat>
@@ -764,6 +821,7 @@
             <PrestigeBartering>Increases mana received from merchants by 10% per level.</PrestigeBartering>
             <PrestigeExpOverflow>Experience earned is spread amongst all stats by 2% per level.</PrestigeExpOverflow>
             <PrestigeResetAll>Resets all current prestige bonuses, giving you back the points to allocate again. Note, this DOES trigger a reset, so this cannot be done mid-playthrough.</PrestigeResetAll>
+            <confirm_prestige>Prestiging will reset all of your progress, but retain prestige points. Are you sure?</confirm_prestige>
         </prestige_bonus>
         <navigation>
             <town>Location</town>
@@ -993,25 +1051,26 @@
                 simply climbing a mountain.
 			</story>
 			<story num="6"> <!--Good Reputation Story--> <!--Change 6 to Valhalla-->
-                You expected to be whisked away to a land of opulence and wonder beyond your wildest dreams. Instead,
-                you sat in a cramped room filling out paperwork for three hours before being dropped off outside what
-                appears to be an ordinary town, with manicured lawns and meandering sidewalks leading to tidy parks and
-                decorations. It's not ordinary though, if you stare at the grass you notice it's just a bit too green,
-                the sky just a bit too blue. The literal deity taking a seven foot tall dog on a walk doesn't help
-                either. A god passing by asks if you want to contribute to a local charity, and you see another god
-                offering tours of 'Valhalla, the greatest city above the world!'
+                You expected triumph, or at least some unmistakable verdict. Instead, you were handed forms. A clerk
+                with a halo and the patience of a career bureaucrat guided you through three hours of questions about
+                eligibility, provenance, and civic relevance before finally releasing you into what appears to be an
+                ordinary town, all manicured lawns and meandering sidewalks leading to tidy parks and immaculate
+                decorations. It isn't ordinary, though. The grass is just a little too green, the sky a little too
+                blue, and the literal deity walking a seven foot tall dog is hard to ignore. One god asks if you'd
+                like to contribute to a local charity, while another offers tours of 'Valhalla, the greatest city
+                above the world!' The lesson is obvious before you've taken ten steps inside: this place does not
+                merely welcome people. It categorizes them.
 			</story>
 			<story num="7"> <!--Bad Reputation Story--> <!--Change 7 to Startington-->
-                You find yourself in a land covered in a perpetual haze, with a deep red sky casting an eerie glow over
-                the landscape. Alien and oppressive, it's unlike anywhere you've ever been; it feels more claustrophobic
-                here than in the shrouded thickets of the forest or the deepest caves of Mt. Olympus. This is the shadow
-                realm, a place of such natural hostility that it hurts just to stand here and look at it - it's like the
-                haze is reaching inside your mind and suppressing your thoughts. One thing it can't suppress, though, is
-                the intense feeling of familiarity at your immediate surroundings. The trees may be gnarled and the dirt
-                may be dusty and ashen, but you've walked this road thousands of times - you could recognize the
-                outskirts of Beginnersville in your sleep. It's not Beginnersville you see off in the distance though.
-                In its place, you find only a desecrated ruin of a village, dominated by a massive dark spire sitting in
-                the dead center of town.
+                The answer from above is not silence, exactly. It is redirection. You find yourself in a land covered
+                in perpetual haze, with a deep red sky casting an eerie glow over everything. Alien and oppressive, it's
+                unlike anywhere you've ever been; it feels more claustrophobic here than in the shrouded thickets of the
+                forest or the deepest caves of Mt. Olympus. The place presses against the mind hard enough that it feels
+                hostile on principle, and yet beneath that hostility is structure. The road is familiar. The outskirts
+                are those of Beginnersville as surely as if you had walked them yesterday, only rewritten in ash,
+                cracks, and ruin. Where the village should be, there stands only a desecrated shell dominated by a
+                massive dark spire in the dead center of town. This is not a pit where the unwanted are dumped and
+                forgotten. It is a place that kept functioning after it was abandoned.
 			</story>
 			<story num="8"> <!--Change 8 to Jungle Path-->
                 Shadow realm or not, there are enough things that haven't changed that you still lean on your established routine. Right down
@@ -1417,7 +1476,7 @@
         </town2>
         <town3>
             <name>Mt. Olympus</name>
-            <desc><![CDATA[You could have taken that path to the other town, but no! You just <i>had</i> to go to Mt. Olympus, didn't you. But anyways, while you're here, thanks to being neither a canine nor old, you can learn a few new tricks. And kill some innocent trolls while you're at it.]]></desc>
+            <desc><![CDATA[You could have taken that path to the other town, but no, you just <i>had</i> to go to Mt. Olympus. Fine. While you're here, you can pick through ruined myths, old runes, and several mutually incompatible ideas of worth; also learn a few new tricks and kill some innocent trolls. The higher you climb, the less this place feels like a destination and the more it feels like a mountain deciding what kind of answer you came for.]]></desc>
         </town3>
         <town4>
             <name>Valhalla</name>
@@ -1425,7 +1484,7 @@
         </town4>
         <town5>
             <name>Startington</name>
-            <desc>A once familiar place, now crawling with shadows and ominous feelings of wasted sick days. There stands a large pillar of gloomy purple light in the center of it all, emanating from a spire surrounded by black clouds. The pillar seems to be the only source of light in town, though it's connected to 10 locations in town with weaker beams. Maybe you should check those spots out.</desc>
+            <desc>A once familiar place, now rewritten into ruin without being reduced to silence. Shadows crawl through the streets, a pillar of violet light rises from the great spire at the town's center, and weaker beams bind it to ten other places nearby. Whatever was abandoned here learned how to keep functioning on salvage, residue, and rules the shining cities above would rather forget. Maybe you should see how this place still works.</desc>
         </town5>
         <town6>
             <name>Jungle Path</name>
@@ -1445,13 +1504,13 @@
         <calculated_shattering>
             <name>Calculated Shattering</name>
             <desc><![CDATA[
-            Practicing your Shattering technique to get through all these pots as quickly as possible seems surprisingly productive.<br>Reduces the mana cost of <span class="localized" data-lockey="actions>smash_pots>name"></span> by 1 per level.
+            Practicing your Shattering technique to get through all these pots as quickly as possible seems surprisingly productive.<br>Reduces the mana cost of <span class="localized" data-lockey="actions>smash_pots>label"></span> by 1 per level.
         ]]></desc>
         </calculated_shattering>
         <no_frill_frames>
             <name>No-frill Frames</name>
             <desc><![CDATA[
-            If you dedicate a bit of time to perusing for glasses, you can find some cheaper frames. And considering you won't be using them for too long until everything starts over again, you figure it's a good idea to skimp.<br>Reduces the gold cost of <span class="localized" data-lockey="actions>buy_glasses>name"></span> by 1 per level.
+            If you dedicate a bit of time to perusing for glasses, you can find some cheaper frames. And considering you won't be using them for too long until everything starts over again, you figure it's a good idea to skimp.<br>Reduces the gold cost of <span class="localized" data-lockey="actions>buy_glasses>label"></span> by 1 per level.
         ]]></desc>
         </no_frill_frames>
     </talents>
@@ -1504,14 +1563,29 @@
             <current_list_active>Keep current list active</current_list_active>
             <repeat_last_action>Repeat last action on list</repeat_last_action>
             <add_action_top>Add action to top of list</add_action_top>
+            <lootable_first>Prioritize known-good targets</lootable_first>
+            <manage_loadouts>Manage Loadouts</manage_loadouts>
             <save_loadout>Save To List</save_loadout>
             <load_loadout>Load From List</load_loadout>
+            <rename>Rename</rename>
+            <loadout_name_default>Loadout Name</loadout_name_default>
+            <loadout_default_name>Loadout {num}</loadout_default_name>
+            <loadout_saved>Saved!</loadout_saved>
+            <loadout_name_too_long>30 Letter Max</loadout_name_too_long>
+            <loadout_enter_name>Enter a name!</loadout_enter_name>
             <clear_list>Clear List</clear_list>
             <clear_disabled>Clear Disabled</clear_disabled>
             <add_at_cap>*Add action at cap</add_at_cap>
             <max_training>Max Training</max_training>
+            <main_stat>Main Stat</main_stat>
+            <will_unlock>Will unlock</will_unlock>
+            <survey_complete_paused>Survey complete! (Game paused)</survey_complete_paused>
+            <progress_complete_paused>Progress complete! (Game paused)</progress_complete_paused>
+            <dark_ritual_actions_are>Actions are:</dark_ritual_actions_are>
             <higher_done_percent_benefic>You can find more stuff with higher %.</higher_done_percent_benefic>
             <progress_label>Progress</progress_label>
+            <limited_numbers_intro>The three numbers above always read left to right as:</limited_numbers_intro>
+            <limited_numbers_details>By default the action checks unknown targets first. Enable this checkbox to spend already-known profitable targets before checking new ones.</limited_numbers_details>
             <total_found>Total Found</total_found>
             <total_checked>Total Checked</total_checked>
             <icons>
@@ -2162,12 +2236,12 @@
             <label>Talk To Hermit</label>
             <label_done>Hermit Knowledge Learned</label_done>
             <tooltip><![CDATA[
-            This old man is happy to have a listening ear, surely he has some useful knowledge. You hope. He's initially confrontational, but opens up once you start talking about the road.<br>Reduces mana cost of Gather Herbs, Practical Magic, and Learn Alchemy by 0.5% per 1% of Hermit Knowledge.<br>Unlocked with both 20% Shortcut Explored and 40 Magic.
+            This old man is happy to have a listening ear. He knows more than he first lets on about roads, borders, and the way certain places answer different kinds of travelers. He's initially confrontational, but opens up once you start talking about the road.<br>Reduces mana cost of Gather Herbs, Practical Magic, and Learn Alchemy by 0.5% per 1% of Hermit Knowledge.<br>Unlocked with both 20% Shortcut Explored and 40 Magic.
             ]]></tooltip>
             <story_1><![CDATA[<b>1% Hermit knowledge learned:</b>⮀ The Hermit is old, scraggly and surprisingly, not bald. Looks old as dirt. He doesn't know the name of the surrounding provinces, but knows the names of the provinces before the current ones.]]></story_1>
             <story_2><![CDATA[<b>10% Hermit knowledge learned:</b>⮀ The old hermit is an absolute genius at using magic to speed things up and just in general make things quicker and easier. You have much information to wring from him. He doesn't tell you his name and insists you call him 'Old man', or 'Hermit'.]]></story_2>
             <story_3><![CDATA[<b>20% Hermit knowledge learned:</b>⮀ You've tried to worm it out of him over multiple loops, but he still won't tell you his name. He just seems amused at your attempts to get him to say it. Either way, you're steadily wringing more information out of him.]]></story_3>
-            <story_4><![CDATA[<b>40% Hermit knowledge learned:</b>⮀ Apparently, the old man was here before this forest was a forest. He remembers the first seeds being sown. Just, what? How old would that even make him?]]></story_4>
+            <story_4><![CDATA[<b>40% Hermit knowledge learned:</b>⮀ Apparently, the old man was here before this forest was a forest. He remembers the first seeds being sown. Then, almost absentmindedly, he remarks that the mountain was already old even then, and that it never asked the same question of every pilgrim. Just, what? How old would that even make him?]]></story_4>
             <story_5><![CDATA[<b>60% Hermit knowledge learned:</b>⮀ You learn more about his tells, when to push and when not to. You've angered him and seen him joyful, made him laugh and cry. Reminisce on old memories and curse bitterly. You've almost figured him out. You still don't know his name.]]></story_5>
             <story_6><![CDATA[<b>80% Hermit knowledge learned:</b>⮀ You've spent more time learning about this one man than you have most other things, you've come to see him almost as a familiar figure. With how much time you've spent with him, it's hard not to. You still don't know his name. One thing you do know is that he's been around a long time and has forgotten more about magic than you've learned.]]></story_6>
             <story_7><![CDATA[<b>100% Hermit knowledge learned:</b>⮀ He finally told you his name. Gelt. He seemed almost knowing as he told you.]]></story_7>
@@ -2266,13 +2340,13 @@
             <label>Talk To Witch</label>
             <label_done>Witch Knowledge Learned</label_done>
             <tooltip><![CDATA[
-            Talk to the witch to learn her secrets of the dark arts.<br>Unlocked with both 60% Thicket Explored and 80 Magic.<br>Reduces mana cost of Dark Magic and Dark Ritual by 0.5% per 1% of Witch Knowledge.
+            Talk to the witch to learn her secrets of the dark arts. She speaks readily of bargains, taboos, and doors that never open for the dutiful.<br>Unlocked with both 60% Thicket Explored and 80 Magic.<br>Reduces mana cost of Dark Magic and Dark Ritual by 0.5% per 1% of Witch Knowledge.
             ]]></tooltip>
             <story_1><![CDATA[<b>1% Witch knowledge learned:</b>⮀ You stumble across a small crooked hut and as you approach the boundary, a small slip of a woman step outs. She's stunning and you're immediately on guard. The area pulses with a heady hum of magic that sends shivers down your spine. She introduces herself as Evis.]]></story_1>
             <story_2><![CDATA[<b>10% Witch knowledge learned:</b>⮀ The Witch as you taken to referring to her as, seeing as she changes her name every time she introduces herself to you, is a veritable font of magical knowledge, of how to dominate the mana itself and make more from less.]]></story_2>
             <story_3><![CDATA[<b>20% Witch knowledge learned:</b>⮀ You continue to hunt down the Witch and drag more information out of her, the magic she teaches you is cruel, callous even. The witch is surprisingly personable for what you would consider a stereotypical 'Wicked Witch'.]]></story_3>
             <story_4><![CDATA[<b>40% Witch knowledge learned:</b>⮀ You start to learn more about the witch's daily routine as you spend more and more time around her, the relationship you manage to cultivate with her at the start of each loop grows more familiar with each repetition. She seems to be slightly more interested each time you reveal your knowledge of dark magic.]]></story_4>
-            <story_5><![CDATA[<b>50% Witch knowledge learned:</b>⮀ You had apparently impressed her enough this time that she took you to a clearing she had found, and explained to you a ritual that would give you a boost, permanently through any circumstances by calling upon the dark gods. The catch she explained, with ill concealed glee, was that you would need souls to sacrifice if you wanted to do this ritual.]]></story_5>
+            <story_5><![CDATA[<b>50% Witch knowledge learned:</b>⮀ You had apparently impressed her enough this time that she took you to a clearing she had found, and explained to you a ritual that would give you a boost, permanently through any circumstances by calling upon the dark gods. With ill concealed glee, she adds that some powers only answer those willing to offer what respectable people refuse to touch. The catch, she explains, is that you would need souls to sacrifice if you wanted to do this ritual.]]></story_5>
             <story_6><![CDATA[<b>60% Witch knowledge learned:</b>⮀ As you learn more and more about the witch and her varied names, one thing starts to become glaringly obvious. The Witch and The Hermit know one another. If her irritable grumbling about the old fool and his idiotic desires were anything to go by. You get the feeling that their relationship is complex.]]></story_6>
             <story_7><![CDATA[<b>80% Witch knowledge learned:</b>⮀ The witch is struck with a strange sense of melancholy one loop and you have no idea why, but the witch is strangely open with information and you manage to pry out more of the relationship between her and the Hermit. They were lovers once, and to your surprise, she used to be the one whom nature adores. She shuts up quickly after letting that slip. You're all the more determined to pry it out of her though.]]></story_7>
             <story_8><![CDATA[<b>100% Witch knowledge learned:</b>⮀ Somehow she seems to sense something about you this loop, and she tells you her name, and it's the name she gives for every loop after. Trisha. You manage to pry most of her relationship with the hermit from her. They were lovers once, this you knew, but what you didn't was that she was of nobility and he a common vagabond. She fell for him and he for her; it was a love for the ages, she tells you while drunk on the wine you brought along with you. He wanted to run away with her and she agreed, too lovestruck to question why. He was running from deals he had made and bargains he had forsaken, his glib tongue landing him in trouble of the otherworldly nature. Trisha seems frustrated with her youth's naïveté as she tells you how she was made a scapegoat for his failings and forfeits in his deals and bargains. How she was essentially sold to the dark gods as his forfeit. When you ask what she did in return, all Trisha does is smile with dark satisfaction, the fire flaring briefly.]]></story_8>
@@ -2508,9 +2582,9 @@
         <read_books>
             <label>Read Books</label>
             <tooltip><![CDATA[
-            There's a library! You always loved reading.<br>Discover new worlds and perspectives, get ideas from fiction characters, and empathize with the desire to be stronger.<br>Requires glasses.<br>Has 4x exp/talent gain, and can only be done <div id='trainingLimitInt'></div> times per reset.<br>Unlocked at 50% city explored.
+            There's a library! You always loved reading.<br>Discover new worlds and perspectives, get ideas from fiction characters, and leaf through myths and histories that cannot agree on what makes a person worth remembering.<br>Requires glasses.<br>Has 4x exp/talent gain, and can only be done <div id='trainingLimitInt'></div> times per reset.<br>Unlocked at 50% city explored.
             ]]></tooltip>
-			<story_1><![CDATA[<b>Books read:</b>⮀ They do have it! You must have read this book a hundred times when you were a kid, and it's been a long time since you've found another copy. That's not all the library has to offer, far from it, but right now you're happy to settle down with your favourite book for an afternoon of reading.]]></story_1>
+			<story_1><![CDATA[<b>Books read:</b>⮀ They do have it! You must have read this book a hundred times when you were a kid, and it's been a long time since you've found another copy. That's not all the library has to offer, far from it; the shelves around you are crowded with myths, chronicles, and travelogues that can't agree on what kind of person the world remembers. For now, though, you're happy to settle down with your favourite book for an afternoon of reading.]]></story_1>
             <story_2><![CDATA[<b>100 Intelligence Talent:</b>⮀ You've been rereading all of your old favourites, and it's like a completely new experience. There's a lot of subtext that went over your head and subtle themes you never quite picked up on. You thought stories for kids were just a bunch of silly words strung together, but you can see that there's more beneath the surface now that you know how to look.]]></story_2>
 			<story_3><![CDATA[<b>1,000 Intelligence Talent:</b>⮀ You've grown a fondness for mystery novels recently. You like teasing through all the hints, laying out what you know of all the characters and their motivations, and trying to figure out the solution before it's revealed to you. You're getting it right more often with each book you read!]]></story_3>
 			<story_4><![CDATA[<b>10,000 Intelligence Talent:</b>⮀ You finish reading the last book in the library. It's bad, there's a reason you left it for last, but you needed to read it. The ways that it's bad throws the better qualities of more successful stories into stark relief, and by analyzing its failures you can better appreciate what makes good stories good. The search for knowledge leaves no stone unturned.]]></story_4>
@@ -2557,19 +2631,19 @@
         <underworld>
             <label>Underworld</label>
             <tooltip><![CDATA[
-            Your knowledge in the explorers guild continues to open new doors. Grease the right hinges with a bit of gold, and who knows where you can end up.<br>
+            Your knowledge in the explorers guild continues to open doors that polite maps pretend are not there. Grease the right hinges with a bit of gold, and who knows where you can end up.<br>
             Unlocked with 50% of the world surveyed.<br>
             Travels to Commerceville.<br>Costs
             ]]></tooltip>
             <tooltip2>gold.</tooltip2>
-			<story_1><![CDATA[<b>Traveled through the Underworld:</b>⮀ Checking your map one more time, you make your way down the well-hidden alleyway and through a door that you're not quite sure is exactly <i>there.</i> Rather than any kind of room, you find yourself on the shore of an underground river, where a ferryman awaits you. "...You live yet," the ferryman whispers louder than an earthquake, "why do you seek passage?" Rather than explaining yourself, you hold up a heavy pouch of coins. Charon, as you somehow know the ferryman is named, silently nods and gestures for you to board. The trip across the waters is silent, steady and... boring. However, the moment you set foot on the Far Shore, the world twists around you and you are suddenly standing in front of Commerceville's gates! ...If this is the afterlife, you'd rather stay alive a little longer.]]></story_1>
+			<story_1><![CDATA[<b>Traveled through the Underworld:</b>⮀ Checking your map one more time, you make your way down the well-hidden alleyway and through a door that you're not quite sure is exactly <i>there.</i> Rather than any kind of room, you find yourself on the shore of an underground river, where a ferryman awaits you. "...You live yet," the ferryman whispers louder than an earthquake, "why do you seek passage?" Rather than explaining yourself, you hold up a heavy pouch of coins. Charon, as you somehow know the ferryman is named, silently nods and gestures for you to board. It occurs to you that this route is less a secret than an omission: everyone important knows it exists, they just prefer not to say so out loud. The trip across the waters is silent, steady and... boring. However, the moment you set foot on the Far Shore, the world twists around you and you are suddenly standing in front of Commerceville's gates! ...If this is the afterlife, you'd rather stay alive a little longer.]]></story_1>
         </underworld>
         <!--town 4-->
         <climb_mountain>
             <label>Climb Mountain</label>
             <label_done>Mountain Explored</label_done>
             <tooltip><![CDATA[
-            Traversing the mountain will be difficult, but you can use your pickaxe as a makeshift climbing pick of sorts to help you get around.<br>2x progress with pickaxe.
+            Traversing the mountain will be difficult, but you can use your pickaxe as a makeshift climbing pick of sorts to help you get around. The higher you climb, the less it feels like travel and the more it feels like approaching a waiting answer.<br>2x progress with pickaxe.
             ]]></tooltip>
 			<story_1><![CDATA[<b>1% Mountain Explored:</b>⮀ You stand at the foot of the mountain and look up at the peak. It's so far away, so high up. You take a minute to just stare in awe before looking for a good route up.]]></story_1>
 			<story_2><![CDATA[<b>10% Mountain Explored:</b>⮀ As you climb up the foothills you see old abandoned campsites and think of the rumours you've heard. You're obviously not the first person to try to scale the mountain, but you wonder how the other expeditions ended.]]></story_2>
@@ -2577,7 +2651,7 @@
 			<story_4><![CDATA[<b>40% Mountain Explored:</b>⮀ Hidden away in the side of the mountain, you find a tunnel that seems to go deep under the mountain. There's more of those odd symbols near the entrance, perhaps a warning not to go in?]]></story_4>
 			<story_5><![CDATA[<b>60% Mountain Explored:</b>⮀ The higher you climb the more remains of the ancient civilization you see. Even here at the outskirts you're finding bits of worked stone half-buried in the rocks. Time, it seems, has not been kind to their city.]]></story_5>
 			<story_6><![CDATA[<b>80% Mountain Explored:</b>⮀ You're in the heart of the ruined city now, and there's no hiding what once was anymore. Houses, roads, a once-lovely fountain, it's all in ruins but you can picture what their city must have looked like in its prime.]]></story_6>
-			<story_7><![CDATA[<b>100% Mountain Explored:</b>⮀ You reach the summit, and in front of you is a huge, magnificent temple. It, too, is in ruins, and the statues of the gods are worn and broken. Amidst the bleak scene, your attention is drawn to an inexplicably pristine altar in a position of prominence, and you feel strangely like you're being watched.]]></story_7>
+			<story_7><![CDATA[<b>100% Mountain Explored:</b>⮀ You reach the summit, and in front of you is a huge, magnificent temple. It, too, is in ruins, and the statues of the gods are worn and broken. Amidst the bleak scene, your attention is drawn to an inexplicably pristine altar in a position of prominence, and you feel strangely like you're being watched. Not judged yet, exactly. Sorted.]]></story_7>
         </climb_mountain>
         <mana_geyser>
             <label>Mana Geyser</label>
@@ -2755,21 +2829,21 @@
         <face_judgement>
             <label>Face Judgement</label>
             <tooltip><![CDATA[
-            Face the judgement of the gods. If your reputation is 50 or above, you'll be accepted into their good graces and granted passage to Valhalla. If your reputation is -50 or below, you'll be cast into the shadow realm.<br>(If neither, nothing happens.)<br>Unlocked at 100% Mountain Explored.
+            Stand before the altar and see what kind of world still answers to you. The summit does not weigh every life by the same measure.<br>Unlocked at 100% Mountain Explored.
             ]]></tooltip>
-			<story_1><![CDATA[<b>Judgement Faced:</b>⮀ Their civilization may have fallen, but their gods are still very real, and the weight of their attention nearly drives you to your knees. Seeking to justify your presence, you begin to speak. Of your life, of your goals, and of your moral fibre. Every act of kindness, every misdeed, it all comes tumbling out one after another. The only secret you manage to withhold is the loops - you have a feeling that you'd be struck down immediately if you let that slip.]]></story_1>
-            <story_4><![CDATA[<b>Ignored by the Gods:</b>⮀ You finish your story, trailing off awkwardly as you tell of the moment a few minutes ago, when you decided to appeal to the gods. Anxiously, you wait for their verdict, but your anxiety quickly turns into terrified shame as you sense emotions of boredom, annoyance, and even disgust. How dare you waste the time of the gods like this!? You cringe as their attention slowly fades away a bit at a time, until all that's left is you looking stupid, kneeling on a stone slab at the top of a mountain.]]></story_4>
-			<story_2><![CDATA[<b>Accepted by the Gods:</b>⮀ At the end of your story, a crack of lightning strikes behind the altar and leaves behind a cheerful man. Between the perfect bodily form and the power radiating from him, there's no doubt you're meeting a god in the flesh. He extends his hand, an offer of invitation, and you happily reach out and take it.]]></story_2>
-			<story_3><![CDATA[<b>Cast into the Shadow Realm:</b>⮀ There is only one word for the act of facing the gods while the stench of their dark cousins emanates from you: defiance. They know you aren't here to win their favour, but to spit in their faces as an emissary of their hated nemeses. Enraged, the gods strike you down, and you sink into a world of roiling black turmoil. And yet, the dark gods you're aligned with act too, and in the shadows, you find yourself along a twisted yet familiar path.]]></story_3>
+			<story_1><![CDATA[<b>Judgement Faced:</b>⮀ Their civilization may have fallen, but their gods are still very real, and the weight of their attention nearly drives you to your knees. Seeking to justify your presence, you begin to speak. Of your life, your goals, your loyalties, your debts, the gifts you've taken and the costs you've accepted. Every act of kindness, every trespass, every bargain, every refusal, it all comes tumbling out one after another. The only secret you manage to withhold is the loops - you have a feeling that you'd be struck down immediately if you let that slip.]]></story_1>
+            <story_4><![CDATA[<b>Met with Silence:</b>⮀ You finish your story and wait. The pressure at the altar does not become wrath so much as absence. No hand reaches for you, no door opens, no voice names you. Whatever measures govern this place, you have not yet become someone it chooses to answer. At last the attention withdraws, leaving you alone on the stone slab with the wind and your own heartbeat.]]></story_4>
+			<story_2><![CDATA[<b>Recognized by the Gods:</b>⮀ At the end of your story, a crack of lightning strikes behind the altar and leaves behind a cheerful man. Between the perfect bodily form and the power radiating from him, there's no doubt you're meeting a god in the flesh. He extends his hand, not as a reward but as recognition, and invites you to come where the ordered world has already made room for you.]]></story_2>
+			<story_3><![CDATA[<b>Claimed by the Shadow Realm:</b>⮀ The bright court does not claim you. The force that answers from the altar is rejection sharpened into violence, and the world drops out from beneath you. Yet something else answers before the fall can become annihilation. In the black turmoil below, another path catches you: twisted, familiar, and very much prepared to make use of what you've become.]]></story_3>
         </face_judgement>
         <guru>
             <label>Guru</label>
-            <tooltip><![CDATA[The greatest explorer the guild has ever known was said to have found a path without judgement to Valhalla itself. Now, as his equal, he is willing to show you the way if you bring him a few herbs.<br>
+            <tooltip><![CDATA[The greatest explorer the guild has ever known was said to have found a path to Valhalla that never once passed beneath the altar's gaze. Now, as his equal, he is willing to show you the way if you bring him a few herbs.<br>
             Unlocked with 100% of the world surveyed.<br>
-            Travels to Valhalla, bypassing Face Judgement and Reputation requirements.<br>
+            Travels to Valhalla without relying on Face Judgement.<br>
             Requires 1000 herbs.
             ]]></tooltip>
-            <story_1><![CDATA[<b>Guru:</b>⮀ The gods were once explorers themselves, the guru explains, for how else could they have discovered Valhalla to make it their home? You toss another herb in the smoky fire, listening to him speak. Seeking to rediscover the route found long ago, the guru had spent decades scouring the mountain that seems so connected to the gods. And at last, he found it. When you press him for details, he simply points upwards. You gaze at the sky and notice the smoke curve strangely around a spot in the air. An invisible gateway, high up in the sky above an unremarkable plateau on the mountain? You had wondered how it took the guru decades of work, but now you wonder how he ever managed it at all.]]></story_1>
+            <story_1><![CDATA[<b>Guru:</b>⮀ The gods were once explorers themselves, the guru explains, for how else could they have discovered Valhalla to make it their home? You toss another herb in the smoky fire, listening to him speak. The mountain watches with many eyes, he says, but not every gate waits at the altar. Seeking to rediscover the route found long ago, the guru had spent decades scouring the mountain that seems so connected to the gods. And at last, he found it. When you press him for details, he simply points upwards. You gaze at the sky and notice the smoke curve strangely around a spot in the air. An invisible gateway, high up in the sky above an unremarkable plateau on the mountain? You had wondered how it took the guru decades of work, but now you wonder how he ever managed it at all.]]></story_1>
         </guru>
         <!--town 5-->
         <guided_tour>

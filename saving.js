@@ -799,7 +799,7 @@ const optionValueHandlers = {
             } else if (Notification && Notification.permission === "denied") {
                 input.checked = false;
                 input.indeterminate = false;
-                alert("Notification permission denied. You may need to allow this site to send you notifications manually.");
+                alert(_txt("menu>save>notification_permission_denied"));
             } else if (!Notification || Notification.permission !== "granted") {
                 input.checked = false;
                 input.indeterminate = false;
@@ -975,7 +975,7 @@ function load(inChallenge, saveJson = window.localStorage[saveName]) {
     loadoutnames = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""];
     // loadoutnames[-1] is what displays in the loadout renaming box when no loadout is selected
     // It isn't technically part of the array, just a property on it, so it doesn't count towards loadoutnames.length
-    loadoutnames[-1] = "";
+    loadoutnames[-1] = getLoadoutNameDefault();
 
     let toLoad = {};
     // has a save file
@@ -1155,14 +1155,14 @@ function doLoad(toLoad) {
         }
     }
     for (let i = 0; i < loadoutnames.length; i++) {
-        loadoutnames[i] = "Loadout " + (i + 1);
+        loadoutnames[i] = getDefaultLoadoutName(i + 1);
     }
     if (toLoad.loadoutnames) {
         for (let i = 0; i < loadoutnames.length; i++) {
             if(toLoad.loadoutnames[i] != undefined && toLoad.loadoutnames != "")
                 loadoutnames[i] = toLoad.loadoutnames[i];
             else
-                loadoutnames[i] = "Loadout " + (i + 1);
+                loadoutnames[i] = getDefaultLoadoutName(i + 1);
         }
     }
     curLoadout = toLoad.curLoadout;
@@ -1438,7 +1438,7 @@ function exportSave() {
     inputElement("exportImport").value = `ILSV01${LZString.compressToBase64(saveJson)}`;
     inputElement("exportImport").select();
     if (!document.execCommand("copy")) {
-        alert("Copying the save to the clipboard failed! You will need to copy the highlighted value yourself.");
+        alert(_txt("menu>save>copy_failed"));
     }
 }
 
@@ -1449,7 +1449,7 @@ function importSave() {
 
 function processSave(saveData) {
     if (saveData === "") {
-        if (confirm("Importing nothing will delete your save. Are you sure you want to delete your save?")) {
+        if (confirm(_txt("menu>save>confirm_delete"))) {
             challengeSave = {};
             clearSave();
         } else {
@@ -1481,7 +1481,7 @@ function storeSaveJson(saveJson) {
     } catch (e) {
         if (e instanceof DOMException && e.name === "QuotaExceededError") {
             if (!overquotaWarned) {
-                alert("The game's save file has exceeded this browser's storage quota.\nThis is EXTREMELY unusual and means something has gone very wrong.\n\nYOU ARE AT RISK OF LOSING GAME PROGRESS.\n\nAttempting to proceed anyway. You should export your save and keep it somewhere safe, and if possible, please report this bug in the Discord (link under Options)!");
+                alert(_txt("menu>save>quota_exceeded").replace(/<br>/gu, "\n"));
                 overquotaWarned = true;
             }
         } else {
@@ -1562,7 +1562,7 @@ function importCurrentList() {
 function beginChallenge(challengeNum) {
     console.log("Beginning Challenge");
     if (window.localStorage[challengeSaveName] && window.localStorage[challengeSaveName] !== "") {
-        if (confirm("Beginning a new challenge will delete your current challenge save. Are you sure you want to begin?"))
+        if (confirm(_txt("menu>challenges>confirm_begin")))
             window.localStorage[challengeSaveName] = "";
         else
             return false;

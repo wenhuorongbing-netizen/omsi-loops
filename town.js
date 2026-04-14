@@ -81,7 +81,7 @@ class Town {
     finishProgress(varName, expGain) {
         // return if capped, for performance
         if (this[`exp${varName}`] === 505000) {
-            if (options.pauseOnComplete) pauseGame(true, "Progress complete! (Game paused)");
+            if (options.pauseOnComplete) pauseGame(true, _txt("actions>tooltip>progress_complete_paused"));
             else return;
         }
 

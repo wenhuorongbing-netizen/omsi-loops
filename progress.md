@@ -1,0 +1,227 @@
+Original prompt: 你是一个游戏汉化师仔细思考这个游戏该如何汉化来将其的localization全部变为中文,且不影响排版布局和字体问题
+
+- 已确认项目使用 `lang/<locale>/game.xml` 作为主语言资源，运行时入口在 `localization.js`。
+- 已确认默认 UI 仍有一部分硬编码英文，需要同时修改 HTML/JS，不能只翻译 XML。
+- 已确认默认字体栈对中文不够稳，需要补系统中文字体回退，并让运行时把 `lang` 同步到 DOM。
+- 已安装临时 npm 依赖 `fast-xml-parser` 与 `@vitalets/google-translate-api`，用于一次性生成 `zh-CN/game.xml`；当前未改动跟踪依赖文件。
+- 下一步：
+- 补英文语言键，覆盖现有硬编码弹窗、按钮和提示文案。
+- 新增中文语言包生成脚本并批量产出 `lang/zh-CN/game.xml`。
+- 接入 `zh-CN` 为默认语言，修正中文字体与少量布局。
+- 启动页面做实际显示验证，检查是否有残留英文或排版溢出。
+- 已完成：
+- 新增 `tools/translate-lang.mjs`，通过缓存续跑方式生成了 `lang/zh-CN/game.xml`。
+- `localization.js` 现已默认使用 `zh-CN`，并把 `lang` 同步到 DOM；同时修复了 `txtsObj()` 默认落回英文 fallback 的问题，这个问题会导致动态 action/resource 文案始终显示英文。
+- `index.html`、`driver.js`、`saving.js`、`prestige.js`、`town.js`、`views/main.view.js`、`views/menu.view.js` 已接入中文键值，覆盖了教程按钮、预设管理、确认框、浏览器警告、暂停提示等原本没走语言包的文本。
+- `actionList.js` 的城镇名改为运行时从本地化文件读取，不再使用写死英文数组。
+- `stylesheet.css` 已补中文字体回退，并让 `input/select/textarea` 继承统一字体；弹层支持更稳的换行。
+- 已用 Playwright 技能脚本对首页做截图验证，产物在 `output/web-game-zh/shot-0.png`；首屏菜单、属性、资源条、城镇名、行动按钮和预设入口均已显示中文，未见明显布局溢出。
+- 后续可继续润色：
+- 剧情与长 tooltip 主要依赖机器翻译，首屏术语已经手工校正，但深层剧情文本仍可能有个别措辞不够自然。
+ 
+- 2026-04-13 proofreading pass:
+- Polished high-visibility zh-CN strings in save/import UI, browser warning, options, challenge descriptions, prestige descriptions, tracked resources, time controls, stats labels, and several skill/buff labels.
+- Fixed obvious mistranslations such as Export/Import labels, the minutes unit, Herbs/Hide/Favors resource labels, talent terminology, and the lag warning text.
+- Unified surfaced player-facing terms where they had drifted across the file: Merchanton -> 商顿, Spatiomancy -> 空间魔法, Chronomancy -> 时间术.
+- Cleaned several early- and mid-game stories/tooltips with mixed English or awkward MT phrasing, including flower trail text, swindling stories, and the jungle escape story.
+- Next suggested pass: long action stories and deep tooltip blocks beyond the first few towns still contain machine-translated phrasing and can be hand-edited for tone/style consistency.
+- Additional 2026-04-13 pass:
+- Manually rewrote tutorial copy, FAQ entries, and the opening global story block (`time_controls > stories` intro/endgame entries) into more natural Chinese instead of raw MT phrasing.
+- Rechecked tutorial modal plus options/extras menus in Playwright after the edits; screenshots remained within layout and no new console/page errors appeared.
+- 2026-04-13 v4.0 localization pass:
+- Added changelog entry `4.0` in `lang/zh-CN/game.xml` and filled the new localized menu keys used by `views/menu.view.js` for Challenges / Totals / Prestige.
+- Fully rewrote the stats block for Chinese readability: fixed radar short labels, corrected Constitution -> `体质`, and rewrote the stats explanation so it matches the actual mana/xp logic.
+- Polished early Beginnersville action text by hand for `smash_pots`, `pick_locks`, `buy_glasses`, `buy_mana_z1`, `buy_mana_challenge`, `meet_people`, `short_quest`, `investigate`, `long_quest`, `warrior_lessons`, `mage_lessons`, `heal_the_sick`, `fight_monsters`, `small_dungeon`, `buy_supplies`, `haggle`, and `start_journey`.
+- Clarified the three-number limited-action display in `actionList.js` and zh-CN strings so players can distinguish known-good targets, total good targets, and unchecked targets.
+- Fixed malformed zh-CN talent descriptions for the pot-smashing / glasses talents and aligned the English talent lockeys with `label` so the localized span resolves correctly.
+- Hardened tooltip visibility in `stylesheet.css` by defaulting hidden popovers to `display:none`; Playwright checks now show zero visible `.showthis*` / `.showthisstory` nodes before hover.
+- Fixed a repeated runtime error in `driver.js`: `showNotification()` and `hideNotification()` now guard against missing `...Notification` nodes, which stopped the load-time `Cannot read properties of null (reading 'style')` page errors.
+- Verification:
+- Static server started on `http://127.0.0.1:4173`.
+- `develop-web-game` Playwright client was run again after the edits; output is in `output/web-game-v4-client/`.
+- Additional Playwright checks saved screenshots in `output/web-game-v4-debug/` for:
+- main page regular stats (`main.png`)
+- radar chart with corrected short labels (`radar.png`)
+- Challenges / Totals / Prestige hover menus (`challengesMenu.png`, `totalsMenu.png`, `prestige_bonusesMenu.png`)
+- pot counter explanation and pot action tooltip (`pots-info-hover.png`, `pots-action-hover.png`)
+- Remaining polish opportunities:
+- Many deeper late-game story blocks still read like MT and need the same manual pass this round gave to town 0 / early game.
+- Some stage-2+ place names and joke strings still have inconsistent tone (example found during search: `梅尔钱顿` remains in at least one later story block).
+- 2026-04-14 UI fix pass:
+- Fixed the top global story panel leaking all cached story entries into the popup by hiding `story0`, `story1`, ... nodes by default in `views/timecontrols.view.js`; only the active story is shown now.
+- Fixed the action tooltip category block layout by forcing the heading / description / note in `.actionCategoryTooltip*` to render as block elements instead of inheriting the global `div { display:inline-block; }`.
+- Rechecked both issues in Playwright; screenshots saved to `output/web-game-v4-fixcheck/story-control.png` and `output/web-game-v4-fixcheck/pots-tooltip.png`.
+- Also rewrote the first-stage tooltip copy again for a more natural Chinese gameplay flow, including `wander`, `smash_pots`, `pick_locks`, `buy_glasses`, `buy_mana_z1`, `buy_mana_challenge`, `meet_people`, `short_quest`, `investigate`, `long_quest`, `throw_party`, `warrior_lessons`, `mage_lessons`, `heal_the_sick`, `fight_monsters`, `small_dungeon`, `buy_supplies`, `haggle`, `start_journey`, and `train_strength`.
+- 2026-04-13 failure attribution pass:
+- Added structured action failure metadata in `actions.js` with six failure kinds (`route`, `cost`, `condition`, `timing`, `model`, `exhausted`) plus hard/soft severity and pause eligibility.
+- `getNextValidAction()` now stores `failureInfo` and localized reason text instead of only a generic error string.
+- `driver.js` now ignores soft blockers for `Pause on failed loop`, while still pausing for hard failures and unfinished remaining actions.
+- `views/main.view.js` current-action tooltips now show failure type + reason, and hide failed-attempt counts for soft blockers.
+- Existing story flags for failure milestones remain wired to hard failures; `Brew Potions` still distinguishes the negative-reputation story from the normal reputation failure story.
+- Verification:
+- `node --check actions.js`
+- `node --check views/main.view.js`
+- `node --check driver.js`
+- `develop-web-game` Playwright client smoke run against `http://127.0.0.1:4173`
+- Targeted Playwright regression in `output/failure-attribution-cases/results.json` confirmed:
+- `Brew Potions` splits `condition/reputationLow` vs `cost/herbsLow`
+- `Escape` reports `timing/escapeWindow`
+- `Gods Trial` reports `model/teamModel`
+- `The Spire` completed state reports `exhausted/completed` with `pauseEligible: false`
+- 2026-04-13 failure attribution closure pass:
+- Covered `allowed()` over-limit loops as structured hard failures with `condition/listLimitExceeded` instead of silent stops.
+- Added a reusable gold-threshold fallback for fixed-price actions that do not declare `goldCost()`, covering `Buy Supplies`, `Purchase Supplies`, and other fixed-gold gates such as `Buy Glasses`, `Guided Tour`, `Donate`, and `Buy Pickaxe`.
+- Added favor-shortage handling for mixed gold/favor gates (`Wizard College`, `Pegasus`) so they classify as `cost` rather than generic condition failures when the payment resource is the blocker.
+- Corrected `Challenge Gods` so completed-state exhaustion now reports `exhausted/completed`; `powerCapped` is only used when the action is blocked by power state before completion.
+- Additional targeted Playwright regression in `output/failure-attribution-cases-v2/results.json` confirmed:
+- `allowed-limit` -> `condition/listLimitExceeded`
+- `buy-supplies-gold` -> `cost/goldLow`
+- `purchase-supplies-gold` -> `cost/goldLow`
+- `challenge-gods-completed` -> `exhausted/completed` with `pauseEligible: false`
+- `route-mismatch` -> `route/wrongTown`
+- `generic-condition` -> `condition/genericCondition`
+- 2026-04-13 branch foreshadowing pass:
+- Rewrote chapter 6/7 arrival text to frame Valhalla and Startington as two different systems of recognition instead of success/failure states.
+- Reframed Mt. Olympus and Startington town descriptions around classification, ruined infrastructure, and alternate social order.
+- Added early foreshadowing to `Talk To Hermit`, `Talk To Witch`, `Read Books`, and `Underworld` so the player sees multiple value systems before `Face Judgement`.
+- Reworked `Climb Mountain`, `Face Judgement`, and `Guru` text so the summit reads as a branching response and Startington reads as a valid reception rather than a punishment state.
+- Updated both `lang/en-EN/game.xml` and `lang/zh-CN/game.xml` in parallel so the branch language stays aligned across locales.
+- Verification:
+- UTF-8 XML parse succeeded for both language files via PowerShell (`lang/en-EN/game.xml`, `lang/zh-CN/game.xml`).
+- Playwright smoke run against `http://127.0.0.1:4173`, `?lg=en-EN`, and `?lg=zh-CN` produced no page errors or console errors.
+- Smoke artifacts saved to `output/branch-foreshadowing-smoke/results.json` with screenshots alongside the JSON.
+- 2026-04-14 forest-path tooltip polish pass:
+- Rewrote the stage-2 / Forest Path action tooltips in `lang/zh-CN/game.xml` to read like intentional Chinese game copy instead of literal MT, covering `explore_forest`, `wild_mana`, `gather_herbs`, `hunt`, `sit_by_waterfall`, `old_shortcut`, `talk_to_hermit`, `practical_magic`, `learn_alchemy`, `brew_potions`, `train_dexterity`, `train_speed`, `follow_flowers`, `bird_watching`, `clear_thicket`, `talk_to_witch`, `dark_magic`, `dark_ritual`, and `continue_on`.
+- Fixed several high-visibility stage-2 label issues while doing the pass, including `Train Speed -> 训练速度`, `Old Shortcut -> 旧捷径`, and `Clear Thicket -> 清理密丛`.
+- Clarified the three-number limited-action copy for Forest Path gathering loops so `Wild Mana`, `Gather Herbs`, and `Hunt` better communicate known-good targets vs total useful targets vs unchecked candidates.
+- Verification:
+- UTF-8 XML parse succeeded for `lang/zh-CN/game.xml`.
+- `develop-web-game` smoke run against `http://127.0.0.1:4173` completed after the copy pass; latest screenshot written to `output/web-game/shot-0.png`.
+- Suggested next pass:
+- Rewrite the Forest Path action log story blocks (`story_1+`) with the same tone standard, especially `wild_mana`, `hunt`, `sit_by_waterfall`, `train_dexterity`, `train_speed`, `talk_to_witch`, and `dark_ritual`.
+- 2026-04-14 Merchanton tooltip polish pass:
+- Rewrote the stage-3 / Merchanton action-entry copy in `lang/zh-CN/game.xml` for `explore_city`, `gamble`, `get_drunk`, `buy_mana_z3`, `sell_potions`, `adventure_guild`, `gather_team`, `large_dungeon`, `crafting_guild`, `craft_armor`, `apprentice`, `mason`, `architect`, `read_books`, `buy_pickaxe`, `heroes_trial`, `start_trek`, and `underworld`.
+- Fixed several stage-3 high-visibility mistranslations while doing the pass, including `Get Drunk -> 喝酒套话`, `Crafting Guild -> 工匠公会`, `Mason -> 做泥瓦工`, and `Start Trek -> 启程登山`.
+- Also normalized several high-frequency dungeon/trial labels and segment names (`已搜刮`, `掉率`, `上次属性`, `击退门卫`, `关闭微型法塔` etc.) so the interface reads like coherent Chinese UI instead of direct MT.
+- Verification:
+- UTF-8 XML parse succeeded for `lang/zh-CN/game.xml`.
+- `develop-web-game` Playwright smoke run against `http://127.0.0.1:4173/?lg=zh-CN` completed after the copy pass.
+- Runtime `_txt(...)` extraction in Playwright confirmed the game is serving the updated Merchanton strings for `explore_city`, `gamble`, `get_drunk`, `gather_team`, `large_dungeon`, `crafting_guild`, `read_books`, `start_trek`, and `underworld`.
+- Suggested next pass:
+- Rewrite the Merchanton story blocks (`story_1+`) to match the new tooltip tone, especially `get_drunk`, `adventure_guild`, `gather_team`, `large_dungeon`, `apprentice`, `mason`, and `architect`.
+- 2026-04-14 Mt. Olympus tooltip polish pass:
+- Rewrote the stage-4 / Mt. Olympus action-entry copy in `lang/zh-CN/game.xml` for `climb_mountain`, `mana_geyser`, `decipher_runes`, `chronomancy`, `looping_potion`, `pyromancy`, `explore_cavern`, `mine_soulstones`, `hunt_trolls`, `check_walls`, `take_artifacts`, `imbue_mind`, `imbue_body`, `face_judgement`, and `guru`.
+- Fixed several stage-4 high-visibility mistranslations while doing the pass, including `Climb Mountain -> 攀登山脉`, `Mana Geyser -> 法力喷泉`, `Mine Soulstone -> 开采灵魂石`, `Hunt Trolls -> 猎杀巨魔`, `Imbue Mind -> 灌注心智`, `Imbue Body -> 灌注身躯`, and `Guru -> 宗师`.
+- Clarified the counter labels for the mountain/cavern gather loops so `mana_geyser`, `mine_soulstones`, and `take_artifacts` better describe known-good targets vs totals vs unchecked spots.
+- Verification:
+- UTF-8 XML parse succeeded for `lang/zh-CN/game.xml`.
+- `develop-web-game` Playwright smoke run against `http://127.0.0.1:4173/?lg=zh-CN` completed after the copy pass.
+- Runtime `_txt(...)` extraction in Playwright confirmed the game is serving the updated Mt. Olympus strings for `climb_mountain`, `mana_geyser`, `decipher_runes`, `looping_potion`, `hunt_trolls`, `check_walls`, `take_artifacts`, `imbue_mind`, `imbue_body`, `face_judgement`, and `guru`.
+- Suggested next pass:
+- Rewrite the Mt. Olympus story blocks (`story_1+`) to match the new tooltip tone, especially `decipher_runes`, `chronomancy`, `pyromancy`, `hunt_trolls`, `imbue_mind`, `imbue_body`, `face_judgement`, and `guru`.
+- 2026-04-14 Valhalla tooltip polish pass:
+- Rewrote the stage-5 / Valhalla action-entry copy in `lang/zh-CN/game.xml` for `guided_tour`, `canvass`, `donate`, `accept_donations`, `tidy_up`, `buy_mana_z5`, `sell_artifact`, `gift_artifact`, `mercantilism`, `charm_school`, `enchant_armor`, `wizard_college`, `restoration`, `spatiomancy`, `seek_citizenship`, `build_housing`, `collect_taxes`, `oracle`, `pegasus`, `fight_frost_giants`, `seek_blessing`, `great_feast`, and `fall_from_grace`.
+- Reframed the copy around Valhalla's actual social logic instead of literal MT: official tours instead of snooping, charity canvassing and donation fraud, post-feast cleanup, elite schooling, citizenship bureaucracy, property/tax exploitation, divine favor, and being expelled by violating divine decorum.
+- Fixed several stage-5 high-visibility mistranslations while doing the pass, including `Oracle -> 神谕`, `Pegasus -> 天马`, `Fight Giants -> 讨伐霜巨人`, `Seek Blessing -> 求取神恩`, `Sell/Donate Artifact -> 出售文物 / 捐赠文物`, and `Mercantilism -> 经商术`.
+- Clarified the donation-counter UI copy for `accept_donations` so the three numbers now read as known valuable donations, total valuable donations, and unchecked donations.
+- Verification:
+- UTF-8 XML parse succeeded for `lang/zh-CN/game.xml`.
+- `develop-web-game` Playwright smoke run against `http://127.0.0.1:4173/?lg=zh-CN` completed after the copy pass; smoke artifacts were written to `output/valhalla-tooltip-smoke/`.
+- Runtime `_txt(...)` extraction in Playwright confirmed the game is serving the updated Valhalla strings for `guided_tour`, `accept_donations`, `mercantilism`, `wizard_college`, `oracle`, `pegasus`, `fight_frost_giants`, `great_feast`, and `fall_from_grace`.
+- Suggested next pass:
+- Rewrite the Valhalla story blocks (`story_1+`) to match the new tooltip tone, especially `guided_tour`, `canvass`, `accept_donations`, `wizard_college`, `seek_citizenship`, `fight_frost_giants`, `seek_blessing`, and `great_feast`.
+- 2026-04-14 Shadow Startington tooltip polish pass:
+- Rewrote the stage-6 / shadow-town action-entry copy in `lang/zh-CN/game.xml` for `meander`, `mana_well`, `destroy_pylons`, `raise_zombie`, `dark_sacrifice`, `the_spire`, `purchase_supplies`, `dead_trial`, and `journey_forth`.
+- Reframed the copy around the actual structure of this zone instead of literal MT: shadow-corrupted exploration, draining wells, compulsory pylon destruction, corpse-raising, bargaining with dark gods, storm-wreathed Spire progression, grim supply buying, zombie-only necropolis crawling, and pushing on toward the jungle.
+- Fixed several stage-6 high-visibility labels and helper texts while doing the pass, including `法力之井 -> 法力井`, `摧毁水晶塔 -> 摧毁支柱`, `召唤僵尸 -> 唤起僵尸`, `黑暗牺牲 -> 黑暗祭献`, `购买供应品 -> 购置补给`, `死者的审判 -> 死者试炼`, and `出发 -> 继续前行`.
+- Clarified the well/pylon counter UI copy so the three-number displays now read as known-valid targets, total possible targets, and unchecked spots/buildings.
+- Polished several high-frequency segment and status labels in the same block, including `已洗劫`, `已攻破`, `几率`, `上次`, `穿过门阵`, `斩杀幽魂`, `拆除微型支柱`, `净化楼层`, and the dead-trial segment names.
+- Verification:
+- UTF-8 XML parse succeeded for `lang/zh-CN/game.xml`.
+- `develop-web-game` Playwright smoke run against `http://127.0.0.1:4173/?lg=zh-CN` completed after the copy pass; smoke artifacts were written to `output/shadow-town-tooltip-smoke/`.
+- Runtime `_txt(...)` extraction in Playwright confirmed the game is serving the updated shadow-town strings for `meander`, `mana_well`, `destroy_pylons`, `raise_zombie`, `the_spire`, `purchase_supplies`, `dead_trial`, and `journey_forth`.
+- Suggested next pass:
+- Rewrite the shadow-town story blocks (`story_1+`) to match the new tooltip tone, especially `meander`, `mana_well`, `destroy_pylons`, `dark_sacrifice`, `the_spire`, `dead_trial`, and `journey_forth`.
+- 2026-04-14 Jungle tooltip polish pass:
+- Rewrote the stage-7 / Jungle action-entry copy in `lang/zh-CN/game.xml` for `fight_jungle_monsters`, `explore_jungle`, `rescue_survivors`, `prepare_buffet`, `totem`, `escape`, and `open_portal`.
+- Reframed the copy around the actual gameplay rhythm of this zone instead of literal MT: solo monster hunting, dangerous jungle scouting, survivor rescue and triage, feeding a nervous camp, harnessing the totem, racing the jungle as it closes in, and using restoration to tear a portal back out of the shadow realm.
+- Fixed several stage-7 high-visibility labels and helper texts while doing the pass, including `丛林战 -> 猎杀猛兽`, `击败的生物 -> 已猎杀`, `已保存 -> 已救回`, `准备自助餐 -> 张罗餐食`, `逃脱 -> 逃出丛林`, and `打开门户 -> 开启传送门`.
+- Polished the rescue segment labels in the same block so `找到 / 帮助 / 保证` now read as `寻人 / 疗伤 / 安抚`, matching the actual flow of the action.
+- Verification:
+- UTF-8 XML parse succeeded for `lang/zh-CN/game.xml`.
+- `develop-web-game` Playwright smoke run against `http://127.0.0.1:4173/?lg=zh-CN` completed after the copy pass; smoke artifacts were written to `output/jungle-tooltip-smoke/`.
+- Runtime `_txt(...)` extraction in Playwright confirmed the game is serving the updated Jungle strings for `fight_jungle_monsters`, `explore_jungle`, `rescue_survivors`, `prepare_buffet`, `totem`, `escape`, and `open_portal`.
+- Suggested next pass:
+- Rewrite the Jungle story blocks (`story_1+`) to match the new tooltip tone, especially `fight_jungle_monsters`, `explore_jungle`, `rescue_survivors`, `prepare_buffet`, `totem`, and `escape`.
+- 2026-04-14 Commerceville tooltip polish pass:
+- Rewrote the stage-8 / Commerceville action-entry copy in `lang/zh-CN/game.xml` for `excursion`, `explorers_guild`, `thieves_guild`, `pick_pockets`, `rob_warehouse`, `insurance_fraud`, `guild_assassin`, `invest`, `collect_interest`, `seminar`, `purchase_key`, `secret_trial`, and `leave_city`.
+- Reframed the copy around the actual logic of the zone instead of literal MT: hiring street guides, citywide exploration and map work, guild exclusivity, pickpocketing and warehouse jobs as escalating black-market play, insurance fraud, assassin contracts, loop-persistent banking, motivational seminars, buying the city key, and the vanity trial as a public spectacle.
+- Shortened several action labels to fit the existing UI more cleanly while keeping the longer explanation in tooltips, including `雇人带路`, `扒窃`, `骗保`, `励志讲座`, `买下城钥`, and `虚荣试炼`.
+- Fixed several high-visibility mistranslations while doing the pass, including `探险者协会 -> 探险者公会`, `罗布仓库 -> 洗劫仓库`, `保险欺诈 -> 骗保`, `购买密钥 -> 买下城钥`, and `收取利息 -> 领取利息`.
+- Also normalized cross-zone references inside guild tooltips so Commerceville now correctly points back to `商顿` where the original English referenced `Merchanton`.
+- Verification:
+- UTF-8 XML parse succeeded for `lang/zh-CN/game.xml`.
+- A `develop-web-game` Playwright smoke run against `http://127.0.0.1:4173/?lg=zh-CN` completed after the copy pass; smoke artifacts were written to `output/commercial-town-tooltip-smoke/`.
+- Runtime `_txt(...)` extraction in Playwright confirmed the game is serving the updated Commerceville strings for `excursion`, `explorers_guild`, `thieves_guild`, `pick_pockets`, `rob_warehouse`, `insurance_fraud`, `guild_assassin`, `invest`, `collect_interest`, `seminar`, `purchase_key`, `secret_trial`, and `leave_city`.
+- Suggested next pass:
+- Rewrite the Commerceville story blocks (`story_1+`) to match the new tooltip tone, especially `excursion`, `thieves_guild`, `pick_pockets`, `rob_warehouse`, `insurance_fraud`, `guild_assassin`, `seminar`, and `secret_trial`.
+- 2026-04-14 Olympus Valley tooltip polish pass:
+- Rewrote the stage-9 / Olympus Valley endgame action-entry copy in `lang/zh-CN/game.xml` for `imbue_soul`, `build_tower`, `gods_trial`, `challenge_gods`, and `restore_time`.
+- Reframed the copy around the actual endgame structure instead of literal MT: soul infusion as a true sacrifice/reset, tower-building as hauling temporal stones into a road back to Valhalla, the gods' tower gauntlet as an explicit siege climb, the pantheon fight as the final personal confrontation, and time restoration as the act of stitching the broken timeline back together.
+- Tightened several endgame labels to read more naturally in Chinese UI, including `众神试炼`, `挑战诸神`, `修复时间`, `建塔进度`, and the supporting `已通关 / 百层通关` wording for the tower trial.
+- Also normalized the town-9 terminology so the tooltips now consistently reference `心智灌注 / 身躯灌注` and `时间石`, matching the rest of the current Chinese localization more closely than the previous mixed wording.
+- Verification:
+- UTF-8 XML parse succeeded for `lang/zh-CN/game.xml`.
+- The `develop-web-game` Playwright client was run against `http://127.0.0.1:4173/?lg=zh-CN` after the copy pass; smoke artifacts were written to `output/endgame-tooltip-smoke/`.
+- Runtime `_txt(...)` extraction in Playwright confirmed the game is serving the updated Olympus Valley strings for `imbue_soul`, `build_tower`, `gods_trial`, `challenge_gods`, and `restore_time`.
+- Suggested next pass:
+- Rewrite the Olympus Valley story blocks (`story_1+`) to match the new tooltip tone, especially `imbue_soul`, `build_tower`, `gods_trial`, `challenge_gods`, and the ending narration in `restore_time`.
+- 2026-04-14 cross-zone special-action tooltip polish pass:
+- With all main town-stage action-entry copy covered, moved on to the special cross-zone action group in `lang/zh-CN/game.xml`: `assassin`, `ruinsz1`, `ruinsz3`, `ruinsz5`, `ruinsz6`, `haulz1`, `haulz3`, `haulz5`, and `haulz6`.
+- Reframed the generic assassination tooltip around covert contracts and cleanup rather than literal MT, and normalized the segment labels to `侦查目标 / 制定计划 / 动手行刺 / 清理痕迹 / 抽身离场`.
+- Rewrote the four ruins actions so they read like actual archaeological/plot-investigation hooks in Chinese instead of repetitive placeholder copy, with each zone now reflecting its own context (forest ruins, Olympus ruins, shadow-town ruins, jungle ruins).
+- Rewrote the four temporal-stone hauling actions to clearly explain the loop-resistant stone logic in natural Chinese, and normalized the helper labels to `运石 / 已运石 / 剩余时间石 / 时间石总数 / 待查石块`.
+- Verification:
+- UTF-8 XML parse succeeded for `lang/zh-CN/game.xml`.
+- The `develop-web-game` Playwright client was run against `http://127.0.0.1:4173/?lg=zh-CN` after the copy pass; smoke artifacts were written to `output/special-actions-tooltip-smoke/`.
+- Runtime `_txt(...)` extraction in Playwright confirmed the game is serving the updated strings for `assassin`, `ruinsz1`, `ruinsz3`, `ruinsz5`, `ruinsz6`, `haulz1`, `haulz3`, `haulz5`, and `haulz6`.
+- Suggested next pass:
+- Rewrite the matching special-action story blocks (`assassinz0`-`assassinz7`, `ruinsz* story_1+`, `haulz* story_1+`) so their tone matches the new entry copy.
+- 2026-04-14 shared progression-action tooltip polish pass:
+- Rewrote the shared progression/system action-entry copy in `lang/zh-CN/game.xml` for `survey`, `map`, `found_glasses`, and refined the wording in `buy_mana_z1`.
+- Normalized the surveying terminology so the live action, completion label, and global tracker now consistently read `勘测 / 已勘测 / 世界勘测`, matching the wording already used in later guild and zone copy.
+- Reframed `购买地图` around the actual gameplay loop (buy maps -> survey zones -> uncover missed resources/secrets) instead of literal MT, and rewrote `找回眼镜` to sound like a deliberate payoff line rather than a flat direct translation.
+- Tightened the `购买法力` helper copy so it reads like intentional UI text in Chinese while preserving the original mechanical meaning.
+- Verification:
+- UTF-8 XML parse succeeded for `lang/zh-CN/game.xml`.
+- The `develop-web-game` Playwright client was run against `http://127.0.0.1:4173/?lg=zh-CN` after the copy pass; smoke artifacts were written to `output/shared-actions-tooltip-smoke/`.
+- Runtime `_txt(...)` extraction in Playwright confirmed the game is serving the updated strings for `survey`, `map`, `found_glasses`, and `buy_mana_z1`.
+- Suggested next pass:
+- Rewrite the remaining story-heavy shared/action-log text still showing machine-translation leftovers, especially `assassinz0`-`assassinz7`, `ruinsz* story_1+`, `haulz* story_1+`, and the endgame story blocks with mixed English headers.
+- 2026-04-14 mana-family tooltip polish pass:
+- Reworked the `Buy Mana` action family in `lang/zh-CN/game.xml` so the beginner-town, challenge, Merchanton, and Valhalla variants now read like one coherent Chinese UI family instead of four slightly different literal translations.
+- Updated `buy_mana_z1`, `buy_mana_challenge`, `buy_mana_z3`, and `buy_mana_z5` to keep the same core mechanic phrasing (`按当前买得起的额度一次买满`) while still preserving each location's context: normal convenience buy, drought-limited challenge stock, trade-city price shopping, and the divine market run by the God of Trade.
+- Verification:
+- UTF-8 XML parse succeeded for `lang/zh-CN/game.xml`.
+- The `develop-web-game` Playwright client was run against `http://127.0.0.1:4173/?lg=zh-CN` after the copy pass; smoke artifacts were written to `output/mana-family-tooltip-smoke/`.
+- Runtime `_txt(...)` extraction in Playwright confirmed the game is serving the updated strings for `buy_mana_z1`, `buy_mana_challenge`, `buy_mana_z3`, and `buy_mana_z5`.
+- Suggested next pass:
+- Rewrite the remaining story-heavy text that still has mixed English headers or obvious MT leftovers, especially `assassinz0`-`assassinz7`, `ruinsz* story_1+`, `haulz* story_1+`, and the endgame story blocks.
+- 2026-04-14 action filter contrast fix:
+- Fixed the action-category filter buttons in `stylesheet.css`; they were inheriting the global button light text color while using a pale custom background, which produced near-white text on a near-white background in the filter legend.
+- Added dedicated filter-button colors for default / hover / active / disabled states, with explicit dark text plus accent-tinted backgrounds and borders so the category chips remain readable in the light theme.
+- Verification:
+- Re-ran a browser smoke check against `http://127.0.0.1:4173/?lg=zh-CN`.
+- Computed-style capture in `output/action-filter-fix-smoke/runtime-styles.json` now shows `color: rgb(0, 0, 0)` on the filter buttons.
+- Visual checks saved to `output/action-filter-fix-smoke/filter-main.png` and `output/action-filter-fix-smoke/filter-legend.png`.
+- 2026-04-14 action stories visibility fix:
+- Fixed an `Action Stories` DOM-index regression in `views/main.view.js`: after action-category badges were added, `updateStories()` was still writing into `children[2]`, which now points at the icon wrapper instead of the tooltip body.
+- Story text now renders into a dedicated `storyContent${action.varName}` node inside `.showthisstory`, so updates no longer depend on fragile child indices.
+- Added `.storyTooltipContent > p` styling in `stylesheet.css` so paragraph indentation remains stable after splitting the tooltip into category header + story body sections.
+- Verification:
+- `node --check views/main.view.js`
+- Browser regression against `http://127.0.0.1:4173/?lg=zh-CN` confirmed:
+- a visible story card (`storyContainerWander`) shows only title text in normal state
+- its `.showthisstory` computed style is `display:none`, `visibility:hidden`, `opacity:0` before hover
+- after hover, the same tooltip becomes `display:block`, `visibility:visible`, `opacity:1`
+- artifacts saved in `output/action-stories-visibility/results.json` with `before-hover.png` and `after-hover.png`

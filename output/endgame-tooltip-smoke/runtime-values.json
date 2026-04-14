@@ -1,0 +1,18 @@
+{
+  "pageErrors": [],
+  "consoleErrors": [],
+  "values": {
+    "actions>imbue_soul>tooltip": "\n            把一路积攒下来的灵魂石、心智灌注和身躯灌注一并熔进灵魂里，换来更高层次的成长。完成后会重置所有天赋等级、灵魂石、心智灌注和身躯灌注，但其他技能与增益会保留下来。<br>\n需要心智灌注与身躯灌注都达到 500。<br>\n每级使训练动作的经验倍率提高 100%，并使所有动作速度提高 50%。\n            \n      ",
+    "actions>build_tower>label_done": "建塔进度",
+    "actions>build_tower>tooltip": "\n            既然已经被打落谷底，那就亲手搭出一条回到瓦尔哈拉的路。你要把一路从各处遗迹里搬来的时间石砌成通天之塔。<br>\n            需要 1 块时间石。<br>\n            运石和建塔进度会跨循环保留；每放上一块石头，都会永久从你旅途中发现的石堆里少掉一块。\n            \n      ",
+    "actions>gods_trial>label": "众神试炼",
+    "actions>gods_trial>label_done": "已通关",
+    "actions>gods_trial>label_part": "众神试炼",
+    "actions>gods_trial>tooltip": "\n            众神把你亲手建起的高塔塞满怪物，只为了拦住你回到瓦尔哈拉。很好，那就一层一层杀上去。<br>\n进度基于团队战斗力。<br>\n需要塔楼建造达到 100%。\n            \n      ",
+    "actions>challenge_gods>label": "挑战诸神",
+    "actions>challenge_gods>label_done": "已败诸神",
+    "actions>challenge_gods>tooltip": "\n            正主终于亲自下场了。只要击败七位神，你就能亲手终结这场没完没了的循环。<br>\n            进度基于个人战斗力。<br>\n            本轮需要先通关众神试炼的全部 100 层。\n            \n      ",
+    "actions>restore_time>label": "修复时间",
+    "actions>restore_time>tooltip": "\n            你已经走到终点。凭借夺来的众神之力，你终于可以把被循环撕裂的时间重新接回正轨。<br>需要众神之力。\n        \n      "
+  }
+}

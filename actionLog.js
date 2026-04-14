@@ -224,7 +224,7 @@ class ActionLogEntry {
         if (key === "loop") return formatNumber(this.loop);
         if (key === "loopStart") return formatNumber(this.loop);
         if (key === "loopEnd") return formatNumber(this.loop);
-        if (key === "town") return townNames[this.action?.townNum];
+        if (key === "town") return getTownName(this.action?.townNum);
         if (key === "action") return this.action?.label;
         if (key === "header") return _txt("actions>log>header");
         throw new Error(`Bad key ${key}`);

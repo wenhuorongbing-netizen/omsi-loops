@@ -1,0 +1,26 @@
+{
+  "pageErrors": [],
+  "consoleErrors": [],
+  "values": {
+    "actions>excursion>label": "雇人带路",
+    "actions>excursion>tooltip": "\n            花点钱雇个本地街头孩子带你认路。对外地人来说，这价格明显带着一层游客税。<br>拥有本地公会身份时，费用降低 80%。<br>佩戴眼镜时进度翻倍。<br>当前费用\n            \n      ",
+    "actions>explorers_guild>label": "探险者公会",
+    "actions>explorers_guild>tooltip": "\n            总觉得这城里还有不少门路、资源和消息从你眼前溜走？探险者公会就是靠把这些遗漏全找出来吃饭的。加入他们后，你会学到如何发现更多地图、资源与机会；等站稳脚跟，甚至还能学会新的世界移动方式。<br>\n每次只能加入 1 个公会（包括商顿的公会）。<br>\n首次完成后，在新手镇解锁“购买地图”，并在所有区域解锁“勘测”。<br>\n如果你带来已完成的地图，每张地图都会提供相当于勘测 2 个随机未完成区域的经验。<br>\n如果身上没有地图，还会额外获得 30 张。<br>\n世界勘测进度每达到 25%，就会解锁新的捷径。<br>\n当前世界勘测进度：<div id='totalSurveyProgress'></div>%。<br>\n城市见闻达到 10% 后解锁。\n            \n      ",
+    "actions>thieves_guild>label_done": "钱袋线已断",
+    "actions>thieves_guild>tooltip": "\n            学会把财富转移给更“需要”的人。主要是你自己。<br>参加他们的入会测试，拿到盗贼阶位。<br>需要负声望。<br>\n每次只能加入 1 个公会（包括商顿的公会），且每轮只能尝试 1 次。<br>\n每完成 1 个阶段获得 10 金币。<br>\n每点法力提供 (实用魔法技能 + 偷窃技能) * (1 + 主属性 / 100) * sqrt(1 + 完成次数 / 1000) * (原始法力消耗 / 实际法力消耗) 进度。<br>\n城市见闻达到 25% 后解锁。<br>\n偷窃经验按阶段结算，而不是按整次动作结算。\n            \n      ",
+    "actions>pick_pockets>label": "扒窃",
+    "actions>pick_pockets>tooltip": "\n            替路人减轻一点“财务负担”，也算是助人为乐。<br>\n需要盗贼公会。<br>\n可根据逛城进度和空间魔法完成 <div id='actionAllowedPockets'>x</div> 次。<br>\n扒窃进度会乘以盗贼公会倍率。<br>\n奖励 \n      ",
+    "actions>rob_warehouse>label": "洗劫仓库",
+    "actions>insurance_fraud>label": "骗保",
+    "actions>guild_assassin>tooltip": "\n            加入刺客公会，接下他们散布在各地的目标名单。把目标的心脏带回来，你就能从公会手里换到更多秘密。<br>\n每次只能加入 1 个公会（包括商顿的公会）。<br>\n首次完成后，在前 8 个区域各解锁一个“暗杀”动作。<br>\n获得等于 100 * 心脏数量^2 的刺客经验。<br>\n骗保达到 100% 后解锁。\n            \n      ",
+    "actions>invest>tooltip": "\n            把钱存进永恒银行。存进去的金币会在循环之间保留下来。<br>\n            累计存入金币：<div id='goldInvested'></div>（上限 999999999999）\n            \n      ",
+    "actions>collect_interest>label": "领取利息",
+    "actions>collect_interest>tooltip": "\n            从永恒银行领取你的利息。<br>\n            获得总存款的 0.1%。<br>\n            每轮只能领取 1 次。<br>\n            当前利息：<div id='bankInterest'></div>\n            \n      ",
+    "actions>seminar>label": "励志讲座",
+    "actions>seminar>tooltip": "\n            买张励志讲座的入场券，学学怎么成为“最好的自己”，顺便让所有人都喜欢你。你几乎可以肯定，想从他们的邮件名单里消失，唯一办法就是把时间倒回去。<br>花费\n            \n      ",
+    "actions>purchase_key>label": "买下城钥",
+    "actions>secret_trial>label": "虚荣试炼",
+    "actions>secret_trial>tooltip": "\n            当你和队伍踏上试炼台时，围观的人群早已把你们当成赌盘的一部分。<br>\n进度基于团队战斗力。<br>\n奖励 +1 点吹嘘资本。\n            \n      ",
+    "actions>leave_city>tooltip": "\n            这地方的人一个比一个像狼，再待下去只会被活活啃干净。该走了。<br>需要城市钥匙。\n            \n      "
+  }
+}

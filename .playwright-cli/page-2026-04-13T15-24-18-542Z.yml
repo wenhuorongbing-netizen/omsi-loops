@@ -1,0 +1,321 @@
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - list [ref=e4]:
+      - listitem [ref=e5]:
+        - generic [ref=e6]: 
+      - listitem [ref=e7]: Changelog
+      - listitem [ref=e8]: Saving
+      - listitem [ref=e9]: FAQ
+      - listitem [ref=e10]:
+        - text: Options
+        - option "Normal" [selected]
+        - option "Dark"
+        - option "Cubic"
+        - option "Cubic Dark"
+        - option "Zen"
+        - option "Zen Dark"
+      - listitem [ref=e11]: Extras
+      - listitem [active]:
+        - text: Challenges
+        - generic [ref=e561]:
+          - text: Challenges are special modes that impose special conditions and heavy restrictions.
+          - text: They give no rewards ard are just here for fun.
+          - text: It is only recommended to try them after beating the main game.
+          - text: Please export and save your data locally before starting.
+          - text: Beginning a challenge will permanently delete your current save.
+          - button "Exit Challenge" [ref=e562] [cursor=pointer]
+          - button "Resume Challenge" [ref=e563] [cursor=pointer]
+          - button "Mana Drought" [ref=e564] [cursor=pointer]
+          - button "Noodle Arms" [ref=e565] [cursor=pointer]
+          - button "Mana Burn" [ref=e566] [cursor=pointer]
+      - listitem [ref=e13]: Totals
+      - listitem [ref=e14]: Prestige Perks
+      - listitem [ref=e15]: CRITICAL ALERT
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - generic [ref=e19]: 
+          - text: "Mana:"
+        - generic [ref=e20]: 190 | 2.17s
+      - generic [ref=e21]:
+        - generic [ref=e22]: "Gold:"
+        - generic [ref=e23]: "0"
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - button "Play" [ref=e301] [cursor=pointer]
+        - button "Restart" [ref=e27] [cursor=pointer]
+        - button "Bonus Seconds" [ref=e28] [cursor=pointer]
+        - generic [ref=e31]: Story
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - checkbox "Pause before restart" [ref=e34] [cursor=pointer]
+          - text: Pause before restart
+        - generic [ref=e35]:
+          - checkbox "Pause on failed loop" [ref=e36] [cursor=pointer]
+          - text: Pause on failed loop
+        - generic [ref=e37]:
+          - checkbox "Pause on progress complete" [ref=e38] [cursor=pointer]
+          - text: Pause on progress complete
+  - main [ref=e39]:
+    - generic [ref=e41]:
+      - generic [ref=e43]: Stats
+      - generic [ref=e44]:
+        - radio "Regular View" [checked] [ref=e45] [cursor=pointer]
+        - text: Regular View
+        - radio "Radar Chart" [ref=e46] [cursor=pointer]
+        - text: Radar Chart
+      - generic [ref=e47]:
+        - generic [ref=e49]:
+          - generic [ref=e50]: Dexterity
+          - generic [ref=e51]: "500"
+          - generic [ref=e55]: "500"
+          - generic [ref=e58]: "0"
+        - generic [ref=e63]:
+          - generic [ref=e64]: Strength
+          - generic [ref=e65]: "500"
+          - generic [ref=e69]: "500"
+          - generic [ref=e72]: "0"
+        - generic [ref=e77]:
+          - generic [ref=e78]: Constitution
+          - generic [ref=e79]: "500"
+          - generic [ref=e83]: "500"
+          - generic [ref=e86]: "0"
+        - generic [ref=e91]:
+          - generic [ref=e92]: Speed
+          - generic [ref=e93]: "500"
+          - generic [ref=e97]: "500"
+          - generic [ref=e100]: "0"
+        - generic [ref=e105]:
+          - generic [ref=e106]: Perception
+          - generic [ref=e107]: "500"
+          - generic [ref=e111]: "500"
+          - generic [ref=e114]: "0"
+        - generic [ref=e119]:
+          - generic [ref=e120]: Charisma
+          - generic [ref=e121]: "500"
+          - generic [ref=e125]: "500"
+          - generic [ref=e128]: "0"
+        - generic [ref=e133]:
+          - generic [ref=e134]: Intelligence
+          - generic [ref=e135]: "500"
+          - generic [ref=e139]: "500"
+          - generic [ref=e142]: "0"
+        - generic [ref=e147]:
+          - generic [ref=e148]: Luck
+          - generic [ref=e149]: "500"
+          - generic [ref=e153]: "500"
+          - generic [ref=e156]: "0"
+        - generic [ref=e161]:
+          - generic [ref=e162]: Soul
+          - generic [ref=e163]: "500"
+          - generic [ref=e167]: "500"
+          - generic [ref=e170]: "0"
+        - generic [ref=e175]:
+          - generic [ref=e176]: Total
+          - generic [ref=e331]: 4,500
+          - generic [ref=e177]: 4,500
+          - generic [ref=e178]: "0"
+      - generic [ref=e179]:
+        - generic [ref=e181]: Skills
+        - generic [ref=e182]:
+          - generic [ref=e183]: Self Combat
+          - generic [ref=e185]: 3,000
+        - generic [ref=e186]:
+          - generic [ref=e187]: Team Combat
+          - generic [ref=e189]: 3,000
+        - generic [ref=e332]:
+          - generic [ref=e333]: Combat
+          - generic [ref=e335]: "500"
+        - generic [ref=e337]:
+          - generic [ref=e338]: Magic
+          - generic [ref=e340]: "500"
+        - generic [ref=e342]:
+          - generic [ref=e343]: Practical Magic
+          - generic [ref=e345]: "500"
+        - generic [ref=e347]:
+          - generic [ref=e348]: Alchemy
+          - generic [ref=e350]: "500"
+        - generic [ref=e352]:
+          - generic [ref=e353]: Dark Magic
+          - generic [ref=e355]: "500"
+        - generic [ref=e357]:
+          - generic [ref=e358]: Crafting
+          - generic [ref=e360]: "500"
+        - generic [ref=e362]:
+          - generic [ref=e363]: Chronomancy
+          - generic [ref=e365]: "500"
+        - generic [ref=e367]:
+          - generic [ref=e368]: Pyromancy
+          - generic [ref=e370]: "500"
+        - generic [ref=e372]:
+          - generic [ref=e373]: Restoration
+          - generic [ref=e375]: "500"
+        - generic [ref=e377]:
+          - generic [ref=e378]: Spatiomancy
+          - generic [ref=e380]: "500"
+        - generic [ref=e382]:
+          - generic [ref=e383]: Mercantilism
+          - generic [ref=e385]: "500"
+        - generic [ref=e387]:
+          - generic [ref=e388]: Divine Favor
+          - generic [ref=e390]: "500"
+        - generic [ref=e392]:
+          - generic [ref=e393]: Communion
+          - generic [ref=e395]: "500"
+        - generic [ref=e397]:
+          - generic [ref=e398]: Gluttony
+          - generic [ref=e400]: "500"
+        - generic [ref=e402]:
+          - generic [ref=e403]: Wunderkind
+          - generic [ref=e405]: "500"
+        - generic [ref=e407]:
+          - generic [ref=e408]: Thievery
+          - generic [ref=e410]: "500"
+        - generic [ref=e412]:
+          - generic [ref=e413]: Leadership
+          - generic [ref=e415]: "500"
+        - generic [ref=e417]:
+          - generic [ref=e418]: Assassination
+          - generic [ref=e420]: "500"
+      - generic [ref=e465]: Buffs
+    - generic [ref=e191]:
+      - generic [ref=e193]: Action List
+      - text:  
+      - generic [ref=e194]:
+        - generic [ref=e195]:
+          - generic [ref=e302]:
+            - img [ref=e305]
+            - generic [ref=e306]: "0"
+            - text: /
+            - generic [ref=e307]: "1"
+          - generic [ref=e197]:
+            - generic [ref=e198]: Mana Used
+            - generic [ref=e199]: 0 | 0s
+        - generic [ref=e200]:
+          - generic [ref=e270]:
+            - generic [ref=e271]:
+              - img
+              - text: ×
+              - generic [ref=e272]: "1"
+            - generic [ref=e273]:
+              - text: 
+              - button "" [ref=e274] [cursor=pointer]
+              - button "" [ref=e275] [cursor=pointer]
+              - button "" [ref=e276] [cursor=pointer]
+              - text: 
+              - button "" [ref=e277] [cursor=pointer]
+              - button "" [ref=e278] [cursor=pointer]
+              - button "" [ref=e279] [cursor=pointer]
+              - button "" [ref=e280] [cursor=pointer]
+          - generic [ref=e202]:
+            - generic [ref=e203]: Amount
+            - button "1" [ref=e204] [cursor=pointer]
+            - button "5" [ref=e205] [cursor=pointer]
+            - button "10" [ref=e206] [cursor=pointer]
+            - textbox [ref=e207] [cursor=pointer]: "1"
+      - generic [ref=e208]:
+        - generic [ref=e209]:
+          - checkbox "Keep current list active" [ref=e210] [cursor=pointer]
+          - text: Keep current list active
+          - checkbox "Repeat last action on list" [ref=e211] [cursor=pointer]
+          - text: Repeat last action on list
+          - checkbox "Add action to top of list" [ref=e212] [cursor=pointer]
+          - text: Add action to top of list
+        - generic [ref=e213]:
+          - button "Clear List" [ref=e214] [cursor=pointer]
+          - generic [ref=e215] [cursor=pointer]: Manage Loadouts
+    - generic [ref=e216]:
+      - generic [ref=e217]:
+        - generic [ref=e218]:
+          - generic [ref=e422] [cursor=pointer]: 
+          - combobox [ref=e221]:
+            - text: "\""
+            - option "Beginnersville"
+            - text: "\""
+            - option "Forest Path"
+            - text: "\""
+            - option "Merchanton"
+            - text: "\""
+            - option "Mt. Olympus"
+            - text: "\""
+            - option "Valhalla"
+            - text: "\""
+            - option "Startington"
+            - text: "\""
+            - option "Jungle Path"
+            - text: "\""
+            - option "Commerceville"
+            - text: "\""
+            - option "Valley of Olympus" [selected]
+          - generic [ref=e222] [cursor=pointer]: 
+        - generic [ref=e223]:
+          - text:                                                                                                                                  
+          - generic [ref=e423]:
+            - generic [ref=e467]:
+              - generic [ref=e468]: World Surveyed
+              - generic [ref=e469]: "100"
+              - generic [ref=e470]: "%"
+              - text: 
+            - generic [ref=e477]:
+              - generic [ref=e478]: Surveyed
+              - generic [ref=e479]: "100"
+              - generic [ref=e480]: "%"
+              - text: 
+            - text: 
+            - generic [ref=e425]:
+              - generic [ref=e426]: Tower Progress
+              - generic [ref=e427]: "100"
+              - generic [ref=e428]: "%"
+              - text: 
+            - generic [ref=e487]:
+              - generic [ref=e488]:
+                - generic [ref=e489]: Gods Trial One
+                - generic [ref=e490]:
+                  - generic [ref=e491]: Done
+                  - generic [ref=e492]: "0"
+              - text: 
+            - generic [ref=e513]:
+              - generic [ref=e514]:
+                - generic [ref=e515]: Challenge Gods One
+                - generic [ref=e516]:
+                  - generic [ref=e517]: Gods Defeated
+                  - generic [ref=e518]: "0"
+              - text: 
+        - generic [ref=e243]:
+          - generic [ref=e244]: Action Options
+          - generic [ref=e245] [cursor=pointer]: 
+        - generic [ref=e246]:
+          - generic [ref=e435]:
+            - button "Survey" [ref=e539] [cursor=pointer]:
+              - text: Survey
+              - img [ref=e541]
+            - button "Imbue Soul" [ref=e437]:
+              - text: Imbue Soul
+              - img [ref=e439]
+            - button "Build Tower" [ref=e441] [cursor=pointer]:
+              - text: Build Tower
+              - generic [ref=e442]:
+                - img [ref=e443]
+                - img [ref=e444]
+            - button "Trial of the Gods" [ref=e543] [cursor=pointer]:
+              - text: Trial of the Gods
+              - generic [ref=e544]:
+                - img [ref=e545]
+                - img [ref=e546]
+            - button "Challenge Gods" [ref=e548] [cursor=pointer]:
+              - text: Challenge Gods
+              - img [ref=e550]
+            - button "Restore Time" [ref=e552] [cursor=pointer]:
+              - text: Restore Time
+              - img [ref=e554]
+          - text: "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
+      - generic [ref=e259]:
+        - generic [ref=e260]: Action Log
+        - list [ref=e261]:
+          - listitem [ref=e262]: "Loop 0: You're a simple courier, on a long trip to deliver a high priority package. Just as you entered town, you tripped - breaking your glasses - and the package burst open, spilling a strange liquid on you. Immediately, your meager amount of mana started draining rapidly. Right as your mana completely ran out, you found yourself back in the moment the liquid was absorbed into your skin, with your tiny reserves filled... yet draining just as before. This happened again and again, the world resetting with you, until you decided you had to figure out a way to prolong how long these 'loops' were. Mana crystals are often stored in pottery around town, perhaps you'll start there ..."
+          - listitem [ref=e555]: "Loop 7, Wander in Beginnersville (20% Explored): You know the general layout of the small village now, you don't get lost walking from one side to another!"
+          - listitem [ref=e556]: "Loop 7, Wander in Beginnersville (40% Explored): You're starting to really know your way around, you can almost figure your way around without following a set path!"
+          - listitem [ref=e557]: "Loop 7, Wander in Beginnersville (60% Explored): You've trod all the main roads and you avail yourself to the unkempt side paths and less well-worn paths. If you let yourself into some houses along the way, well, no one needs to know, do they?"
+          - listitem [ref=e558]: "Loop 7, Wander in Beginnersville (80% Explored): You've decided to explore the houses now that you've trod every single feasible path in this small village. Man, the stuff people keep around."
+          - listitem [ref=e559]: "Loop 7, Wander in Beginnersville (100% Explored): You've been everywhere, there is absolutely nowhere in this town you haven't been. You've been in every cellar, under every bed, and in every closet. You've pried all the floorboards, and just in general, been into everything. Except the houses with locks, those dastardly locks."
+          - listitem [ref=e263]: End of log

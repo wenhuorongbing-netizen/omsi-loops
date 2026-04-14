@@ -174,7 +174,353 @@ function getXMLName(name) {
     return name.toLowerCase().replace(/ /gu, "_");
 }
 
-const townNames = ["Beginnersville", "Forest Path", "Merchanton", "Mt. Olympus", "Valhalla", "Startington", "Jungle Path", "Commerceville", "Valley of Olympus"];
+function getTownName(index) {
+    if (typeof index !== "number") return "";
+    return _txt(`towns>town${index}>name`);
+}
+
+function getTownNames() {
+    return Array.from({length: 9}, (_unused, index) => getTownName(index));
+}
+
+/** @typedef {"advance"|"growth"|"resource"|"shortcut"|"side"} ActionCategory */
+/** @satisfies {ActionCategory[]} */
+const actionCategories = ["advance", "growth", "resource", "shortcut", "side"];
+
+const actionCategoryStrings = {
+    "en-EN": {
+        legendTitle: "View by role",
+        legendHint: "Dim actions by role without hiding them.",
+        legendHintActive: "Filtering by {label}. Click again to clear.",
+        legendToggleShow: "Show role legend",
+        legendToggleHide: "Hide role legend",
+        primaryRole: "Primary role",
+        categories: {
+            advance: {
+                label: "Advance",
+                short: "Adv",
+                description: "Mainly expands what you can do next.",
+            },
+            growth: {
+                label: "Growth",
+                short: "Grow",
+                description: "Mainly improves the baseline for future loops.",
+            },
+            resource: {
+                label: "Resource",
+                short: "Res",
+                description: "Mainly prepares the costs and materials other actions need.",
+            },
+            shortcut: {
+                label: "Shortcut",
+                short: "Short",
+                description: "Mainly shortens routes or bypasses standard prerequisites.",
+            },
+            side: {
+                label: "Side",
+                short: "Side",
+                description: "Mainly supports worldbuilding, special builds, or optional goals.",
+            },
+        },
+        notes: {
+            faceJudgement: "This branching action is affected by your current reputation.",
+        },
+    },
+    "zh-CN": {
+        legendTitle: "按功能查看",
+        legendHint: "按功能弱过滤行动，不会隐藏按钮。",
+        legendHintActive: "当前按“{label}”弱过滤，再点一次可清除。",
+        legendToggleShow: "显示功能图例",
+        legendToggleHide: "隐藏功能图例",
+        primaryRole: "主要作用",
+        categories: {
+            advance: {
+                label: "推进",
+                short: "推进",
+                description: "主要用于扩展后续可做的事情。",
+            },
+            growth: {
+                label: "成长",
+                short: "成长",
+                description: "主要用于提高之后循环的基础能力。",
+            },
+            resource: {
+                label: "资源",
+                short: "资源",
+                description: "主要用于准备其他行动需要的消耗与材料。",
+            },
+            shortcut: {
+                label: "捷径",
+                short: "捷径",
+                description: "主要用于压缩路径或绕开常规前置。",
+            },
+            side: {
+                label: "支线",
+                short: "支线",
+                description: "主要用于补完世界、特殊构筑或非必要目标。",
+            },
+        },
+        notes: {
+            faceJudgement: "这是分支推进行动，结果会受当前声望影响。",
+        },
+    },
+};
+
+function getActionCategoryLocale() {
+    const lang = Localization.currentLang;
+    return actionCategoryStrings[lang] ?? actionCategoryStrings["en-EN"];
+}
+
+/** @param {string} template @param {Record<string, string>} values */
+function formatActionCategoryText(template, values) {
+    return template.replace(/\{(\w+)\}/gu, (_match, key) => values[key] ?? "");
+}
+
+/** @param {ActionCategory} category */
+function getActionCategoryInfo(category) {
+    return getActionCategoryLocale().categories[category];
+}
+
+/** @param {ActionCategory} category */
+function getActionCategoryLabel(category) {
+    return getActionCategoryInfo(category).label;
+}
+
+/** @param {ActionCategory} category */
+function getActionCategoryShortLabel(category) {
+    return getActionCategoryInfo(category).short;
+}
+
+/** @param {ActionCategory} category */
+function getActionCategoryDescription(category) {
+    return getActionCategoryInfo(category).description;
+}
+
+function getActionCategoryLegendTitle() {
+    return getActionCategoryLocale().legendTitle;
+}
+
+function getActionCategoryLegendHint(activeCategory) {
+    if (activeCategory) {
+        return formatActionCategoryText(getActionCategoryLocale().legendHintActive, {
+            label: getActionCategoryLabel(activeCategory),
+        });
+    }
+    return getActionCategoryLocale().legendHint;
+}
+
+function getActionCategoryLegendToggleText(collapsed) {
+    return getActionCategoryLocale()[collapsed ? "legendToggleShow" : "legendToggleHide"];
+}
+
+function getActionCategoryPrimaryRoleText() {
+    return getActionCategoryLocale().primaryRole;
+}
+
+/** @param {Action<any>|ActionName|string} action */
+function getActionCategoryNote(action) {
+    const name = typeof action === "string" ? action : action.name;
+    if (name === "Face Judgement") {
+        return getActionCategoryLocale().notes.faceJudgement;
+    }
+    return "";
+}
+
+/** @type {Partial<Record<string, ActionCategory>>} */
+const actionCategoryByName = Object.create(null);
+
+/** @param {ActionCategory} category @param {string[]} names */
+function assignActionCategory(category, names) {
+    for (const name of names) {
+        actionCategoryByName[name] = category;
+    }
+}
+
+assignActionCategory("advance", [
+    "Wander",
+    "Meet People",
+    "Investigate",
+    "Start Journey",
+    "Explore Forest",
+    "Talk To Hermit",
+    "Follow Flowers",
+    "Clear Thicket",
+    "Talk To Witch",
+    "Continue On",
+    "Explore City",
+    "Get Drunk",
+    "Start Trek",
+    "Climb Mountain",
+    "Decipher Runes",
+    "Explore Cavern",
+    "Check Walls",
+    "Face Judgement",
+    "Guided Tour",
+    "Canvass",
+    "Seek Citizenship",
+    "Meander",
+    "Journey Forth",
+    "Explore Jungle",
+    "Fight Jungle Monsters",
+    "Escape",
+    "Excursion",
+    "Purchase Key",
+    "Leave City",
+    "Build Tower",
+    "Gods Trial",
+    "Challenge Gods",
+    "Restore Time",
+]);
+
+assignActionCategory("growth", [
+    "Buy Glasses",
+    "Train Strength",
+    "Warrior Lessons",
+    "Mage Lessons",
+    "Heal The Sick",
+    "Fight Monsters",
+    "Small Dungeon",
+    "Sit By Waterfall",
+    "Practical Magic",
+    "Learn Alchemy",
+    "Train Dexterity",
+    "Train Speed",
+    "Bird Watching",
+    "Dark Magic",
+    "Dark Ritual",
+    "Adventure Guild",
+    "Large Dungeon",
+    "Crafting Guild",
+    "Apprentice",
+    "Mason",
+    "Architect",
+    "Read Books",
+    "Buy Pickaxe",
+    "Heroes Trial",
+    "Chronomancy",
+    "Looping Potion",
+    "Pyromancy",
+    "Imbue Mind",
+    "Imbue Body",
+    "Mercantilism",
+    "Charm School",
+    "Oracle",
+    "Wizard College",
+    "Restoration",
+    "Spatiomancy",
+    "Seek Blessing",
+    "Fight Frost Giants",
+    "Great Feast",
+    "Dark Sacrifice",
+    "The Spire",
+    "Rescue Survivors",
+    "Prepare Buffet",
+    "Totem",
+    "Explorers Guild",
+    "Thieves Guild",
+    "Guild Assassin",
+    "Seminar",
+    "Imbue Soul",
+]);
+
+assignActionCategory("resource", [
+    "Map",
+    "Smash Pots",
+    "Pick Locks",
+    "Buy Mana Z1",
+    "Short Quest",
+    "Long Quest",
+    "Buy Supplies",
+    "Haggle",
+    "Wild Mana",
+    "Gather Herbs",
+    "Hunt",
+    "Brew Potions",
+    "Gamble",
+    "Buy Mana Z3",
+    "Sell Potions",
+    "Gather Team",
+    "Craft Armor",
+    "Mana Geyser",
+    "Mine Soulstones",
+    "Hunt Trolls",
+    "Take Artifacts",
+    "Donate",
+    "Accept Donations",
+    "Tidy Up",
+    "Buy Mana Z5",
+    "Sell Artifact",
+    "Gift Artifact",
+    "Enchant Armor",
+    "Build Housing",
+    "Collect Taxes",
+    "Mana Well",
+    "Destroy Pylons",
+    "Raise Zombie",
+    "Purchase Supplies",
+    "Dead Trial",
+    "Pick Pockets",
+    "Rob Warehouse",
+    "Insurance Fraud",
+    "Invest",
+    "Collect Interest",
+    "RuinsZ1",
+    "RuinsZ3",
+    "RuinsZ5",
+    "RuinsZ6",
+    "HaulZ1",
+    "HaulZ3",
+    "HaulZ5",
+    "HaulZ6",
+    "AssassinZ0",
+    "AssassinZ1",
+    "AssassinZ2",
+    "AssassinZ3",
+    "AssassinZ4",
+    "AssassinZ5",
+    "AssassinZ6",
+    "AssassinZ7",
+]);
+
+assignActionCategory("shortcut", [
+    "Hitch Ride",
+    "Open Rift",
+    "Old Shortcut",
+    "Underworld",
+    "Guru",
+    "Pegasus",
+    "Fall From Grace",
+    "Open Portal",
+]);
+
+assignActionCategory("side", [
+    "SurveyZ0",
+    "SurveyZ1",
+    "SurveyZ2",
+    "SurveyZ3",
+    "SurveyZ4",
+    "SurveyZ5",
+    "SurveyZ6",
+    "SurveyZ7",
+    "SurveyZ8",
+    "Found Glasses",
+    "Throw Party",
+    "Secret Trial",
+]);
+
+const warnedAboutMissingActionCategories = new Set();
+
+/** @param {Action<any>|ActionName|string} action */
+function getActionCategory(action) {
+    const name = typeof action === "string" ? action : action.name;
+    const category = actionCategoryByName[name];
+    if (category) return category;
+    if (!warnedAboutMissingActionCategories.has(name)) {
+        warnedAboutMissingActionCategories.add(name);
+        console.warn(`Missing action category for ${name}; defaulting to side.`);
+    }
+    return "side";
+}
 
 
 // there are 4 types of actions
@@ -261,6 +607,7 @@ class Action extends Localizable {
     get label() { return this.memoize("label"); }
     get labelDone() { return this.memoize("labelDone", ">label_done"); }
     get labelGlobal() { return this.memoize("labelGlobal", ">label_global"); }
+    get category() { return getActionCategory(this); }
 
     static {
         // listing these means they won't get stored even if memoized
@@ -271,11 +618,11 @@ class Action extends Localizable {
     // centralized here (function will not be called by the game code if info text is not
     // applicable)
     infoText() {
-        return `${_txt(`actions>${getXMLName(this.name)}>info_text1`)}
-                <i class='fa fa-arrow-left'></i>
-                ${_txt(`actions>${getXMLName(this.name)}>info_text2`)}
-                <i class='fa fa-arrow-left'></i>
-                ${_txt(`actions>${getXMLName(this.name)}>info_text3`)}
+        return `${_txt("actions>tooltip>limited_numbers_intro")}
+                <br><span class='bold'>①</span> ${_txt(`actions>${getXMLName(this.name)}>info_text1`)}
+                <br><span class='bold'>②</span> ${_txt(`actions>${getXMLName(this.name)}>info_text2`)}
+                <br><span class='bold'>③</span> ${_txt(`actions>${getXMLName(this.name)}>info_text3`)}
+                <br><br>${_txt("actions>tooltip>limited_numbers_details")}
                 <br><span class='bold'>${`${_txt("actions>tooltip>total_found")}: `}</span><div id='total${this.varName}'></div>
                 <br><span class='bold'>${`${_txt("actions>tooltip>total_checked")}: `}</span><div id='checked${this.varName}'></div>`;
     };
@@ -628,7 +975,7 @@ function SurveyAction(townNum) {
                 towns[this.townNum].finishProgress(this.varName, getExploreSkill());
                 view.requestUpdate("updateActionTooltips", null);
             } else if (options.pauseOnComplete) {
-                pauseGame(true, "Survey complete! (Game paused)");
+                pauseGame(true, _txt("actions>tooltip>survey_complete_paused"));
             }
         }
     });

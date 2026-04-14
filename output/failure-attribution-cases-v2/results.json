@@ -1,0 +1,77 @@
+{
+  "results": [
+    {
+      "label": "allowed-limit",
+      "name": "Buy Supplies",
+      "kind": "condition",
+      "detail": "listLimitExceeded",
+      "severity": "hard",
+      "countsAsFailure": true,
+      "pauseEligible": true,
+      "typeText": "Condition unmet",
+      "reasonText": "This action was queued more times than the current loop allows.",
+      "pauseCheck": true
+    },
+    {
+      "label": "buy-supplies-gold",
+      "name": "Buy Supplies",
+      "kind": "cost",
+      "detail": "goldLow",
+      "severity": "hard",
+      "countsAsFailure": true,
+      "pauseEligible": true,
+      "typeText": "Resource shortage",
+      "reasonText": "Your current loop did not have enough gold for this action.",
+      "pauseCheck": true
+    },
+    {
+      "label": "purchase-supplies-gold",
+      "name": "Purchase Supplies",
+      "kind": "cost",
+      "detail": "goldLow",
+      "severity": "hard",
+      "countsAsFailure": true,
+      "pauseEligible": true,
+      "typeText": "Resource shortage",
+      "reasonText": "Your current loop did not have enough gold for this action.",
+      "pauseCheck": true
+    },
+    {
+      "label": "challenge-gods-completed",
+      "name": "Challenge Gods",
+      "kind": "exhausted",
+      "detail": "completed",
+      "severity": "soft",
+      "countsAsFailure": false,
+      "pauseEligible": false,
+      "typeText": "No current target",
+      "reasonText": "This action has no remaining target right now.",
+      "pauseCheck": false
+    },
+    {
+      "label": "route-mismatch",
+      "name": "Buy Supplies",
+      "kind": "route",
+      "detail": "wrongTown",
+      "severity": "hard",
+      "countsAsFailure": true,
+      "pauseEligible": true,
+      "typeText": "Route mismatch",
+      "reasonText": "Queued for Beginnersville, but your loop was in Forest Path.",
+      "pauseCheck": true
+    },
+    {
+      "label": "generic-condition",
+      "name": "Guild Assassin",
+      "kind": "condition",
+      "detail": "genericCondition",
+      "severity": "hard",
+      "countsAsFailure": true,
+      "pauseEligible": true,
+      "typeText": "Condition unmet",
+      "reasonText": "Your current route or long-term state did not meet this action's requirement.",
+      "pauseCheck": true
+    }
+  ],
+  "errors": []
+}

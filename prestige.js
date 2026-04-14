@@ -134,7 +134,7 @@ function prestigeConfirmation() {
     }
 
     if (window.localStorage[defaultSaveName] && window.localStorage[defaultSaveName] !== "") {
-        if (confirm(`Prestiging will reset all of your progress, but retain prestige points. Are you sure?`)) {
+        if (confirm(_txt("menu>prestige_bonus>confirm_prestige"))) {
             for (const town of towns) {
                 // this should be done in a more logical way but for now, just make sure to clear these out
                 town?.hiddenVars?.clear();

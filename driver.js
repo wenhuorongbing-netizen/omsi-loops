@@ -304,7 +304,7 @@ function prepareRestart() {
     const curAction = actions.getNextValidAction();
     if (options.pauseBeforeRestart ||
         (options.pauseOnFailedLoop &&
-         (actions.current.filter(action => action.loopsLeft - action.extraLoops > 0).length > 0))) {
+         actions.hasPauseEligibleRemainingActions())) {
         if (options.pingOnPause) {
             beep(250);
             setTimeout(() => beep(250), 500);
@@ -432,7 +432,7 @@ function selectLoadout(num) {
     } else {
         curLoadout = num;
     }
-    inputElement("renameLoadout").value = loadoutnames[curLoadout - 1];
+    inputElement("renameLoadout").value = loadoutnames[curLoadout - 1] ?? getLoadoutNameDefault();
     view.updateLoadout(curLoadout);
 }
 
@@ -440,6 +440,14 @@ function loadLoadout(num) {
     curLoadout = num;
     view.updateLoadout(curLoadout);
     loadList();
+}
+
+function getDefaultLoadoutName(num) {
+    return _txt("actions>tooltip>loadout_default_name").replace("{num}", `${num}`);
+}
+
+function getLoadoutNameDefault() {
+    return _txt("actions>tooltip>loadout_name_default");
 }
 
 let globalCustomInput = "";
@@ -451,8 +459,8 @@ function saveList() {
     nameList(false);
     loadouts[curLoadout] = copyArray(actions.next);
     save();
-    if ((inputElement("renameLoadout").value !== "Saved!")) globalCustomInput = inputElement("renameLoadout").value;
-    inputElement("renameLoadout").value = "Saved!";
+    if ((inputElement("renameLoadout").value !== _txt("actions>tooltip>loadout_saved"))) globalCustomInput = inputElement("renameLoadout").value;
+    inputElement("renameLoadout").value = _txt("actions>tooltip>loadout_saved");
     setTimeout(() => {
         inputElement("renameLoadout").value = globalCustomInput;
     }, 1000);
@@ -465,12 +473,12 @@ function nameList(saveGame) {
     // if both the old AND the new names are numeric, then we insist on a non-numeric name
     if (isNaN(parseFloat(inputElement("renameLoadout").value))) {
         if (inputElement("renameLoadout").value.length > 30) {
-            inputElement("renameLoadout").value = "30 Letter Max";
-        } else if (inputElement("renameLoadout").value !== "Saved!") {
+            inputElement("renameLoadout").value = _txt("actions>tooltip>loadout_name_too_long");
+        } else if (inputElement("renameLoadout").value !== _txt("actions>tooltip>loadout_saved")) {
             loadoutnames[curLoadout - 1] = inputElement("renameLoadout").value;
         }
     } else if (!isNaN(parseFloat(loadoutnames[curLoadout - 1]))) {
-        inputElement("renameLoadout").value = "Enter a name!";
+        inputElement("renameLoadout").value = _txt("actions>tooltip>loadout_enter_name");
     }
     document.getElementById(`load${curLoadout}`).textContent = loadoutnames[curLoadout -1];
     if (saveGame) save();
@@ -614,12 +622,14 @@ function collapse(actionId) {
 }
 
 function showNotification(name) {
-    document.getElementById(`${name}Notification`).style.display = "block";
+    const notification = document.getElementById(`${name}Notification`);
+    if (notification) notification.style.display = "block";
 }
 
 function hideNotification(name) {
     unreadActionStories = unreadActionStories.filter(toRead => toRead !== name);
-    document.getElementById(`${name}Notification`).style.display = "none";
+    const notification = document.getElementById(`${name}Notification`);
+    if (notification) notification.style.display = "none";
 }
 
 function hideActionIcons() {

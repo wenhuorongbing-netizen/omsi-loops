@@ -1,0 +1,26 @@
+{
+  "firstVisibleId": "storyContainerWander",
+  "before": {
+    "id": "storyContainerWander",
+    "cardText": "推进\n徘徊\n",
+    "tooltipDisplay": "none",
+    "tooltipVisibility": "hidden",
+    "tooltipOpacity": "0",
+    "tooltipPosition": "fixed",
+    "contentText": "20% 已探索： ???\n???: ???\n???: ???\n???: ???\n???: ???\n"
+  },
+  "after": {
+    "id": "storyContainerWander",
+    "tooltipDisplay": "block",
+    "tooltipVisibility": "visible",
+    "tooltipOpacity": "1",
+    "tooltipPosition": "fixed",
+    "tooltipRect": {
+      "x": 575.5,
+      "y": 369.84375,
+      "width": 304.359375,
+      "height": 117.1875
+    }
+  },
+  "errors": []
+}

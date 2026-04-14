@@ -1,0 +1,4 @@
+[     208ms] [LOG] Loading game from: idleLoops1 inChallenge: undefined @ http://127.0.0.1:4173/saving.js:986
+[     208ms] [LOG] Challenge Mode: 0 In Challenge: false @ http://127.0.0.1:4173/saving.js:993
+[     254ms] [LOG] JSHandle@node SVGRect @ http://127.0.0.1:4173/statsgraph.js:89
+[     438ms] [LOG] Updating prestige values from load @ http://127.0.0.1:4173/saving.js:1306

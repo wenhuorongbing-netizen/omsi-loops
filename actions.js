@@ -35,6 +35,7 @@
  * @prop {number} timeSpent
  * @prop {number} effectiveTimeElapsed
  * @prop {string} [errorMessage]
+ * @prop {ActionFailureInfo} [failureInfo]
  * }} 
  * @typedef {CurrentActionEntry & AnyActionType} AnyActionEntry
  */
@@ -54,6 +55,207 @@
 /** @param {AnyActionEntry} action @returns {action is MultipartAction} */
 function isMultipartAction(action) {
     return 'loopStats' in action;
+}
+
+/**
+ * @typedef {"route"|"cost"|"condition"|"timing"|"model"|"exhausted"} ActionFailureKind
+ * @typedef {"hard"|"soft"} ActionFailureSeverity
+ * @typedef {{
+ *   kind: ActionFailureKind,
+ *   detail: string,
+ *   severity: ActionFailureSeverity,
+ *   countsAsFailure: boolean,
+ *   pauseEligible: boolean,
+ * }} ActionFailureInfo
+ */
+
+const actionFailureStrings = {
+    "en-EN": {
+        labels: {
+            type: "Failure Type:",
+            reason: "Reason:",
+        },
+        kinds: {
+            route: "Route mismatch",
+            cost: "Resource shortage",
+            condition: "Condition unmet",
+            timing: "Bad timing",
+            model: "Build mismatch",
+            exhausted: "No current target",
+        },
+        reasons: {
+            wrongTown: "Queued for {required}, but your loop was in {current}.",
+            reputationLow: "Your current reputation did not meet this action's requirement.",
+            positiveReputationRequired: "This action requires positive reputation to proceed.",
+            herbsLow: "Your current loop did not have enough herbs for this action.",
+            goldLow: "Your current loop did not have enough gold for this action.",
+            adventureGuildRequired: "This action requires the adventure guild route to be active.",
+            hideLow: "Your current loop did not have enough hide for this action.",
+            bloodLow: "Your current loop did not have enough blood for this action.",
+            suppliesLow: "Your current loop did not have the supplies needed for travel.",
+            escapeWindow: "This action can only begin during its early-loop time window.",
+            restorationLow: "Your current restoration level was below this action's requirement.",
+            imbueBodyRequirement: "Your current imbuement state or talent baseline was not ready for this action.",
+            zombieModel: "Your current zombie build could not generate progress for this action.",
+            teamModel: "Your current team build could not generate progress for this action.",
+            selfModel: "Your current self-combat build could not generate progress for this action.",
+            powerRequired: "This action requires stored power before it can begin.",
+            powerCapped: "This action currently has no valid target until power changes.",
+            completed: "This action has no remaining target right now.",
+            listLimitExceeded: "This action was queued more times than the current loop allows.",
+            favorsLow: "Your current loop did not have enough favors for this action.",
+            genericCost: "Your current loop could not pay this action's cost.",
+            genericCondition: "Your current route or long-term state did not meet this action's requirement.",
+            genericModel: "Your current build could not generate progress for this action.",
+        },
+    },
+    "zh-CN": {
+        labels: {
+            type: "\u5931\u8d25\u5f52\u56e0\uff1a",
+            reason: "\u539f\u56e0\uff1a",
+        },
+        kinds: {
+            route: "\u8def\u7ebf\u4e0d\u5bf9",
+            cost: "\u8d44\u6e90\u4e0d\u8db3",
+            condition: "\u6761\u4ef6\u4e0d\u7b26",
+            timing: "\u65f6\u673a\u4e0d\u5bf9",
+            model: "\u6784\u7b51\u4e0d\u5bf9",
+            exhausted: "\u5f53\u524d\u65e0\u6548",
+        },
+        reasons: {
+            wrongTown: "\u8fd9\u4e2a\u884c\u52a8\u88ab\u6392\u5728 {required}\uff0c\u4f46\u8fd9\u4e00\u8f6e\u5faa\u73af\u5b9e\u9645\u5230\u4e86 {current}\u3002",
+            reputationLow: "\u4f60\u5f53\u524d\u7684\u58f0\u671b\u6ca1\u6709\u8fbe\u5230\u8fd9\u4e2a\u884c\u52a8\u7684\u6761\u4ef6\u3002",
+            positiveReputationRequired: "\u8fd9\u4e2a\u884c\u52a8\u9700\u8981\u4fdd\u6301\u6b63\u5411\u58f0\u671b\u624d\u80fd\u7ee7\u7eed\u3002",
+            herbsLow: "\u4f60\u8fd9\u4e00\u8f6e\u5faa\u73af\u7684\u8349\u836f\u4e0d\u8db3\uff0c\u65e0\u6cd5\u652f\u4ed8\u8fd9\u4e2a\u884c\u52a8\u3002",
+            goldLow: "\u4f60\u8fd9\u4e00\u8f6e\u5faa\u73af\u7684\u91d1\u5e01\u4e0d\u8db3\uff0c\u65e0\u6cd5\u652f\u4ed8\u8fd9\u4e2a\u884c\u52a8\u3002",
+            adventureGuildRequired: "\u8fd9\u4e2a\u884c\u52a8\u9700\u8981\u5f53\u524d\u5904\u5728\u5192\u9669\u8005\u516c\u4f1a\u8def\u7ebf\u4e0a\u3002",
+            hideLow: "\u4f60\u8fd9\u4e00\u8f6e\u5faa\u73af\u7684\u517d\u76ae\u4e0d\u8db3\uff0c\u65e0\u6cd5\u652f\u4ed8\u8fd9\u4e2a\u884c\u52a8\u3002",
+            bloodLow: "\u4f60\u8fd9\u4e00\u8f6e\u5faa\u73af\u7684\u8840\u6db2\u4e0d\u8db3\uff0c\u65e0\u6cd5\u652f\u4ed8\u8fd9\u4e2a\u884c\u52a8\u3002",
+            suppliesLow: "\u8fd9\u6b21\u65c5\u884c\u6240\u9700\u7684\u8865\u7ed9\u5728\u5f53\u524d\u5faa\u73af\u4e2d\u6ca1\u6709\u51c6\u5907\u597d\u3002",
+            escapeWindow: "\u8fd9\u4e2a\u884c\u52a8\u53ea\u80fd\u5728\u672c\u8f6e\u7684\u65e9\u671f\u65f6\u95f4\u7a97\u53e3\u91cc\u5f00\u59cb\u3002",
+            restorationLow: "\u4f60\u5f53\u524d\u7684\u6062\u590d\u7cfb\u7b49\u7ea7\u8fd8\u6ca1\u8fbe\u5230\u8fd9\u4e2a\u884c\u52a8\u7684\u8981\u6c42\u3002",
+            imbueBodyRequirement: "\u4f60\u5f53\u524d\u7684\u6ce8\u5165\u8fdb\u5ea6\u6216\u5929\u8d4b\u57fa\u7ebf\u8fd8\u4e0d\u9002\u5408\u6267\u884c\u8fd9\u4e2a\u884c\u52a8\u3002",
+            zombieModel: "\u4f60\u5f53\u524d\u7684\u50f5\u5c38\u6784\u7b51\u65e0\u6cd5\u4e3a\u8fd9\u4e2a\u884c\u52a8\u63d0\u4f9b\u6709\u6548\u8fdb\u5ea6\u3002",
+            teamModel: "\u4f60\u5f53\u524d\u7684\u961f\u4f0d\u6784\u7b51\u65e0\u6cd5\u4e3a\u8fd9\u4e2a\u884c\u52a8\u63d0\u4f9b\u6709\u6548\u8fdb\u5ea6\u3002",
+            selfModel: "\u4f60\u5f53\u524d\u7684\u4e2a\u4eba\u6218\u6597\u6784\u7b51\u65e0\u6cd5\u4e3a\u8fd9\u4e2a\u884c\u52a8\u63d0\u4f9b\u6709\u6548\u8fdb\u5ea6\u3002",
+            powerRequired: "\u8fd9\u4e2a\u884c\u52a8\u9700\u8981\u5148\u79ef\u7d2f\u5f53\u524d\u6240\u9700\u7684\u795e\u529b\u3002",
+            powerCapped: "\u5728\u795e\u529b\u72b6\u6001\u53d1\u751f\u53d8\u5316\u4e4b\u524d\uff0c\u8fd9\u4e2a\u884c\u52a8\u76ee\u524d\u6ca1\u6709\u53ef\u7528\u76ee\u6807\u3002",
+            completed: "\u8fd9\u4e2a\u884c\u52a8\u76ee\u524d\u6ca1\u6709\u5269\u4f59\u76ee\u6807\u4e86\u3002",
+            listLimitExceeded: "\u8fd9\u4e2a\u884c\u52a8\u5728\u5f53\u524d\u5217\u8868\u4e2d\u88ab\u6392\u5f97\u6bd4\u5141\u8bb8\u7684\u6b21\u6570\u66f4\u591a\u3002",
+            favorsLow: "\u4f60\u8fd9\u4e00\u8f6e\u5faa\u73af\u7684\u4eba\u60c5\u4e0d\u8db3\uff0c\u65e0\u6cd5\u652f\u4ed8\u8fd9\u4e2a\u884c\u52a8\u3002",
+            genericCost: "\u4f60\u8fd9\u4e00\u8f6e\u5faa\u73af\u7684\u8d44\u6e90\u4e0d\u8db3\uff0c\u65e0\u6cd5\u652f\u4ed8\u8fd9\u4e2a\u884c\u52a8\u3002",
+            genericCondition: "\u4f60\u5f53\u524d\u7684\u8def\u7ebf\u6216\u957f\u671f\u72b6\u6001\u6ca1\u6709\u6ee1\u8db3\u8fd9\u4e2a\u884c\u52a8\u7684\u6761\u4ef6\u3002",
+            genericModel: "\u4f60\u5f53\u524d\u7684\u6784\u7b51\u65e0\u6cd5\u4e3a\u8fd9\u4e2a\u884c\u52a8\u63d0\u4f9b\u6709\u6548\u8fdb\u5ea6\u3002",
+        },
+    },
+};
+
+function getActionFailureLocale() {
+    const lang = Localization.currentLang;
+    return actionFailureStrings[lang] ?? actionFailureStrings["en-EN"];
+}
+
+/** @param {string} template @param {Record<string, string>} values */
+function formatActionFailureText(template, values) {
+    return template.replace(/\{(\w+)\}/gu, (_match, key) => values[key] ?? "");
+}
+
+/** @param {number} townNum */
+function getFailureTownLabel(townNum) {
+    const townName = getTownName(townNum);
+    if (townName) return townName;
+    if (Localization.currentLang === "zh-CN") return `\u533a\u57df ${townNum + 1}`;
+    return `Zone ${townNum + 1}`;
+}
+
+/**
+ * @param {ActionFailureKind} kind
+ * @param {string} detail
+ * @param {ActionFailureSeverity} [severity]
+ * @returns {ActionFailureInfo}
+ */
+function createActionFailureInfo(kind, detail, severity = "hard") {
+    const isSoft = severity === "soft";
+    return {
+        kind,
+        detail,
+        severity,
+        countsAsFailure: !isSoft,
+        pauseEligible: !isSoft,
+    };
+}
+
+/** @param {ActionFailureKind} kind */
+function getActionFailureKindLabel(kind) {
+    return getActionFailureLocale().kinds[kind];
+}
+
+function getActionFailureTypeLabelText() {
+    return getActionFailureLocale().labels.type;
+}
+
+function getActionFailureReasonLabelText() {
+    return getActionFailureLocale().labels.reason;
+}
+
+/**
+ * @param {ActionFailureInfo} failureInfo
+ * @param {AnyActionEntry} action
+ */
+function getActionFailureReason(failureInfo, action) {
+    const {reasons} = getActionFailureLocale();
+    switch (failureInfo.detail) {
+        case "wrongTown":
+            return formatActionFailureText(reasons.wrongTown, {
+                required: getFailureTownLabel(action.townNum),
+                current: getFailureTownLabel(curTown),
+            });
+        case "reputationLow":
+            return reasons.reputationLow;
+        case "positiveReputationRequired":
+            return reasons.positiveReputationRequired;
+        case "herbsLow":
+            return reasons.herbsLow;
+        case "goldLow":
+            return reasons.goldLow;
+        case "adventureGuildRequired":
+            return reasons.adventureGuildRequired;
+        case "hideLow":
+            return reasons.hideLow;
+        case "bloodLow":
+            return reasons.bloodLow;
+        case "suppliesLow":
+            return reasons.suppliesLow;
+        case "escapeWindow":
+            return reasons.escapeWindow;
+        case "restorationLow":
+            return reasons.restorationLow;
+        case "imbueBodyRequirement":
+            return reasons.imbueBodyRequirement;
+        case "zombieModel":
+            return reasons.zombieModel;
+        case "teamModel":
+            return reasons.teamModel;
+        case "selfModel":
+            return reasons.selfModel;
+        case "powerRequired":
+            return reasons.powerRequired;
+        case "powerCapped":
+            return reasons.powerCapped;
+        case "completed":
+            return reasons.completed;
+        case "listLimitExceeded":
+            return reasons.listLimitExceeded;
+        case "favorsLow":
+            return reasons.favorsLow;
+        case "genericCost":
+            return reasons.genericCost;
+        case "genericModel":
+            return reasons.genericModel;
+        case "genericCondition":
+        default:
+            return reasons.genericCondition;
+    }
 }
 
 class Actions {
@@ -249,13 +451,20 @@ class Actions {
             curAction.ticks = 0;
             curAction.timeSpent = 0;
             curAction.effectiveTimeElapsed = 0;
+            curAction.failureInfo = this.getAllowedFailureInfo(curAction);
+            curAction.errorMessage = this.getErrorMessage(curAction, curAction.failureInfo);
             view.requestUpdate("updateCurrentActionBar", this.currentPos);
             return undefined;
         }
-        while (curAction.townNum !== curTown
-            || (curAction.canStart && !curAction.canStart())
-            || (isMultipartAction(curAction) && !curAction.canMakeProgress(0))) {
-            curAction.errorMessage = this.getErrorMessage(curAction);
+        while (curAction) {
+            const failureInfo = this.getFailureInfo(curAction);
+            if (!failureInfo) {
+                curAction.failureInfo = undefined;
+                curAction.errorMessage = undefined;
+                break;
+            }
+            curAction.failureInfo = failureInfo;
+            curAction.errorMessage = this.getErrorMessage(curAction, failureInfo);
             view.requestUpdate("updateCurrentActionBar", this.currentPos);
             this.currentPos++;
             this.currentAction = null;
@@ -272,19 +481,169 @@ class Actions {
         return curAction;
     }
 
-    /** @param {AnyActionEntry} action  */
-    getErrorMessage(action) {
+    /** @param {AnyActionEntry} action @returns {ActionFailureInfo?} */
+    getFailureInfo(action) {
         if (action.townNum !== curTown) {
-            return `You were in zone ${curTown + 1} when you tried this action, and needed to be in zone ${action.townNum + 1}`;
+            return createActionFailureInfo("route", "wrongTown");
         }
         if (action.canStart && !action.canStart()) {
-            return "You could not make the cost for this action.";
+            return this.getStartFailureInfo(action);
         }
         if (isMultipartAction(action) && !action.canMakeProgress(0)) {
-            // return "You have already completed this action.";
-            return null; // already-complete does not currently count as an error
+            return this.getProgressFailureInfo(action);
         }
-        return "??";
+        return null;
+    }
+
+    /** @param {AnyActionEntry} action @returns {ActionFailureInfo} */
+    getAllowedFailureInfo(action) {
+        return createActionFailureInfo("condition", "listLimitExceeded");
+    }
+
+    /** @param {AnyActionEntry} action @returns {number | undefined} */
+    getGoldFailureThreshold(action) {
+        if (typeof action.goldCost === "function") {
+            const cost = action.goldCost();
+            if (Number.isFinite(cost)) return cost;
+        }
+        switch (action.name) {
+            case "Buy Glasses":
+            case "Guided Tour":
+                return 10;
+            case "Donate":
+                return 20;
+            case "Buy Pickaxe":
+                return 200;
+            case "Buy Supplies":
+                return towns[0].suppliesCost;
+            case "Purchase Supplies":
+            case "Wizard College":
+                return 500;
+            case "Pegasus":
+                return 200;
+            case "Invest":
+                return 1;
+        }
+        return undefined;
+    }
+
+    /** @param {AnyActionEntry} action @returns {ActionFailureInfo | null} */
+    getResourceFailureInfo(action) {
+        const goldThreshold = this.getGoldFailureThreshold(action);
+        if (Number.isFinite(goldThreshold) && resources.gold < goldThreshold) {
+            return createActionFailureInfo("cost", "goldLow");
+        }
+
+        switch (action.name) {
+            case "Wizard College":
+                if (resources.favors < 10) return createActionFailureInfo("cost", "favorsLow");
+                break;
+            case "Pegasus":
+                if (resources.favors < 20) return createActionFailureInfo("cost", "favorsLow");
+                break;
+        }
+
+        return null;
+    }
+
+    /** @param {AnyActionEntry} action @returns {ActionFailureInfo} */
+    getStartFailureInfo(action) {
+        switch (action.name) {
+            case "Heal The Sick":
+                return createActionFailureInfo("condition", "reputationLow");
+            case "Brew Potions":
+                if (resources.reputation < 5) return createActionFailureInfo("condition", "reputationLow");
+                if (resources.herbs < 10) return createActionFailureInfo("cost", "herbsLow");
+                return createActionFailureInfo("condition", "genericCondition");
+            case "Gamble":
+                if (resources.reputation < -5) return createActionFailureInfo("condition", "reputationLow");
+                if (resources.gold < 20) return createActionFailureInfo("cost", "goldLow");
+                return createActionFailureInfo("condition", "genericCondition");
+            case "Gather Team":
+                if (guild !== "Adventure") return createActionFailureInfo("condition", "adventureGuildRequired");
+                if (resources.gold < (resources.teamMembers + 1) * 100) return createActionFailureInfo("cost", "goldLow");
+                return createActionFailureInfo("condition", "genericCondition");
+            case "Craft Armor":
+                return createActionFailureInfo("cost", "hideLow");
+            case "Imbue Body":
+                return createActionFailureInfo("condition", "imbueBodyRequirement");
+            case "Accept Donations":
+                return createActionFailureInfo("condition", "positiveReputationRequired");
+            case "Raise Zombie":
+                return createActionFailureInfo("cost", "bloodLow");
+            case "Journey Forth":
+                return createActionFailureInfo("cost", "suppliesLow");
+            case "Escape":
+                return createActionFailureInfo("timing", "escapeWindow");
+            case "Open Portal":
+                return createActionFailureInfo("condition", "restorationLow");
+            case "Gods Trial":
+                if (action.currentFloor() >= trialFloors[action.trialNum]) return createActionFailureInfo("exhausted", "completed", "soft");
+                if (resources.power >= 7) return createActionFailureInfo("exhausted", "powerCapped", "soft");
+                return createActionFailureInfo("condition", "genericCondition");
+            case "Challenge Gods":
+                if (action.currentFloor() >= trialFloors[action.trialNum]) return createActionFailureInfo("exhausted", "completed", "soft");
+                if (resources.power >= 8) return createActionFailureInfo("exhausted", "powerCapped", "soft");
+                if (resources.power <= 0) return createActionFailureInfo("condition", "powerRequired");
+                return createActionFailureInfo("condition", "genericCondition");
+        }
+
+        if (action instanceof TrialAction) {
+            if (action.currentFloor() >= trialFloors[action.trialNum]) {
+                return createActionFailureInfo("exhausted", "completed", "soft");
+            }
+            return createActionFailureInfo("condition", "genericCondition");
+        }
+
+        if (action instanceof DungeonAction) {
+            const loopCounter = towns[action.townNum][`${action.varName}LoopCounter`];
+            const currentFloor = Math.floor(loopCounter / action.segments + 0.0000001);
+            if (currentFloor >= dungeons[action.dungeonNum].length) {
+                return createActionFailureInfo("exhausted", "completed", "soft");
+            }
+            return createActionFailureInfo("condition", "genericCondition");
+        }
+
+        const resourceFailure = this.getResourceFailureInfo(action);
+        if (resourceFailure) return resourceFailure;
+
+        return createActionFailureInfo("condition", "genericCondition");
+    }
+
+    /** @param {AnyActionEntry} action @returns {ActionFailureInfo} */
+    getProgressFailureInfo(action) {
+        switch (action.name) {
+            case "Dead Trial":
+                return createActionFailureInfo("model", "zombieModel");
+            case "Challenge Gods":
+                return createActionFailureInfo("model", "selfModel");
+            case "Small Dungeon":
+            case "Fight Frost Giants":
+            case "Fight Jungle Monsters":
+                return createActionFailureInfo("model", "selfModel");
+            case "Large Dungeon":
+            case "Heroes Trial":
+            case "The Spire":
+            case "Secret Trial":
+            case "Gods Trial":
+                return createActionFailureInfo("model", "teamModel");
+        }
+        return createActionFailureInfo("model", "genericModel");
+    }
+
+    /**
+     * @param {AnyActionEntry} action
+     * @param {ActionFailureInfo} [failureInfo]
+     */
+    getErrorMessage(action, failureInfo = action.failureInfo ?? this.getFailureInfo(action)) {
+        return failureInfo ? getActionFailureReason(failureInfo, action) : null;
+    }
+
+    hasPauseEligibleRemainingActions() {
+        return this.current.some(action =>
+            action.loopsLeft - action.extraLoops > 0 &&
+            (action.failureInfo?.pauseEligible ?? true)
+        );
     }
 
     restart() {
@@ -330,6 +689,8 @@ class Actions {
                 action.goldRemaining = 0;
                 action.timeSpent = 0;
                 action.effectiveTimeElapsed = 0;
+                action.errorMessage = undefined;
+                action.failureInfo = undefined;
             }
 
         } else {
@@ -353,6 +714,8 @@ class Actions {
                 toAdd.goldRemaining = 0;
                 toAdd.timeSpent = 0;
                 toAdd.effectiveTimeElapsed = 0;
+                toAdd.errorMessage = undefined;
+                toAdd.failureInfo = undefined;
 
                 this.current.push(toAdd);
             }
