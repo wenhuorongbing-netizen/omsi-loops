@@ -111,7 +111,7 @@ async function collectActionMetadata(baseUrl) {
                     stats: Object.keys(action.stats ?? {}).sort(),
                     affectedBy: Array.isArray(action.affectedBy) ? action.affectedBy.slice().sort() : [],
                     runtimeHooks,
-                    isTravel: typeof getTravelNum === "function" ? getTravelNum(action.name) !== 0 : false,
+                    isTravel: typeof getPossibleTravel === "function" ? getPossibleTravel(action.name).length > 0 : false,
                     legacyIndex,
                 };
             });

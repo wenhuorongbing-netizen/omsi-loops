@@ -141,7 +141,7 @@ function hasLimit(name) {
 }
 /** @param {ActionName} name  */
 function isTravel(name) {
-    return getTravelNum(name) !== 0;
+    return getPossibleTravel(name).length !== 0;
 }
 /** @param {ActionName} name  */
 function getPossibleTravel(name) {
@@ -151,7 +151,7 @@ function getPossibleTravel(name) {
 }
 /** @param {ActionName} name  */
 function getTravelNum(name) {
-    if (name === "Face Judgement" && resources.reputation <= 50) return 2;
+    if (name === "Face Judgement" && resources.reputation <= -50) return 2;
     if (name === "Face Judgement" && resources.reputation >= 50) return 1;
     if (name === "Start Journey" || name === "Continue On" || name === "Start Trek" || name === "Fall From Grace" || name === "Journey Forth" || name === "Escape" || name === "Leave City" || name === "Guru") return 1;
     if (name === "Hitch Ride") return 2;

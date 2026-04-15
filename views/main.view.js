@@ -3103,7 +3103,7 @@ class View {
                 extraImage += `<img src='img/${camelize(action.affectedBy[i])}.svg' class='smallIcon' draggable='false' style='position:absolute;${extraImagePositions[i]}'>`;
             }
         }
-        const isTravel = getTravelNum(action.name) != 0;
+        const isTravel = getPossibleTravel(action.name).length > 0;
         const divClass = `${isTravel ? "travelContainer" : "actionContainer"} ${isTraining(action.name) || hasLimit(action.name) ? "cappableActionContainer" : ""}`;
         const imageName = action.name.startsWith("Assassin") ? "assassin" : camelize(action.name);
         const category = action.category;

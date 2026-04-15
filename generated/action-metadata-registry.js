@@ -4,7 +4,7 @@
     global.IdleLoopsGeneratedActionMetadata = Object.freeze(
     {
         "version": 1,
-        "generatedAt": "2026-04-15T02:31:31.747Z",
+        "generatedAt": "2026-04-15T13:26:14.386Z",
         "source": "tools/build-content.mjs",
         "entries": [
             {

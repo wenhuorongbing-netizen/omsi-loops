@@ -141,6 +141,8 @@ export async function runRuntimeSmoke({
         || !result.bootstrap?.contentEffectHookCount
         || !result.bootstrap?.contentStoryHookCount
         || !result.bootstrap?.contentMetadataMatchesRuntime
+        || !result.bootstrap?.faceJudgementTravelThresholdsMatchFinishLogic
+        || !result.bootstrap?.faceJudgementRetainsTravelMetadata
         || result.bootstrap?.wanderMetadata?.type !== "progress"
         || result.bootstrap?.wanderMetadata?.zoneId !== "beginnersville"
         || result.bootstrap?.wanderMetadata?.category !== "advance"
@@ -316,6 +318,28 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
                 && typeof globalThis.IdleLoopsRunnerTick?.finalizeCompletedAction === "function",
             contentActionCount: globalThis.IdleLoopsActionMetadataRegistry?.listActionMetadata?.().length ?? -1,
             contentZoneCount: globalThis.IdleLoopsZoneRegistry?.listZones?.().length ?? -1,
+            faceJudgementTravelThresholdsMatchFinishLogic: (() => {
+                if (typeof getTravelNum !== "function"
+                    || !globalThis.resources
+                    || typeof globalThis.IdleLoopsResourceState?.setResourceValue !== "function") {
+                    return false;
+                }
+                const originalReputation = resources.reputation;
+                globalThis.IdleLoopsResourceState.setResourceValue(resources, "reputation", 60);
+                const positiveBranch = getTravelNum("Face Judgement");
+                globalThis.IdleLoopsResourceState.setResourceValue(resources, "reputation", 0);
+                const neutralBranch = getTravelNum("Face Judgement");
+                globalThis.IdleLoopsResourceState.setResourceValue(resources, "reputation", -60);
+                const negativeBranch = getTravelNum("Face Judgement");
+                globalThis.IdleLoopsResourceState.setResourceValue(resources, "reputation", originalReputation);
+                return positiveBranch === 1 && neutralBranch === 0 && negativeBranch === 2;
+            })(),
+            faceJudgementRetainsTravelMetadata: (() => {
+                if (typeof getPossibleTravel !== "function") {
+                    return false;
+                }
+                return getPossibleTravel("Face Judgement").length > 0;
+            })(),
             usesExtractedSharedDefinitions: (() => {
                 const registerFactories = globalThis.IdleLoopsLegacyDefinitionFactories?.registerSharedActionFactories;
                 if (typeof registerFactories !== "function" || typeof MultipartAction !== "function") {
