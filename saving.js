@@ -4,6 +4,38 @@ function startGame() {
     setScreenSize();
 }
 
+function getSaveServiceApi() {
+    const saveServiceApi = globalThis.IdleLoopsSaveService;
+    if (!saveServiceApi) {
+        throw new Error("[services/save] IdleLoopsSaveService is not available");
+    }
+    return saveServiceApi;
+}
+
+function getOptionsStoreApi() {
+    const optionsStoreApi = globalThis.IdleLoopsOptionsStore;
+    if (!optionsStoreApi) {
+        throw new Error("[services/options] IdleLoopsOptionsStore is not available");
+    }
+    return optionsStoreApi;
+}
+
+function getCloudSaveServiceApi() {
+    const cloudSaveServiceApi = globalThis.IdleLoopsCloudSaveService;
+    if (!cloudSaveServiceApi) {
+        throw new Error("[services/save] IdleLoopsCloudSaveService is not available");
+    }
+    return cloudSaveServiceApi;
+}
+
+function getSaveMigrationsApi() {
+    const saveMigrationsApi = globalThis.IdleLoopsSaveMigrations;
+    if (!saveMigrationsApi) {
+        throw new Error("[services/save] IdleLoopsSaveMigrations is not available");
+    }
+    return saveMigrationsApi;
+}
+
 function cheat() {
     if (gameSpeed === 1) gameSpeed = 20;
     else gameSpeed = 1;
@@ -41,8 +73,8 @@ function cheatTalent(stat, targetTalentLevel)
 {
     if (stat === "all" || stat === "All")
         for (const stat of statList)
-        stats[stat].talentLevelExp.setLevel(targetTalentLevel);
-    else stats[stat].talentLevelExp.setLevel(targetTalentLevel);
+            globalThis.IdleLoopsCharacterState.setTalentLevel(stats, stat, targetTalentLevel);
+    else globalThis.IdleLoopsCharacterState.setTalentLevel(stats, stat, targetTalentLevel);
     view.updateStats();
 }
 
@@ -50,8 +82,8 @@ function cheatSoulstone(stat, targetSS)
 {
     if (stat === "all" || stat === "All")
         for (const stat in stats)
-            stats[stat].soulstone = targetSS;
-    else stats[stat].soulstone = targetSS;
+            globalThis.IdleLoopsCharacterState.setSoulstone(stats, stat, targetSS);
+    else globalThis.IdleLoopsCharacterState.setSoulstone(stats, stat, targetSS);
     view.updateSoulstones();
 }
 
@@ -646,6 +678,30 @@ function applyAppContextGlobals(patch) {
     }
 }
 
+function captureAppContextCollections(names) {
+    const appContext = getLegacyAppContext();
+    if (!appContext || typeof appContext.captureCollectionState !== "function") {
+        return null;
+    }
+    try {
+        return appContext.captureCollectionState(names);
+    } catch {
+        return null;
+    }
+}
+
+function applyAppContextCollections(patch) {
+    const appContext = getLegacyAppContext();
+    if (!appContext || typeof appContext.applyCollectionState !== "function") {
+        return null;
+    }
+    try {
+        return appContext.applyCollectionState(patch);
+    } catch {
+        return null;
+    }
+}
+
 function captureSaveGlobals() {
     return captureAppContextGlobals([
         "totalTalent",
@@ -659,6 +715,46 @@ function captureSaveGlobals() {
         stonesUsed,
         storyMax,
         unreadActionStories,
+    };
+}
+
+function captureSaveCollections() {
+    return captureAppContextCollections([
+        "townsUnlocked",
+        "completedActions",
+        "challengeSave",
+    ]) ?? {
+        townsUnlocked: [...townsUnlocked],
+        completedActions: [...completedActions],
+        challengeSave: {...challengeSave},
+    };
+}
+
+function captureSaveStoryCollections() {
+    return captureAppContextCollections([
+        "storyFlags",
+        "storyVars",
+        "totals",
+    ]) ?? {
+        storyFlags: {...storyFlags},
+        storyVars: {...storyVars},
+        totals: {...totals},
+    };
+}
+
+function captureSavePrestigeCollections() {
+    return captureAppContextCollections([
+        "prestigeValues",
+    ]) ?? {
+        prestigeValues: {...prestigeValues},
+    };
+}
+
+function captureSaveBuffCollections() {
+    return captureAppContextCollections([
+        "buffCaps",
+    ]) ?? {
+        buffCaps: {...buffCaps},
     };
 }
 
@@ -705,6 +801,84 @@ function loadStorySaveGlobals(toLoad) {
     return loadedGlobals;
 }
 
+function loadStorySaveCollections(toLoad) {
+    const loadedCollections = {
+        storyFlags: {},
+        storyVars: {},
+    };
+    for (const property in storyFlags) {
+        loadedCollections.storyFlags[property] = toLoad.storyReqs?.hasOwnProperty(property)
+            ? toLoad.storyReqs[property]
+            : storyInitializers.storyFlags[property]?.(toLoad.storyReqs ?? {}, toLoad.storyVars ?? {}) ?? false;
+    }
+    for (const property in storyVars) {
+        loadedCollections.storyVars[property] = toLoad.storyVars?.hasOwnProperty(property)
+            ? toLoad.storyVars[property]
+            : storyInitializers.storyVars[property]?.(toLoad.storyReqs ?? {}, toLoad.storyVars ?? {}) ?? -1;
+    }
+    applyAppContextCollections(loadedCollections)
+        ?? globalThis.IdleLoopsStoryState.applyStoryCollections(storyFlags, storyVars, loadedCollections);
+    return loadedCollections;
+}
+
+function loadPrestigeValuesState(toLoad) {
+    const loadedPrestigeValues = {
+        prestigeCurrentPoints: toLoad.prestigeValues?.prestigeCurrentPoints === undefined ? 0 : toLoad.prestigeValues.prestigeCurrentPoints,
+        prestigeTotalPoints: toLoad.prestigeValues?.prestigeTotalPoints === undefined ? 0 : toLoad.prestigeValues.prestigeTotalPoints,
+        prestigeTotalCompletions: toLoad.prestigeValues?.prestigeTotalCompletions === undefined ? 0 : toLoad.prestigeValues.prestigeTotalCompletions,
+        completedCurrentPrestige: toLoad.prestigeValues?.completedCurrentPrestige === undefined ? 0 : toLoad.prestigeValues.completedCurrentPrestige,
+        completedAnyPrestige: toLoad.prestigeValues?.completedAnyPrestige === undefined ? false : toLoad.prestigeValues.completedAnyPrestige,
+    };
+    applyAppContextCollections({
+        prestigeValues: loadedPrestigeValues,
+    }) ?? globalThis.IdleLoopsPrestigeState.replacePrestigeValues(prestigeValues, loadedPrestigeValues);
+    return loadedPrestigeValues;
+}
+
+function loadBuffCapsState(toLoad) {
+    const loadedBuffCaps = {};
+    for (const property in buffCaps) {
+        loadedBuffCaps[property] = toLoad.buffCaps?.hasOwnProperty(property) ? toLoad.buffCaps[property] : buffCaps[property];
+    }
+    applyAppContextCollections({
+        buffCaps: loadedBuffCaps,
+    }) ?? globalThis.IdleLoopsBuffCapState.applyBuffCapSnapshot(buffCaps, loadedBuffCaps);
+    for (const property in loadedBuffCaps) {
+        const element = inputElement(`buff${property}Cap`, false, false);
+        if (element) {
+            element.value = loadedBuffCaps[property];
+        }
+    }
+    return loadedBuffCaps;
+}
+
+function loadTotalsState(toLoad) {
+    const loadedTotals = {
+        time: toLoad.totals?.time === undefined ? 0 : toLoad.totals.time,
+        effectiveTime: toLoad.totals?.effectiveTime === undefined ? 0 : toLoad.totals.effectiveTime,
+        borrowedTime: toLoad.totals?.borrowedTime ?? 0,
+        loops: toLoad.totals?.loops === undefined ? 0 : toLoad.totals.loops,
+        actions: toLoad.totals?.actions === undefined ? 0 : toLoad.totals.actions,
+    };
+    applyAppContextCollections({
+        totals: loadedTotals,
+    }) ?? globalThis.IdleLoopsRuntimeState.applyTotalsSnapshot(totals, loadedTotals);
+    return loadedTotals;
+}
+
+function applyChallengeSaveState(value) {
+    return applyAppContextCollections({
+        challengeSave: value,
+    })?.challengeSave ?? globalThis.IdleLoopsChallengeState.applyChallengeSaveSnapshot(challengeSave, value);
+}
+
+function loadProgressionSaveCollections(toLoad) {
+    const loadedCollections = globalThis.IdleLoopsWorldState.createProgressionCollectionsSnapshot(toLoad);
+    applyAppContextCollections(loadedCollections)
+        ?? globalThis.IdleLoopsWorldState.applyProgressionCollections(townsUnlocked, completedActions, loadedCollections);
+    return loadedCollections;
+}
+
 function createVirtualGlobalAccessor(name) {
     const get = /** @type {() => any} */(new Function(`return ${name};`));
     const set = /** @type {(any) => void} */(new Function("v__", `${name} = v__`));
@@ -728,7 +902,19 @@ function virtualizeGlobalVariables(variables) {
 
 /** @type {Notification} */
 let pauseNotification = null;
-const googleCloud = selfIsGame ? new GoogleCloud() : null;
+const googleCloud = selfIsGame
+    ? getCloudSaveServiceApi().createCloudSaveFacade(new GoogleCloud(), {
+        view,
+        delay,
+        processSave,
+        saveGame: save,
+        currentSaveData,
+        saveFileName,
+        cloudSavedText(name) {
+            return _txt("menu>save>cloud_saved").replace("{name}", name);
+        },
+    })
+    : null;
 
 const options = {
     theme: "normal",
@@ -823,25 +1009,10 @@ function importPredictorSettings() {
         slowMode: "predictorSlowMode",
         slowTimer: "predictorSlowTimer",
     };
-    /** @type {Partial<typeof options>} */
-    const newOptions = {};
-    for (const [originalSetting, newOption] of Object.entries(settingsMap)) {
-        const value = localStorage.getItem(originalSetting);
-        if (value != null) {
-            // has a setting
-            if (isNumericOption(newOption)) {
-                const numericValue = parseInt(value);
-                if (isFinite(numericValue)) {
-                    newOptions[newOption] = numericValue;
-                }
-            } else if (isStringOption(newOption)) {
-                newOptions[newOption] = value;
-            } else {
-                newOptions[newOption] = value === "true";
-            }
-        }
-    }
-    return newOptions;
+    return getOptionsStoreApi().importLegacyPredictorSettings(localStorage, settingsMap, {
+        isNumericOption,
+        isStringOption,
+    });
 }
 if (selfIsGame) {
     Object.assign(options, importPredictorSettings()); // override hardcoded defaults if not in worker
@@ -944,7 +1115,7 @@ const optionValueHandlers = {
         document.getElementById("navbar_action_log").style.display = value ? "" : "none";
     },
     predictor(value, init) {
-        localStorage["loadPredictor"] = value || "";
+        getOptionsStoreApi().writePredictorToggle(localStorage, value);
     },
     googleCloud(value, init, getInput) {
         if (value) {
@@ -1067,8 +1238,7 @@ function closeTutorial() {
 }
 
 function clearSave() {
-    window.localStorage[defaultSaveName] = "";
-    window.localStorage[challengeSaveName] = "";
+    getSaveServiceApi().clearSaveSlots(window.localStorage, [defaultSaveName, challengeSaveName]);
     location.reload();
 }
 
@@ -1082,30 +1252,26 @@ function loadDefaults() {
     initializeBuffs();
     initializeActions();
     initializeTowns();
-    prestigeValues["prestigeCurrentPoints"] = 0;
-    prestigeValues["prestigeTotalPoints"] = 0;
-    prestigeValues["prestigeTotalCompletions"] = 0;
-    prestigeValues["completedCurrentPrestige"] = false;
-    prestigeValues["completedAnyPrestige"] = false;
+    globalThis.IdleLoopsPrestigeState.resetPrestigeValues(prestigeValues);
     Data.recordDefaults();
     defaultsRecorded = true;
 }
 
 function loadUISettings() {
-    const height = localStorage.getItem("actionListHeight");
+    const height = getOptionsStoreApi().readActionListHeight(localStorage) ?? "";
     if (height !== "") document.documentElement.style.setProperty("--action-list-height", height);
 }
 
 function saveUISettings() {
     const height = document.documentElement.style.getPropertyValue("--action-list-height");
-    if (height !== "") localStorage.setItem("actionListHeight", height);
+    getOptionsStoreApi().writeActionListHeight(localStorage, height);
 }
 
 function needsDataSnapshots() {
     return options.predictor && options.predictorBackgroundThread;
 }
 
-function load(inChallenge, saveJson = window.localStorage[saveName]) {
+function load(inChallenge, saveJson = getSaveServiceApi().readSaveJson(window.localStorage, saveName)) {
     loadDefaults();
     loadUISettings();
 
@@ -1124,22 +1290,24 @@ function load(inChallenge, saveJson = window.localStorage[saveName]) {
 
     console.log("Loading game from: " + saveName + " inChallenge: " + inChallenge);
 
-    if(toLoad.challengeSave !== undefined)
-    for (let challengeProgress in toLoad.challengeSave)
-        challengeSave[challengeProgress] = toLoad.challengeSave[challengeProgress];
-    if (inChallenge !== undefined) challengeSave.inChallenge = inChallenge;
+    const loadedChallengeSave = globalThis.IdleLoopsChallengeState.createChallengeSaveSnapshot(toLoad.challengeSave ?? {});
+    if (inChallenge !== undefined) {
+        loadedChallengeSave.inChallenge = inChallenge;
+    }
+    applyChallengeSaveState(loadedChallengeSave);
 
-    console.log("Challenge Mode: " + challengeSave.challengeMode + " In Challenge: " + challengeSave.inChallenge);
+    const activeChallengeSave = captureSaveCollections().challengeSave;
+    console.log("Challenge Mode: " + activeChallengeSave.challengeMode + " In Challenge: " + activeChallengeSave.inChallenge);
 
 
-    if (saveName === defaultSaveName && challengeSave.inChallenge === true) {
+    if (saveName === defaultSaveName && activeChallengeSave.inChallenge === true) {
         console.log("Switching to challenge save");
         saveName = challengeSaveName;
         load(true);
         return;
     }
 
-    if (challengeSave.challengeMode !== 0)
+    if (activeChallengeSave.challengeMode !== 0)
         saveName = challengeSaveName;
 
     doLoad(toLoad);
@@ -1159,46 +1327,12 @@ function doLoad(toLoad) {
         }
     }
 
-    for (const property in toLoad.buffs) {
-        if (toLoad.buffs.hasOwnProperty(property)) {
-            // need the min for people with broken buff amts from pre 0.93
-            buffs[property].amt = Math.min(toLoad.buffs[property].amt, buffHardCaps[property]);
-        }
-    }
+    globalThis.IdleLoopsCharacterState.loadBuffSnapshot(buffs, toLoad.buffs, buffHardCaps);
 
-    if (toLoad.buffCaps !== undefined) {
-        for (const property in buffCaps) {
-            if (toLoad.buffCaps.hasOwnProperty(property)) {
-                buffCaps[property] = toLoad.buffCaps[property];
-                inputElement(`buff${property}Cap`).value = buffCaps[property];
-            }
-        }
-    }
+    loadBuffCapsState(toLoad);
+    loadPrestigeValuesState(toLoad);
 
-    if (toLoad.prestigeValues !== undefined) {
-        prestigeValues["prestigeCurrentPoints"]     = toLoad.prestigeValues["prestigeCurrentPoints"]     === undefined ? 0     : toLoad.prestigeValues["prestigeCurrentPoints"];
-        prestigeValues["prestigeTotalPoints"]       = toLoad.prestigeValues["prestigeTotalPoints"]       === undefined ? 0     : toLoad.prestigeValues["prestigeTotalPoints"];
-        prestigeValues["prestigeTotalCompletions"]  = toLoad.prestigeValues["prestigeTotalCompletions"]  === undefined ? 0     : toLoad.prestigeValues["prestigeTotalCompletions"];
-        prestigeValues["completedCurrentPrestige"]  = toLoad.prestigeValues["completedCurrentPrestige"]  === undefined ? 0     : toLoad.prestigeValues["completedCurrentPrestige"];
-        prestigeValues["completedAnyPrestige"]      = toLoad.prestigeValues["completedAnyPrestige"]      === undefined ? false : toLoad.prestigeValues["completedAnyPrestige"];
-    }
-
-
-    for (const property in storyFlags) {
-        if (toLoad.storyReqs?.hasOwnProperty(property)) {
-            storyFlags[property] = toLoad.storyReqs[property];
-        } else {
-            storyFlags[property] = storyInitializers.storyFlags[property]?.(toLoad.storyReqs ?? {}, toLoad.storyVars ?? {}) ?? false;
-        }
-    }
-
-    for (const property in storyVars) {
-        if (toLoad.storyVars?.hasOwnProperty(property)) {
-            storyVars[property] = toLoad.storyVars[property];
-        } else {
-            storyVars[property] = storyInitializers.storyVars[property]?.(toLoad.storyReqs ?? {}, toLoad.storyVars ?? {}) ?? -1;
-        }
-    }
+    loadStorySaveCollections(toLoad);
 
     if (toLoad.actionLog !== undefined) {
         actionLog.load(toLoad.actionLog);
@@ -1212,20 +1346,7 @@ function doLoad(toLoad) {
 
     loadPrimarySaveGlobals(toLoad);
 
-    if (toLoad.maxTown) {
-        townsUnlocked = [0];
-        for (let i = 1; i <= toLoad.maxTown; i++) {
-            townsUnlocked.push(i);
-        }
-    } else {
-        townsUnlocked = toLoad.townsUnlocked === undefined ? [0] : toLoad.townsUnlocked;
-    }
-    completedActions = [];
-    if (toLoad.completedActions && toLoad.completedActions.length > 0)
-        toLoad.completedActions.forEach(action => {
-            completedActions.push(action);
-        });
-    completedActions.push("FoundGlasses");
+    loadProgressionSaveCollections(toLoad);
     actions.clearActions();
     if (toLoad.nextList) {
         for (const action of toLoad.nextList) {
@@ -1332,26 +1453,11 @@ function doLoad(toLoad) {
         }
     }
 
-    if (toLoad.options === undefined) {
-        options.theme = toLoad.currentTheme === undefined ? options.theme : toLoad.currentTheme;
-        options.repeatLastAction = toLoad.repeatLast;
-        options.pingOnPause = toLoad.pingOnPause === undefined ? options.pingOnPause : toLoad.pingOnPause;
-        options.notifyOnPause = toLoad.notifyOnPause === undefined ? options.notifyOnPause : toLoad.notifyOnPause;
-        options.autoMaxTraining = toLoad.autoMaxTraining === undefined ? options.autoMaxTraining : toLoad.autoMaxTraining;
-        options.highlightNew = toLoad.highlightNew === undefined ? options.highlightNew : toLoad.highlightNew;
-        options.hotkeys = toLoad.hotkeys === undefined ? options.hotkeys : toLoad.hotkeys;
-        options.updateRate = toLoad.updateRate === undefined ? options.updateRate : window.localStorage["updateRate"] ?? toLoad.updateRate;
-    } else {
-        const optionsToLoad = {...toLoad.options, ...toLoad.extraOptions};
-        for (const option in optionsToLoad) {
-            if (option in options) {
-            options[option] = optionsToLoad[option];
-            }
-        }
-        if ("updateRate" in optionsToLoad && window.localStorage["updateRate"]) {
-            options.updateRate = window.localStorage["updateRate"];
-        }
-    }
+    getSaveMigrationsApi().applySavedOptions(
+        options,
+        toLoad,
+        getOptionsStoreApi().readUpdateRate(window.localStorage),
+    );
 
     /** @type {string[]} */
     const hiddenVarNames = toLoad.hiddenVars?.slice() ?? [];
@@ -1409,15 +1515,8 @@ function doLoad(toLoad) {
     storyShowing = toLoad.storyShowing === undefined ? 0 : toLoad.storyShowing;
     loadStorySaveGlobals(toLoad);
 
-    if (toLoad.totals != undefined) {
-        totals.time = toLoad.totals.time === undefined ? 0 : toLoad.totals.time;
-        totals.effectiveTime = toLoad.totals.effectiveTime === undefined ? 0 : toLoad.totals.effectiveTime;
-        totals.borrowedTime = toLoad.totals.borrowedTime ?? 0;
-        totals.loops = toLoad.totals.loops === undefined ? 0 : toLoad.totals.loops;
-        totals.actions = toLoad.totals.actions === undefined ? 0 : toLoad.totals.actions;
-    }
-    else totals = {time: 0, effectiveTime: 0, borrowedTime: 0, loops: 0, actions: 0};
-    currentLoop = totals.loops;
+    const loadedTotals = loadTotalsState(toLoad);
+    currentLoop = loadedTotals.loops;
     view.updateTotals();
     console.log("Updating prestige values from load")
     view.updatePrestigeValues();
@@ -1425,24 +1524,18 @@ function doLoad(toLoad) {
     // capped at 1 month of gain
     addOffline(Math.min(Math.floor((Date.now() - Date.parse(toLoad.date)) * offlineRatio), 2678400000));
 
-    if (toLoad.version75 === undefined) {
-        const total = towns[0].totalSDungeon;
-        dungeons[0][0].completed = Math.floor(total / 2);
-        dungeons[0][1].completed = Math.floor(total / 4);
-        dungeons[0][2].completed = Math.floor(total / 8);
-        dungeons[0][3].completed = Math.floor(total / 16);
-        dungeons[0][4].completed = Math.floor(total / 32);
-        dungeons[0][5].completed = Math.floor(total / 64);
-        towns[0].totalSDungeon = dungeons[0][0].completed + dungeons[0][1].completed + dungeons[0][2].completed + dungeons[0][3].completed + dungeons[0][4].completed + dungeons[0][5].completed;
-    }
+    getSaveMigrationsApi().migrateVersion75DungeonTotals(toLoad, towns, dungeons);
 
     //Handle players on previous challenge system
-    if(toLoad.challenge !== undefined && toLoad.challenge !== 0) {
-        challengeSave.challengeMode = 0;
-        challengeSave.inChallenge = true;
+    if (getSaveMigrationsApi().needsLegacyChallengeMigration(toLoad)) {
+        const challengeMigration = getSaveMigrationsApi().createLegacyChallengeMigration(
+            captureSaveCollections().challengeSave,
+            toLoad.challenge,
+        );
+        applyChallengeSaveState(challengeMigration.bootstrap);
         save();
 
-        challengeSave.challengeMode = toLoad.challenge;
+        applyChallengeSaveState(challengeMigration.finalize);
         saveName = challengeSaveName;
         save();
         location.reload();
@@ -1467,17 +1560,21 @@ function doLoad(toLoad) {
 function doSave() {
     const toSave = {};
     const saveGlobals = captureSaveGlobals();
+    const saveCollections = captureSaveCollections();
+    const saveStoryCollections = captureSaveStoryCollections();
+    const savePrestigeCollections = captureSavePrestigeCollections();
+    const saveBuffCollections = captureSaveBuffCollections();
     toSave.curLoadout = curLoadout;
     toSave.dungeons = dungeons;
     toSave.trials = trials;
-    toSave.townsUnlocked = townsUnlocked;
-    toSave.completedActions = completedActions;
+    toSave.townsUnlocked = saveCollections.townsUnlocked;
+    toSave.completedActions = saveCollections.completedActions;
 
     toSave.stats = stats;
     toSave.totalTalent = saveGlobals?.totalTalent ?? totalTalent;
     toSave.skills = skills;
     toSave.buffs = buffs;
-    toSave.prestigeValues = prestigeValues;
+    toSave.prestigeValues = savePrestigeCollections.prestigeValues;
     toSave.goldInvested = saveGlobals?.goldInvested ?? goldInvested;
     toSave.stonesUsed = saveGlobals?.stonesUsed ?? stonesUsed;
     toSave.version75 = true;
@@ -1519,19 +1616,17 @@ function doSave() {
     }
     toSave.storyShowing = storyShowing;
     toSave.storyMax = saveGlobals?.storyMax ?? storyMax;
-    toSave.storyReqs = storyFlags; // save uses the legacy name "storyReqs" for compatibility
-    toSave.storyVars = storyVars;
+    toSave.storyReqs = saveStoryCollections.storyFlags; // save uses the legacy name "storyReqs" for compatibility
+    toSave.storyVars = saveStoryCollections.storyVars;
     toSave.unreadActionStories = saveGlobals?.unreadActionStories ?? unreadActionStories;
     toSave.actionLog = actionLog;
-    toSave.buffCaps = buffCaps;
+    toSave.buffCaps = saveBuffCollections.buffCaps;
 
     toSave.date = new Date();
     toSave.totalOfflineMs = totalOfflineMs;
-    toSave.totals = totals;
+    toSave.totals = saveStoryCollections.totals;
 
-    toSave.challengeSave = challengeSave;
-    for (const challengeProgress in challengeSave)
-        toSave.challengeSave[challengeProgress] = challengeSave[challengeProgress];
+    toSave.challengeSave = saveCollections.challengeSave;
 
     return toSave;
 }
@@ -1540,18 +1635,21 @@ function save() {
     const toSave = doSave();
     const saveJson = JSON.stringify(toSave);
     storeSaveJson(saveJson);
-    window.localStorage["updateRate"] = options.updateRate;
+    getOptionsStoreApi().writeUpdateRate(window.localStorage, options.updateRate);
     return saveJson;
 }
 
 function currentSaveData() {
-    return `ILSV01${LZString.compressToBase64(window.localStorage[saveName])}`;
+    return getSaveServiceApi().createEncodedSaveData(
+        getSaveServiceApi().readSaveJson(window.localStorage, saveName),
+        LZString,
+    );
 }
 
 function exportSave() {
     const saveJson = save();
     // idle loops save version 01. patch v0.94, moved from old save system to lzstring base 64
-    inputElement("exportImport").value = `ILSV01${LZString.compressToBase64(saveJson)}`;
+    inputElement("exportImport").value = getSaveServiceApi().createEncodedSaveData(saveJson, LZString);
     inputElement("exportImport").select();
     if (!document.execCommand("copy")) {
         alert(_txt("menu>save>copy_failed"));
@@ -1566,7 +1664,10 @@ function importSave() {
 function processSave(saveData) {
     if (saveData === "") {
         if (confirm(_txt("menu>save>confirm_delete"))) {
-            challengeSave = {};
+            applyChallengeSaveState({
+                challengeMode: 0,
+                inChallenge: false,
+            });
             clearSave();
         } else {
             return;
@@ -1574,12 +1675,10 @@ function processSave(saveData) {
     }
     let saveJson = "";
     // idle loops save version 01. patch v0.94, moved from old save system to lzstring base 64
-    if (saveData.substr(0, 6) === "ILSV01") {
-        saveJson = LZString.decompressFromBase64(saveData.substr(6));
-    } else {
-        // handling for old saves from stopsign or patches prior to v0.94
-        saveJson = decode(saveData);
-    }
+    saveJson = getSaveServiceApi().decodeSaveData(saveData, {
+        compressor: LZString,
+        decodeLegacy: decode,
+    });
     if (saveJson) {
         storeSaveJson(saveJson);
     }
@@ -1592,29 +1691,25 @@ function processSave(saveData) {
 
 let overquotaWarned = false;
 function storeSaveJson(saveJson) {
-    try {
-        window.localStorage[saveName] = saveJson;
-    } catch (e) {
-        if (e instanceof DOMException && e.name === "QuotaExceededError") {
+    getSaveServiceApi().storeSaveJson(window.localStorage, saveName, saveJson, {
+        onQuotaExceeded() {
             if (!overquotaWarned) {
                 alert(_txt("menu>save>quota_exceeded").replace(/<br>/gu, "\n"));
                 overquotaWarned = true;
             }
-        } else {
-            throw e;
         }
-    }
+    });
 }
 
 function saveFileName() {
-    const gameName = document.title.replace('*PAUSED* ','')
-    const version = document.querySelector('#changelog > li[data-verNum]').firstChild.textContent.trim()
-    return `${gameName} ${version} - Loop ${totals.loops}.txt`
+    const gameName = document.title.replace('*PAUSED* ','');
+    const version = document.querySelector('#changelog > li[data-verNum]').firstChild.textContent.trim();
+    return getSaveServiceApi().buildSaveFileName(gameName, version, totals.loops);
 }
 
 function exportSaveFile() {
     const saveJson = save();
-    const saveData = `ILSV01${LZString.compressToBase64(saveJson)}`;
+    const saveData = getSaveServiceApi().createEncodedSaveData(saveJson, LZString);
     const a = document.createElement('a');
     a.setAttribute('href', 'data:text/plain;charset=utf-8,' + saveData);
     a.setAttribute('download', saveFileName());
@@ -1677,18 +1772,22 @@ function importCurrentList() {
 
 function beginChallenge(challengeNum) {
     console.log("Beginning Challenge");
-    if (window.localStorage[challengeSaveName] && window.localStorage[challengeSaveName] !== "") {
+    if (getSaveServiceApi().hasSaveSlot(window.localStorage, challengeSaveName)) {
         if (confirm(_txt("menu>challenges>confirm_begin")))
-            window.localStorage[challengeSaveName] = "";
+            getSaveServiceApi().clearSaveSlot(window.localStorage, challengeSaveName);
         else
             return false;
     }
     if (challengeSave.challengeMode === 0) {
-        challengeSave.inChallenge = true;
+        applyChallengeSaveState(globalThis.IdleLoopsChallengeState.createChallengeSaveSnapshot(challengeSave, {
+            inChallenge: true,
+        }));
         save();
         console.log ("Saving to: " + saveName);
     }
-    challengeSave.challengeMode = challengeNum;
+    applyChallengeSaveState(globalThis.IdleLoopsChallengeState.createChallengeSaveSnapshot(challengeSave, {
+        challengeMode: challengeNum,
+    }));
     saveName = challengeSaveName;
     load(true);
     totalOfflineMs = 1000000;
@@ -1707,8 +1806,10 @@ function exitChallenge() {
 }
 
 function resumeChallenge() {
-    if (challengeSave.challengeMode === 0 && window.localStorage[challengeSaveName] && window.localStorage[challengeSaveName] !== "") {
-        challengeSave.inChallenge = true;
+    if (challengeSave.challengeMode === 0 && getSaveServiceApi().hasSaveSlot(window.localStorage, challengeSaveName)) {
+        applyChallengeSaveState(globalThis.IdleLoopsChallengeState.createChallengeSaveSnapshot(challengeSave, {
+            inChallenge: true,
+        }));
         save();
         saveName = challengeSaveName;
         load(true);

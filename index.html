@@ -45,6 +45,8 @@
 <script src="https://apis.google.com/js/api.js" async defer></script>
 
 <body id="theBody" style="min-width:1210px">
+    <div id="accessibilityStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+    <div id="accessibilityAlert" class="sr-only" role="alert" aria-live="assertive" aria-atomic="true"></div>
     <div id="loadingBox" class="showWhileLoading hideWhenLoaded">
         <!-- This will only be visible if the localization has never been loaded in this browser -->
         <div id="loadingText" class="localized" data-lockey="misc>loading">初次加载（可能需要一点时间）...</div>
@@ -619,13 +621,62 @@
     <script src="helpers.js"></script>
     <script src="uicomponents.js"></script>
     <script src="google.js"></script>
+    <script src="src/services/save/save-service.js"></script>
+    <script src="src/services/save/save-migrations.js"></script>
+    <script src="src/services/options/options-store.js"></script>
+    <script src="src/services/save/cloud-save-service.js"></script>
+    <script src="src/services/predictor/predictor-bridge.js"></script>
+    <script src="src/services/predictor/predictor-worker-service.js"></script>
+    <script src="src/content/definitions/legacy-shared-actions.js"></script>
+    <script src="src/content/definitions/beginnersville-actions.js"></script>
+    <script src="src/content/definitions/forest-path-actions.js"></script>
+    <script src="src/content/definitions/merchanton-actions.js"></script>
+    <script src="src/content/definitions/olympus-actions.js"></script>
     <script src="actionList.js"></script>
+    <script src="src/content/zone-registry.js"></script>
+    <script src="generated/action-metadata-registry.js"></script>
+    <script src="src/content/action-metadata-registry.js"></script>
+    <script src="src/content/rules/legacy-action-rules.js"></script>
+    <script src="src/content/effects/legacy-action-effects.js"></script>
+    <script src="src/content/stories/legacy-story-hooks.js"></script>
+    <script src="src/content/runtime-hook-registry.js"></script>
+    <script src="src/content/content-registry.js"></script>
     <script src="actionLog.js"></script>
     <script src="interval.js"></script>
+    <script src="src/core/loop/game-loop.js"></script>
+    <script src="src/core/loop/restart-coordinator.js"></script>
+    <script src="src/core/loop/offline-progress.js"></script>
+    <script src="src/core/loop/game-speed.js"></script>
+    <script src="src/core/loop/lag-tracker.js"></script>
+    <script src="src/core/loop/run-budget.js"></script>
+    <script src="src/core/loop/frame-gate.js"></script>
+    <script src="src/core/progression/world-state.js"></script>
     <script src="driver.js"></script>
     <script src="stats.js"></script>
     <script src="statsgraph.js"></script>
+    <script src="src/core/queue/queue-store.js"></script>
+    <script src="src/core/runner/current-action-state.js"></script>
+    <script src="src/core/runner/action-failure.js"></script>
+    <script src="src/core/runner/next-valid-action.js"></script>
+    <script src="src/core/runner/action-formulas.js"></script>
+    <script src="src/core/runner/action-tick.js"></script>
     <script src="actions.js"></script>
+    <script src="src/core/domain/town-state.js"></script>
+    <script src="src/core/domain/resource-state.js"></script>
+    <script src="src/core/progression/town-progress.js"></script>
+    <script src="src/core/progression/meta-progression.js"></script>
+    <script src="src/core/progression/prestige-state.js"></script>
+    <script src="src/core/progression/buff-cap-state.js"></script>
+    <script src="src/core/progression/runtime-state.js"></script>
+    <script src="src/core/progression/character-state.js"></script>
+    <script src="src/core/progression/story-state.js"></script>
+    <script src="src/core/progression/challenge-state.js"></script>
+    <script src="src/ui/controllers/cloud-save-ui.js"></script>
+    <script src="src/ui/controllers/loadout-controller.js"></script>
+    <script src="src/ui/controllers/town-browser-controller.js"></script>
+    <script src="src/ui/controllers/planner-controller.js"></script>
+    <script src="src/ui/controllers/reading-shell.js"></script>
+    <script src="src/ui/controllers/accessibility-controller.js"></script>
     <script src="views/main.view.js"></script>
     <script src="town.js"></script>
     <script src="talents.js"></script>

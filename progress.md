@@ -214,6 +214,74 @@ Original prompt: 你是一个游戏汉化师仔细思考这个游戏该如何汉
 - Re-ran a browser smoke check against `http://127.0.0.1:4173/?lg=zh-CN`.
 - Computed-style capture in `output/action-filter-fix-smoke/runtime-styles.json` now shows `color: rgb(0, 0, 0)` on the filter buttons.
 - Visual checks saved to `output/action-filter-fix-smoke/filter-main.png` and `output/action-filter-fix-smoke/filter-legend.png`.
+- 2026-04-15 AppContext save-collection bridge pass:
+- Extended `src/app/app-context.js` and `src/app/game-session.js` with collection-level capture/apply APIs so save-facing arrays/objects can move through an explicit runtime entry instead of direct globals.
+- `saving.js` now routes `townsUnlocked`, `completedActions`, and `challengeSave` through dedicated helpers (`captureSaveCollections`, `loadProgressionSaveCollections`, `applyChallengeSaveState`) that prefer `LegacyAppContext` and preserve object/array identity by mutating in place.
+- `tests/smoke/runtime-smoke.mjs` now asserts both scalar save globals and progression/challenge collections use the AppContext bridge on save and load.
+- Verification:
+- `npm run smoke`
+- `npm run baseline:check`
+- Reviewed `output/smoke/runtime/results.json`: both locales reported `saveCollectionsUseAppContext: true`, `loadCollectionsUseAppContext: true`, and `loadCollectionsMatchExpected: true`.
+- Visually inspected `output/smoke/runtime/runtime-en-EN.png`; main layout rendered normally with no new page/console errors.
+- Suggested next pass:
+- Extend the same explicit-bridge pattern to `storyFlags` / `storyVars` or to remaining save-owned objects like `totals`, then update baseline fixtures beyond `new-game`.
+- 2026-04-15 AppContext story/totals bridge pass:
+- Extended `src/app/app-context.js` collection bindings to cover `storyFlags`, `storyVars`, and `totals`, and expanded session snapshots so they now carry story state (`storyMax`, unread stories, flags, vars) plus in-place `totals`.
+- `saving.js` now routes story/totals serialization through explicit helpers: `captureSaveStoryCollections()`, `loadStorySaveCollections()`, and `loadTotalsState()`. This also removed the old `totals = {...}` reassignment path from `doLoad()` and replaced the `challengeSave = {}` clear path with `applyChallengeSaveState(...)` to preserve object identity.
+- `tests/support/runtime-metrics.mjs` now prefers session-backed story/completed-action data when available, so regression baselines reflect the explicit session boundary instead of reading a mixed global/session view.
+- `tests/smoke/runtime-smoke.mjs` now distinguishes save-path vs load-path AppContext calls and separately verifies scalar globals, progression/challenge collections, and story/totals collections.
+- Verification:
+- `npm run smoke`
+- `npm run baseline:update`
+- `npm run baseline:check`
+- `npm run regression`
+- Reviewed `output/smoke/runtime/results.json`: both locales now report `saveUsesAppContext: true`, `loadUsesAppContext: true`, `saveStoryCollectionsUseAppContext: true`, `loadStoryCollectionsUseAppContext: true`, and `loadStoryCollectionsMatchExpected: true`.
+- Visually inspected `output/smoke/runtime/runtime-en-EN.png`; layout remained stable and no new console/page errors were introduced.
+- Suggested next pass:
+- Move one more save-owned object family behind the same bridge (`prestigeValues` is the obvious candidate), or switch tracks and create the planned mid/late-game fixture saves so the new session boundary gets validated against real progression states.
+- 2026-04-15 AppContext prestige bridge pass:
+- Extended `src/app/app-context.js` collection bindings with `prestigeValues`, and session snapshots now source prestige from the collection bridge instead of reading the raw object directly.
+- `saving.js` now routes prestige serialization through `captureSavePrestigeCollections()` and `loadPrestigeValuesState()`, so prestige save/load is handled through the same explicit AppContext boundary as story/totals and progression/challenge state.
+- `tests/smoke/runtime-smoke.mjs` now separately verifies `prestigeValues` save-path capture, load-path apply, and loaded-value equality against the reloaded fixture payload.
+- Verification:
+- `npm run smoke`
+- `npm run baseline:update`
+- Smoke results in `output/smoke/runtime/results.json` now show `savePrestigeUseAppContext: true`, `loadPrestigeUseAppContext: true`, and `loadPrestigeMatchesExpected: true` for both `zh-CN` and `en-EN`.
+- Suggested next pass:
+- Either keep shrinking `saving.js` by moving another save-owned object family such as `buffCaps`, or switch to Phase 0 depth and create the planned real mid/late-game fixture saves so these bridges are exercised against non-trivial progression data.
+- 2026-04-15 Phase 0 synthetic fixture generation pass:
+- Added scripted Phase 0 fixture presets in `tests/fixtures/saves/phase0-presets.mjs` and a generator in `tools/generate-phase0-fixtures.mjs`.
+- Generated four synthetic progression fixtures from live runtime state instead of hand-authoring save JSON:
+- `forest-midgame.localstorage.json`
+- `merchanton-midgame.localstorage.json`
+- `valhalla-startington-branch.localstorage.json`
+- `endgame.localstorage.json`
+- Marked all four fixtures `active` in `tests/fixtures/saves/manifest.json`, added the `npm run fixtures:phase0` script, and documented the workflow in `tests/fixtures/saves/README.md`.
+- Fixed `dismissTutorialIfPresent()` in `tests/support/runtime-fixture-driver.mjs` so baseline jobs no longer hang on hidden-but-present tutorial buttons.
+- Refreshed baselines for all five active fixtures; `baseline:check` now validates `new-game` plus the four generated mid/late-game saves.
+- Added `tools/capture-fixture-screenshots.mjs` plus `npm run fixtures:review` to capture one review screenshot and a small summary JSON for every active fixture under `output/fixtures/review/`.
+- Verification:
+- `node tools/generate-phase0-fixtures.mjs`
+- `npm run baseline:update`
+- `npm run regression`
+- `npm run fixtures:review`
+- Regression now reports:
+- `Baseline OK: new-game`
+- `Baseline OK: forest-midgame`
+- `Baseline OK: merchanton-midgame`
+- `Baseline OK: valhalla-startington-branch`
+- `Baseline OK: endgame`
+- Review artifacts now include:
+- `output/fixtures/review/new-game.png`
+- `output/fixtures/review/forest-midgame.png`
+- `output/fixtures/review/merchanton-midgame.png`
+- `output/fixtures/review/valhalla-startington-branch.png`
+- `output/fixtures/review/endgame.png`
+- `output/fixtures/review/results.json`
+- Important note:
+- Save files still do not persist the currently selected town. The review screenshot tool now navigates to each preset's target town after load so the screenshots reflect the intended scenario rather than always showing Beginnersville.
+- Suggested next pass:
+- If Phase 0 needs to become less synthetic, replace one or more generated presets with imported real player saves via `tools/create-save-fixture.mjs`; otherwise the next highest-value engineering move is back on the core refactor path (`actions.js` / `driver.js` seam extraction).
 - 2026-04-14 action stories visibility fix:
 - Fixed an `Action Stories` DOM-index regression in `views/main.view.js`: after action-category badges were added, `updateStories()` was still writing into `children[2]`, which now points at the icon wrapper instead of the tooltip body.
 - Story text now renders into a dedicated `storyContent${action.varName}` node inside `.showthisstory`, so updates no longer depend on fragile child indices.
@@ -538,3 +606,557 @@ Original prompt: 你是一个游戏汉化师仔细思考这个游戏该如何汉
 - no new console/page errors in the P3 closeout regression
 - Status correction:
 - P3 was already complete in the narrowed implementation scope; this closeout covers the two original-spec leftovers (`Hotkeys` stable entry and `Simple Tooltips` beginner mode), so the fourth-item GUI/QOL roadmap is now closed against the original P3 checklist as well
+- 2026-04-15 AppContext buff-cap bridge pass:
+- Added `buffCaps` to `LegacyAppContext` collection bindings and session snapshots so it now travels through the same explicit save-state seam as story/totals/prestige collections.
+- `saving.js` now routes `buffCaps` through `captureSaveBuffCollections()` and `loadBuffCapsState()` instead of directly mutating the raw object in `doSave()` / `doLoad()`.
+- `loadBuffCapsState()` treats the buff-cap inputs as optional (`inputElement(..., false, false)`) before syncing DOM values, so the bridge no longer assumes those nodes exist.
+- Smoke coverage now verifies the `buffCaps` save/load path hits `captureCollectionState()` / `applyCollectionState()`, and runtime metrics prefer session-backed buff caps when available.
+- Verification:
+- `node --check src/app/app-context.js`
+- `node --check src/app/game-session.js`
+- `node --check saving.js`
+- `node --check tests/support/runtime-metrics.mjs`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run baseline:check`
+- `npm run regression`
+- 2026-04-15 queue-store extraction pass:
+- Added the first `src/core/*` runtime seam at `src/core/queue/queue-store.js`.
+- Moved `actions.next` storage helpers there: action-id assignment, snapshot cloning, zone-span construction, closest-valid-index calculation, and the basic insert/move/remove/update primitives.
+- `actions.js` still owns execution, failure analysis, and restart logic, but its queue mutation methods now delegate to `IdleLoopsQueueStore` instead of inlining all queue storage behavior.
+- Wired the new seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Added minimal docs for the new directory split in `src/core/README.md`, `src/core/queue/README.md`, and `AI_MAP.md`.
+- Smoke now asserts the queue-store API is present at runtime (`hasQueueStoreApi: true`) before proceeding with the rest of the regression.
+- Verification:
+- `node --check src/core/queue/queue-store.js`
+- `node --check actions.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- 2026-04-15 character-state save/load follow-up pass:
+- Extended `src/core/progression/character-state.js` with save/load-adjacent mutation helpers for buff snapshot application, direct talent-level setting, and direct soulstone setting.
+- `saving.js` now routes buff load clamping through `IdleLoopsCharacterState.loadBuffSnapshot(...)`, and the cheat helpers route talent/soulstone mutation through the same seam instead of open-coding direct character state writes.
+- Verification:
+- `node --check src/core/progression/character-state.js`
+- `node --check saving.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- 2026-04-15 phase-4 closure pass:
+- Extended `src/core/domain/resource-state.js` with a direct setter so remaining runtime resource writes in `actionList.js` now route through the resource seam (`wizardCollege`, `reputation`, `heart`).
+- `actionList.js` also now routes the `Imbue Body` talent-level reset path through `IdleLoopsCharacterState.setTalentLevel(...)`.
+- Final direct-write scan now shows remaining mutations are confined to seam internals or explicit UI/compat shells rather than the runtime core path.
+- Verification:
+- `node --check src/core/domain/resource-state.js`
+- `node --check actionList.js`
+- `npm run smoke`
+- `npm run regression`
+- Phase note: `Phase 4` is now considered complete. Next main focus is `Phase 5`: split `saving.js` toward explicit save/options/cloud services while preserving current save compatibility.
+- 2026-04-15 phase-5 service extraction pass:
+- Added `src/services/save/save-service.js`, `src/services/save/save-migrations.js`, `src/services/options/options-store.js`, and `src/services/save/cloud-save-service.js`.
+- `saving.js` now delegates local save-slot storage, encoded import/export payload handling, update-rate/UI setting persistence, challenge-slot checks, and legacy option/challenge/version migrations through explicit service seams.
+- `google.js` is now a lower-level Google auth/transport adapter; runtime-facing cloud save behavior is owned by `IdleLoopsCloudSaveService`.
+- `prestige.js` now routes backup-slot handling through `IdleLoopsSaveService`.
+- Wired the new service seams into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/services/*` READMEs, `AI_MAP.md`, and smoke bootstrap assertions so the service layer is now part of the runtime contract: `hasSaveServiceApi`, `hasSaveMigrationsApi`, `hasOptionsStoreApi`, `hasCloudSaveServiceApi`.
+- Verification:
+- `node --check src/services/save/save-service.js`
+- `node --check src/services/save/save-migrations.js`
+- `node --check src/services/options/options-store.js`
+- `node --check src/services/save/cloud-save-service.js`
+- `node --check google.js`
+- `node --check saving.js`
+- `node --check prestige.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- Phase note: `Phase 5` is now considered complete. Next main focus is `Phase 6`: split the mega-view into UI panels/controllers without changing DOM ids/classes or visual behavior.
+- 2026-04-15 world-state follow-up pass:
+- `saving.js` now delegates progression collection load-shape construction to `IdleLoopsWorldState.createProgressionCollectionsSnapshot(...)`, so towns-unlocked/completed-actions world progression is built and applied inside the same seam.
+- Verification:
+- `node --check src/core/progression/world-state.js`
+- `node --check saving.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- 2026-04-15 challenge-state follow-up pass:
+- `saving.js` now routes `beginChallenge()` and `resumeChallenge()` challenge-save mutation through `IdleLoopsChallengeState.createChallengeSaveSnapshot(...)` + `applyChallengeSaveState(...)` instead of direct object writes.
+- Verification:
+- `node --check saving.js`
+- `npm run smoke`
+- `npm run regression`
+- 2026-04-15 world-state extraction pass:
+- Added `src/core/progression/world-state.js` as the next `Phase 4` seam under `src/core/progression/*`.
+- Moved town-unlock state mutation out of `driver.js`, moved completed-action marking out of `actions.js`, and moved progression collection fallback apply out of `saving.js`.
+- Wired the new seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/core/progression/README.md`, `src/core/README.md`, `AI_MAP.md`, and smoke bootstrap assertions so the world seam is now part of the runtime contract: `hasWorldStateApi: true`.
+- Verification:
+- `node --check src/core/progression/world-state.js`
+- `node --check driver.js`
+- `node --check actions.js`
+- `node --check saving.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- 2026-04-15 story-state follow-up pass:
+- Extended `src/core/progression/story-state.js` with `applyStoryCollections(...)` so `saving.js` no longer open-codes fallback story flag/var object replacement when AppContext collection bindings are unavailable.
+- `saving.js` now delegates the legacy fallback story collection apply path to `IdleLoopsStoryState`.
+- Verification:
+- `node --check src/core/progression/story-state.js`
+- `node --check saving.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- 2026-04-15 challenge-state extraction pass:
+- Added `src/core/progression/challenge-state.js` as the next `Phase 4` seam under `src/core/progression/*`.
+- Moved `challengeSave` normalization and fallback object-apply logic out of `saving.js`, and moved challenge-mode town-unlock progress tracking out of `driver.js`.
+- Wired the new seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/core/progression/README.md`, `src/core/README.md`, `AI_MAP.md`, and smoke bootstrap assertions so the challenge seam is now part of the runtime contract: `hasChallengeStateApi: true`.
+- Verification:
+- `node --check src/core/progression/challenge-state.js`
+- `node --check driver.js`
+- `node --check saving.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- 2026-04-15 runner-state extraction pass:
+- Added `src/core/runner/current-action-state.js` as the first runner-focused seam under `src/core/*`.
+- Moved current-loop state assembly there: creating `actions.current` entries from `actions.next`, resetting per-loop runtime fields for keep-current-list restarts, and calculating `totalNeeded`.
+- `actions.js` now delegates `restart()` current-list rebuilding/reset and `adjustTicksNeeded()` to `IdleLoopsRunnerState`, while keeping `tick()`, restart-wide global resets, and failure analysis in place.
+- Wired the runner seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Added minimal docs in `src/core/README.md`, `src/core/runner/README.md`, and `AI_MAP.md`.
+- Smoke now asserts both extracted core seams are present at runtime: `hasQueueStoreApi: true` and `hasRunnerStateApi: true`.
+- Verification:
+- `node --check src/core/runner/current-action-state.js`
+- `node --check actions.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- 2026-04-15 runner-failure extraction pass:
+- Added `src/core/runner/action-failure.js` as the next runner seam under `src/core/*`.
+- Moved failure classification there: gold-threshold/resource shortage checks, start-condition classification, multipart progress/model classification, and the top-level `getFailureInfo()` / `getAllowedFailureInfo()` helpers.
+- `actions.js` now delegates its failure-analysis methods to `IdleLoopsRunnerFailure`, while keeping the UI-facing `getNextValidAction()` loop and localized error-message formatting in place.
+- Wired the new seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/core/README.md`, `src/core/runner/README.md`, and `AI_MAP.md` so the runner split now documents state assembly plus failure classification separately.
+- Smoke now asserts all extracted core seams are present at runtime: `hasQueueStoreApi: true`, `hasRunnerStateApi: true`, and `hasRunnerFailureApi: true`.
+- Verification:
+- `node --check src/core/runner/action-failure.js`
+- `node --check actions.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- 2026-04-15 runner-selection extraction pass:
+- Added `src/core/runner/next-valid-action.js` as the next runner seam under `src/core/*`.
+- Moved the current-list scan there: blocked-by-limit reset handling, forward scan across failed actions, and activation of the next runnable action are now resolved by `IdleLoopsRunnerSelection.resolveNextValidAction(...)`.
+- `actions.js` still owns the view-side reaction to those scan results: localized error-message formatting, `view.requestUpdate(...)`, and stamping `effectiveTimeElapsed` on the newly activated action.
+- Wired the new seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/core/README.md`, `src/core/runner/README.md`, and `AI_MAP.md` so the runner split now documents state assembly, failure classification, and next-valid-action scanning as separate seams.
+- Smoke now asserts all extracted runner seams are present at runtime: `hasQueueStoreApi: true`, `hasRunnerStateApi: true`, `hasRunnerFailureApi: true`, and `hasRunnerSelectionApi: true`.
+- Verification:
+- `node --check src/core/runner/next-valid-action.js`
+- `node --check actions.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- 2026-04-15 runner-tick extraction pass:
+- Added `src/core/runner/action-tick.js` as the next runner seam under `src/core/*`.
+- Moved the main tick execution helpers there: available-mana normalization, per-action mana budget clipping, multipart progress execution, generic tick-state application, fractional-mana snap handling, completed-action finalization, and post-tick current-position advancement.
+- `actions.js` now orchestrates those helpers plus the existing view updates, instead of inlining the full `tick()` execution path itself.
+- Wired the new seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/core/README.md`, `src/core/runner/README.md`, and `AI_MAP.md` so the runner split now documents state assembly, failure classification, next-valid-action scanning, and tick execution separately.
+- Smoke now asserts all extracted runner seams are present at runtime: `hasQueueStoreApi: true`, `hasRunnerStateApi: true`, `hasRunnerFailureApi: true`, `hasRunnerSelectionApi: true`, and `hasRunnerTickApi: true`.
+- Verification:
+- `node --check src/core/runner/action-tick.js`
+- `node --check actions.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- 2026-04-15 runner-formulas extraction pass:
+- Added `src/core/runner/action-formulas.js` as the next runner seam under `src/core/*`.
+- Moved the remaining action math helpers there: `setAdjustedTicks`, `getMaxTicksForAction`, `getMaxTicksForStat`, and `addExpFromAction`.
+- Kept predictor compatibility by exporting `calcSoulstoneMult` / `calcTalentMult` globally from the new seam, so predictor-side XP modeling still uses the same formula source.
+- `actions.js` now delegates both tick-time math and `adjustTicksNeeded()` math to `IdleLoopsRunnerFormulas` instead of defining those helpers locally.
+- Wired the new seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/core/README.md`, `src/core/runner/README.md`, and `AI_MAP.md` so the runner split now documents formulas separately from tick execution.
+- Smoke now asserts all extracted runner seams are present at runtime: `hasQueueStoreApi: true`, `hasRunnerStateApi: true`, `hasRunnerFailureApi: true`, `hasRunnerSelectionApi: true`, `hasRunnerFormulasApi: true`, and `hasRunnerTickApi: true`.
+- Verification:
+- `node --check src/core/runner/action-formulas.js`
+- `node --check actions.js`
+- `node --check predictor.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- 2026-04-15 driver-loop extraction pass:
+- Added `src/core/loop/game-loop.js`, `src/core/loop/restart-coordinator.js`, and `src/core/loop/offline-progress.js` as the first `driver.js` seams under `src/core/loop/*`.
+- Moved realtime-budget execution, loop-completion/restart state prep, and offline bonus-state calculations out of `driver.js` while leaving DOM/view updates in the page shell.
+- `driver.js` now delegates `executeGameTicks()` to `IdleLoopsGameLoop`, loop completion/restart bookkeeping to `IdleLoopsRestartCoordinator`, and offline bonus toggling/delta resolution to `IdleLoopsOfflineProgress`.
+- Wired the new seams into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/core/README.md`, `src/core/loop/README.md`, and `AI_MAP.md` so the refactor map now covers the first `driver.js` split, not only `actions.js`.
+- Smoke now asserts all extracted loop seams are present at runtime: `hasGameLoopApi: true`, `hasRestartCoordinatorApi: true`, and `hasOfflineProgressApi: true`.
+- Verification:
+- `node --check src/core/loop/game-loop.js`
+- `node --check src/core/loop/restart-coordinator.js`
+- `node --check src/core/loop/offline-progress.js`
+- `node --check driver.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- 2026-04-15 driver-speed-lag extraction pass:
+- Added `src/core/loop/game-speed.js` and `src/core/loop/lag-tracker.js` as the next `driver.js` seams under `src/core/loop/*`.
+- Moved speed multiplier calculation, actual game speed resolution, dungeon soulstone-chance refresh, and lag-state transitions out of `driver.js`.
+- `driver.js` now delegates `getSpeedMult()` / `getActualGameSpeed()` / `refreshDungeons()` to `IdleLoopsGameSpeed`, and delegates `updateLag()` to `IdleLoopsLagTracker` while keeping `view.requestUpdate("updateBonusText")` in the shell.
+- Wired the new seams into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/core/README.md`, `src/core/loop/README.md`, and `AI_MAP.md` so loop boundaries now explicitly include speed and lag helpers.
+- Smoke now asserts the added loop seams are present at runtime: `hasGameSpeedApi: true` and `hasLagTrackerApi: true`.
+- Verification:
+- `node --check src/core/loop/game-speed.js`
+- `node --check src/core/loop/lag-tracker.js`
+- `node --check driver.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- Next suggested seam: keep pushing `driver.js` toward `RunBudgetService` by extracting lag-compensation/refund decisions around `executeGameTicks()`, or start the first `town.js` domain split for `Phase 4`.
+- 2026-04-15 run-budget extraction pass:
+- Added `src/core/loop/run-budget.js` as the next `driver.js` seam under `src/core/loop/*`.
+- Moved post-frame budget decisions out of `driver.js`: lag-pressure detection, backlog refund-to-offline conversion, and lag-reset gating after `executeGameTicks()`.
+- `driver.js` now delegates that decision block to `IdleLoopsRunBudget.resolvePostExecutionBudget(...)` and only performs the resulting side effects (`addOffline`, `updateLag`, `view.update`).
+- Wired the new seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/core/README.md`, `src/core/loop/README.md`, and `AI_MAP.md` so the loop split now explicitly includes frame-budget post-processing.
+- Smoke now asserts the added loop seam is present at runtime: `hasRunBudgetApi: true`.
+- Verification:
+- `node --check src/core/loop/run-budget.js`
+- `node --check driver.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- Next suggested seam: either extract the remaining frame gate / autosave / paused-loop shell from `tick()`, or start the first `town.js` pure-domain split for `Phase 4`.
+- 2026-04-15 frame-gate extraction pass:
+- Added `src/core/loop/frame-gate.js` as the next `driver.js` seam under `src/core/loop/*`.
+- Moved frame-clock advance, autosave gating, frame-budget thresholding, paused-loop offline draining, deadline creation, and radar rollover state out of `driver.js`.
+- `driver.js` now delegates the `tick()` shell to `IdleLoopsFrameGate` and keeps only shell-side effects such as `save()`, `addOffline()`, `updateLag()`, and `view.update()`.
+- Wired the new seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/core/README.md`, `src/core/loop/README.md`, and `AI_MAP.md` so the loop split now explicitly includes the frame gate.
+- Smoke now asserts the added loop seam is present at runtime: `hasFrameGateApi: true`.
+- Verification:
+- `node --check src/core/loop/frame-gate.js`
+- `node --check driver.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- 2026-04-15 town-progression extraction pass:
+- Added `src/core/progression/town-progress.js` and `src/core/progression/README.md` as the first `town.js` seam under `src/core/progression/*`.
+- Moved pure town-state mutation helpers out of `town.js`: regular-variable restart, progress XP gain/cap handling, and limited-action completion bookkeeping.
+- `town.js` now delegates those mutations to `IdleLoopsTownProgress` while keeping UI refreshes, pause behavior, and `adjustAll()` in the shell.
+- Wired the new seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/core/README.md` and `AI_MAP.md` so the refactor map now includes the first `Phase 4` progression/domain seam.
+- Smoke now asserts the added seam is present at runtime: `hasTownProgressApi: true`.
+- Verification:
+- `node --check src/core/progression/town-progress.js`
+- `node --check town.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- Next suggested seam: keep driving `Phase 4` by extracting the remaining town/domain helpers that still force `view.requestUpdate()` / `adjustAll()`, or return to `driver.js` only for the small leftover `singleTick()`/animation shell.
+- 2026-04-15 town-state extraction pass:
+- Added `src/core/domain/town-state.js` and `src/core/domain/README.md` as the next `Phase 4` seam under `src/core/domain/*`.
+- Moved pure town-domain logic out of `town.js`: progress level math, percent-to-next math, town var initialization for limited/progress/multipart actions, and constructor-time action-list initialization/reordering.
+- `town.js` now delegates `expFromLevel()`, `getLevel()`, `getPrcToNext()`, `createVars()`, `createProgressVars()`, `createMultipartVars()`, and constructor-time town action setup to `IdleLoopsTownState`.
+- Wired the new seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/core/README.md`, `AI_MAP.md`, and smoke bootstrap assertions so the domain seam is now part of the runtime contract: `hasTownStateApi: true`.
+- Verification:
+- `node --check src/core/domain/town-state.js`
+- `node --check src/core/progression/town-progress.js`
+- `node --check town.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- 2026-04-15 town-progress follow-up pass:
+- Extended `src/core/progression/town-progress.js` with `collectLevelUpRegularUpdates()` so `finishProgress()` no longer computes its own regular-update target list inline.
+- `town.js` now keeps only the shell-side UI effects (`view.requestUpdate`, `adjustAll`, `pauseGame`) while the update-target derivation lives in the progression seam.
+- Verification:
+- `node --check src/core/progression/town-progress.js`
+- `node --check town.js`
+- `npm run smoke`
+- `npm run baseline:check`
+- Next suggested seam: finish shrinking `town.js` by extracting the remaining shell coordination around progress-complete pause behavior and/or shared update descriptors, then start the first non-town domain object split.
+- 2026-04-15 resource-state extraction pass:
+- Added `src/core/domain/resource-state.js` as the first non-town `Phase 4` seam under `src/core/domain/*`.
+- Moved pure resource mutation helpers out of `driver.js`: delta application, reset-to-template, and full reset object construction including the glasses carry-over rule.
+- `driver.js` now delegates `addResource()`, `resetResource()`, and `resetResources()` state mutation to `IdleLoopsResourceState`, while keeping `view.requestUpdate(...)` and other shell-side effects in place.
+- Wired the new seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/core/domain/README.md`, `src/core/README.md`, `AI_MAP.md`, and smoke bootstrap assertions so the resource seam is now part of the runtime contract: `hasResourceStateApi: true`.
+- Verification:
+- `node --check src/core/domain/resource-state.js`
+- `node --check driver.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- Phase note: `Phase 4` is no longer only `town.js`; domain seams now cover both town state and resource state.
+- Next suggested seam: either finish the last `town.js` shell coordination around progress completion, or start lifting another domain object such as buff/state caps out of legacy page shells.
+- 2026-04-15 meta-progression extraction pass:
+- Added `src/core/progression/meta-progression.js` as the next `Phase 4` seam under `src/core/progression/*`.
+- Moved small cross-loop progression mutations out of inline action definitions: training-limit increments/resets, gold investment accumulation/capping, and stone-use state updates/maxing.
+- `actionList.js` now delegates those mutations to `IdleLoopsMetaProgression` instead of open-coding the scalar/object updates inline.
+- Wired the new seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/core/progression/README.md`, `src/core/README.md`, `AI_MAP.md`, and smoke bootstrap assertions so the progression seam is now part of the runtime contract: `hasMetaProgressionApi: true`.
+- Verification:
+- `node --check src/core/progression/meta-progression.js`
+- `node --check actionList.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- 2026-04-15 town-progress descriptor pass:
+- Extended `src/core/progression/town-progress.js` with `describeProgressEffects()` so `finishProgress()` in `town.js` now consumes a progression descriptor instead of deriving its own refresh/update targets inline.
+- `town.js` keeps only shell-side UI work (`pauseGame`, `adjustAll`, `view.requestUpdate`) while the progression seam now owns more of the outcome description.
+- Verification:
+- `node --check src/core/progression/town-progress.js`
+- `node --check town.js`
+- `npm run smoke`
+- `npm run baseline:check`
+- Next suggested seam: lift the remaining buff-cap / prestige-adjacent state mutations into domain/progression helpers, or finish the last thin shell wrappers around town progress completion.
+- 2026-04-15 prestige-state extraction pass:
+- Added `src/core/progression/prestige-state.js` as the next `Phase 4` seam under `src/core/progression/*`.
+- Moved core prestige state mutations out of `prestige.js` and default initialization in `saving.js`: completion reward application, affordability checks, point spending, snapshot creation/application, and full reset of prestige values.
+- `prestige.js` now delegates prestige state mutation to `IdleLoopsPrestigeState` and keeps only shell-side effects such as confirmation, buff carry-over construction, save/restart wiring, and `view.updatePrestigeValues()`.
+- Wired the new seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/core/progression/README.md`, `src/core/README.md`, `AI_MAP.md`, and smoke bootstrap assertions so the prestige seam is now part of the runtime contract: `hasPrestigeStateApi: true`.
+- Verification:
+- `node --check src/core/progression/prestige-state.js`
+- `node --check prestige.js`
+- `node --check saving.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- 2026-04-15 buff-cap seam pass:
+- Added `src/core/progression/buff-cap-state.js` and moved buff-cap clamp/apply logic out of `views/main.view.js`.
+- `updateBuffCaps()` now delegates cap normalization and state mutation to `IdleLoopsBuffCapState`, leaving the view layer to handle only DOM input reads/writes.
+- Wired the new seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/core/progression/README.md`, `src/core/README.md`, `AI_MAP.md`, and smoke bootstrap assertions so the buff-cap seam is now part of the runtime contract: `hasBuffCapStateApi: true`.
+- Verification:
+- `node --check src/core/progression/buff-cap-state.js`
+- `node --check views/main.view.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- Phase note: `Phase 4` seams now cover town state, resource state, town progression, meta progression, prestige state, and buff-cap state.
+- Next suggested seam: continue shrinking legacy shell ownership around remaining stateful globals such as mana/timeNeeded/offline/totals, or finish the last thin `town.js` shell coordination paths.
+- 2026-04-15 runtime-state extraction pass:
+- Added `src/core/progression/runtime-state.js` as the next `Phase 4` seam under `src/core/progression/*`.
+- Moved core runtime carry-over state mutations out of legacy shells: loop total accumulation, mana-to-time-budget growth, borrowed offline time apply/return, challenge restart time-budget calculation, and preserved runtime state snapshotting for prestige resets.
+- `driver.js` now delegates `loopEnd()`, `addMana()`, `borrowTime()`, and `returnTime()` state mutation to `IdleLoopsRuntimeState`.
+- `prestige.js` now uses `IdleLoopsRuntimeState.snapshotPersistentRunState(...)` when carrying totals/offline state across prestige resets.
+- `challenges.js` now uses `IdleLoopsRuntimeState.buildChallengeTimeNeeded(...)` for the challenge-3 restart budget path instead of open-coding the formula inline.
+- Wired the new seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/core/progression/README.md`, `src/core/README.md`, `AI_MAP.md`, and smoke bootstrap assertions so the runtime seam is now part of the runtime contract: `hasRuntimeStateApi: true`.
+- Verification:
+- `node --check src/core/progression/runtime-state.js`
+- `node --check driver.js`
+- `node --check prestige.js`
+- `node --check challenges.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- Phase note: `Phase 4` seams now cover town state, resource state, town progression, meta progression, prestige state, buff-cap state, and runtime carry-over state.
+- Next suggested seam: finish the last thin `town.js` shell wrappers, or start isolating stat/buff mutation paths so domain state no longer relies on page-level shells for progression updates.
+- 2026-04-15 character-state extraction pass:
+- Added `src/core/progression/character-state.js` as the next `Phase 4` seam under `src/core/progression/*`.
+- Moved core character progression mutations out of `stats.js`: skill XP application, buff amount application, stat XP application, and restart-time stat level reset.
+- `stats.js` now delegates those state mutations to `IdleLoopsCharacterState` and keeps action-log updates plus `view.requestUpdate(...)` in the shell.
+- Wired the new seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/core/progression/README.md`, `src/core/README.md`, `AI_MAP.md`, and smoke bootstrap assertions so the character seam is now part of the runtime contract: `hasCharacterStateApi: true`.
+- Verification:
+- `node --check src/core/progression/character-state.js`
+- `node --check stats.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- 2026-04-15 character-state follow-up pass:
+- Extended `src/core/progression/character-state.js` with soulstone and reset helpers so `actionList.js` no longer directly mutates character progression state in the dungeon reward path or `Imbue Soul` reset path.
+- `actionList.js` now routes soulstone grants and the `Imbuement`/`Imbuement2` reset block through `IdleLoopsCharacterState`.
+- Verification:
+- `node --check src/core/progression/character-state.js`
+- `node --check actionList.js`
+- `npm run smoke`
+- `npm run baseline:check`
+- Phase note: `Phase 4` seams now cover town state, resource state, character state, town progression, meta progression, prestige state, buff-cap state, and runtime carry-over state.
+- Next suggested seam: continue shrinking the remaining shell ownership in `town.js` and `views/main.view.js`, or start isolating save-adjacent state reset helpers so `saving.js` stops directly reinitializing runtime state piece by piece.
+- 2026-04-15 story-state extraction pass:
+- Added `src/core/progression/story-state.js` as the next `Phase 4` seam under `src/core/progression/*`.
+- Moved `views/main.view.js` story-state mutation helpers out of the mega-view: global story unlock gating, story flag mutation, and story-var floor updates now delegate to `IdleLoopsStoryState`.
+- Wired the new seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/core/progression/README.md`, `src/core/README.md`, `AI_MAP.md`, and smoke bootstrap assertions so the story seam is now part of the runtime contract: `hasStoryStateApi: true`.
+- Verification:
+- `node --check src/core/progression/story-state.js`
+- `node --check views/main.view.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- 2026-04-15 phase-6 ui-controller split pass:
+- Added browser-only UI controller seams under `src/ui/controllers/*`: `cloud-save-ui.js`, `loadout-controller.js`, `town-browser-controller.js`, `planner-controller.js`, and `reading-shell.js`.
+- Added `src/ui/README.md` and `src/ui/controllers/README.md` to document the new UI layer boundaries and the rule that these controllers own browser composition only, not gameplay/save rules.
+- `views/main.view.js` now delegates cloud-save UI, loadout-manager shell, town-browser/action-category tools, planner shell/quick settings/predictor panel, and reading shell/nav/menu behavior to `IdleLoops*Controller` seams while preserving legacy DOM ids/classes and the old `view.*` entrypoints.
+- Wired the controller seams into the page bootstrap via `index.html`; the worker stays UI-free and unchanged.
+- Updated `tests/smoke/runtime-smoke.mjs` and `AI_MAP.md` so UI controller extraction is now part of the runtime contract: `hasUiCloudSaveUiApi`, `hasUiLoadoutControllerApi`, `hasUiTownBrowserControllerApi`, `hasUiPlannerControllerApi`, `hasUiReadingShellControllerApi`.
+- Verification:
+- `node --check src/ui/controllers/cloud-save-ui.js`
+- `node --check src/ui/controllers/loadout-controller.js`
+- `node --check src/ui/controllers/town-browser-controller.js`
+- `node --check src/ui/controllers/planner-controller.js`
+- `node --check src/ui/controllers/reading-shell.js`
+- `node --check views/main.view.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- Phase note: `Phase 6` is now considered complete for the shell/controller split. `views/main.view.js` still owns large render/update surfaces such as inspector/chronicle rendering, but the major browser-only control shells are no longer implemented inline in the mega-view.
+- Next suggested phase: start `Phase 7` by splitting predictor service/bridge/worker responsibilities so main thread and worker stop sharing behavior through whole-script imports.
+- 2026-04-15 phase-7 predictor-service split pass:
+- Added `src/services/predictor/README.md`, `src/services/predictor/predictor-bridge.js`, and `src/services/predictor/predictor-worker-service.js`.
+- Moved main-thread predictor worker lifecycle/message-queue logic out of `predictor.js` into `IdleLoopsPredictorBridge`, including worker creation, init-message dispatch, channel routing, and snapshot re-import requests.
+- Moved worker-side message orchestration out of `predictor-worker.js` into `IdleLoopsPredictorWorkerService`; the worker file now only bootstraps the predictor and hands messages to the service.
+- `predictor.js` now keeps predictor formulas/update flow while delegating background-thread bridge concerns to `src/services/predictor/*`.
+- Wired predictor services into both browser and worker startup paths via `index.html` and `predictor-worker.js`.
+- Updated `src/services/README.md`, `AI_MAP.md`, and smoke bootstrap assertions so predictor service extraction is now part of the runtime contract: `hasPredictorBridgeApi`, `hasPredictorWorkerServiceApi`.
+- Verification:
+- `node --check src/services/predictor/predictor-bridge.js`
+- `node --check src/services/predictor/predictor-worker-service.js`
+- `node --check predictor.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run smoke`
+- `npm run regression`
+- Phase note: `Phase 7` is now considered complete for predictor bridge/service separation. The worker still bootstraps against the legacy runtime bundle, but predictor bridge ownership and worker message orchestration are no longer embedded inline in legacy entry files.
+- Next suggested phase: move to `Phase 8` documentation/contracts, then optionally deepen predictor shared-core extraction later without blocking current maintainability goals.
+- 2026-04-15 phase-8 documentation/contracts pass:
+- Expanded `docs/ARCHITECTURE.md` from the initial bootstrap note into a full current-state architecture contract covering phases, runtime ownership, invariants, source-of-truth status, and next-phase scope.
+- Expanded `docs/SAVE_SCHEMA.md` so it now documents the real save boundary: `saving.js` compatibility, service seams under `src/services/*`, `LegacyAppContext` bridging, active fixtures, and current mutation/apply rules.
+- Added `docs/RUNTIME_FLOW.md` to describe browser boot, predictor worker boot, loop/runner flow, save/load flow, UI flow, content flow, and the remaining choke points.
+- Added `docs/ACTION_AUTHORING.md` to pin the current runtime truth (`actionList.js`), the target authoring direction, minimum metadata shape, authoring rules, safe migration workflow, and review checklist.
+- Added `docs/TERMS.md` so queue/current/next/tick/loop/seam/runtime truth and other long-lived project terms now have stable definitions for maintainers and AI tools.
+- Updated `AI_MAP.md` so the doc set is part of the fast-entry contract for future maintenance.
+- Verification:
+- `npm run regression`
+- Phase note: `Phase 8` is now considered complete for architecture/developer contracts. The next mainline phase is `Phase 9` accessibility and sustainment work.
+- 2026-04-15 phase-9 accessibility baseline pass:
+- Added `src/ui/controllers/accessibility-controller.js` as the browser-only accessibility seam under `src/ui/controllers/*`.
+- Moved keyboard tooltip access, ARIA syncing for tabs/popups, live-region announcements, and time-bar progress semantics into `IdleLoopsAccessibilityController` instead of leaving them implicit in `views/main.view.js`.
+- Wired the accessibility seam into browser startup via `index.html`, `views/main.view.js`, `src/ui/controllers/reading-shell.js`, and `driver.js`.
+- Added hidden live regions to `index.html`, reduced-motion fallbacks plus broader keyboard focus styling to `stylesheet.css`, and accessibility runtime contract checks to `tests/smoke/runtime-smoke.mjs`.
+- Updated `src/ui/README.md`, `src/ui/controllers/README.md`, and `AI_MAP.md` so the accessibility shell is part of the stable maintenance map.
+- Verification:
+- `npm run regression`
+- Phase note: `Phase 9` is now considered complete for the accessibility baseline. Next focus is post-phase sustainment work: content source-of-truth unification, further mega-view shrinkage, and optional modern tooling only after compatibility remains stable.
+- 2026-04-15 phase-10 content metadata baseline pass:
+- Added `src/content/README.md`, `src/content/definitions/README.md`, `src/content/zone-registry.js`, `src/content/action-metadata-registry.js`, and `src/content/content-registry.js`.
+- Added `tools/build-content.mjs` plus committed output `generated/action-metadata-registry.js` so action metadata is now generated from the live runtime and loaded back as a stable static artifact.
+- Wired the generated content metadata seam into both browser and predictor startup paths via `index.html`, `predictor-worker.js`, and `src/app/bootstrap.js`; `IdleLoopsBootstrap.getContentRegistry()` now exposes the runtime-facing content entry.
+- Updated `docs/ARCHITECTURE.md`, `docs/RUNTIME_FLOW.md`, `docs/ACTION_AUTHORING.md`, and `AI_MAP.md` so generated content metadata is now part of the documented maintenance contract.
+- Updated `tests/smoke/runtime-smoke.mjs` so regression now verifies the content registry APIs exist and that generated metadata still matches the live `totalActionList` runtime registry.
+- Verification:
+- `npm run content:build`
+- `npm run regression`
+- Phase note: `Phase 10` is now considered complete for the content metadata baseline. Execution truth is still `actionList.js`, but runtime-readable metadata no longer lives only in the legacy action file.
+- 2026-04-15 phase-11 content hook registry pass:
+- Added `src/content/runtime-hook-registry.js` as the next explicit content seam.
+- `src/content/content-registry.js` now exposes runtime hook lookup/invocation alongside zone and action metadata.
+- `src/content/action-metadata-registry.js` now resolves `rewardKey` and `progressKey` to real hook ids when the underlying live runtime hook exists, instead of leaving placeholder ids detached from execution.
+- Wired the runtime hook registry into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `tests/smoke/runtime-smoke.mjs` so regression now verifies hook registry APIs exist and that live content hooks actually execute: `Wander.visible/unlocked` resolve to `true` and `Smash Pots` cost resolves to `{ manaCost: 50, goldCost: 100 }` on the baseline fixture.
+- Verification:
+- `npm run regression`
+- Phase note: `Phase 11` is now considered complete for the content hook baseline. The next content-side work is replacing legacy hook adapters with explicit rule/effect/story modules while keeping the generated ids stable.
+- 2026-04-15 phase-12 content hook-family split pass:
+- Added `src/content/rules/legacy-action-rules.js`, `src/content/effects/legacy-action-effects.js`, and `src/content/stories/legacy-story-hooks.js`, plus README files for each content execution family.
+- `src/content/runtime-hook-registry.js` no longer classifies hooks ad hoc; it now delegates hook invocation and descriptor ownership to explicit `rule / effect / story` adapter seams.
+- `src/content/content-registry.js` now exposes hook-family-aware summaries and `listRuntimeHooksByKind(...)`.
+- Wired the new content execution-family seams into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `tests/smoke/runtime-smoke.mjs` so regression now verifies the family seams exist and that descriptors are typed correctly: `legacy:Wander:visible` is a `rule`, `legacy:Wander:storyReqs` is a `story`, and `legacy:SmashPots:finish` is an `effect`.
+- Verification:
+- `npm run regression`
+- Phase note: `Phase 12` is now considered complete for the content hook-family baseline. The next content-side work is extracting selected hook families out of adapter delegation and into real rules/effects/story modules while preserving current ids and behavior.
+- 2026-04-15 phase-13 shared content-definition extraction pass:
+- `actionList.js` no longer owns the inline implementations for the shared survey/ruins/haul/assassin definition family. Those constructors/helpers now execute through `src/content/definitions/legacy-shared-actions.js` via `IdleLoopsLegacyDefinitionFactories.registerSharedActionFactories(...)`.
+- Runtime behavior remains the same: action ids, `varName`s, action instantiation sites, hook ids, save semantics, and predictor compatibility were left intact. This pass only moved the shared definition implementations out of the legacy mega-file.
+- Updated `tests/smoke/runtime-smoke.mjs` so regression now verifies both the definition-factory API and that live runtime actions are actually backed by the extracted seam (`Action.AssassinZ0 instanceof sharedDefinitions.AssassinAction` plus global rock-adjustment helpers still present).
+- Updated `docs/ARCHITECTURE.md`, `docs/RUNTIME_FLOW.md`, `docs/ACTION_AUTHORING.md`, `AI_MAP.md`, and `src/content/definitions/README.md` so the first content-definition extraction is part of the documented maintenance contract.
+- Verification:
+- `node --check src/content/definitions/legacy-shared-actions.js`
+- `node --check actionList.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run regression`
+- Phase note: `Phase 13` is now considered complete for the first shared content-definition extraction baseline. The next content-side work is zone-by-zone definition extraction and replacing selected legacy rule/effect/story adapters with true extracted implementations behind the existing ids.
+- 2026-04-15 phase-14 first zone-module extraction pass:
+- Added `src/content/definitions/beginnersville-actions.js` and moved the full Zone 1 / Beginnersville registration block out of `actionList.js` into `IdleLoopsZoneDefinitionFactories.registerBeginnersvilleActions(...)`.
+- `actionList.js` now consumes that zone module through an explicit registration seam after `lateGameActions` is created, while preserving all action ids, `varName`s, helper behavior, global compatibility hooks (`adjustPots`, `adjustLocks`, `adjustSQuests`, `adjustLQuests`), and `DungeonAction.prototype.finishDungeon` behavior.
+- Wired the new zone-definition module into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `tests/smoke/runtime-smoke.mjs` so regression now verifies both the zone-definition factory API and that live runtime Beginnersville actions/helpers are actually backed by the extracted seam.
+- Updated `docs/ARCHITECTURE.md`, `docs/RUNTIME_FLOW.md`, `docs/ACTION_AUTHORING.md`, `AI_MAP.md`, and `src/content/definitions/README.md` so the first zone-scale content extraction is part of the documented maintenance contract.
+- Verification:
+- `node --check src/content/definitions/beginnersville-actions.js`
+- `node --check actionList.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run regression`
+- Phase note: `Phase 14` is now considered complete for the first zone-sized content-definition extraction baseline. The next content-side work is extracting additional town blocks and then replacing selected legacy rule/effect/story adapters with true extracted implementations behind the existing ids.
+- 2026-04-15 phase-15 second zone-module extraction pass:
+- Added `src/content/definitions/forest-path-actions.js` and moved the full Zone 2 / Forest Path registration block out of `actionList.js` into `IdleLoopsZoneDefinitionFactories.registerForestPathActions(...)`.
+- `actionList.js` now consumes that second zone module through an explicit registration seam, while the cross-zone soulstone sacrifice helpers remain in `actionList.js` for now because they are still shared by later zones.
+- Preserved all Forest Path action ids, `varName`s, helper behavior, and driver-facing global compatibility hooks (`adjustWildMana`, `adjustHunt`, `adjustHerbs`).
+- Wired the new zone-definition module into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `tests/smoke/runtime-smoke.mjs` so regression now verifies the Forest Path zone-definition factory API and that live runtime Forest Path actions/helpers are actually backed by the extracted seam.
+- Updated `docs/ARCHITECTURE.md`, `docs/RUNTIME_FLOW.md`, `docs/ACTION_AUTHORING.md`, `AI_MAP.md`, and `src/content/definitions/README.md` so the second zone-scale content extraction is part of the documented maintenance contract.
+- Verification:
+- `node --check src/content/definitions/forest-path-actions.js`
+- `node --check actionList.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run regression`
+- Phase note: `Phase 15` is now considered complete for the second zone-sized content-definition extraction baseline. The next content-side work is extracting Merchanton and continuing to peel cross-zone helpers away from `actionList.js`.
+- 2026-04-15 phase-16 third zone-module extraction pass:
+- Added `src/content/definitions/merchanton-actions.js` and moved the full Zone 3 / Merchanton registration block out of `actionList.js` into `IdleLoopsZoneDefinitionFactories.registerMerchantonActions(...)`.
+- `actionList.js` now consumes that third zone module through an explicit registration seam, while keeping cross-zone and post-Merchanton helpers outside the extracted block. Merchanton-owned compatibility helpers `adjustSuckers`, `getAdvGuildRank`, and `getCraftGuildRank` are now exported explicitly from the module so `driver.js`, `stats.js`, and later content still see the same runtime API.
+- Preserved all Merchanton action ids, `varName`s, guild-rank behavior, dungeon/trial behavior, and unlock routing.
+- Wired the new zone-definition module into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `tests/smoke/runtime-smoke.mjs` so regression now verifies the Merchanton zone-definition factory API and that live runtime Merchanton actions/helpers are actually backed by the extracted seam.
+- Updated `docs/ARCHITECTURE.md`, `docs/RUNTIME_FLOW.md`, `docs/ACTION_AUTHORING.md`, `AI_MAP.md`, and `src/content/definitions/README.md` so the third zone-scale content extraction is part of the documented maintenance contract.
+- Verification:
+- `node --check src/content/definitions/merchanton-actions.js`
+- `node --check actionList.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run regression`
+- Phase note: `Phase 16` is now considered complete for the third zone-sized content-definition extraction baseline. The next content-side work is extracting Mt. Olympus and then peeling remaining cross-zone helpers away from `actionList.js`.
+- 2026-04-15 phase-17 fourth zone-module extraction pass:
+- Added `src/content/definitions/olympus-actions.js` and moved the full Zone 4 / Mt. Olympus registration block out of `actionList.js` into `IdleLoopsZoneDefinitionFactories.registerOlympusActions(...)`.
+- `actionList.js` now consumes that fourth zone module through an explicit registration seam, while the cross-zone soulstone sacrifice helpers remain in `actionList.js` because they are still shared by later regions. Olympus-owned compatibility helpers `adjustGeysers`, `adjustMineSoulstones`, and `adjustArtifacts` are now exported explicitly from the module so `driver.js` and the rest of the runtime still see the same API.
+- Preserved all Olympus action ids, `varName`s, buff/progression behavior, and branch routing (`Face Judgement`, `Guru`, `Imbue Mind`, `Imbue Body`) without changing formulas or save semantics.
+- Wired the new zone-definition module into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `tests/smoke/runtime-smoke.mjs` so regression now verifies the Olympus zone-definition factory API and that live runtime Olympus actions/helpers are actually backed by the extracted seam.
+- Updated `docs/ARCHITECTURE.md`, `docs/RUNTIME_FLOW.md`, `docs/ACTION_AUTHORING.md`, `AI_MAP.md`, and `src/content/definitions/README.md` so the fourth zone-scale content extraction is part of the documented maintenance contract.
+- Verification:
+- `node --check src/content/definitions/olympus-actions.js`
+- `node --check actionList.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run regression`
+- Phase note: `Phase 17` is now considered complete for the fourth zone-sized content-definition extraction baseline. The next content-side work is extracting Valhalla and then continuing to peel remaining cross-zone helpers away from `actionList.js`.

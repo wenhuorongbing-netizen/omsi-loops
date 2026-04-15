@@ -2,10 +2,53 @@ importScripts(
     "data.js",
     "localization.js",
     "helpers.js",
+    "src/services/save/save-service.js",
+    "src/services/save/save-migrations.js",
+    "src/services/options/options-store.js",
+    "src/services/save/cloud-save-service.js",
+    "src/services/predictor/predictor-bridge.js",
+    "src/services/predictor/predictor-worker-service.js",
+    "src/content/definitions/legacy-shared-actions.js",
+    "src/content/definitions/beginnersville-actions.js",
+    "src/content/definitions/forest-path-actions.js",
+    "src/content/definitions/merchanton-actions.js",
+    "src/content/definitions/olympus-actions.js",
     "actionList.js",
+    "src/content/zone-registry.js",
+    "generated/action-metadata-registry.js",
+    "src/content/action-metadata-registry.js",
+    "src/content/rules/legacy-action-rules.js",
+    "src/content/effects/legacy-action-effects.js",
+    "src/content/stories/legacy-story-hooks.js",
+    "src/content/runtime-hook-registry.js",
+    "src/content/content-registry.js",
+    "src/core/loop/game-loop.js",
+    "src/core/loop/restart-coordinator.js",
+    "src/core/loop/offline-progress.js",
+    "src/core/loop/game-speed.js",
+    "src/core/loop/lag-tracker.js",
+    "src/core/loop/run-budget.js",
+    "src/core/loop/frame-gate.js",
+    "src/core/progression/world-state.js",
     "driver.js",
     "stats.js",
+    "src/core/queue/queue-store.js",
+    "src/core/runner/current-action-state.js",
+    "src/core/runner/action-failure.js",
+    "src/core/runner/next-valid-action.js",
+    "src/core/runner/action-formulas.js",
+    "src/core/runner/action-tick.js",
     "actions.js",
+    "src/core/domain/town-state.js",
+    "src/core/domain/resource-state.js",
+    "src/core/progression/town-progress.js",
+    "src/core/progression/meta-progression.js",
+    "src/core/progression/prestige-state.js",
+    "src/core/progression/buff-cap-state.js",
+    "src/core/progression/runtime-state.js",
+    "src/core/progression/character-state.js",
+    "src/core/progression/story-state.js",
+    "src/core/progression/challenge-state.js",
     "town.js",
     "prestige.js",
     "src/app/legacy-globals.js",
@@ -55,91 +98,13 @@ importScripts(
 console.log("starting predictor worker");
 
 const predictor = IdleLoopsBootstrap.bootstrapPredictorWorker();
-/** @type {MessageToPredictor} */
-let queuedUpdate;
+const predictorWorkerService = IdleLoopsPredictorWorkerService.create({
+    predictor,
+    dataApi: Data,
+    postMessage: self.postMessage.bind(self),
+});
 
 /** @param {MessageEvent<MessageToPredictor>} e */
 onmessage = e => {
-    const {data} = e;
-    // console.log("Got message:", data);
-    handleMessage(data);
+    predictorWorkerService.handleMessage(e.data);
 }
-/** @param {MessageToPredictor} data */
-function handleMessage(data) {
-    /** @type {(message: MessageFromPredictor) => void} */
-    const postMessage = self.postMessage;
-
-    if (!data?.type) {
-        console.error("Unexpected message, no type:", data);
-        return;
-    }
-    
-    switch (data.type) {
-        // case "loadSave":
-        //     console.log("loading save");
-        //     doLoad(data.save);
-        //     console.log("loaded save");
-        //     break;
-        case "setOptions":
-            predictor.setOptions(data.options);
-            // console.debug("set options");
-            break;
-        case "verifyDefaultIds":
-            if (!Data.verifyDefaultIds(data.idRefs)) {
-                postMessage({type: "error", message: "default id verification failed"});
-            }
-            // console.debug("default ids verified");
-            break;
-        case "importSnapshots":
-            if (data.resetToDefaults) {
-                // when the main thread has reason to believe that none of the cached snapshots will be useful
-                // anymore, it will send resetToDefaults to clear Data.snapshotStack.
-                Data.resetToDefaults();
-            }
-            const {snapshotExports} = data;
-            let loadCount = 0;
-            try {
-                for (const exportToLoad of snapshotExports) {
-                    if (Data.getSnapshotIndex({id: exportToLoad.id}) >= 0) {
-                        // already loaded, skip
-                        console.debug(`Already loaded snapshot ${exportToLoad.id}`)
-                        continue;
-                    }
-                    // console.debug(`importing snapshot ${exportToLoad.id}`);
-                    Data.importSnapshot(exportToLoad);
-                    loadCount++;
-                }
-            } catch (e) {
-                if (e instanceof SnapshotMissingError) {
-                    console.error(`missing snapshot ${e.id}?`, e);
-                    postMessage({type: "error", message: e.message});
-                } else {
-                    postMessage({type: "error", message: e.toString()});
-                }
-                return;
-            }
-            // console.debug(`imported ${loadCount} snapshots of ${snapshotExports.length} provided`, snapshotExports);
-            if (queuedUpdate) {
-                // succeeded, go back into startUpdate
-                const qu = queuedUpdate;
-                queuedUpdate = undefined;
-                handleMessage(qu);
-            }
-            break;
-        case "startUpdate":
-            const {runData, snapshotHeritage} = data;
-            const id = snapshotHeritage.at(-1);
-            if (Data.getSnapshotIndex({id}) >= 0) {
-                // console.debug(`Loading snapshot ${id}`);
-                Data.getSnapshot({id}).applyState();
-                predictor.workerUpdate(runData);
-                // console.debug("started update");
-            } else {
-                const requiredSnapshots = snapshotHeritage.filter(id => Data.getSnapshotIndex({id}) === -1);
-                // console.debug(`Requesting ${requiredSnapshots.length} snapshots for heritage of length ${snapshotHeritage.length}: ${requiredSnapshots.join(", ")}`, snapshotHeritage);
-                queuedUpdate = data;
-                postMessage({type: "getSnapshots", snapshotIds: requiredSnapshots});
-            }
-            break;
-    }
-};

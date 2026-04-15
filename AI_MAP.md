@@ -2,14 +2,72 @@
 
 ## Fast Answers
 
+- Architecture overview: `docs/ARCHITECTURE.md`
+- Runtime flow contract: `docs/RUNTIME_FLOW.md`
+- Save boundary contract: `docs/SAVE_SCHEMA.md`
+- Action authoring contract: `docs/ACTION_AUTHORING.md`
+- Shared terminology: `docs/TERMS.md`
 - App bootstrap: `src/app/bootstrap.js`
+- Content zone registry seam: `src/content/zone-registry.js`
+- Content action metadata seam: `src/content/action-metadata-registry.js`
+- Content definition factory seam: `src/content/definitions/legacy-shared-actions.js`
+- Zone definition factory seam: `src/content/definitions/beginnersville-actions.js`
+- Forest Path definition factory seam: `src/content/definitions/forest-path-actions.js`
+- Merchanton definition factory seam: `src/content/definitions/merchanton-actions.js`
+- Olympus definition factory seam: `src/content/definitions/olympus-actions.js`
+- Content runtime hook seam: `src/content/runtime-hook-registry.js`
+- Content rule adapter seam: `src/content/rules/legacy-action-rules.js`
+- Content effect adapter seam: `src/content/effects/legacy-action-effects.js`
+- Content story adapter seam: `src/content/stories/legacy-story-hooks.js`
+- Combined content registry seam: `src/content/content-registry.js`
+- Generated action metadata: `generated/action-metadata-registry.js`
+- Content build entry: `tools/build-content.mjs`
 - Legacy binding bridge: `src/app/legacy-globals.js`
 - Explicit app context scaffold: `src/app/app-context.js`
 - Explicit session scaffold: `src/app/game-session.js`
+- Save service seam: `src/services/save/save-service.js`
+- Save migrations seam: `src/services/save/save-migrations.js`
+- Options store seam: `src/services/options/options-store.js`
+- Cloud save seam: `src/services/save/cloud-save-service.js`
+- Predictor bridge seam: `src/services/predictor/predictor-bridge.js`
+- Predictor worker-service seam: `src/services/predictor/predictor-worker-service.js`
+- Cloud save UI seam: `src/ui/controllers/cloud-save-ui.js`
+- Loadout UI seam: `src/ui/controllers/loadout-controller.js`
+- Town browser UI seam: `src/ui/controllers/town-browser-controller.js`
+- Planner UI seam: `src/ui/controllers/planner-controller.js`
+- Reading shell UI seam: `src/ui/controllers/reading-shell.js`
+- Accessibility UI seam: `src/ui/controllers/accessibility-controller.js`
+- Loop seam: `src/core/loop/game-loop.js`
+- Restart seam: `src/core/loop/restart-coordinator.js`
+- Offline seam: `src/core/loop/offline-progress.js`
+- Speed seam: `src/core/loop/game-speed.js`
+- Lag seam: `src/core/loop/lag-tracker.js`
+- Run-budget seam: `src/core/loop/run-budget.js`
+- Frame-gate seam: `src/core/loop/frame-gate.js`
+- World state seam: `src/core/progression/world-state.js`
+- Town state seam: `src/core/domain/town-state.js`
+- Resource state seam: `src/core/domain/resource-state.js`
+- Town progression seam: `src/core/progression/town-progress.js`
+- Meta progression seam: `src/core/progression/meta-progression.js`
+- Prestige state seam: `src/core/progression/prestige-state.js`
+- Buff cap seam: `src/core/progression/buff-cap-state.js`
+- Runtime state seam: `src/core/progression/runtime-state.js`
+- Character state seam: `src/core/progression/character-state.js`
+- Story state seam: `src/core/progression/story-state.js`
+- Challenge state seam: `src/core/progression/challenge-state.js`
+- Queue storage seam: `src/core/queue/queue-store.js`
+- Runner state seam: `src/core/runner/current-action-state.js`
+- Runner failure seam: `src/core/runner/action-failure.js`
+- Runner selection seam: `src/core/runner/next-valid-action.js`
+- Runner formulas seam: `src/core/runner/action-formulas.js`
+- Runner tick seam: `src/core/runner/action-tick.js`
 - Browser session entry: `IdleLoopsBootstrap.getGameSession()`
 - Save-facing global bridge: `IdleLoopsAppContext.getLegacyAppContext()`
+- Save-facing collection bridge: `LegacyAppContext.captureCollectionState()/applyCollectionState()`
+- Session snapshot now carries story/totals/prestige/buff-cap state alongside queue and progression/challenge collections
 - Runtime content truth today: `actionList.js`
 - Save compatibility today: `saving.js`
+- Local save/options/cloud service seams now live under `src/services/*`
 - Predictor worker entry: `predictor-worker.js`
 - Smoke regression entry: `tools/run-smoke.mjs`
 - Fixture/baseline entry: `tests/fixtures/saves/manifest.json`
@@ -17,13 +75,37 @@
 ## Current Boundaries
 
 - `src/app/*` owns startup and explicit access points into the legacy global runtime.
-- `actionList.js` is still the live runtime action registry.
-- `saving.js` is still the save/load compatibility boundary, but core save scalars now bridge through `LegacyAppContext`.
-- `views/main.view.js` is still the dominant UI composition layer.
+- `src/content/*` owns stable zone definitions, generated action metadata lookup, and the combined content registry entry used for future content extraction.
+- `src/content/definitions/*` now owns the first extracted shared legacy action-definition factories that are consumed by `actionList.js`.
+- `src/content/definitions/beginnersville-actions.js` now owns the first zone-sized action registration module consumed by `actionList.js`.
+- `src/content/definitions/forest-path-actions.js` now owns the second zone-sized action registration module consumed by `actionList.js`.
+- `src/content/definitions/merchanton-actions.js` now owns the third zone-sized action registration module consumed by `actionList.js`.
+- `src/content/definitions/olympus-actions.js` now owns the fourth zone-sized action registration module consumed by `actionList.js`.
+- `src/content/runtime-hook-registry.js` maps stable legacy hook ids such as `legacy:Wander:visible` and `legacy:SmashPots:cost` back to the live runtime implementation.
+- `src/content/rules/*`, `src/content/effects/*`, and `src/content/stories/*` now split those content hook adapters by ownership family even though they still delegate to legacy action methods.
+- `src/services/save/*` owns local save-slot persistence, encoded import/export payload helpers, save file naming, cloud-save orchestration over the Google adapter, and the first extracted save compatibility migrations.
+- `src/services/save/save-migrations.js` owns old-save compatibility transforms that are still exercised from `saving.js`.
+- `src/services/options/*` owns browser-stored UI/predictor settings that are not gameplay rules.
+- `src/services/predictor/*` owns predictor worker lifecycle, cross-thread message routing, and worker-side snapshot/import orchestration; prediction formulas still live in `predictor.js`.
+- `src/ui/controllers/*` owns browser-only planner, reading-shell, loadout-manager, cloud-save, and town-browser composition logic that used to live inside `views/main.view.js`.
+- `src/ui/controllers/accessibility-controller.js` owns keyboard tooltip access, live-region announcements, ARIA syncing for tabs/popups, and reduced-motion-facing UI semantics.
+- `src/core/loop/*` owns frame-budget, speed, lag, and realtime-to-mana loop helpers from `driver.js`.
+- `src/core/domain/*` owns pure town/domain helpers for level math, resource mutations, and town-local action initialization.
+- `src/core/progression/*` owns world unlock/completion state, town progression, prestige state, buff-cap state, runtime carry-over state, character progression state, story state, challenge state, and small cross-loop progression mutations that used to be in `town.js`, `stats.js`, `prestige.js`, `driver.js`, `views/main.view.js`, `saving.js`, and `actionList.js`.
+- `src/core/queue/*` owns the first extracted queue-list storage helpers for `actions.next`.
+- `src/core/runner/*` owns current-loop action-state assembly/reset helpers for `actions.current`.
+- `actionList.js` is still the live runtime action registry, but the first shared survey/ruins/haul/assassin definition family now comes from `src/content/definitions/*`.
+- `generated/action-metadata-registry.js` is now the generated runtime metadata registry for actions, while execution truth remains in `actionList.js`.
+- `src/content/runtime-hook-registry.js` is now the runtime adapter layer that turns metadata hook ids into actual callable hooks without changing action behavior.
+- `src/content/rules/*`, `src/content/effects/*`, and `src/content/stories/*` are now the first stable landing zones for future hook extraction work.
+- `saving.js` is still the save/load compatibility boundary, but core save scalars, progression/challenge collections, story/totals objects, prestige state, and buff-cap state now bridge through `LegacyAppContext`.
+- `google.js` is now the low-level Google auth/transport adapter; runtime-facing cloud save behavior is owned by `src/services/save/cloud-save-service.js`.
+- `views/main.view.js` still owns the large render/update surface, but controller-sized UI shells now live under `src/ui/controllers/*`.
+- `docs/*` now owns the human/AI architecture contracts for runtime flow, save boundaries, action authoring, and terminology.
 
 ## Not Moved Yet
 
-- action rules and effects are not in `src/core/` yet
-- save migrations are not split from `saving.js` yet
+- formulas and view-side reaction to runner results are still in `actions.js`
 - XML/editor content is not the runtime source of truth yet
-- predictor still depends on legacy game scripts
+- predictor formulas/core still depend on legacy game scripts
+- inspector/chronicle rendering still lives in `views/main.view.js`

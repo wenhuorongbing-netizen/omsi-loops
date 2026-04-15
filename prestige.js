@@ -7,17 +7,27 @@ const PRESTIGE_SPATIOMANCY_BASE  = 1.10;
 const PRESTIGE_CHRONOMANCY_BASE  = 1.05;
 const PRESTIGE_EXP_OVERFLOW_BASE = 1.00222;
 
+function getPrestigeStateApi() {
+    const prestigeStateApi = globalThis.IdleLoopsPrestigeState;
+    if (!prestigeStateApi) {
+        throw new Error("[progression] IdleLoopsPrestigeState is not available");
+    }
+    return prestigeStateApi;
+}
+
+function getRuntimeStateApi() {
+    const runtimeStateApi = globalThis.IdleLoopsRuntimeState;
+    if (!runtimeStateApi) {
+        throw new Error("[progression] IdleLoopsRuntimeState is not available");
+    }
+    return runtimeStateApi;
+}
+
 // All prestige button functions
 function completedCurrentGame() {
     console.log("completed current prestige")
 
-    if (!prestigeValues["completedCurrentPrestige"]) {
-        prestigeValues["prestigeCurrentPoints"]    += 90;
-        prestigeValues["prestigeTotalPoints"]      += 90;
-        prestigeValues["prestigeTotalCompletions"] += 1;
-        prestigeValues["completedCurrentPrestige"] = true;
-        prestigeValues["completedAnyPrestige"]     = true;
-
+    if (getPrestigeStateApi().awardPrestigeCompletion(prestigeValues)) {
         view.updatePrestigeValues();
     }
 }
@@ -26,7 +36,7 @@ function completedCurrentGame() {
 function prestigeUpgrade(prestigeSelected) {
     // Update prestige value
     const costOfPrestige = getPrestigeCost(prestigeSelected);
-    if (costOfPrestige > prestigeValues["prestigeCurrentPoints"]) {
+    if (!getPrestigeStateApi().canAffordPrestige(prestigeValues, costOfPrestige)) {
         console.log("Not enough points available.")
         return;
     } 
@@ -36,7 +46,7 @@ function prestigeUpgrade(prestigeSelected) {
     }
 
     addBuffAmt(prestigeSelected, 1);
-    prestigeValues["prestigeCurrentPoints"] -= costOfPrestige;
+    getPrestigeStateApi().spendPrestigePoints(prestigeValues, costOfPrestige);
     
     // Retain certain values between prestiges
     const nextPrestigeBuffs = {
@@ -52,13 +62,9 @@ function prestigeUpgrade(prestigeSelected) {
         Imbuement3: Math.min(prestigeValues["prestigeTotalCompletions"], getBuffLevel("Imbuement3")), 
     }
 
-    const nextPrestigeValues = {
-        prestigeCurrentPoints:     prestigeValues["prestigeCurrentPoints"],
-        prestigeTotalPoints:       prestigeValues["prestigeTotalPoints"],
-        prestigeTotalCompletions:  prestigeValues["prestigeTotalCompletions"],
+    const nextPrestigeValues = getPrestigeStateApi().createPrestigeSnapshot(prestigeValues, {
         completedCurrentPrestige:  false,
-        completedAnyPrestige:      prestigeValues["completedAnyPrestige"],
-    }
+    });
 
     prestigeWithNewValues(nextPrestigeValues, nextPrestigeBuffs)
 }
@@ -78,13 +84,10 @@ function resetAllPrestiges() {
         Imbuement3: Math.min(prestigeValues["prestigeTotalCompletions"], getBuffLevel("Imbuement3")), 
     }
 
-    const nextPrestigeValues = {
+    const nextPrestigeValues = getPrestigeStateApi().createPrestigeSnapshot(prestigeValues, {
         prestigeCurrentPoints:     prestigeValues["prestigeTotalPoints"],
-        prestigeTotalPoints:       prestigeValues["prestigeTotalPoints"],
-        prestigeTotalCompletions:  prestigeValues["prestigeTotalCompletions"],
         completedCurrentPrestige:  false,
-        completedAnyPrestige:      prestigeValues["completedAnyPrestige"],
-    }
+    });
 
     prestigeWithNewValues(nextPrestigeValues, nextPrestigeBuffs)
 }
@@ -94,8 +97,7 @@ function resetAllPrestiges() {
  * @param {{[K in PrestigeBuffName|'Imbuement3']: number}} nextPrestigeBuffs
  */
 function prestigeWithNewValues(nextPrestigeValues, nextPrestigeBuffs) {
-    let nextTotals = totals;
-    let nextOfflineMs = totalOfflineMs;
+    const preservedRunState = getRuntimeStateApi().snapshotPersistentRunState(totals, totalOfflineMs);
 
 
     // Remove all progress and save totals
@@ -112,13 +114,9 @@ function prestigeWithNewValues(nextPrestigeValues, nextPrestigeBuffs) {
         view.requestUpdate("updateBuff", key);
     }
 
-    prestigeValues["prestigeCurrentPoints"]    = nextPrestigeValues.prestigeCurrentPoints.valueOf();
-    prestigeValues["prestigeTotalPoints"]      = nextPrestigeValues.prestigeTotalPoints.valueOf();
-    prestigeValues["prestigeTotalCompletions"] = nextPrestigeValues.prestigeTotalCompletions.valueOf();
-    prestigeValues["completedCurrentPrestige"] = nextPrestigeValues.completedCurrentPrestige.valueOf();
-    prestigeValues["completedAnyPrestige"]     = nextPrestigeValues.completedAnyPrestige.valueOf();
-    totals = nextTotals;
-    totalOfflineMs = nextOfflineMs;
+    getPrestigeStateApi().applyPrestigeSnapshot(prestigeValues, nextPrestigeValues);
+    totals = preservedRunState.totals;
+    totalOfflineMs = preservedRunState.totalOfflineMs;
     view.updatePrestigeValues();
     save();
 }
@@ -139,8 +137,8 @@ function prestigeConfirmation() {
                 // this should be done in a more logical way but for now, just make sure to clear these out
                 town?.hiddenVars?.clear();
             }
-            window.localStorage["prestigeBackup"] = window.localStorage[defaultSaveName];
-            window.localStorage[defaultSaveName] = "";
+            globalThis.IdleLoopsSaveService.copySaveSlot(window.localStorage, defaultSaveName, "prestigeBackup");
+            globalThis.IdleLoopsSaveService.clearSaveSlot(window.localStorage, defaultSaveName);
         } else
             return false;
     }

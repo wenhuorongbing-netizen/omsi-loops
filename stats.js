@@ -526,12 +526,12 @@ function getPrcToNextSkillLevel(skill) {
 
 /** @param {SkillName} name */
 function addSkillExp(name, amount) {
-    if (name === "Combat" || name === "Pyromancy" || name === "Restoration") amount *= 1 + getBuffLevel("Heroism") * 0.02;
-    const oldLevel = getSkillLevel(name);
-    skills[name].levelExp.addExp(amount);
-    const newLevel = getSkillLevel(name);
-    if (oldLevel !== newLevel) {
-        actionLog.addSkillLevel(actions.currentAction, name, newLevel, oldLevel);
+    const skillState = getCharacterStateApi().applySkillExp(skills, name, amount, {
+        getBuffLevel,
+        getSkillLevel,
+    });
+    if (skillState.leveledUp) {
+        actionLog.addSkillLevel(actions.currentAction, name, skillState.newLevel, skillState.oldLevel);
     }
     view.requestUpdate("updateSkill", name);
 }
@@ -562,12 +562,10 @@ function handleSkillExp(list) {
  * @param {SoulstoneEntry["stones"]} [statsSpent] 
  */
 function addBuffAmt(name, amount, action, spendType, statsSpent) {
-    const oldBuffLevel = getBuffLevel(name);
-    if (oldBuffLevel === buffHardCaps[name]) return;
-    buffs[name].amt += amount;
-    if (amount === 0) buffs[name].amt = 0; // for presetige, reset to 0 when passed in.
+    const buffState = getCharacterStateApi().applyBuffAmount(buffs, buffHardCaps, name, amount);
+    if (!buffState.changed) return;
     if (action) {
-        actionLog.addBuff(action, name, buffs[name].amt, oldBuffLevel, spendType, statsSpent);
+        actionLog.addBuff(action, name, buffState.newLevel, buffState.oldLevel, spendType, statsSpent);
     }
     view.requestUpdate("updateBuff",name);
 }
@@ -587,6 +585,14 @@ function getTalentMultiplier() {
     return talentMultiplierCache.talentMultiplier;
 }
 
+function getCharacterStateApi() {
+    const characterStateApi = globalThis.IdleLoopsCharacterState;
+    if (!characterStateApi) {
+        throw new Error("[progression] IdleLoopsCharacterState is not available");
+    }
+    return characterStateApi;
+}
+
 // how much "addExp" would you have to do to get this stat to the next exp or talent level
 /** @param {StatName} name */
 function getExpToLevel(name, talentOnly=false) {
@@ -598,19 +604,18 @@ function getExpToLevel(name, talentOnly=false) {
 
 /** @param {StatName} name */
 function addExp(name, amount) {
-    stats[name].statLevelExp.addExp(amount);
-    stats[name].soullessLevelExp.addExp(amount / stats[name].soulstoneMult);
-    let talentGain = amount * getTalentMultiplier();
-    stats[name].talentLevelExp.addExp(talentGain);
-    totalTalent += talentGain;
+    const statState = getCharacterStateApi().applyStatExp(stats, name, amount, totalTalent, getTalentMultiplier());
+    totalTalent = statState.totalTalent;
     view.requestUpdate("updateStat", name);
 }
 
 function restartStats() {
-    for (let i = 0; i < statList.length; i++) {
-        if(getSkillLevel("Wunderkind") > 0) stats[statList[i]].statLevelExp.setLevel(getBuffLevel("Imbuement2") * 2);
-        else stats[statList[i]].statLevelExp.setLevel(getBuffLevel("Imbuement2"));
-    }
+    getCharacterStateApi().resetStatLevels(
+        stats,
+        statList,
+        getSkillLevel("Wunderkind"),
+        getBuffLevel("Imbuement2"),
+    );
     view.requestUpdate("updateStats", true);
 }
 

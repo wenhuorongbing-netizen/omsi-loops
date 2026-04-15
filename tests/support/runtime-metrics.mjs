@@ -41,15 +41,20 @@ export async function captureRuntimeMetrics(page) {
             })),
             buffs: mapNames(buffList, buffName => ({
                 amount: buffs[buffName].amt,
-                cap: buffCaps[buffName] ?? null,
+                cap: sessionState?.buffCaps?.[buffName] ?? buffCaps[buffName] ?? null,
             })),
-            story: {
+            story: sessionState?.story ? {
+                storyMax: sessionState.story.storyMax,
+                unreadActionStories: sessionState.story.unreadActionStories,
+                trueFlags: enabledFlags(sessionState.story.flags),
+                vars: nonZeroValues(sessionState.story.vars),
+            } : {
                 storyMax,
                 unreadActionStories: [...unreadActionStories].sort((left, right) => left.localeCompare(right)),
                 trueFlags: enabledFlags(storyFlags),
                 vars: nonZeroValues(storyVars),
             },
-            completedActions: nonZeroValues(completedActions),
+            completedActions: sessionState?.completedActions ?? nonZeroValues(completedActions),
             towns: towns.map(town => ({
                 index: town.index,
                 unlocked: town.unlocked(),

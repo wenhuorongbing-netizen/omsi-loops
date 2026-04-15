@@ -13,44 +13,93 @@ let effectiveTime = 0;
 let lastSave = Date.now();
 let lagSpeed = 0;
 
+function getGameLoop() {
+    const gameLoop = globalThis.IdleLoopsGameLoop;
+    if (!gameLoop) {
+        throw new Error("[loop] IdleLoopsGameLoop is not available");
+    }
+    return gameLoop;
+}
+
+function getRestartCoordinator() {
+    const restartCoordinator = globalThis.IdleLoopsRestartCoordinator;
+    if (!restartCoordinator) {
+        throw new Error("[loop] IdleLoopsRestartCoordinator is not available");
+    }
+    return restartCoordinator;
+}
+
+function getOfflineProgress() {
+    const offlineProgress = globalThis.IdleLoopsOfflineProgress;
+    if (!offlineProgress) {
+        throw new Error("[loop] IdleLoopsOfflineProgress is not available");
+    }
+    return offlineProgress;
+}
+
+function getGameSpeedApi() {
+    const gameSpeedApi = globalThis.IdleLoopsGameSpeed;
+    if (!gameSpeedApi) {
+        throw new Error("[loop] IdleLoopsGameSpeed is not available");
+    }
+    return gameSpeedApi;
+}
+
+function getLagTracker() {
+    const lagTracker = globalThis.IdleLoopsLagTracker;
+    if (!lagTracker) {
+        throw new Error("[loop] IdleLoopsLagTracker is not available");
+    }
+    return lagTracker;
+}
+
+function getRunBudget() {
+    const runBudget = globalThis.IdleLoopsRunBudget;
+    if (!runBudget) {
+        throw new Error("[loop] IdleLoopsRunBudget is not available");
+    }
+    return runBudget;
+}
+
+function getFrameGate() {
+    const frameGate = globalThis.IdleLoopsFrameGate;
+    if (!frameGate) {
+        throw new Error("[loop] IdleLoopsFrameGate is not available");
+    }
+    return frameGate;
+}
+
+function getResourceStateApi() {
+    const resourceStateApi = globalThis.IdleLoopsResourceState;
+    if (!resourceStateApi) {
+        throw new Error("[domain] IdleLoopsResourceState is not available");
+    }
+    return resourceStateApi;
+}
+
+function getRuntimeStateApi() {
+    const runtimeStateApi = globalThis.IdleLoopsRuntimeState;
+    if (!runtimeStateApi) {
+        throw new Error("[progression] IdleLoopsRuntimeState is not available");
+    }
+    return runtimeStateApi;
+}
+
 function getSpeedMult(zone = curTown) {
-    let speedMult = 1;
-
-    // Dark Ritual
-    if (zone === 0) speedMult *= getRitualBonus(0, 20, 10);
-    else if (zone === 1) speedMult *= getRitualBonus(20, 40, 5);
-    else if (zone === 2) speedMult *= getRitualBonus(40, 60, 2.5);
-    else if (zone === 3) speedMult *= getRitualBonus(60, 80, 1.5);
-    else if (zone === 4) speedMult *= getRitualBonus(80, 100, 1);
-    else if (zone === 5) speedMult *= getRitualBonus(100, 150, .5);
-    else if (zone === 6) speedMult *= getRitualBonus(150, 200, .5);
-    else if (zone === 7) speedMult *= getRitualBonus(200, 250, .5);
-    else if (zone === 8) speedMult *= getRitualBonus(250, 300, .5);
-    speedMult *= getRitualBonus(300, 666, .1);
-    
-    // Chronomancy
-    speedMult *= getSkillBonus("Chronomancy");
-    
-    // Imbue Soul
-    speedMult *= 1 + 0.5 * getBuffLevel("Imbuement3");
-
-    // Prestige Chronomancy
-    speedMult *= prestigeBonus("PrestigeChronomancy");
-
-    return speedMult;
+    return getGameSpeedApi().calculateSpeedMultiplier(zone, {
+        getRitualBonus,
+        getSkillBonus,
+        getBuffLevel,
+        prestigeBonus,
+    });
 }
 
 function getActualGameSpeed() {
-    return gameSpeed * getSpeedMult() * bonusSpeed;
+    return getGameSpeedApi().calculateActualGameSpeed(gameSpeed, getSpeedMult(), bonusSpeed);
 }
 
 function refreshDungeons(manaSpent) {
-    for (const dungeon of dungeons) {
-        for (const level of dungeon) {
-            const chance = level.ssChance;
-            if (chance < 1) level.ssChance = Math.min(chance + 0.0000001 * manaSpent, 1);
-        }
-    }
+    getGameSpeedApi().refreshDungeonChances(dungeons, manaSpent);
 }
 
 function singleTick() {
@@ -86,20 +135,29 @@ function animationTick(animationTime) {
 }
 
 function tick() {
-    const newTime = Date.now();
-    gameTicksLeft += newTime - curTime;
-    if (inputElement("radarStats").checked) radarUpdateTime += newTime - curTime;
-    const delta = newTime - curTime;
-    curTime = newTime;
+    const frameAdvance = getFrameGate().advanceFrameClock({
+        curTime,
+        gameTicksLeft,
+        radarUpdateTime,
+        lastSave,
+    }, {
+        newTime: Date.now(),
+        radarEnabled: inputElement("radarStats").checked,
+        autosaveRate: options.autosaveRate,
+        windowFps,
+    });
+    curTime = frameAdvance.curTime;
+    gameTicksLeft = frameAdvance.gameTicksLeft;
+    radarUpdateTime = frameAdvance.radarUpdateTime;
+    lastSave = frameAdvance.lastSave;
 
     // save even when paused
-    if (curTime - lastSave > options.autosaveRate * 1000) {
-        lastSave = curTime;
+    if (frameAdvance.shouldAutosave) {
         save();
     }
 
     // don't do any updates until we've got enough time built up to match the refresh rate setting
-    if (gameTicksLeft < 1000 / windowFps) {
+    if (!frameAdvance.hasFrameBudget) {
         return;
     }
 
@@ -120,106 +178,85 @@ function tick() {
     // }
 
     if (gameIsStopped) {
-        addOffline(gameTicksLeft * offlineRatio);
+        const pausedFrame = getFrameGate().resolvePausedFrame(gameTicksLeft, offlineRatio);
+        addOffline(pausedFrame.offlineDelta);
         updateLag(0);
         view.update();
-        gameTicksLeft = 0;
+        gameTicksLeft = pausedFrame.gameTicksLeft;
         return;
     }
 
-    const deadline = performance.now() + 1000 / windowFps; // don't go past the current frame update time
+    const deadline = getFrameGate().createFrameDeadline(performance.now(), windowFps); // don't go past the current frame update time
     // Data.recordSnapshot("tick");
 
     executeGameTicks(deadline);
 }
 
 function executeGameTicks(deadline) {
-    // convert "gameTicksLeft" (actually milliseconds) into equivalent base-mana count, aka actual game ticks
-    // including the gameSpeed multiplier here because it is effectively constant over the course of a single
-    // update, and it affects how many actual game ticks pass in a given span of realtime.
-    let baseManaToBurn = Mana.floor(gameTicksLeft * baseManaPerSecond * gameSpeed / 1000);
+    let baseManaToBurn = getGameLoop().calculateBaseManaToBurn(gameTicksLeft, {
+        baseManaPerSecond,
+        gameSpeed,
+        Mana,
+    });
     const originalManaToBurn = baseManaToBurn;
-    let cleanExit = false;
-
-    while (baseManaToBurn * bonusSpeed >= (options.fractionalMana ? 0.01 : 1) && performance.now() < deadline) {
-        if (gameIsStopped) {
-            cleanExit = true;
-            break;
-        }
-        // first, figure out how much *actual* mana is available to get spent. bonusSpeed gets rolled in first,
-        // since it can change over the course of an update (if offline time runs out)
-        let manaAvailable = baseManaToBurn;
-        // totalMultiplier lets us back-convert from manaAvailable (in units of "effective game ticks") to
-        // baseManaToBurn (in units of "realtime ticks modulated by gameSpeed") once we figure out how much
-        // of our mana we're using in this cycle
-        let totalMultiplier = 1;
-
-        manaAvailable *= bonusSpeed;
-        totalMultiplier *= bonusSpeed;
-
-        if (bonusSpeed > 1) {
-            // can't spend more mana than offline time available
-            manaAvailable = Math.min(manaAvailable, Mana.ceil(totalOfflineMs * baseManaPerSecond * gameSpeed * bonusSpeed / 1000));
-        }
-
-        // next, roll in the multiplier from skills/etc
-        let speedMult = getSpeedMult();
-        manaAvailable *= speedMult;
-        totalMultiplier *= speedMult;
-
-        // limit to only how much time we have available
-        manaAvailable = Math.min(manaAvailable, timeNeeded - timer);
-
-        // don't run more than 1 tick
-        if (shouldRestart) {
-            manaAvailable = Math.min(manaAvailable, 1);
-        }
-
-        // a single action may not use a partial tick, so ceil() to be sure unless fractionalMana.
-        // Even with fractionalMana, we need to set a minimum so that mana usages aren't lost to floating-point precision.
-        const manaSpent = Mana.ceil(actions.tick(manaAvailable), timer / 1e15);
-
-        // okay, so the current action has used manaSpent effective ticks. figure out how much of our realtime
-        // that accounts for, in base ticks and in seconds.
-        const baseManaSpent = manaSpent / totalMultiplier;
-        const timeSpent = baseManaSpent / gameSpeed / baseManaPerSecond;
-
-        // update timers
-        timer += manaSpent; // number of effective mana ticks
-        timeCounter += timeSpent; // realtime seconds
-        effectiveTime += timeSpent * gameSpeed * bonusSpeed; // "seconds" modified only by gameSpeed and offline bonus
-        baseManaToBurn -= baseManaSpent; // burn spent mana
-        gameTicksLeft -= timeSpent * 1000;
-
-        // spend bonus time for this segment
-        if (bonusSpeed !== 1) {
-            addOffline(-timeSpent * (bonusSpeed - 1) * 1000);
-        }
-
-        refreshDungeons(manaSpent);
-
-        if (shouldRestart || timer >= timeNeeded) {
-            cleanExit = true;
-            loopEnd();
-            prepareRestart();
-            break; // don't span loops within tick()
-        }
+    const executionResult = getGameLoop().executeBudgetedTicks({
+        baseManaToBurn,
+        deadline,
+        timer,
+        timeCounter,
+        effectiveTime,
+        gameTicksLeft,
+        timeNeeded,
+        gameSpeed,
+        baseManaPerSecond,
+        reachedLoopEnd: false,
+    }, {
+        Mana,
+        performanceNow: () => performance.now(),
+        isGameStopped: () => gameIsStopped,
+        getShouldRestart: () => shouldRestart,
+        getBonusSpeed: () => bonusSpeed,
+        getFractionalMana: () => options.fractionalMana,
+        getTotalOfflineMs: () => totalOfflineMs,
+        getSpeedMult,
+        actionTick: manaAvailable => actions.tick(manaAvailable),
+        addOffline,
+        refreshDungeons,
+    });
+    let cleanExit = executionResult.cleanExit;
+    baseManaToBurn = executionResult.baseManaToBurn;
+    timer = executionResult.timer;
+    timeCounter = executionResult.timeCounter;
+    effectiveTime = executionResult.effectiveTime;
+    gameTicksLeft = executionResult.gameTicksLeft;
+    if (executionResult.reachedLoopEnd) {
+        loopEnd();
+        prepareRestart();
     }
 
-    if (radarUpdateTime > 100) {
+    const radarState = getFrameGate().consumeRadarUpdate(radarUpdateTime, 100);
+    radarUpdateTime = radarState.radarUpdateTime;
+    if (radarState.shouldUpdateStatGraph) {
         view.updateStatGraphNeeded = true;
-        radarUpdateTime %= 100;
     }
 
-    if (!gameIsStopped && baseManaToBurn * bonusSpeed >= 10) {
-        if (!cleanExit || lagSpeed > 0) {
-            // lagging. refund all backlog as bonus time to clear the queue
-            addOffline(gameTicksLeft * offlineRatio);
-            gameTicksLeft = 0;
-        }
-        updateLag((originalManaToBurn - baseManaToBurn) * bonusSpeed);
-    } else if (baseManaToBurn * bonusSpeed < 1) {
-        // lag cleared
+    const runBudgetResult = getRunBudget().resolvePostExecutionBudget({
+        gameIsStopped,
+        baseManaToBurn,
+        bonusSpeed,
+        cleanExit,
+        lagSpeed,
+        gameTicksLeft,
+        originalManaToBurn,
+        offlineRatio,
+    });
+    if (runBudgetResult.refundedOfflineMs) {
+        addOffline(runBudgetResult.refundedOfflineMs);
+    }
+    gameTicksLeft = runBudgetResult.gameTicksLeft;
+    if (runBudgetResult.lagManaSpent !== null) {
+        updateLag(runBudgetResult.lagManaSpent);
+    } else if (runBudgetResult.clearLag) {
         updateLag(0);
     }
 
@@ -269,6 +306,10 @@ function pauseGame(ping, message) {
     }
     document.title = gameIsStopped ? "*PAUSED* Idle Loops" : "Idle Loops";
     document.getElementById("pausePlay").textContent = _txt(`time_controls>${gameIsStopped ? "play_button" : "pause_button"}`);
+    if (gameIsStopped) {
+        const pauseAnnouncement = message || (Localization.currentLang?.startsWith("zh") ? "\u6e38\u620f\u5df2\u6682\u505c" : "Game paused");
+        globalThis.IdleLoopsAccessibilityController?.announceStatus(pauseAnnouncement, true);
+    }
     if (!gameIsStopped && (shouldRestart || timer >= timeNeeded)) {
         restart();
     } else if (ping) {
@@ -283,14 +324,9 @@ function pauseGame(ping, message) {
 }
 
 function loopEnd() {
-    if (effectiveTime > 0) {
-        totals.time += timeCounter;
-        totals.effectiveTime += effectiveTime;
-        totals.loops++;
+    if (getRuntimeStateApi().recordLoopTotals(totals, timeCounter, effectiveTime)) {
         view.requestUpdate("updateTotals", null);
-        const loopCompletedActions = actions.current.slice(0, actions.currentPos);
-        if (actions.current[actions.currentPos] !== undefined && actions.current[actions.currentPos].loopsLeft < actions.current[actions.currentPos].loops)
-            loopCompletedActions.push(actions.current[actions.currentPos]);
+        const loopCompletedActions = getRestartCoordinator().collectLoopCompletedActions(actions.current, actions.currentPos);
         markActionsComplete(loopCompletedActions);
         actionStory(loopCompletedActions);
         if (options.highlightNew) {
@@ -302,9 +338,11 @@ function loopEnd() {
 
 function prepareRestart() {
     const curAction = actions.getNextValidAction();
-    if (options.pauseBeforeRestart ||
-        (options.pauseOnFailedLoop &&
-         actions.hasPauseEligibleRemainingActions())) {
+    if (getRestartCoordinator().shouldPauseBeforeRestart({
+        pauseBeforeRestart: options.pauseBeforeRestart,
+        pauseOnFailedLoop: options.pauseOnFailedLoop,
+        hasPauseEligibleRemainingActions: actions.hasPauseEligibleRemainingActions(),
+    })) {
         if (options.pingOnPause) {
             beep(250);
             setTimeout(() => beep(250), 500);
@@ -326,13 +364,17 @@ function prepareRestart() {
 }
 
 function restart() {
-    shouldRestart = false;
-    timer = 0;
-    timeCounter = 0;
-    effectiveTime = 0;
-    timeNeeded = timeNeededInitial;
+    const restartState = getRestartCoordinator().buildRestartState({
+        totalsLoops: totals.loops,
+        timeNeededInitial,
+    });
+    shouldRestart = restartState.shouldRestart;
+    timer = restartState.timer;
+    timeCounter = restartState.timeCounter;
+    effectiveTime = restartState.effectiveTime;
+    timeNeeded = restartState.timeNeeded;
     document.title = "Idle Loops";
-    currentLoop = totals.loops + 1; // don't let currentLoop get out of sync with totals.loops, that'd cause problems
+    currentLoop = restartState.currentLoop; // don't let currentLoop get out of sync with totals.loops, that'd cause problems
     resetResources();
     restartStats();
     for (let i = 0; i < towns.length; i++) {
@@ -388,25 +430,30 @@ function addActionToList(name, townNum, isTravelAction, insertAtIndex) {
 // mana and resources
 
 function addMana(amount) {
-    timeNeeded += amount;
+    timeNeeded = getRuntimeStateApi().addManaToTimeBudget(timeNeeded, amount);
 }
 
 function addResource(resource, amount) {
-    if (Number.isFinite(amount)) resources[resource] += amount;
-    else resources[resource] = amount;
-    view.requestUpdate("updateResource", resource);
-
-    if (resource === "teamMembers" || resource === "armor" || resource === "zombie") view.requestUpdate("updateTeamCombat",null);
+    const resourceState = getResourceStateApi().applyResourceDelta(resources, resource, amount);
+    view.requestUpdate("updateResource", resourceState.resource);
+    if (resourceState.shouldUpdateTeamCombat) {
+        view.requestUpdate("updateTeamCombat", null);
+    }
 }
 
 function resetResource(resource) {
-    resources[resource] = resourcesTemplate[resource];
-    view.requestUpdate("updateResource", resource);
+    const resourceState = getResourceStateApi().resetResourceToTemplate(resources, resourcesTemplate, resource);
+    view.requestUpdate("updateResource", resourceState.resource);
+    if (resourceState.shouldUpdateTeamCombat) {
+        view.requestUpdate("updateTeamCombat", null);
+    }
 }
 
 function resetResources() {
-    resources = copyObject(resourcesTemplate);
-    if(getExploreProgress() >= 100 || prestigeValues['completedAnyPrestige']) addResource("glasses", true);
+    resources = getResourceStateApi().buildResetResources(resourcesTemplate, {
+        copyObject,
+        shouldGrantGlasses: getExploreProgress() >= 100 || prestigeValues["completedAnyPrestige"],
+    });
     view.requestUpdate("updateResources", null);
 }
 
@@ -505,18 +552,13 @@ function clearList() {
 }
 
 function unlockTown(townNum) {
-    if (!towns[townNum].unlocked()) {
-        townsUnlocked.push(townNum);
-        townsUnlocked.sort();
+    const unlockState = globalThis.IdleLoopsWorldState.unlockTown(townsUnlocked, townNum);
+    if (unlockState.changed) {
         // refresh current
         view.showTown(townNum);
         view.requestUpdate("updateTravelMenu",null);
     }
-    let cNum = challengeSave.challengeMode;
-    if (cNum !== 0) {
-        if(challengeSave["c"+cNum]<townNum) challengeSave["c"+cNum] = townNum;
-        else if(challengeSave["c"+cNum] === undefined) challengeSave["c"+cNum] = townNum;
-    }
+    globalThis.IdleLoopsChallengeState.recordChallengeTownUnlock(challengeSave, townNum);
     curTown = townNum;
 }
 
@@ -626,6 +668,7 @@ function collapse(actionId) {
 function showNotification(name) {
     const notification = document.getElementById(`${name}Notification`);
     if (notification) notification.style.display = "block";
+    globalThis.IdleLoopsAccessibilityController?.announceNamedNotification(name);
 }
 
 function hideNotification(name) {
@@ -730,16 +773,15 @@ function removeAction(actionId) {
 }
 
 function borrowTime() {
-    addOffline(86400_000);
-    totals.borrowedTime += 86400;
+    totalOfflineMs = getRuntimeStateApi().borrowOfflineTime(totalOfflineMs, totals);
     view.requestUpdate("updateOffline", null);
     view.requestUpdate("updateTotals", null);
 }
 
 function returnTime() {
-    if (totalOfflineMs >= 86400_000) {
-        addOffline(-86400_000);
-        totals.borrowedTime -= 86400;
+    const returnState = getRuntimeStateApi().returnOfflineTime(totalOfflineMs, totals);
+    if (returnState.changed) {
+        totalOfflineMs = returnState.totalOfflineMs;
         view.requestUpdate("updateOffline", null);
         view.requestUpdate("updateTotals", null);
     }
@@ -748,78 +790,60 @@ function returnTime() {
 let lagStart = 0;
 let lagSpent = 0;
 function updateLag(manaSpent) {
-    if (manaSpent === 0) { // cancel lag display
-        if (lagSpeed !== 0) {
-            lagSpeed = 0;
-            view.requestUpdate("updateBonusText", null);
-        }
-        return;
+    const nextLagState = getLagTracker().updateLagState({
+        lagStart,
+        lagSpent,
+        lagSpeed,
+    }, manaSpent, {
+        performanceNow: () => performance.now(),
+        baseManaPerSecond,
+    });
+    lagStart = nextLagState.lagStart;
+    lagSpent = nextLagState.lagSpent;
+    lagSpeed = nextLagState.lagSpeed;
+    if (nextLagState.bonusTextNeedsUpdate) {
+        view.requestUpdate("updateBonusText", null);
     }
-    if (lagSpeed === 0) {
-        // initial lag. 
-        lagStart = performance.now();
-        lagSpent = 0;
-        lagSpeed = 1;
-        return;
-    }
-    // update lag
-    lagSpent += manaSpent;
-    const now = performance.now();
-    const measuredSpeed = lagSpent / (now - lagStart) * 1000 / baseManaPerSecond;
-    lagSpeed = measuredSpeed;
-    view.requestUpdate("updateBonusText", null);
 }
 
 function addOffline(num) {
     if (num) {
-        if (totalOfflineMs + num < 0 && bonusSpeed > 1) {
+        if (getOfflineProgress().shouldDisableBonusForOfflineSpend(totalOfflineMs, num, bonusSpeed)) {
             toggleOffline();
         }
-        totalOfflineMs += num;
-        if (totalOfflineMs < 0) {
-            totalOfflineMs = 0;
-        }
+        totalOfflineMs = getOfflineProgress().applyOfflineDelta(totalOfflineMs, num);
         view.requestUpdate("updateOffline", null);
     }
 }
 
 function toggleOffline() {
-    if (totalOfflineMs === 0) return;
-    if (!isBonusActive()) {
-        bonusSpeed = 5;
-        bonusActive = true;
+    const toggledState = getOfflineProgress().toggleOfflineState({
+        totalOfflineMs,
+        bonusActive,
+        bonusSpeed,
+    });
+    if (!toggledState.changed) return;
+
+    bonusActive = toggledState.bonusActive;
+    bonusSpeed = toggledState.bonusSpeed;
+    if (bonusActive) {
         checkExtraSpeed();
-        document.getElementById("isBonusOn").textContent = _txt("time_controls>bonus_seconds>state>on");
-    } else {
-        bonusSpeed = 1;
-        bonusActive = false;
-        document.getElementById("isBonusOn").textContent = _txt("time_controls>bonus_seconds>state>off");
     }
+    document.getElementById("isBonusOn").textContent = _txt(`time_controls>bonus_seconds>state>${bonusActive ? "on" : "off"}`);
     setOption("bonusIsActive", bonusActive, true);
     view.requestUpdate("updateTime", null);
 }
 
 function isBonusActive() {
-    return bonusActive && bonusSpeed !== 1;
+    return getOfflineProgress().isBonusActive(bonusActive, bonusSpeed);
 }
 
 function checkExtraSpeed() {
     view.requestUpdate("updateBonusText", null);
-    if (typeof options.speedIncreaseBackground === "number" && !isNaN(options.speedIncreaseBackground) && options.speedIncreaseBackground >= 0 && !document.hasFocus() && (options.speedIncreaseBackground < 1 || isBonusActive())) {
-        if (options.speedIncreaseBackground === 1) {
-            bonusSpeed = 1.00001;
-        } else if (options.speedIncreaseBackground === 0) {
-            bonusSpeed = 0.0000001; // let's avoid any divide by zero errors shall we
-        } else {
-            bonusSpeed = options.speedIncreaseBackground;
-        }
-        return;
-    }
-    if (!isBonusActive()) {
-        bonusSpeed = 1;
-        return;
-    }
-    if (options.speedIncrease10x === true) { bonusSpeed = 10};
-    if (options.speedIncrease20x === true) { bonusSpeed = 20};
-    if (bonusSpeed < options.speedIncreaseCustom) { bonusSpeed = options.speedIncreaseCustom };
+    bonusSpeed = getOfflineProgress().resolveBonusSpeed({
+        bonusActive,
+        bonusSpeed,
+        options,
+        hasFocus: document.hasFocus(),
+    });
 }

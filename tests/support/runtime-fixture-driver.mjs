@@ -65,7 +65,7 @@ export async function openFixturePage({
 
 export async function dismissTutorialIfPresent(page) {
     const tutorialButton = page.locator("#tutorial button");
-    if (await tutorialButton.count()) {
+    if (await tutorialButton.count() && await tutorialButton.first().isVisible().catch(() => false)) {
         await tutorialButton.click();
         await page.waitForTimeout(100);
     }

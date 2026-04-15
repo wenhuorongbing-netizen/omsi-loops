@@ -34,7 +34,7 @@ function loadChallenge() {
                 timer = 0;
                 timeCounter = 0;
                 effectiveTime = 0;
-                timeNeeded = 4320000 - totals.effectiveTime*50;
+                timeNeeded = globalThis.IdleLoopsRuntimeState.buildChallengeTimeNeeded(4320000, totals.effectiveTime, 50);
                 document.title = "Idle Loops";
                 resetResources();
                 restartStats();

@@ -387,83 +387,60 @@ const Koviko = {
 
     #nextUpdateId = 1;
 
-    /** @type {Omit<Worker, 'postMessage'> & {postMessage(message: MessageToPredictor): void}} */
-    #worker;
-    /** @type {Record<number, {resolve: (data: MessageFromPredictor) => void, reject: (error: any) => void}>} */
-    #channelAwaiters = {};
-    /** @type {Record<number, MessageFromPredictor[]>} */
-    #channelQueues = {};
-    #workerDisabled = false;
+    /** @type {ReturnType<typeof IdleLoopsPredictorBridge.createWorkerBridge>|null} */
+    #workerBridge = null;
+    get predictorBridge() {
+      if (this.isWorker) {
+        throw new Error("Can't get worker bridge from inside worker!");
+      }
+      if (!this.#workerBridge) {
+        this.#workerBridge = IdleLoopsPredictorBridge.createWorkerBridge({
+          isEnabled: () => options.predictorBackgroundThread,
+          createWorker: () => new Worker("predictor-worker.js", {name: "predictor"}),
+          createInitMessages: () => [
+            {type: "setOptions", options},
+            {type: "verifyDefaultIds", idRefs: Data.exportDefaultIds()},
+          ],
+          resolveSnapshotExports: (snapshotIds) => {
+            if (!this.backgroundSnapshot) return null;
+            const requestedSnapshots = this.backgroundSnapshot
+                                       .getHeritage()
+                                       .filter(s => snapshotIds.includes(s.id))
+                                       .sort((a, b) => snapshotIds.indexOf(a.id) - snapshotIds.indexOf(b.id));
+            return requestedSnapshots.length === snapshotIds.length
+              ? requestedSnapshots.map(snapshot => snapshot.export())
+              : null;
+          },
+          onWorkerError: (data) => {
+            console.error(`Unrecoverable error in background predictor worker; disabling background predictor`, data);
+            inputElement("predictorBackgroundThreadInput").indeterminate = true;
+            inputElement("predictorBackgroundThreadInput").disabled = true;
+          },
+        });
+      }
+      return this.#workerBridge;
+    }
     get worker() {
       if (this.isWorker) {
         throw new Error("Can't get worker from inside worker!");
       }
-      if (!this.#worker && options.predictorBackgroundThread && !this.#workerDisabled) {
-        this.#worker = new Worker("predictor-worker.js", {name: "predictor"});
-        this.#worker.onmessage = this.handleWorkerMessage.bind(this);
-        this.#worker.postMessage({type: "setOptions", options});
-        this.#worker.postMessage({type: "verifyDefaultIds", idRefs: Data.exportDefaultIds()});
-      }
-      return this.#worker;
+      return this.predictorBridge.ensureWorker();
     }
 
     terminateWorker() {
-      if (this.#worker) {
-        this.#worker.terminate();
-        this.#worker = null;
+      if (this.#workerBridge) {
+        this.#workerBridge.terminate();
       }
     }
 
     /** @param {number} channel @returns {Promise<MessageFromPredictor>} */
     nextWorkerMessage(channel) {
-      return new Promise((resolve, reject) => {
-        const message = this.#channelQueues[channel]?.shift();
-        if (message) {
-          if (this.#channelQueues[channel].length === 0) {
-            delete this.#channelQueues[channel];
-          }
-          resolve(message);
-        } else {
-          this.#channelAwaiters[channel]?.reject("channel overridden");
-          this.#channelAwaiters[channel] = {resolve, reject};
-        }
-      });
+      return this.predictorBridge.nextMessage(channel);
     }
 
     /** @param {MessageEvent<MessageFromPredictor>} e  */
     handleWorkerMessage(e) {
-      const {data} = e;
-      if (data.type === "error") {
-        // Errors are bad. Terminate and disable the worker.
-        console.error(`Unrecoverable error in background predictor worker; disabling background predictor`, data);
-        this.terminateWorker();
-        this.#workerDisabled = true;
-        inputElement("predictorBackgroundThreadInput").indeterminate = true;
-        inputElement("predictorBackgroundThreadInput").disabled = true;
-        return;
-      } else if (data.type === "getSnapshots") {
-        const {snapshotIds} = data;
-        const requestedSnapshots = this.backgroundSnapshot
-                                       .getHeritage()
-                                       .filter(s => snapshotIds.includes(s.id))
-                                       .sort((a, b) => snapshotIds.indexOf(a.id) - snapshotIds.indexOf(b.id));
-        if (requestedSnapshots.length === snapshotIds.length) {
-          const estimatedSize = requestedSnapshots.map(s => s.sizeEstimate).reduce((a, b) => a + b);
-          // console.debug(`Exporting ${requestedSnapshots.length} snapshots of estimated size ${estimatedSize}.`, snapshotIds, requestedSnapshots);
-          this.worker.postMessage({type: "importSnapshots", snapshotExports: requestedSnapshots.map(s => s.export())});
-        } else {
-          console.debug(`Only found ${requestedSnapshots.length} of ${snapshotIds.length} requested snapshots. Ignoring request, probably stale.`, snapshotIds, requestedSnapshots);
-        }
-        return;
-      }
-      const channel = data.id || 0;
-      const awaiter = this.#channelAwaiters[channel];
-      if (awaiter) {
-        awaiter.resolve(data);
-        delete this.#channelAwaiters[channel];
-      } else {
-        (this.#channelQueues[channel] ??= []).push(data);
-      }
+      return this.predictorBridge.handleMessage(e.data);
     }
 
     /**
@@ -1730,8 +1707,8 @@ const Koviko = {
       Data.recordSnapshot("predictor-worker");
       this.backgroundSnapshot = Data.getSnapshot(-1);
       const snapshotHeritage = this.backgroundSnapshot.getHeritage().map(s => s.id);
-      this.worker.postMessage({type: "setOptions", options});
-      this.worker.postMessage({
+      this.predictorBridge.postMessage({type: "setOptions", options});
+      this.predictorBridge.postMessage({
         type: "startUpdate",
         runData,
         snapshotHeritage,

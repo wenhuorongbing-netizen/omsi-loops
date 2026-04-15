@@ -3,6 +3,7 @@
 (function bootstrapApp(global) {
     let gameSession = null;
     let workerSession = null;
+    let contentRegistry = null;
 
     function resolveLegacyBinding(name, getter) {
         const legacy = global.IdleLoopsLegacy;
@@ -52,6 +53,14 @@
         return predictorNamespace;
     }
 
+    function requireContentRegistry() {
+        const registry = global.IdleLoopsContentRegistry;
+        if (!registry || typeof registry.listActionMetadata !== "function" || typeof registry.listZones !== "function") {
+            throw new Error("[bootstrap] IdleLoopsContentRegistry is not available");
+        }
+        return registry;
+    }
+
     function persistLoadingText() {
         const loadingText = global.document?.getElementById("loadingText");
         if (loadingText) {
@@ -71,6 +80,7 @@
         localization.localizePage("game");
         persistLoadingText();
         startGame();
+        contentRegistry = requireContentRegistry();
         gameSession = createSession();
         return gameSession;
     }
@@ -80,6 +90,7 @@
         const predictorNamespace = requirePredictorFactory();
 
         loadDefaults();
+        contentRegistry = requireContentRegistry();
         workerSession = createSession();
         return predictorNamespace.initWorkerPredictor();
     }
@@ -92,6 +103,9 @@
         },
         getWorkerSession() {
             return workerSession;
+        },
+        getContentRegistry() {
+            return contentRegistry;
         },
     });
 })(globalThis);

@@ -21,12 +21,28 @@
             return this.appContext.captureSaveState();
         }
 
+        captureCollectionState(names) {
+            return this.appContext.captureCollectionState(names);
+        }
+
+        captureSaveCollections() {
+            return this.appContext.captureSaveCollections();
+        }
+
+        captureSaveBuffCollections() {
+            return this.appContext.captureSaveBuffCollections();
+        }
+
         applyScalarPatch(patch) {
             return this.appContext.applyScalarState(patch);
         }
 
         applyGlobalPatch(patch) {
             return this.appContext.applyGlobalState(patch);
+        }
+
+        applyCollectionPatch(patch) {
+            return this.appContext.applyCollectionState(patch);
         }
     }
 

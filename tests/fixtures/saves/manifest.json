@@ -11,39 +11,39 @@
     },
     {
       "id": "forest-midgame",
-      "status": "planned",
-      "description": "Phase 0 target fixture for Forest-path midgame parity.",
+      "status": "active",
+      "description": "Synthetic Forest-path midgame parity fixture generated from a scripted runtime scenario.",
       "fixtureFile": "forest-midgame.localstorage.json",
       "baselineFile": "forest-midgame.baseline.json",
       "language": "en-EN",
-      "tags": ["phase-0", "midgame", "forest"]
+      "tags": ["phase-0", "midgame", "forest", "synthetic"]
     },
     {
       "id": "merchanton-midgame",
-      "status": "planned",
-      "description": "Phase 0 target fixture for Merchanton midgame parity.",
+      "status": "active",
+      "description": "Synthetic Merchanton midgame parity fixture generated from a scripted runtime scenario.",
       "fixtureFile": "merchanton-midgame.localstorage.json",
       "baselineFile": "merchanton-midgame.baseline.json",
       "language": "en-EN",
-      "tags": ["phase-0", "midgame", "merchanton"]
+      "tags": ["phase-0", "midgame", "merchanton", "synthetic"]
     },
     {
       "id": "valhalla-startington-branch",
-      "status": "planned",
-      "description": "Phase 0 target fixture for the Valhalla/Startington branch split.",
+      "status": "active",
+      "description": "Synthetic Valhalla/Startington branch-state fixture generated from a scripted runtime scenario.",
       "fixtureFile": "valhalla-startington-branch.localstorage.json",
       "baselineFile": "valhalla-startington-branch.baseline.json",
       "language": "en-EN",
-      "tags": ["phase-0", "branch", "valhalla", "startington"]
+      "tags": ["phase-0", "branch", "valhalla", "startington", "synthetic"]
     },
     {
       "id": "endgame",
-      "status": "planned",
-      "description": "Phase 0 target fixture for endgame parity checks.",
+      "status": "active",
+      "description": "Synthetic endgame parity fixture generated from a scripted runtime scenario.",
       "fixtureFile": "endgame.localstorage.json",
       "baselineFile": "endgame.baseline.json",
       "language": "en-EN",
-      "tags": ["phase-0", "endgame"]
+      "tags": ["phase-0", "endgame", "synthetic"]
     }
   ]
 }

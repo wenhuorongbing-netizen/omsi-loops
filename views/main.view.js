@@ -47,10 +47,13 @@ class View {
         this.initializeReadingShell();
         this.initializePlannerShell();
         this.initializeLoadoutManager();
+        this.initializeAccessibilityShell();
         document.body.removeEventListener("mouseover", this.mouseoverHandler);
         document.body.addEventListener("mouseover", this.mouseoverHandler, {passive: true});
         document.body.removeEventListener("focusin", this.mouseoverHandler);
         document.body.addEventListener("focusin", this.mouseoverHandler, {passive: true});
+        document.body.removeEventListener("focusout", this.focusoutHandler);
+        document.body.addEventListener("focusout", this.focusoutHandler, {passive: true});
         document.body.removeEventListener("click", this.documentClickHandler);
         document.body.addEventListener("click", this.documentClickHandler);
         document.removeEventListener("keydown", this.keydownHandler);
@@ -67,6 +70,7 @@ class View {
 
     constructor() {
         this.mouseoverHandler = this.mouseoverHandler.bind(this);
+        this.focusoutHandler = this.focusoutHandler.bind(this);
         this.modifierkeychangeHandler = this.modifierkeychangeHandler.bind(this);
         this.documentClickHandler = this.documentClickHandler.bind(this);
         this.keydownHandler = this.keydownHandler.bind(this);
@@ -120,6 +124,9 @@ class View {
     /** @param {UIEvent} event */
     mouseoverHandler(event) {
         if (!(event.target instanceof HTMLElement)) return;
+        if (event.type === "focusin") {
+            globalThis.IdleLoopsAccessibilityController.handleFocusIn(this, event.target);
+        }
         const trigger = this.getClosestTrigger(event.target);
         this.mouseoverCount++;
         if (trigger) {
@@ -138,8 +145,14 @@ class View {
                 if (tooltip instanceof HTMLElement)
                     this.fixTooltipPosition(tooltip, trigger, event.target);
             }
+            globalThis.IdleLoopsAccessibilityController.syncTooltipTrigger(trigger);
         }
     };
+
+    /** @param {FocusEvent} event */
+    focusoutHandler(event) {
+        return globalThis.IdleLoopsAccessibilityController.handleFocusOut(this, event);
+    }
 
     modifierkeychangeHandler() {
         htmlElement("clearList").textContent = shiftDown ? _txt("actions>tooltip>clear_disabled") : _txt("actions>tooltip>clear_list");
@@ -372,233 +385,55 @@ class View {
     }
 
     initializeReadingShell() {
-        const chronicleLogPane = htmlElement("chronicleLogBody");
-        const actionLogContainer = htmlElement("actionLogContainer");
-        if (actionLogContainer.parentElement !== chronicleLogPane) {
-            chronicleLogPane.appendChild(actionLogContainer);
-        }
-        this.refreshGuiLanguage(true);
-        this.setReadingPane(this.readingPane);
-        this.setInspectorTab(this.inspectorTab);
-        this.setChronicleTab(this.chronicleTab);
-        this.renderChronicleLogControls();
-        this.renderChronicleChapters();
-        this.renderChronicleStories();
-        this.renderInspector();
-        this.updateMobileReadingState();
+        return globalThis.IdleLoopsReadingShellController.initializeReadingShell(this);
     }
 
     initializePlannerShell() {
-        this.applyUiPreset();
-        this.applyUiDensity();
-        this.setPredictorState(options.predictor ? "running" : "off");
-        this.updateUiPresetButtons();
-        this.updateUiDensityButtons();
-        this.updateQueueRepeatToggle();
-        this.updatePlannerStatus();
-        this.updateQuickSettings();
-        this.updateHotkeyReferencePanels();
+        return globalThis.IdleLoopsPlannerController.initializePlannerShell(this);
+    }
+
+    initializeAccessibilityShell() {
+        return globalThis.IdleLoopsAccessibilityController.initializeAccessibilityShell(this);
+    }
+
+    refreshAccessibilityShell() {
+        return globalThis.IdleLoopsAccessibilityController.refreshAccessibilityShell(this);
     }
 
     getHotkeyReferenceSections() {
-        if (this.isChineseLanguage()) {
-            return [
-                {
-                    title: "\u64ad\u653e\u4e0e\u5faa\u73af",
-                    items: [
-                        ["Space", "\u6682\u505c / \u7ee7\u7eed"],
-                        ["R", "\u624b\u52a8\u91cd\u542f\u5faa\u73af"],
-                        ["B", "\u5207\u6362\u79bb\u7ebf\u6536\u76ca"],
-                    ],
-                },
-                {
-                    title: "\u6392\u8868\u4e0e\u6570\u91cf",
-                    items: [
-                        ["1-9", "\u5feb\u901f\u8bbe\u5b9a\u6dfb\u52a0\u6b21\u6570"],
-                        ["0", "\u628a\u5f53\u524d\u6b21\u6570 x10"],
-                        ["Backspace", "\u628a\u5f53\u524d\u6b21\u6570 /10"],
-                        ["=", "\u961f\u5217\u5bb9\u91cf +100"],
-                        ["-", "\u961f\u5217\u5bb9\u91cf -100"],
-                        ["Shift+S / L / C", "\u4fdd\u5b58 / \u8f7d\u5165 / \u6e05\u7a7a\u961f\u5217"],
-                        ["Shift+Z", "\u64a4\u9500\u4e0a\u4e00\u6b65"],
-                    ],
-                },
-                {
-                    title: "\u9884\u8bbe\u4e0e\u5bfc\u822a",
-                    items: [
-                        ["Shift+1..5", "\u8f7d\u5165 1-5 \u53f7 Loadout"],
-                        ["Left / A", "\u5207\u5230\u4e0a\u4e00\u4e2a\u533a\u57df"],
-                        ["Right / D", "\u5207\u5230\u4e0b\u4e00\u4e2a\u533a\u57df"],
-                        ["Shift+Left / A", "\u5207\u5230\u884c\u52a8\u9762"],
-                        ["Shift+Right / D", "\u5207\u5230\u6545\u4e8b\u9762"],
-                    ],
-                },
-            ];
-        }
-        return [
-            {
-                title: "Playback",
-                items: [
-                    ["Space", "Pause or resume the loop"],
-                    ["R", "Restart the current loop"],
-                    ["B", "Toggle offline bonus time"],
-                ],
-            },
-            {
-                title: "Queue and Amounts",
-                items: [
-                    ["1-9", "Set the add amount directly"],
-                    ["0", "Multiply the current add amount by 10"],
-                    ["Backspace", "Divide the current add amount by 10"],
-                    ["=", "Increase queue capacity by 100"],
-                    ["-", "Decrease queue capacity by 100"],
-                    ["Shift+S / L / C", "Save, load, or clear the current queue"],
-                    ["Shift+Z", "Undo the last queue edit"],
-                ],
-            },
-            {
-                title: "Loadouts and Navigation",
-                items: [
-                    ["Shift+1..5", "Load loadouts 1 through 5"],
-                    ["Left / A", "Move to the previous area"],
-                    ["Right / D", "Move to the next area"],
-                    ["Shift+Left / A", "Switch to the action list"],
-                    ["Shift+Right / D", "Switch to the story list"],
-                ],
-            },
-        ];
+        return globalThis.IdleLoopsPlannerController.getHotkeyReferenceSections(this);
     }
 
     renderHotkeyReferenceHtml() {
-        const statusKey = options.hotkeys ? "hotkeyStatusOn" : "hotkeyStatusOff";
-        const statusClass = options.hotkeys ? "is-active" : "is-inactive";
-        const sections = this.getHotkeyReferenceSections();
-        return `
-            <div class="hotkeyReferenceHeader">
-                <div class="hotkeyReferenceTitle">${this.getGuiText("hotkeyReferenceTitle")}</div>
-                <span class="hotkeyReferenceStatus ${statusClass}">${this.getGuiText(statusKey)}</span>
-            </div>
-            <div class="hotkeyReferenceIntro">${this.getGuiText("hotkeyReferenceIntro")}</div>
-            <div class="hotkeyReferenceGrid">
-                ${sections.map(section => `
-                    <section class="hotkeyReferenceGroup">
-                        <div class="hotkeyReferenceGroupTitle">${section.title}</div>
-                        <ul class="hotkeyReferenceList">
-                            ${section.items.map(([key, description]) => `
-                                <li class="hotkeyReferenceRow">
-                                    <kbd>${key}</kbd>
-                                    <span>${description}</span>
-                                </li>
-                            `).join("")}
-                        </ul>
-                    </section>
-                `).join("")}
-            </div>
-        `;
+        return globalThis.IdleLoopsPlannerController.renderHotkeyReferenceHtml(this);
     }
 
     updateHotkeyReferencePanels() {
-        const optionLabel = document.getElementById("simpleTooltipsOptionLabel");
-        if (optionLabel instanceof HTMLElement) {
-            optionLabel.textContent = this.getGuiText("simpleTooltips");
-        }
-        const optionTooltip = document.getElementById("simpleTooltipsOptionTooltip");
-        if (optionTooltip instanceof HTMLElement) {
-            optionTooltip.textContent = this.getGuiText("simpleTooltipsTooltip");
-        }
-        const helpHeading = document.getElementById("quickSettingsHelpHeading");
-        if (helpHeading instanceof HTMLElement) {
-            helpHeading.textContent = this.getGuiText("quickSettingsHelp");
-        }
-        const buttonIds = ["optionsHotkeyReferenceButton", "quickSettingHotkeyReference"];
-        for (const id of buttonIds) {
-            const button = document.getElementById(id);
-            if (button instanceof HTMLElement) {
-                button.textContent = this.getGuiText("viewHotkeys");
-            }
-        }
-        const panelHtml = this.renderHotkeyReferenceHtml();
-        for (const id of ["hotkeyReferencePanelOptions", "hotkeyReferencePanelQuick"]) {
-            const panel = document.getElementById(id);
-            if (panel instanceof HTMLElement) {
-                panel.innerHTML = panelHtml;
-            }
-        }
+        return globalThis.IdleLoopsPlannerController.updateHotkeyReferencePanels(this);
     }
 
     closeHotkeyReferencePanels() {
-        const pairs = [
-            ["optionsHotkeyReferenceButton", "hotkeyReferencePanelOptions"],
-            ["quickSettingHotkeyReference", "hotkeyReferencePanelQuick"],
-        ];
-        for (const [buttonId, panelId] of pairs) {
-            const button = document.getElementById(buttonId);
-            const panel = document.getElementById(panelId);
-            if (button instanceof HTMLElement) {
-                button.classList.remove("is-active");
-                button.setAttribute("aria-expanded", "false");
-            }
-            if (panel instanceof HTMLElement) {
-                panel.classList.add("hidden");
-            }
-        }
+        return globalThis.IdleLoopsPlannerController.closeHotkeyReferencePanels(this);
     }
 
     toggleHotkeyReference(source) {
-        const isOptions = source === "options";
-        const buttonId = isOptions ? "optionsHotkeyReferenceButton" : "quickSettingHotkeyReference";
-        const panelId = isOptions ? "hotkeyReferencePanelOptions" : "hotkeyReferencePanelQuick";
-        const button = document.getElementById(buttonId);
-        const panel = document.getElementById(panelId);
-        if (!(button instanceof HTMLElement) || !(panel instanceof HTMLElement)) return;
-        const shouldOpen = panel.classList.contains("hidden");
-        this.closeHotkeyReferencePanels();
-        if (shouldOpen) {
-            this.updateHotkeyReferencePanels();
-            panel.classList.remove("hidden");
-            button.classList.add("is-active");
-            button.setAttribute("aria-expanded", "true");
-        }
+        return globalThis.IdleLoopsPlannerController.toggleHotkeyReference(this, source);
     }
 
     getTrackedStatLabel() {
-        const select = document.getElementById("predictorTrackedStatInput");
-        if (select instanceof HTMLSelectElement) {
-            const selectedOption = select.selectedOptions[0];
-            const label = selectedOption?.textContent?.trim();
-            if (label) return label;
-        }
-        const trackedStat = globalThis.Koviko?.trackedStats?.[options.predictorTrackedStat];
-        if (trackedStat) return `(${trackedStat.type}) ${trackedStat.display_name}`;
-        return options.predictorTrackedStat;
+        return globalThis.IdleLoopsPlannerController.getTrackedStatLabel(this);
     }
 
     getUiPresetLabel(preset) {
-        const labels = this.isChineseLanguage()
-            ? {
-                classic: "\u7ecf\u5178",
-                planner: "\u89c4\u5212",
-                reader: "\u9605\u8bfb",
-                compact: "\u7d27\u51d1",
-            }
-            : {
-                classic: "Classic",
-                planner: "Planner",
-                reader: "Reader",
-                compact: "Compact",
-        };
-        return labels[preset] ?? preset;
+        return globalThis.IdleLoopsPlannerController.getUiPresetLabel(this, preset);
     }
 
     getUiDensityLabel(density) {
-        return this.getGuiText(`density${density[0].toUpperCase()}${density.slice(1)}`);
+        return globalThis.IdleLoopsPlannerController.getUiDensityLabel(this, density);
     }
 
     getQueueRepeatToggleLabel() {
-        if (this.queueCompactRepeats) {
-            return this.isChineseLanguage() ? "\u91cd\u590d\u9879\uff1a\u6298\u53e0" : "Repeat Rows: Compact";
-        }
-        return this.isChineseLanguage() ? "\u91cd\u590d\u9879\uff1a\u5c55\u5f00" : "Repeat Rows: Full";
+        return globalThis.IdleLoopsPlannerController.getQueueRepeatToggleLabel(this);
     }
 
     getTrackedResourcePinLabel(isPinned) {
@@ -613,309 +448,87 @@ class View {
     }
 
     isMobileReadingUi() {
-        return options.responsiveUI && window.matchMedia("(max-width: 810px)").matches;
+        return globalThis.IdleLoopsReadingShellController.isMobileReadingUi(this);
     }
 
     updateMobileReadingState() {
-        const isMobileReadingUi = this.isMobileReadingUi();
-        const isDrawerOpen = isMobileReadingUi && this.readingPane !== "character";
-        document.body.classList.toggle("mobile-reading-ui", isMobileReadingUi);
-        document.body.classList.toggle("mobile-reading-open", isDrawerOpen);
-        htmlElement("statsColumn").dataset.readingDrawer = isDrawerOpen ? "open" : "closed";
+        return globalThis.IdleLoopsReadingShellController.updateMobileReadingState(this);
     }
 
     responsiveLayoutHandler() {
-        this.updateMobileReadingState();
+        return globalThis.IdleLoopsReadingShellController.responsiveLayoutHandler(this);
     }
 
     handlePredictorTrackedStatChange(value) {
-        setOption("predictorTrackedStat", value);
-        if (options.predictor) {
-            this.setPredictorState("stale");
-        } else {
-            this.updatePlannerStatus();
-        }
-        this.renderInspector();
+        return globalThis.IdleLoopsPlannerController.handlePredictorTrackedStatChange(this, value);
     }
 
     setUiPreset(preset) {
-        if (!["classic", "planner", "reader", "compact"].includes(preset)) return;
-        this.uiPreset = preset;
-        window.localStorage.setItem("uiPreset", preset);
-        this.applyUiPreset();
-        this.updateUiPresetButtons();
+        return globalThis.IdleLoopsPlannerController.setUiPreset(this, preset);
     }
 
     applyUiPreset() {
-        for (const preset of ["classic", "planner", "reader", "compact"]) {
-            document.body.classList.toggle(`ui-preset-${preset}`, this.uiPreset === preset);
-        }
-        document.body.dataset.uiPreset = this.uiPreset;
+        return globalThis.IdleLoopsPlannerController.applyUiPreset(this);
     }
 
     setUiDensity(density) {
-        if (!["compact", "standard", "large"].includes(density)) return;
-        this.uiDensity = density;
-        window.localStorage.setItem("uiDensity", density);
-        this.applyUiDensity();
-        this.updateUiDensityButtons();
+        return globalThis.IdleLoopsPlannerController.setUiDensity(this, density);
     }
 
     applyUiDensity() {
-        for (const density of ["compact", "standard", "large"]) {
-            document.body.classList.toggle(`ui-density-${density}`, this.uiDensity === density);
-        }
-        document.body.dataset.uiDensity = this.uiDensity;
+        return globalThis.IdleLoopsPlannerController.applyUiDensity(this);
     }
 
     updateUiPresetButtons() {
-        /** @type {[string, string][]} */
-        const presets = [
-            ["uiPresetClassic", "classic"],
-            ["uiPresetPlanner", "planner"],
-            ["uiPresetReader", "reader"],
-            ["uiPresetCompact", "compact"],
-        ];
-        for (const [id, preset] of presets) {
-            const button = document.getElementById(id);
-            if (!(button instanceof HTMLElement)) continue;
-            const isActive = this.uiPreset === preset;
-            button.textContent = this.getUiPresetLabel(preset);
-            button.classList.toggle("is-active", isActive);
-            button.setAttribute("aria-pressed", String(isActive));
-            button.dataset.state = isActive ? "active" : "inactive";
-            button.setAttribute("title", this.getUiPresetLabel(preset));
-        }
+        return globalThis.IdleLoopsPlannerController.updateUiPresetButtons(this);
     }
 
     updateUiDensityButtons() {
-        /** @type {[string, string][]} */
-        const densities = [
-            ["uiDensityCompact", "compact"],
-            ["uiDensityStandard", "standard"],
-            ["uiDensityLarge", "large"],
-        ];
-        for (const [id, density] of densities) {
-            const button = document.getElementById(id);
-            if (!(button instanceof HTMLElement)) continue;
-            const isActive = this.uiDensity === density;
-            button.textContent = this.getUiDensityLabel(density);
-            button.classList.toggle("is-active", isActive);
-            button.setAttribute("aria-pressed", String(isActive));
-            button.setAttribute("title", this.getUiDensityLabel(density));
-        }
+        return globalThis.IdleLoopsPlannerController.updateUiDensityButtons(this);
     }
 
     toggleQueueCompactRepeats() {
-        this.queueCompactRepeats = !this.queueCompactRepeats;
-        window.localStorage.setItem("queueCompactRepeats", String(this.queueCompactRepeats));
-        this.updateQueueRepeatToggle();
-        this.updateNextActions();
+        return globalThis.IdleLoopsPlannerController.toggleQueueCompactRepeats(this);
     }
 
     updateQueueRepeatToggle() {
-        const button = document.getElementById("queueRepeatToggle");
-        if (!(button instanceof HTMLElement)) return;
-        const label = this.getQueueRepeatToggleLabel();
-        button.textContent = label;
-        button.classList.toggle("is-active", this.queueCompactRepeats);
-        button.setAttribute("aria-pressed", String(this.queueCompactRepeats));
-        button.setAttribute("title", label);
+        return globalThis.IdleLoopsPlannerController.updateQueueRepeatToggle(this);
     }
 
     initializeLoadoutManager() {
-        const managerPanel = document.getElementById("loadoutManagerPanel");
-        const slotGrid = document.getElementById("loadoutSlotGrid");
-        const actionsBar = document.getElementById("loadoutManagerActions");
-        const legacyShell = document.querySelector(".showthatloadout");
-        const legacyPanel = legacyShell?.querySelector(".showthisloadout");
-        const renameInput = document.getElementById("renameLoadout");
-        if (!(managerPanel instanceof HTMLElement) || !(slotGrid instanceof HTMLElement) || !(actionsBar instanceof HTMLElement) || !(legacyPanel instanceof HTMLElement) || !(renameInput instanceof HTMLElement)) return;
-
-        const saveButton = legacyPanel.querySelector("button[data-lockey='actions>tooltip>save_loadout']");
-        const loadButton = legacyPanel.querySelector("button[data-lockey='actions>tooltip>load_loadout']");
-        const renameButton = legacyPanel.querySelector("button[data-lockey='actions>tooltip>rename']");
-
-        slotGrid.innerHTML = "";
-        for (let i = 1; i <= 15; i++) {
-            const loadButtonElement = document.getElementById(`load${i}`);
-            if (!(loadButtonElement instanceof HTMLElement)) continue;
-            loadButtonElement.classList.add("loadoutSlotButton");
-            loadButtonElement.removeAttribute("style");
-            slotGrid.appendChild(loadButtonElement);
-        }
-        if (saveButton instanceof HTMLElement) {
-            saveButton.id = "saveLoadoutButton";
-            actionsBar.appendChild(saveButton);
-        }
-        if (loadButton instanceof HTMLElement) {
-            loadButton.id = "loadLoadoutButton";
-            actionsBar.appendChild(loadButton);
-        }
-        if (renameButton instanceof HTMLElement) {
-            renameButton.id = "renameLoadoutButton";
-            actionsBar.appendChild(renameButton);
-        }
-        actionsBar.appendChild(renameInput);
-        renameInput.removeAttribute("style");
-        if (legacyShell instanceof HTMLElement) {
-            legacyShell.classList.add("legacy-loadout-shell");
-            legacyShell.setAttribute("aria-hidden", "true");
-        }
-        this.toggleLoadoutManager(this.loadoutManagerOpen);
-        this.updateLoadoutManager();
+        return globalThis.IdleLoopsLoadoutController.initializeLoadoutManager(this);
     }
 
     toggleLoadoutManager(force) {
-        if (typeof force === "boolean") {
-            this.loadoutManagerOpen = force;
-        } else {
-            this.loadoutManagerOpen = !this.loadoutManagerOpen;
-        }
-        window.localStorage.setItem("loadoutManagerOpen", String(this.loadoutManagerOpen));
-        const panel = document.getElementById("loadoutManagerPanel");
-        const toggle = document.getElementById("loadoutManagerToggle");
-        if (panel instanceof HTMLElement) panel.classList.toggle("hidden", !this.loadoutManagerOpen);
-        if (toggle instanceof HTMLElement) toggle.setAttribute("aria-expanded", String(this.loadoutManagerOpen));
+        return globalThis.IdleLoopsLoadoutController.toggleLoadoutManager(this, force);
     }
 
     formatLoadoutSavedAt(timestamp) {
-        if (!timestamp) return "";
-        try {
-            return new Date(timestamp).toLocaleString(Localization.currentLang || undefined, {dateStyle: "short", timeStyle: "short"});
-        } catch {
-            return new Date(timestamp).toLocaleString();
-        }
+        return globalThis.IdleLoopsLoadoutController.formatLoadoutSavedAt(Localization.currentLang, timestamp);
     }
 
     simplifyActionRecord(record) {
-        return {
-            name: record.name,
-            loops: record.loops,
-            disabled: !!record.disabled,
-            collapsed: !!record.collapsed,
-        };
+        return globalThis.IdleLoopsLoadoutController.simplifyActionRecord(record);
     }
 
     areActionRecordsEquivalent(left=[], right=[]) {
-        if (left.length !== right.length) return false;
-        return left.every((record, index) => {
-            const comparison = right[index];
-            if (!comparison) return false;
-            const a = this.simplifyActionRecord(record);
-            const b = this.simplifyActionRecord(comparison);
-            return a.name === b.name
-                && a.loops === b.loops
-                && a.disabled === b.disabled
-                && a.collapsed === b.collapsed;
-        });
+        return globalThis.IdleLoopsLoadoutController.areActionRecordsEquivalent(left, right);
     }
 
     noteLoadoutSaved(num) {
-        this.loadoutSaveTimes[num] = new Date().toISOString();
-        window.localStorage.setItem("loadoutSaveTimes", JSON.stringify(this.loadoutSaveTimes));
-        this.updateLoadoutManager();
+        return globalThis.IdleLoopsLoadoutController.noteLoadoutSaved(this, num);
     }
 
     updateLoadoutManager() {
-        const selectionSummary = document.getElementById("loadoutSelectionSummary");
-        const differenceSummary = document.getElementById("loadoutDifferenceSummary");
-        const loadButton = document.getElementById("loadLoadoutButton");
-        const saveButton = document.getElementById("saveLoadoutButton");
-        const renameButton = document.getElementById("renameLoadoutButton");
-        const renameInput = document.getElementById("renameLoadout");
-        if (!(selectionSummary instanceof HTMLElement) || !(differenceSummary instanceof HTMLElement)) return;
-
-        for (let i = 1; i <= 15; i++) {
-            const button = document.getElementById(`load${i}`);
-            if (!(button instanceof HTMLElement)) continue;
-            const records = loadouts?.[i] ?? [];
-            const isEmpty = !records || records.length === 0;
-            const matchesCurrent = !isEmpty && this.areActionRecordsEquivalent(records, actions.next);
-            const savedAt = this.formatLoadoutSavedAt(this.loadoutSaveTimes[i]);
-            const loadoutName = loadoutnames[i - 1] ?? getDefaultLoadoutName(i);
-            const actionCountText = isEmpty
-                ? this.getGuiText("loadoutEmpty")
-                : `${records.length} ${this.getGuiText("loadoutActions")}`;
-            const savedAtText = savedAt
-                ? `${this.getGuiText("loadoutSavedAt")}: ${savedAt}`
-                : `${this.getGuiText("loadoutSavedAt")}: -`;
-            button.classList.toggle("unused", curLoadout !== i);
-            button.classList.toggle("loadout-slot-empty", isEmpty);
-            button.classList.toggle("loadout-slot-dirty", curLoadout === i && !isEmpty && !matchesCurrent);
-            button.classList.toggle("loadout-slot-match", curLoadout === i && matchesCurrent);
-            button.setAttribute("data-count", String(records?.length ?? 0));
-            button.innerHTML = `
-                <span class="loadoutSlotName">${loadoutName}</span>
-                <span class="loadoutSlotMeta">${actionCountText}</span>
-                <span class="loadoutSlotSaved">${savedAtText}</span>
-            `;
-            button.setAttribute("title", `${loadoutName} / ${actionCountText} / ${savedAtText}`);
-            button.setAttribute("aria-label", `${loadoutName}. ${actionCountText}. ${savedAtText}.`);
-        }
-
-        if (curLoadout === 0) {
-            selectionSummary.textContent = this.getGuiText("loadoutNoSelection");
-            differenceSummary.textContent = this.getGuiText("loadoutReplaceWarning");
-            if (loadButton instanceof HTMLButtonElement) loadButton.disabled = true;
-            if (saveButton instanceof HTMLButtonElement) saveButton.disabled = true;
-            if (renameButton instanceof HTMLButtonElement) renameButton.disabled = true;
-            if (renameInput instanceof HTMLInputElement && document.activeElement !== renameInput) {
-                renameInput.value = getLoadoutNameDefault();
-            }
-            return;
-        }
-
-        const selectedRecords = loadouts?.[curLoadout] ?? [];
-        const isEmpty = !selectedRecords || selectedRecords.length === 0;
-        const matchesCurrent = !isEmpty && this.areActionRecordsEquivalent(selectedRecords, actions.next);
-        const savedAt = this.formatLoadoutSavedAt(this.loadoutSaveTimes[curLoadout]);
-        selectionSummary.textContent = `${this.getGuiText("loadoutSelected")}: ${loadoutnames[curLoadout - 1] ?? getDefaultLoadoutName(curLoadout)}`;
-        differenceSummary.textContent = isEmpty
-            ? this.getGuiText("loadoutEmpty")
-            : `${selectedRecords.length} ${this.getGuiText("loadoutActions")} / ${matchesCurrent ? this.getGuiText("loadoutMatchesCurrent") : this.getGuiText("loadoutDiffersCurrent")}${savedAt ? ` / ${this.getGuiText("loadoutSavedAt")}: ${savedAt}` : ""}`;
-        if (loadButton instanceof HTMLButtonElement) loadButton.disabled = isEmpty;
-        if (saveButton instanceof HTMLButtonElement) saveButton.disabled = false;
-        if (renameButton instanceof HTMLButtonElement) renameButton.disabled = false;
-        if (renameInput instanceof HTMLInputElement && document.activeElement !== renameInput) {
-            renameInput.value = loadoutnames[curLoadout - 1] ?? getLoadoutNameDefault();
-        }
+        return globalThis.IdleLoopsLoadoutController.updateLoadoutManager(this);
     }
 
     toggleQuickSetting(option) {
-        if (!(option in options)) return;
-        setOption(option, !options[option], true);
-        if (option === "predictor") {
-            this.setPredictorState(options.predictor ? "stale" : "off");
-        } else {
-            this.updatePlannerStatus();
-        }
-        this.updateQuickSettings();
-        this.updateMobileReadingState();
-        this.renderInspector();
+        return globalThis.IdleLoopsPlannerController.toggleQuickSetting(this, option);
     }
 
     updateQuickSettings() {
-        /** @type {[string, string, string][]} */
-        const quickSettings = [
-            ["quickSettingResponsiveUI", "responsiveUI", "menu>options>responsive_ui"],
-            ["quickSettingActionLog", "actionLog", "menu>options>action_log"],
-            ["quickSettingPredictor", "predictor", "menu>options>predictor"],
-            ["quickSettingStatColors", "statColors", "menu>options>stat_colors"],
-            ["quickSettingHighlightNew", "highlightNew", "menu>options>highlight_new"],
-            ["quickSettingHotkeys", "hotkeys", "menu>options>hotkeys"],
-            ["quickSettingSimpleTooltips", "simpleTooltips", "gui:simpleTooltips"],
-        ];
-        for (const [id, option, locKey] of quickSettings) {
-            const button = document.getElementById(id);
-            if (!(button instanceof HTMLElement)) continue;
-            const active = !!options[option];
-            button.textContent = locKey.startsWith("gui:") ? this.getGuiText(locKey.slice(4)) : _txt(locKey);
-            button.classList.toggle("is-active", active);
-            button.setAttribute("aria-pressed", String(active));
-            button.dataset.state = active ? "on" : "off";
-            button.title = `${button.textContent?.trim() ?? ""}: ${this.getGuiText(active ? "quickSettingOn" : "quickSettingOff")}`;
-        }
+        return globalThis.IdleLoopsPlannerController.updateQuickSettings(this);
     }
 
     getBuffGroupLabel(group) {
@@ -979,162 +592,51 @@ class View {
         this.renderChronicleStories();
         this.renderInspector();
         this.updateMobileReadingState();
+        this.refreshAccessibilityShell();
     }
 
     setReadingPane(pane) {
-        if (this.isMobileReadingUi() && pane === this.readingPane && pane !== "character") {
-            pane = "character";
-        }
-        this.readingPane = pane;
-        const statsColumn = htmlElement("statsColumn");
-        const panes = {
-            inspector: htmlElement("inspectorPane"),
-            chronicle: htmlElement("chroniclePane"),
-        };
-        statsColumn.dataset.readingPane = pane;
-        panes.inspector.classList.toggle("hidden", pane !== "inspector");
-        panes.chronicle.classList.toggle("hidden", pane !== "chronicle");
-        htmlElement("statsWindow").classList.toggle("hidden", pane !== "character");
-        htmlElement("readingTabInspector").classList.toggle("is-active", pane === "inspector");
-        htmlElement("readingTabChronicle").classList.toggle("is-active", pane === "chronicle");
-        htmlElement("readingTabCharacter").classList.toggle("is-active", pane === "character");
-        this.updateMobileReadingState();
+        return globalThis.IdleLoopsReadingShellController.setReadingPane(this, pane);
     }
 
     setInspectorTab(tab) {
-        this.inspectorTab = tab;
-        htmlElement("inspectorTabSummary").classList.toggle("is-active", tab === "summary");
-        htmlElement("inspectorTabStory").classList.toggle("is-active", tab === "story");
-        htmlElement("inspectorTabNumbers").classList.toggle("is-active", tab === "numbers");
-        htmlElement("inspectorSummaryPane").classList.toggle("hidden", tab !== "summary");
-        htmlElement("inspectorStoryPane").classList.toggle("hidden", tab !== "story");
-        htmlElement("inspectorNumbersPane").classList.toggle("hidden", tab !== "numbers");
+        return globalThis.IdleLoopsReadingShellController.setInspectorTab(this, tab);
     }
 
     setChronicleTab(tab) {
-        this.chronicleTab = tab;
-        htmlElement("chronicleTabLog").classList.toggle("is-active", tab === "log");
-        htmlElement("chronicleTabChapters").classList.toggle("is-active", tab === "chapters");
-        htmlElement("chronicleTabStories").classList.toggle("is-active", tab === "stories");
-        htmlElement("chronicleLogPane").classList.toggle("hidden", tab !== "log");
-        htmlElement("chronicleChaptersPane").classList.toggle("hidden", tab !== "chapters");
-        htmlElement("chronicleStoriesPane").classList.toggle("hidden", tab !== "stories");
-        if (tab === "log") this.renderChronicleLogControls();
-        if (tab === "chapters") this.renderChronicleChapters();
-        if (tab === "stories") this.renderChronicleStories();
+        return globalThis.IdleLoopsReadingShellController.setChronicleTab(this, tab);
     }
 
     setChronicleChapter(chapter) {
-        this.chronicleChapter = chapter;
-        this.renderChronicleChapters();
+        return globalThis.IdleLoopsReadingShellController.setChronicleChapter(this, chapter);
     }
 
     openReadingPaneFromNav(pane, tab) {
-        this.setReadingPane(pane);
-        if (pane === "chronicle" && tab) {
-            this.setChronicleTab(tab);
-        }
+        return globalThis.IdleLoopsReadingShellController.openReadingPaneFromNav(this, pane, tab);
     }
 
     setPredictorState(state) {
-        this.predictorState = options.predictor ? state : "off";
-        this.updatePlannerStatus();
+        return globalThis.IdleLoopsPlannerController.setPredictorState(this, state);
     }
 
     predictorUpdateHandler() {
-        this.setPredictorState("ready");
-        if (this.inspectorSelection?.kind === "action" && this.inspectorSelection.source === "queue") {
-            this.renderInspector();
-        }
+        return globalThis.IdleLoopsPlannerController.predictorUpdateHandler(this);
     }
 
     documentClickHandler(event) {
-        if (!(event.target instanceof HTMLElement)) return;
-        const target = event.target;
-        const insidePopup = target.closest(".showthis,.showthis2,.showthisH,.showthisloadout,.showthisstory");
-        const menuTrigger = target.closest("#menu > li.showthatH");
-
-        if (menuTrigger && !insidePopup) {
-            this.toggleMenuPopup(menuTrigger.id);
-        } else if (!target.closest("#menu")) {
-            this.closeOpenMenus();
-        }
-
-        if (insidePopup) return;
-
-        const storyContainer = target.closest(".storyContainer");
-        if (storyContainer instanceof HTMLElement) {
-            const varName = storyContainer.id.replace("storyContainer", "");
-            this.openInspectorForStory(varName);
-            return;
-        }
-
-        const actionContainer = target.closest(".actionOrTravelContainer");
-        if (actionContainer instanceof HTMLElement) {
-            const varName = actionContainer.id.replace("container", "");
-            queueMicrotask(() => this.openInspectorForAction(varName));
-            return;
-        }
-
-        const logEntry = target.closest(".actionLogEntry");
-        if (logEntry instanceof HTMLElement) {
-            const index = Number(logEntry.id.replace("actionLogEntry", ""));
-            if (Number.isFinite(index)) {
-                this.openInspectorForLog(index);
-            }
-        }
+        return globalThis.IdleLoopsReadingShellController.documentClickHandler(this, event);
     }
 
     keydownHandler(event) {
-        if (!(event.target instanceof HTMLElement)) return;
-        if (event.key === "Escape") {
-            this.closeOpenMenus();
-            if (this.readingPane === "inspector" && this.inspectorSelection) {
-                this.clearInspectorSelection();
-            }
-            return;
-        }
-        if (!(event.key === "Enter" || event.key === " ")) return;
-
-        const target = event.target;
-        const storyContainer = target.closest(".storyContainer");
-        if (storyContainer instanceof HTMLElement) {
-            event.preventDefault();
-            this.openInspectorForStory(storyContainer.id.replace("storyContainer", ""));
-            return;
-        }
-        const queueRow = target.closest(".nextActionContainer");
-        if (queueRow instanceof HTMLElement) {
-            event.preventDefault();
-            const actionId = Number(queueRow.getAttribute("data-action-id"));
-            if (Number.isFinite(actionId)) this.openInspectorForQueue(actionId);
-            return;
-        }
-        const logEntry = target.closest(".actionLogEntry");
-        if (logEntry instanceof HTMLElement) {
-            event.preventDefault();
-            const index = Number(logEntry.id.replace("actionLogEntry", ""));
-            if (Number.isFinite(index)) this.openInspectorForLog(index);
-        }
+        return globalThis.IdleLoopsReadingShellController.keydownHandler(this, event);
     }
 
     toggleMenuPopup(menuId) {
-        const menuElement = htmlElement(menuId);
-        const isOpen = menuElement.classList.contains("menu-open");
-        this.closeOpenMenus();
-        if (!isOpen) {
-            menuElement.classList.add("menu-open");
-            menuElement.setAttribute("aria-expanded", "true");
-        }
+        return globalThis.IdleLoopsReadingShellController.toggleMenuPopup(this, menuId);
     }
 
     closeOpenMenus() {
-        this.closeHotkeyReferencePanels();
-        for (const menu of document.querySelectorAll("#menu > li.showthatH.menu-open")) {
-            if (!(menu instanceof HTMLElement)) continue;
-            menu.classList.remove("menu-open");
-            menu.setAttribute("aria-expanded", "false");
-        }
+        return globalThis.IdleLoopsReadingShellController.closeOpenMenus(this);
     }
 
     getActionByVarName(varName) {
@@ -1695,29 +1197,7 @@ class View {
     }
 
     updatePlannerStatus() {
-        const predictorState = htmlElement("plannerPredictorState");
-        const trackedStatState = htmlElement("plannerTrackedStatState");
-        const selectionState = htmlElement("plannerSelectionState");
-        const predictorLabel = {
-            off: this.getGuiText("predictorOff"),
-            running: this.getGuiText("predictorRunning"),
-            ready: this.getGuiText("predictorReady"),
-            stale: this.getGuiText("predictorStale"),
-        }[options.predictor ? this.predictorState : "off"];
-        predictorState.textContent = `${this.getGuiText("predictor")}: ${predictorLabel}`;
-        predictorState.dataset.state = options.predictor ? this.predictorState : "off";
-        trackedStatState.textContent = `${this.isChineseLanguage() ? "\u8ddf\u8e2a\u9879" : "Tracked"}: ${this.getTrackedStatLabel()}`;
-        trackedStatState.dataset.state = options.predictor ? this.predictorState : "off";
-
-        let selectionLabel = this.getGuiText("nothingSelected");
-        if (this.inspectorSelection?.kind === "action") {
-            const action = this.getActionByVarName(this.inspectorSelection.varName);
-            if (action) selectionLabel = `${this.getGuiText("selected")}: ${action.label}`;
-        } else if (this.inspectorSelection?.kind === "log") {
-            selectionLabel = `${this.getGuiText("selected")}: ${this.getGuiText("log")} #${this.inspectorSelection.index + 1}`;
-        }
-        selectionState.textContent = selectionLabel;
-        this.updatePredictorPlannerPanel();
+        return globalThis.IdleLoopsPlannerController.updatePlannerStatus(this);
     }
 
     handleQueueRowClick(actionId, event) {
@@ -1734,46 +1214,15 @@ class View {
     }
 
     updatePredictorPlannerPanel() {
-        const panel = document.getElementById("plannerPredictorPanel");
-        const heading = document.getElementById("plannerPredictorHeading");
-        const viewHeading = document.getElementById("plannerViewHeading");
-        const trackedStatLabel = document.getElementById("plannerTrackedStatLabel");
-        const trackedStatInput = document.getElementById("predictorTrackedStatInput");
-        const totalDisplay = document.getElementById("predictorTotalDisplay");
-        const statisticDisplay = document.getElementById("predictorStatisticDisplay");
-        if (heading instanceof HTMLElement) {
-            heading.textContent = this.getGuiText("plannerPredictorHeading");
-        }
-        if (viewHeading instanceof HTMLElement) {
-            viewHeading.textContent = this.getGuiText("plannerViewHeading");
-        }
-        if (trackedStatLabel instanceof HTMLElement) {
-            trackedStatLabel.textContent = this.isChineseLanguage() ? "\u8ddf\u8e2a\u9879" : "Tracked";
-        }
-        if (trackedStatInput instanceof HTMLSelectElement) {
-            trackedStatInput.value = options.predictorTrackedStat;
-            trackedStatInput.title = `${this.getTrackedStatLabel()}`;
-        }
-        if (!options.predictor) {
-            if (totalDisplay instanceof HTMLElement) totalDisplay.textContent = "";
-            if (statisticDisplay instanceof HTMLElement) statisticDisplay.textContent = "";
-        }
-        if (panel instanceof HTMLElement) {
-            panel.classList.toggle("is-disabled", !options.predictor);
-            panel.dataset.state = options.predictor ? this.predictorState : "off";
-        }
+        return globalThis.IdleLoopsPlannerController.updatePredictorPlannerPanel(this);
     }
 
     getActiveQueueTownNum() {
-        return actions.currentAction?.townNum ?? actions.current[actions.currentPos]?.townNum ?? -1;
+        return globalThis.IdleLoopsPlannerController.getActiveQueueTownNum(this);
     }
 
     updateQueueSegmentHighlight() {
-        const activeTownNum = this.getActiveQueueTownNum();
-        for (const element of document.querySelectorAll(".nextActionContainer")) {
-            if (!(element instanceof HTMLElement)) continue;
-            element.classList.toggle("zone-active-segment", Number(element.dataset.townNum) === activeTownNum);
-        }
+        return globalThis.IdleLoopsPlannerController.updateQueueSegmentHighlight(this);
     }
 
     createStats() {
@@ -2184,43 +1633,14 @@ class View {
 
     /** @param {string|gapi.client.drive.File} fileOrText */
     updateCloudSave(fileOrText) {
-        const list = document.getElementById("cloud_save_result");
-        if (typeof fileOrText === "string") {
-            list.innerHTML = fileOrText;
-        } else if (fileOrText) {
-            const fileId = fileOrText.id;
-            const fileName = fileOrText.name;
-            let li = document.getElementById(`cloud_save_${fileId}`);
-            if (li && !fileName) {
-                li.remove();
-                return;
-            }
-            if (!li) {
-                li = document.createElement("li");
-                list.appendChild(li);
-            }
-            li.className = "cloud_save";
-            li.id = `cloud_save_${fileId}`;
-            li.dataset.fileId = fileId;
-            li.dataset.fileName = fileName;
-            li.innerHTML = `
-                <button onclick='startRenameCloudSave("${fileId}")' class='cloud_rename actionIcon fas fa-pencil-alt'></button>
-                <div class="cloud_save_name"'>
-                    ${fileName}
-                </div>
-                <button class='button cloud_import' style='margin-top: 1px;' onclick='googleCloud.importFile("${fileId}")'>${_txt("menu>save>import_button")}</button>
-                <button class='button cloud_delete' style='margin-top: 1px;' onclick='askDeleteCloudSave("${fileId}")'>${_txt("menu>save>delete_button")}</button>
-            `;
-            const name = /** @type {HTMLElement} */(li.querySelector(".cloud_save_name"));
-            name.textContent = fileName;
-            name.title = fileName;
-        }
+        return globalThis.IdleLoopsCloudSaveUI.updateCloudSave(this, fileOrText);
     }
 
     updateTime() {
         document.getElementById("timeBar").style.width = `${100 - timer / timeNeeded * 100}%`;
         document.getElementById("timer").textContent = `${intToString((timeNeeded - timer), options.fractionalMana ? 2 : 1, true)} | ${formatTime((timeNeeded - timer) / 50 / getActualGameSpeed())}`;
         this.adjustGoldCost({varName:"Wells", cost: Action.ManaWell.goldCost()});
+        globalThis.IdleLoopsAccessibilityController.updateTimeBarState();
     };
     updateOffline() {
         document.getElementById("bonusSeconds").textContent = formatTime(totalOfflineMs / 1000);
@@ -3004,286 +2424,61 @@ class View {
     };
 
     initializeActionCategoryLegend() {
-        if (document.getElementById("actionCategoryLegend")) return;
-
-        document.getElementById("townActionTitle").append(Rendered.html`
-            <div id="actionCategoryLegend" class="actionCategoryLegend">
-                <div class="actionCategoryLegendHeader">
-                    <span id="actionCategoryLegendTitle" class="actionCategoryLegendTitle"></span>
-                    <button
-                        type="button"
-                        id="actionCategoryLegendToggle"
-                        class="button actionCategoryLegendToggle"
-                        onclick="view.toggleActionCategoryLegend()"
-                    ></button>
-                </div>
-                <div id="actionCategoryLegendButtons" class="actionCategoryLegendButtons"></div>
-                <div id="actionCategoryLegendHint" class="actionCategoryLegendHint"></div>
-            </div>
-        `);
-
-        const buttons = document.getElementById("actionCategoryLegendButtons");
-        for (const category of actionCategories) {
-            buttons.append(Rendered.html`
-                <button
-                    type="button"
-                    class="button actionCategoryFilterButton action-category-${category}"
-                    data-category="${category}"
-                    onclick="view.toggleActionCategoryFilter('${category}')"
-                >
-                    <span class="actionCategoryFilterLabel"></span>
-                    <span class="actionCategoryFilterCount">0</span>
-                </button>
-            `);
-        }
-
-        this.updateActionCategoryLegend();
+        return globalThis.IdleLoopsTownBrowserController.initializeActionCategoryLegend(this);
     }
 
     initializeTownBrowserTools() {
-        if (document.getElementById("townBrowserTools")) return;
-        document.getElementById("townActionTitle").append(Rendered.html`
-            <div id="townBrowserTools" class="townBrowserTools">
-                <div id="townSummaryStrip" class="townSummaryStrip">
-                    <div class="townSummaryPrimary">
-                        <span id="townSummaryVisible" class="townSummaryPill"></span>
-                        <span id="townSummaryUnread" class="townSummaryPill"></span>
-                    </div>
-                    <div id="townSummaryCategoryRow" class="townSummaryCategoryRow">
-                        ${actionCategories.map(category => `
-                            <span id="townSummaryCategory${category}" class="townSummaryPill townSummaryCategoryPill action-category-${category}"></span>
-                        `).join("")}
-                    </div>
-                </div>
-                <div id="townFilterBar" class="townFilterBar">
-                    <input
-                        id="townActionSearch"
-                        class="townActionSearch"
-                        type="search"
-                        autocomplete="off"
-                        oninput="view.setTownActionSearch(this.value)"
-                    >
-                    <button
-                        type="button"
-                        id="townFilterNew"
-                        class="button townQuickFilter"
-                        onclick="view.toggleTownQuickFilter('new')"
-                    ></button>
-                    <button
-                        type="button"
-                        id="townFilterUnread"
-                        class="button townQuickFilter"
-                        onclick="view.toggleTownQuickFilter('unread')"
-                    ></button>
-                    <button
-                        type="button"
-                        id="townFilterTravelTrial"
-                        class="button townQuickFilter"
-                        onclick="view.toggleTownQuickFilter('travelTrial')"
-                    ></button>
-                </div>
-            </div>
-        `);
-        this.updateTownBrowserTools();
+        return globalThis.IdleLoopsTownBrowserController.initializeTownBrowserTools(this);
     }
 
     /** @param {AnyAction} action @param {"action"|"story"|"queue"} [variant] */
     renderActionCategoryBadge(action, variant="action") {
-        const category = action.category;
-        return `<span class="actionCategoryBadge actionCategoryBadge-${variant} action-category-${category}" title="${getActionCategoryLabel(category)}">${getActionCategoryShortLabel(category)}</span>`;
+        return globalThis.IdleLoopsTownBrowserController.renderActionCategoryBadge(action, variant);
     }
 
     /** @param {AnyAction} action @param {"action"|"story"} [variant] */
     renderActionCategoryTooltip(action, variant="action") {
-        const category = action.category;
-        const note = getActionCategoryNote(action);
-        return `
-            <div class="actionCategoryTooltipText actionCategoryTooltipText-${variant} action-category-${category}">
-                <div class="actionCategoryTooltipHeading"><span class="bold">${getActionCategoryPrimaryRoleText()}:</span> ${getActionCategoryLabel(category)}</div>
-                <div class="actionCategoryTooltipDescription">${getActionCategoryDescription(category)}</div>
-                ${note ? `<div class="actionCategoryTooltipNote">${note}</div>` : ""}
-            </div>
-        `;
+        return globalThis.IdleLoopsTownBrowserController.renderActionCategoryTooltip(action, variant);
     }
 
     toggleActionCategoryFilter(category) {
-        this.actionCategoryFilter = this.actionCategoryFilter === category ? "" : category;
-        if (this.actionCategoryFilter) {
-            window.localStorage.setItem("actionCategoryFilter", this.actionCategoryFilter);
-        } else {
-            window.localStorage.removeItem("actionCategoryFilter");
-        }
-        this.updateActionCategoryLegend();
-        this.applyActionCategoryFilter();
-        this.updateTownBrowserTools();
+        return globalThis.IdleLoopsTownBrowserController.toggleActionCategoryFilter(this, category);
     }
 
     toggleActionCategoryLegend() {
-        this.actionCategoryLegendCollapsed = !this.actionCategoryLegendCollapsed;
-        window.localStorage.setItem("actionCategoryLegendCollapsed", String(this.actionCategoryLegendCollapsed));
-        this.updateActionCategoryLegend();
+        return globalThis.IdleLoopsTownBrowserController.toggleActionCategoryLegend(this);
     }
 
     updateActionCategoryLegend() {
-        const legend = document.getElementById("actionCategoryLegend");
-        if (!legend) return;
-
-        legend.classList.toggle("collapsed", this.actionCategoryLegendCollapsed);
-        document.getElementById("actionCategoryLegendTitle").textContent = getActionCategoryLegendTitle();
-
-        /** @type {Record<ActionCategory, number>} */
-        const counts = {
-            advance: 0,
-            growth: 0,
-            resource: 0,
-            shortcut: 0,
-            side: 0,
-        };
-
-        const shownTown = towns[townShowing] ?? towns[0];
-        if (shownTown) {
-            for (const action of shownTown.totalActionList) {
-                if (action.visible()) counts[action.category]++;
-            }
-        }
-
-        for (const button of document.querySelectorAll(".actionCategoryFilterButton")) {
-            if (!(button instanceof HTMLButtonElement)) continue;
-            const category = /** @type {ActionCategory} */(button.dataset.category);
-            button.querySelector(".actionCategoryFilterLabel").textContent = getActionCategoryLabel(category);
-            button.querySelector(".actionCategoryFilterCount").textContent = String(counts[category]);
-            button.classList.toggle("is-active", this.actionCategoryFilter === category);
-            button.disabled = counts[category] === 0 && this.actionCategoryFilter !== category;
-            button.title = `${getActionCategoryLabel(category)}: ${getActionCategoryDescription(category)}`;
-        }
-
-        const legendToggle = document.getElementById("actionCategoryLegendToggle");
-        const toggleTitle = getActionCategoryLegendToggleText(this.actionCategoryLegendCollapsed);
-        legendToggle.textContent = this.actionCategoryLegendCollapsed ? "+" : "-";
-        legendToggle.title = toggleTitle;
-        legendToggle.setAttribute("aria-label", toggleTitle);
-
-        document.getElementById("actionCategoryLegendHint").textContent = getActionCategoryLegendHint(this.actionCategoryFilter || undefined);
+        return globalThis.IdleLoopsTownBrowserController.updateActionCategoryLegend(this);
     }
 
     applyActionCategoryFilter() {
-        const activeCategory = this.actionCategoryFilter;
-        for (const container of [...actionOptionsTown, ...actionStoriesTown]) {
-            for (const element of container.querySelectorAll("[data-action-category]")) {
-                if (!(element instanceof HTMLElement)) continue;
-                const shouldDim = !!activeCategory
-                    && !element.classList.contains("hidden")
-                    && element.dataset.actionCategory !== activeCategory;
-                element.classList.toggle("category-dimmed", shouldDim);
-            }
-        }
+        return globalThis.IdleLoopsTownBrowserController.applyActionCategoryFilter(this);
     }
 
     setTownActionSearch(value) {
-        this.townActionSearch = value.trim().toLocaleLowerCase();
-        window.localStorage.setItem("townActionSearch", value);
-        this.applyTownBrowserFilters();
-        this.updateTownBrowserTools();
+        return globalThis.IdleLoopsTownBrowserController.setTownActionSearch(this, value);
     }
 
     toggleTownQuickFilter(filter) {
-        this.townQuickFilters[filter] = !this.townQuickFilters[filter];
-        window.localStorage.setItem("townQuickFilters", JSON.stringify(this.townQuickFilters));
-        this.applyTownBrowserFilters();
-        this.updateTownBrowserTools();
+        return globalThis.IdleLoopsTownBrowserController.toggleTownQuickFilter(this, filter);
     }
 
     isTravelOrTrialAction(action) {
-        return getPossibleTravel(action.name).length > 0
-            || action.name.includes("Trial")
-            || ["SDungeon", "LDungeon", "TheSpire"].includes(action.varName);
+        return globalThis.IdleLoopsTownBrowserController.isTravelOrTrialAction(action);
     }
 
     getTownBrowserStats() {
-        const shownTown = towns[townShowing] ?? towns[0];
-        const unreadStories = Array.isArray(globalThis.unreadActionStories) ? globalThis.unreadActionStories : [];
-        const visibleActions = shownTown?.totalActionList?.filter(action => action.visible()) ?? [];
-        /** @type {Record<ActionCategory, number>} */
-        const categoryCounts = {
-            advance: 0,
-            growth: 0,
-            resource: 0,
-            shortcut: 0,
-            side: 0,
-        };
-        for (const action of visibleActions) {
-            categoryCounts[action.category]++;
-        }
-        return {
-            visibleCount: visibleActions.length,
-            unreadCount: visibleActions.filter(action => unreadStories.includes(`storyContainer${action.varName}`)).length,
-            categoryCounts,
-        };
+        return globalThis.IdleLoopsTownBrowserController.getTownBrowserStats(this);
     }
 
     updateTownBrowserTools() {
-        const searchInput = document.getElementById("townActionSearch");
-        if (searchInput instanceof HTMLInputElement) {
-            if (searchInput.value !== this.townActionSearch) searchInput.value = this.townActionSearch;
-            searchInput.placeholder = this.getGuiText("townSearchPlaceholder");
-        }
-
-        const {visibleCount, unreadCount, categoryCounts} = this.getTownBrowserStats();
-        htmlElement("townSummaryVisible").textContent = `${this.getGuiText("townSummaryVisible")}: ${visibleCount}`;
-        htmlElement("townSummaryUnread").textContent = `${this.getGuiText("townSummaryUnread")}: ${unreadCount}`;
-        for (const category of actionCategories) {
-            const pill = htmlElement(`townSummaryCategory${category}`);
-            const count = categoryCounts[category];
-            pill.innerHTML = `
-                <span class="townSummaryCategoryLabel">${getActionCategoryShortLabel(category)}</span>
-                <span class="townSummaryCategoryCount">${count}</span>
-            `;
-            pill.title = `${getActionCategoryLabel(category)}: ${count}`;
-            pill.classList.toggle("is-empty", count === 0);
-        }
-
-        /** @type {[keyof View["townQuickFilters"], string][]} */
-        const buttons = [
-            ["new", "townFilterNew"],
-            ["unread", "townFilterUnread"],
-            ["travelTrial", "townFilterTravelTrial"],
-        ];
-        for (const [filter, id] of buttons) {
-            const button = htmlElement(id);
-            button.classList.toggle("is-active", !!this.townQuickFilters[filter]);
-            button.textContent = this.getGuiText(id);
-        }
+        return globalThis.IdleLoopsTownBrowserController.updateTownBrowserTools(this);
     }
 
     applyTownBrowserFilters() {
-        const shownTown = towns[townShowing] ?? towns[0];
-        const unreadStories = Array.isArray(globalThis.unreadActionStories) ? globalThis.unreadActionStories : [];
-        for (const action of shownTown?.totalActionList ?? []) {
-            const actionElement = document.getElementById(`container${action.varName}`);
-            const storyElement = document.getElementById(`storyContainer${action.varName}`);
-            const isNew = !completedActions.includes(action.varName);
-            const hasUnreadStory = unreadStories.includes(`storyContainer${action.varName}`);
-            const isTravelTrial = this.isTravelOrTrialAction(action);
-            const searchable = `${action.label} ${getActionCategoryLabel(action.category)} ${this.getActionTypeLabel(action.type)} ${getTownName(action.townNum)}`.toLocaleLowerCase();
-            const searchMiss = !!this.townActionSearch && !searchable.includes(this.townActionSearch);
-            const quickFilterMiss = (this.townQuickFilters.new && !isNew)
-                || (this.townQuickFilters.unread && !hasUnreadStory)
-                || (this.townQuickFilters.travelTrial && !isTravelTrial);
-            const shouldHide = !!(searchMiss || quickFilterMiss);
-
-            if (actionElement instanceof HTMLElement) {
-                actionElement.classList.toggle("town-browser-hidden", shouldHide);
-                actionElement.classList.toggle("action-is-new", isNew);
-                actionElement.classList.toggle("action-has-unread-story", hasUnreadStory);
-                actionElement.classList.toggle("action-is-travel-trial", isTravelTrial);
-            }
-            if (storyElement instanceof HTMLElement) {
-                storyElement.classList.toggle("town-browser-hidden", shouldHide);
-                storyElement.classList.toggle("action-is-new", isNew);
-                storyElement.classList.toggle("action-has-unread-story", hasUnreadStory);
-                storyElement.classList.toggle("action-is-travel-trial", isTravelTrial);
-            }
-        }
+        return globalThis.IdleLoopsTownBrowserController.applyTownBrowserFilters(this);
     }
 
     toggleHiding() {
@@ -3985,67 +3180,36 @@ class View {
 }
 
 function startRenameCloudSave(fileId) {
-    const li = document.getElementById(`cloud_save_${fileId}`);
-    const nameInput = li?.querySelector(".cloud_save_name");
-    if (!nameInput) return;
-    if (nameInput instanceof HTMLInputElement) {
-        if (!nameInput.value || nameInput.value === li.dataset.fileName) {
-            const div = document.createElement("div");
-            div.className = nameInput.className;
-            div.textContent = li.dataset.fileName;
-            div.title = li.dataset.fileName;
-            li.replaceChild(div, nameInput);
-        } else {
-            googleCloud.renameFile(fileId, nameInput.value);
-        }
-    } else {
-        const input = document.createElement("input");
-        input.className = nameInput.className;
-        input.style.width = `${nameInput.clientWidth}px`;
-        input.value = li.dataset.fileName;
-        input.onkeydown = (e) => e.key === "Enter" ? (startRenameCloudSave(fileId), false) : true;
-        li.replaceChild(input, nameInput);
-        input.focus();
-    }
+    return globalThis.IdleLoopsCloudSaveUI.startRenameCloudSave(fileId);
 }
 
 async function askDeleteCloudSave(fileId) {
-    const li = document.getElementById(`cloud_save_${fileId}`);
-    const button = li?.querySelector(".button.cloud_delete");
-    if (!button) return;
-    if (button.classList.contains("warning")) {
-        googleCloud.deleteFile(fileId);
-    } else {
-        button.textContent = _txt("menu>save>confirm_button");
-        button.classList.add("warning");
-        await delay(3000);
-        button.classList.remove("warning");
-        button.textContent = _txt("menu>save>delete_button");
-    }
+    return globalThis.IdleLoopsCloudSaveUI.askDeleteCloudSave(fileId);
 }
 
 function unlockGlobalStory(num) {
-    if (num > storyMax) {
+    const result = globalThis.IdleLoopsStoryState.unlockGlobalStory(storyMax, num);
+    if (result.changed) {
         document.getElementById("newStory").style.display = "inline-block";
-        storyMax = num;
-        view.requestUpdate("updateGlobalStory", num);
+        storyMax = result.storyMax;
+        view.requestUpdate("updateGlobalStory", result.storyMax);
     }
 }
 
 /** @param {StoryFlagName} name  */
 function setStoryFlag(name) {
-    if (!storyFlags[name]) {
-        storyFlags[name] = true;
-        if (options.actionLog) view.requestUpdate("updateStories", false);
+    const result = globalThis.IdleLoopsStoryState.setStoryFlag(storyFlags, name);
+    if (result.changed && options.actionLog) {
+        view.requestUpdate("updateStories", false);
     }
 }
 const unlockStory = setStoryFlag; // compatibility alias
 
 /** @param {StoryVarName} name @param {number} value */
 function increaseStoryVarTo(name, value) {
-    if (storyVars[name] < value) {
-        storyVars[name] = value;
-        if (options.actionLog) view.requestUpdate("updateStories", false);
+    const result = globalThis.IdleLoopsStoryState.increaseStoryVarTo(storyVars, name, value);
+    if (result.changed && options.actionLog) {
+        view.requestUpdate("updateStories", false);
     }
 }
 
@@ -4122,8 +3286,13 @@ function adjustActionListSize(amt) {
 
 function updateBuffCaps() {
     for (const buff of buffList) {
-        inputElement(`buff${buff}Cap`).value = String(Math.min(parseInt(inputElement(`buff${buff}Cap`).value), buffHardCaps[buff]));
-        buffCaps[buff] = parseInt(inputElement(`buff${buff}Cap`).value);
+        const nextValue = globalThis.IdleLoopsBuffCapState.applyBuffCapInput(
+            buffCaps,
+            buff,
+            inputElement(`buff${buff}Cap`).value,
+            buffHardCaps,
+        );
+        inputElement(`buff${buff}Cap`).value = String(nextValue);
     }
 }
 

@@ -59,7 +59,7 @@
   },
   "prestige": {
     "completedAnyPrestige": false,
-    "completedCurrentPrestige": false,
+    "completedCurrentPrestige": 0,
     "prestigeCurrentPoints": 0,
     "prestigeTotalCompletions": 0,
     "prestigeTotalPoints": 0
@@ -285,9 +285,9 @@
       "maxZombiesRaised": -1
     }
   },
-  "completedActions": {
-    "0": "FoundGlasses"
-  },
+  "completedActions": [
+    "FoundGlasses"
+  ],
   "towns": [
     {
       "index": 0,

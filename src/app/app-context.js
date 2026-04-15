@@ -21,6 +21,29 @@
         return Object.fromEntries(Object.entries(source).sort(([left], [right]) => left.localeCompare(right)));
     }
 
+    function cloneStateValue(value) {
+        if (Array.isArray(value)) {
+            return [...value];
+        }
+        if (value && typeof value === "object") {
+            return {...value};
+        }
+        return value;
+    }
+
+    function replaceArrayState(target, value) {
+        target.splice(0, target.length, ...(value ?? []));
+        return [...target];
+    }
+
+    function replaceObjectState(target, value) {
+        for (const key of Object.keys(target)) {
+            delete target[key];
+        }
+        Object.assign(target, value ?? {});
+        return {...target};
+    }
+
     function captureBindingState(bindings, names = Object.keys(bindings)) {
         return Object.fromEntries(names.map(name => {
             if (!(name in bindings)) {
@@ -38,6 +61,17 @@
             bindings[name].set(value);
         }
         return captureBindingState(bindings, Object.keys(patch));
+    }
+
+    function createCollectionAccessor(name, getter, applier) {
+        return Object.freeze({
+            get() {
+                return cloneStateValue(resolveBinding(name, getter));
+            },
+            set(value) {
+                return applier(value);
+            },
+        });
     }
 
     class LegacyAppContext {
@@ -73,6 +107,16 @@
                 dungeons: createBindingAccessor("dungeons", () => dungeons, value => { dungeons = value; }),
                 trials: createBindingAccessor("trials", () => trials, value => { trials = value; }),
             });
+            this.collectionBindings = Object.freeze({
+                townsUnlocked: createCollectionAccessor("townsUnlocked", () => townsUnlocked, value => replaceArrayState(townsUnlocked, value)),
+                completedActions: createCollectionAccessor("completedActions", () => completedActions, value => replaceArrayState(completedActions, value)),
+                challengeSave: createCollectionAccessor("challengeSave", () => challengeSave, value => replaceObjectState(challengeSave, value)),
+                storyFlags: createCollectionAccessor("storyFlags", () => storyFlags, value => replaceObjectState(storyFlags, value)),
+                storyVars: createCollectionAccessor("storyVars", () => storyVars, value => replaceObjectState(storyVars, value)),
+                totals: createCollectionAccessor("totals", () => totals, value => replaceObjectState(totals, value)),
+                prestigeValues: createCollectionAccessor("prestigeValues", () => prestigeValues, value => replaceObjectState(prestigeValues, value)),
+                buffCaps: createCollectionAccessor("buffCaps", () => buffCaps, value => replaceObjectState(buffCaps, value)),
+            });
         }
 
         get actions() { return resolveBinding("actions", () => actions); }
@@ -86,10 +130,12 @@
         get localization() { return resolveBinding("Localization", () => Localization); }
         get predictor() { return resolveBinding("Koviko", () => Koviko); }
         get townsUnlocked() { return resolveBinding("townsUnlocked", () => townsUnlocked); }
+        get completedActions() { return resolveBinding("completedActions", () => completedActions); }
         get storyFlags() { return resolveBinding("storyFlags", () => storyFlags); }
         get storyVars() { return resolveBinding("storyVars", () => storyVars); }
         get prestigeValues() { return resolveBinding("prestigeValues", () => prestigeValues); }
         get totals() { return resolveBinding("totals", () => totals); }
+        get buffCaps() { return resolveBinding("buffCaps", () => buffCaps); }
         get challengeSave() { return resolveBinding("challengeSave", () => challengeSave); }
         get totalActionList() { return resolveBinding("totalActionList", () => totalActionList); }
 
@@ -111,9 +157,27 @@
             ]);
         }
 
+        captureCollectionState(names = Object.keys(this.collectionBindings)) {
+            return captureBindingState(this.collectionBindings, names);
+        }
+
+        captureSaveCollections() {
+            return this.captureCollectionState([
+                "townsUnlocked",
+                "completedActions",
+                "challengeSave",
+            ]);
+        }
+
+        captureSaveBuffCollections() {
+            return this.captureCollectionState([
+                "buffCaps",
+            ]);
+        }
+
         captureCollections() {
             return {
-                townsUnlocked: [...this.townsUnlocked],
+                townsUnlocked: this.captureCollectionState(["townsUnlocked"]).townsUnlocked,
                 resources: sortObjectEntries(this.resources),
                 options: sortObjectEntries(this.options),
             };
@@ -130,6 +194,19 @@
 
         captureSessionState() {
             const scalars = this.captureScalarState();
+            const globals = this.captureGlobalState([
+                "unreadActionStories",
+            ]);
+            const collections = this.captureCollectionState([
+                "challengeSave",
+                "townsUnlocked",
+                "completedActions",
+                "storyFlags",
+                "storyVars",
+                "totals",
+                "prestigeValues",
+                "buffCaps",
+            ]);
             return {
                 meta: {
                     curTown: scalars.curTown,
@@ -141,10 +218,18 @@
                 },
                 scalars,
                 resources: sortObjectEntries(this.resources),
-                prestige: sortObjectEntries(this.prestigeValues),
-                totals: sortObjectEntries(this.totals),
-                challengeSave: sortObjectEntries(this.challengeSave),
-                townsUnlocked: [...this.townsUnlocked],
+                prestige: sortObjectEntries(collections.prestigeValues),
+                totals: sortObjectEntries(collections.totals),
+                buffCaps: sortObjectEntries(collections.buffCaps),
+                challengeSave: sortObjectEntries(collections.challengeSave),
+                townsUnlocked: collections.townsUnlocked,
+                completedActions: collections.completedActions,
+                story: {
+                    storyMax: scalars.storyMax,
+                    unreadActionStories: [...globals.unreadActionStories].sort((left, right) => left.localeCompare(right)),
+                    flags: sortObjectEntries(collections.storyFlags),
+                    vars: sortObjectEntries(collections.storyVars),
+                },
                 queue: this.captureQueueState(),
             };
         }
@@ -155,6 +240,10 @@
 
         applyGlobalState(patch) {
             return applyBindingState(this.globalBindings, patch);
+        }
+
+        applyCollectionState(patch) {
+            return applyBindingState(this.collectionBindings, patch);
         }
     }
 

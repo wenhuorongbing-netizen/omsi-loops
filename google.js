@@ -112,16 +112,16 @@ class GoogleCloud {
         });
     }
 
-    async deleteFile(fileId) {
+    async deleteAppDataFile(fileId) {
         if (!await this.authorize("delete")) return;
         console.log("performing cloud delete");
         await gapi.client.drive.files.delete({
             fileId,
         });
-        view.requestUpdate("updateCloudSave", {id: fileId});
+        return true;
     }
 
-    async renameFile(fileId, newName) {
+    async renameAppDataFile(fileId, newName) {
         if (!await this.authorize("rename")) return;
         console.log("performing cloud rename");
         const response = await gapi.client.drive.files.update({
@@ -130,44 +130,34 @@ class GoogleCloud {
                 name: newName,
             },
         });
-        if (response.result) view.requestUpdate("updateCloudSave", response.result);
+        return response.result ?? null;
     }
 
-    async importFile(fileId) {
+    async fetchSaveData(fileId) {
         if (!await this.authorize("import")) return;
         console.log("performing cloud import");
         const response = await gapi.client.drive.files.get({fileId,alt:"media"});
-        // console.log("got response:",response);
-        processSave(response.body);
+        return response.body;
     }
 
-    async exportSave() {
+    async uploadSaveData(name, data) {
         if (!await this.authorize("save")) return;
         console.log("performing cloud save");
-        save();
-        const data = currentSaveData();
-        const name = saveFileName().replace(".txt","");
         await this.uploadFile({
             name,
             parents: ["appDataFolder"],
         }, "text/plain", data);
-        view.requestUpdate("updateCloudSave", _txt("menu>save>cloud_saved").replace("{name}", name));
-        console.log("cloud save complete, waiting and then triggering optimistic reload");
-        await delay(1000);
-        this.loadSaves(false);
+        return true;
     }
 
-    async loadSaves(fromUserRequest) {
+    async listSaveFiles(fromUserRequest) {
         if (!await this.authorize(fromUserRequest && "load")) return;
         console.log("performing cloud load");
         const response = await gapi.client.drive.files.list({
             spaces: "appDataFolder",
             fields: "files(id,name)",
         });
-        view.requestUpdate("updateCloudSave", ""); // clear the list
-        for (const file of response.result?.files) {
-            view.requestUpdate("updateCloudSave", file);
-        }
+        return response.result?.files ?? [];
     }
 
     /** @param {google.accounts.oauth2.TokenResponse} response  */

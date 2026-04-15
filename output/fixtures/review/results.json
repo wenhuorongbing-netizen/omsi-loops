@@ -1,0 +1,150 @@
+{
+  "fixtures": [
+    {
+      "id": "new-game",
+      "language": "en-EN",
+      "screenshotTown": 0,
+      "screenshotPath": "C:\\Users\\Jack\\Documents\\GitHub\\omsi-loops\\output\\fixtures\\review\\new-game.png",
+      "consoleErrors": [],
+      "meta": {
+        "curTown": 0,
+        "timer": 250,
+        "timeNeeded": 250,
+        "gameIsStopped": true,
+        "totalActionCount": 157,
+        "townCount": 9
+      },
+      "townsUnlocked": [
+        0
+      ],
+      "queueLength": 0,
+      "totals": {
+        "actions": 0,
+        "borrowedTime": 0,
+        "effectiveTime": 0,
+        "loops": 0,
+        "time": 0
+      }
+    },
+    {
+      "id": "forest-midgame",
+      "language": "en-EN",
+      "screenshotTown": 1,
+      "screenshotPath": "C:\\Users\\Jack\\Documents\\GitHub\\omsi-loops\\output\\fixtures\\review\\forest-midgame.png",
+      "consoleErrors": [],
+      "meta": {
+        "curTown": 1,
+        "timer": 250,
+        "timeNeeded": 250,
+        "gameIsStopped": true,
+        "totalActionCount": 157,
+        "townCount": 9
+      },
+      "townsUnlocked": [
+        0,
+        1
+      ],
+      "queueLength": 3,
+      "totals": {
+        "actions": 430,
+        "borrowedTime": 0,
+        "effectiveTime": 6900,
+        "loops": 12,
+        "time": 7200
+      }
+    },
+    {
+      "id": "merchanton-midgame",
+      "language": "en-EN",
+      "screenshotTown": 2,
+      "screenshotPath": "C:\\Users\\Jack\\Documents\\GitHub\\omsi-loops\\output\\fixtures\\review\\merchanton-midgame.png",
+      "consoleErrors": [],
+      "meta": {
+        "curTown": 2,
+        "timer": 250,
+        "timeNeeded": 250,
+        "gameIsStopped": true,
+        "totalActionCount": 157,
+        "townCount": 9
+      },
+      "townsUnlocked": [
+        0,
+        1,
+        2
+      ],
+      "queueLength": 3,
+      "totals": {
+        "actions": 1900,
+        "borrowedTime": 250,
+        "effectiveTime": 23100,
+        "loops": 45,
+        "time": 25000
+      }
+    },
+    {
+      "id": "valhalla-startington-branch",
+      "language": "en-EN",
+      "screenshotTown": 5,
+      "screenshotPath": "C:\\Users\\Jack\\Documents\\GitHub\\omsi-loops\\output\\fixtures\\review\\valhalla-startington-branch.png",
+      "consoleErrors": [],
+      "meta": {
+        "curTown": 5,
+        "timer": 250,
+        "timeNeeded": 250,
+        "gameIsStopped": true,
+        "totalActionCount": 157,
+        "townCount": 9
+      },
+      "townsUnlocked": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "queueLength": 4,
+      "totals": {
+        "actions": 7600,
+        "borrowedTime": 1200,
+        "effectiveTime": 87400,
+        "loops": 180,
+        "time": 92000
+      }
+    },
+    {
+      "id": "endgame",
+      "language": "en-EN",
+      "screenshotTown": 8,
+      "screenshotPath": "C:\\Users\\Jack\\Documents\\GitHub\\omsi-loops\\output\\fixtures\\review\\endgame.png",
+      "consoleErrors": [],
+      "meta": {
+        "curTown": 8,
+        "timer": 250,
+        "timeNeeded": 250,
+        "gameIsStopped": true,
+        "totalActionCount": 157,
+        "townCount": 9
+      },
+      "townsUnlocked": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "queueLength": 3,
+      "totals": {
+        "actions": 28000,
+        "borrowedTime": 4200,
+        "effectiveTime": 389500,
+        "loops": 640,
+        "time": 400000
+      }
+    }
+  ]
+}

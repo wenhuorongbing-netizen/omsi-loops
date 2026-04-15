@@ -1,7 +1,10 @@
 {
   "scripts": {
     "serve": "node tools/static-server.mjs",
+    "content:build": "node tools/build-content.mjs",
     "smoke": "node tools/run-smoke.mjs",
+    "fixtures:phase0": "node tools/generate-phase0-fixtures.mjs",
+    "fixtures:review": "node tools/capture-fixture-screenshots.mjs",
     "baseline:update": "node tools/update-fixture-baselines.mjs",
     "baseline:check": "node tools/check-fixture-baselines.mjs",
     "regression": "npm run smoke && npm run baseline:check"
