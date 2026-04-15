@@ -18,16 +18,25 @@ There is now also a generated metadata seam:
 - runtime hook lookup: `src/content/runtime-hook-registry.js`
 - runtime hook-family adapters: `src/content/rules/legacy-action-rules.js`, `src/content/effects/legacy-action-effects.js`, `src/content/stories/legacy-story-hooks.js`
 - extracted shared definition factories: `src/content/definitions/legacy-shared-actions.js`
+- extracted cross-zone helper registry: `src/content/helpers/exploration-helpers.js`
+- extracted runtime-adjustment helper registry: `src/content/helpers/runtime-adjustment-helpers.js`
 - extracted zone registration modules: `src/content/definitions/beginnersville-actions.js`
 - additional extracted zone registration modules: `src/content/definitions/forest-path-actions.js`
 - additional extracted zone registration modules: `src/content/definitions/merchanton-actions.js`
 - additional extracted zone registration modules: `src/content/definitions/olympus-actions.js`
+- additional extracted zone registration modules: `src/content/definitions/valhalla-actions.js`
+- additional extracted zone registration modules: `src/content/definitions/startington-actions.js`
+- additional extracted zone registration modules: `src/content/definitions/jungle-path-actions.js`
+- additional extracted zone registration modules: `src/content/definitions/commerceville-actions.js`
+- additional extracted zone registration modules: `src/content/definitions/valley-of-olympus-actions.js`
 
 This means:
 
 - XML/editor content is not yet sufficient to make an action playable.
 - New runtime actions still require a runtime definition in `actionList.js`.
 - New reusable legacy definition families should land in `src/content/definitions/*` instead of being re-inlined into `actionList.js`.
+- New cross-zone helper families should land in `src/content/helpers/*` instead of being hidden inside a specific zone module.
+- Driver-facing content recalculation helpers should land in `src/content/helpers/*` instead of staying embedded inside late-game zone files.
 - New zone-scale extraction work should prefer `src/content/definitions/*` registration modules over leaving large town blocks inline in `actionList.js`.
 - Refactor work should extract metadata/rules/effects around that runtime definition, not silently invent a second truth source.
 - Metadata-only changes should be rebuilt with `npm run content:build`.

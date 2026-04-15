@@ -11,10 +11,17 @@
 - Content zone registry seam: `src/content/zone-registry.js`
 - Content action metadata seam: `src/content/action-metadata-registry.js`
 - Content definition factory seam: `src/content/definitions/legacy-shared-actions.js`
+- Content helper seam: `src/content/helpers/exploration-helpers.js`
+- Runtime adjustment helper seam: `src/content/helpers/runtime-adjustment-helpers.js`
 - Zone definition factory seam: `src/content/definitions/beginnersville-actions.js`
 - Forest Path definition factory seam: `src/content/definitions/forest-path-actions.js`
 - Merchanton definition factory seam: `src/content/definitions/merchanton-actions.js`
 - Olympus definition factory seam: `src/content/definitions/olympus-actions.js`
+- Valhalla definition factory seam: `src/content/definitions/valhalla-actions.js`
+- Startington definition factory seam: `src/content/definitions/startington-actions.js`
+- Jungle Path definition factory seam: `src/content/definitions/jungle-path-actions.js`
+- Commerceville definition factory seam: `src/content/definitions/commerceville-actions.js`
+- Valley of Olympus definition factory seam: `src/content/definitions/valley-of-olympus-actions.js`
 - Content runtime hook seam: `src/content/runtime-hook-registry.js`
 - Content rule adapter seam: `src/content/rules/legacy-action-rules.js`
 - Content effect adapter seam: `src/content/effects/legacy-action-effects.js`
@@ -77,10 +84,17 @@
 - `src/app/*` owns startup and explicit access points into the legacy global runtime.
 - `src/content/*` owns stable zone definitions, generated action metadata lookup, and the combined content registry entry used for future content extraction.
 - `src/content/definitions/*` now owns the first extracted shared legacy action-definition factories that are consumed by `actionList.js`.
+- `src/content/helpers/*` now owns the first extracted cross-zone helper family that is consumed by `actionList.js`, UI shells, and predictor/stat logic.
+- `src/content/helpers/runtime-adjustment-helpers.js` now owns the shared driver-facing adjustment helper family that used to be hidden inside late-game zone modules.
 - `src/content/definitions/beginnersville-actions.js` now owns the first zone-sized action registration module consumed by `actionList.js`.
 - `src/content/definitions/forest-path-actions.js` now owns the second zone-sized action registration module consumed by `actionList.js`.
 - `src/content/definitions/merchanton-actions.js` now owns the third zone-sized action registration module consumed by `actionList.js`.
 - `src/content/definitions/olympus-actions.js` now owns the fourth zone-sized action registration module consumed by `actionList.js`.
+- `src/content/definitions/valhalla-actions.js` now owns the fifth zone-sized action registration module consumed by `actionList.js`.
+- `src/content/definitions/startington-actions.js` now owns the sixth zone-sized action registration module consumed by `actionList.js`.
+- `src/content/definitions/jungle-path-actions.js` now owns the seventh zone-sized action registration module consumed by `actionList.js`.
+- `src/content/definitions/commerceville-actions.js` now owns the eighth zone-sized action registration module consumed by `actionList.js`.
+- `src/content/definitions/valley-of-olympus-actions.js` now owns the ninth zone-sized action registration module consumed by `actionList.js`.
 - `src/content/runtime-hook-registry.js` maps stable legacy hook ids such as `legacy:Wander:visible` and `legacy:SmashPots:cost` back to the live runtime implementation.
 - `src/content/rules/*`, `src/content/effects/*`, and `src/content/stories/*` now split those content hook adapters by ownership family even though they still delegate to legacy action methods.
 - `src/services/save/*` owns local save-slot persistence, encoded import/export payload helpers, save file naming, cloud-save orchestration over the Google adapter, and the first extracted save compatibility migrations.

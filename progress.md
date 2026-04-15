@@ -1160,3 +1160,106 @@ Original prompt: 你是一个游戏汉化师仔细思考这个游戏该如何汉
 - `node --check tests/smoke/runtime-smoke.mjs`
 - `npm run regression`
 - Phase note: `Phase 17` is now considered complete for the fourth zone-sized content-definition extraction baseline. The next content-side work is extracting Valhalla and then continuing to peel remaining cross-zone helpers away from `actionList.js`.
+- 2026-04-15 phase-18 fifth zone-module extraction pass:
+- Added `src/content/definitions/valhalla-actions.js` and moved the full Zone 5 / Valhalla registration block out of `actionList.js` into `IdleLoopsZoneDefinitionFactories.registerValhallaActions(...)`.
+- `actionList.js` now consumes that fifth zone module through an explicit registration seam, while cross-zone and post-Valhalla helpers remain outside the extracted block. Valhalla-owned compatibility helpers `adjustDonations`, `getWizCollegeRank`, and `getFrostGiantsRank` are now exported explicitly from the module so `driver.js` and later content still see the same runtime API.
+- Preserved all Valhalla action ids, `varName`s, wizard-college/frost-giant rank behavior, reputation routing, and branch semantics without changing formulas or save semantics.
+- Wired the new zone-definition module into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `tests/smoke/runtime-smoke.mjs` so regression now verifies the Valhalla zone-definition factory API and that live runtime Valhalla actions/helpers are actually backed by the extracted seam.
+- Updated `docs/ARCHITECTURE.md`, `docs/RUNTIME_FLOW.md`, `docs/ACTION_AUTHORING.md`, `AI_MAP.md`, and `src/content/definitions/README.md` so the fifth zone-scale content extraction is part of the documented maintenance contract.
+- Verification:
+- `node --check src/content/definitions/valhalla-actions.js`
+- `node --check actionList.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run regression`
+- Phase note: `Phase 18` is now considered complete for the fifth zone-sized content-definition extraction baseline. The next content-side work is extracting Startington and then continuing to peel remaining cross-zone helpers away from `actionList.js`.
+- 2026-04-15 phase-19 sixth zone-module extraction pass:
+- Added `src/content/definitions/startington-actions.js` and moved the full Zone 6 / Startington registration block out of `actionList.js` into `IdleLoopsZoneDefinitionFactories.registerStartingtonActions(...)`.
+- `actionList.js` now consumes that sixth zone module through an explicit registration seam, while cross-zone and post-Startington helpers remain outside the extracted block. Startington-owned compatibility helpers `adjustPylons` and `adjustWells` are now exported explicitly from the module so `driver.js` and later content still see the same runtime API.
+- Preserved all Startington action ids, `varName`s, pylon/well behavior, dungeon/trial behavior, and branch semantics without changing formulas or save semantics.
+- Wired the new zone-definition module into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `tests/smoke/runtime-smoke.mjs` so regression now verifies the Startington zone-definition factory API and that live runtime Startington actions/helpers are actually backed by the extracted seam.
+- Updated `docs/ARCHITECTURE.md`, `docs/RUNTIME_FLOW.md`, `docs/ACTION_AUTHORING.md`, `AI_MAP.md`, and `src/content/definitions/README.md` so the sixth zone-scale content extraction is part of the documented maintenance contract.
+- Verification:
+- `node --check src/content/definitions/startington-actions.js`
+- `node --check actionList.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run regression`
+- Phase note: `Phase 19` is now considered complete for the sixth zone-sized content-definition extraction baseline. The next content-side work is extracting Jungle Path and then continuing to peel remaining cross-zone helpers away from `actionList.js`.
+- 2026-04-15 phase-20 seventh zone-module extraction pass:
+- Added `src/content/definitions/jungle-path-actions.js` and moved the full Zone 7 / Jungle Path registration block out of `actionList.js` into `IdleLoopsZoneDefinitionFactories.registerJunglePathActions(...)`.
+- `actionList.js` now consumes that seventh zone module through an explicit registration seam. Jungle Path-owned compatibility helper `getFightJungleMonstersRank` is now exported explicitly from the module so the live runtime keeps the same API while the zone block itself no longer lives inline.
+- Preserved all Jungle Path action ids, `varName`s, monster-rank behavior, rescue/portal routing, and unlock semantics without changing formulas or save semantics.
+- Wired the new zone-definition module into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `tests/smoke/runtime-smoke.mjs` so regression now verifies the Jungle Path zone-definition factory API and that live runtime Jungle Path actions/helpers are actually backed by the extracted seam.
+- Updated `docs/ARCHITECTURE.md`, `docs/RUNTIME_FLOW.md`, `docs/ACTION_AUTHORING.md`, `AI_MAP.md`, and `src/content/definitions/README.md` so the seventh zone-scale content extraction is part of the documented maintenance contract.
+- Verification:
+- `node --check src/content/definitions/jungle-path-actions.js`
+- `node --check actionList.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run regression`
+- Phase note: `Phase 20` is now considered complete for the seventh zone-sized content-definition extraction baseline. The next content-side work is extracting Commerceville and then continuing to peel remaining cross-zone helpers away from `actionList.js`.
+- 2026-04-15 phase-21 eighth zone-module extraction pass:
+- Added `src/content/definitions/commerceville-actions.js` and moved the full Zone 8 / Commerceville registration block out of `actionList.js` into `IdleLoopsZoneDefinitionFactories.registerCommercevilleActions(...)`.
+- `actionList.js` now consumes that eighth zone module through an explicit registration seam. Commerceville-owned compatibility helpers for pockets, warehouses, insurance, exploration aggregation, map exchange, thieves-guild rank, and assassination totals are now exported explicitly from the module so the live runtime keeps the same API while the zone block itself no longer lives inline.
+- Preserved all Commerceville action ids, `varName`s, exploration-progression behavior, thieves-guild behavior, secret-trial routing, and unlock semantics without changing formulas or save semantics.
+- Wired the new zone-definition module into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `tests/smoke/runtime-smoke.mjs` so regression now verifies the Commerceville zone-definition factory API and that live runtime Commerceville actions/helpers are actually backed by the extracted seam.
+- Updated `docs/ARCHITECTURE.md`, `docs/RUNTIME_FLOW.md`, `docs/ACTION_AUTHORING.md`, `AI_MAP.md`, and `src/content/definitions/README.md` so the eighth zone-scale content extraction is part of the documented maintenance contract.
+- Verification:
+- `node --check src/content/definitions/commerceville-actions.js`
+- `node --check actionList.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run regression`
+- Phase note: `Phase 21` is now considered complete for the eighth zone-sized content-definition extraction baseline. The next content-side work is extracting Valley of Olympus and then continuing to peel remaining cross-zone helpers away from `actionList.js`.
+- 2026-04-15 phase-22 ninth zone-module extraction pass:
+- Added `src/content/definitions/valley-of-olympus-actions.js` and moved the full Zone 9 / Valley of Olympus registration block out of `actionList.js` into `IdleLoopsZoneDefinitionFactories.registerValleyOfOlympusActions(...)`.
+- `actionList.js` now consumes that ninth zone module through an explicit registration seam. Valley-owned compatibility helper `adjustTrainingExpMult` is now exported explicitly from the module so `driver.js` and the live runtime keep the same API while the final zone block itself no longer lives inline.
+- Preserved all Valley action ids, `varName`s, endgame trial behavior, soul-imbuement behavior, and `Restore Time` unlock semantics without changing formulas or save semantics.
+- Wired the new zone-definition module into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `tests/smoke/runtime-smoke.mjs` so regression now verifies the Valley of Olympus zone-definition factory API and that live runtime Valley actions/helpers are actually backed by the extracted seam.
+- Updated `docs/ARCHITECTURE.md`, `docs/RUNTIME_FLOW.md`, `docs/ACTION_AUTHORING.md`, `AI_MAP.md`, and `src/content/definitions/README.md` so the ninth zone-scale content extraction is part of the documented maintenance contract.
+- Verification:
+- `node --check src/content/definitions/valley-of-olympus-actions.js`
+- `node --check actionList.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run regression`
+- Phase note: `Phase 22` is now considered complete for the ninth zone-sized content-definition extraction baseline. The next content-side work is no longer zone-by-zone extraction; it is peeling the remaining cross-zone helpers away from `actionList.js` and replacing legacy rule/effect/story adapters with true extracted implementations.
+- 2026-04-15 phase-23 first cross-zone helper extraction pass:
+- Added `src/content/helpers/exploration-helpers.js` plus `src/content/helpers/README.md`, and moved the shared survey/exploration helper family out of `src/content/definitions/commerceville-actions.js`.
+- `actionList.js` now consumes those helpers through `IdleLoopsContentHelperRegistry.getExplorationHelpers()`, while the legacy globals (`getExploreProgress`, `getExploreSkill`, `exchangeMap`, and related helpers) are still restored for existing runtime/UI/predictor call sites.
+- `src/content/definitions/commerceville-actions.js` no longer owns the cross-zone exploration helper family; it now only exports the remaining Commerceville-specific helpers such as pockets/warehouses/insurance adjustment, thieves-guild rank, and assassination totals.
+- Wired the new content-helper seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `tests/smoke/runtime-smoke.mjs` so regression now verifies both the content-helper registry API and that the extracted exploration helpers are actually backing the live runtime.
+- Updated `docs/ARCHITECTURE.md`, `docs/RUNTIME_FLOW.md`, `docs/ACTION_AUTHORING.md`, `AI_MAP.md`, `src/content/README.md`, and `src/content/definitions/README.md` so the first cross-zone helper extraction is part of the documented maintenance contract.
+- Verification:
+- `node --check src/content/helpers/exploration-helpers.js`
+- `node --check src/content/definitions/commerceville-actions.js`
+- `node --check actionList.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run regression`
+- Phase note: `Phase 23` is now considered complete for the first cross-zone helper extraction baseline. The next content-side work is peeling the remaining cross-zone helper families away from `actionList.js` and then replacing legacy rule/effect/story adapters with true extracted implementations.
+- 2026-04-15 phase-24 runtime-adjustment helper extraction pass:
+- Added `src/content/helpers/runtime-adjustment-helpers.js` and moved the shared driver-facing adjustment helper family out of the late-game zone modules.
+- `actionList.js` now consumes those helpers through `IdleLoopsContentHelperRegistry.getRuntimeAdjustmentHelpers()`, while the legacy globals (`adjustDonations`, `adjustPylons`, `adjustWells`, `adjustPockets`, `adjustWarehouses`, `adjustInsurance`, `adjustTrainingExpMult`) are still restored for existing driver and content call sites.
+- `src/content/definitions/valhalla-actions.js`, `startington-actions.js`, `commerceville-actions.js`, and `valley-of-olympus-actions.js` no longer own those cross-zone adjustment helpers; they now only export their remaining zone-specific helpers.
+- Wired the new runtime-adjustment helper seam into both browser and predictor startup paths via `index.html` and `predictor-worker.js`.
+- Updated `tests/smoke/runtime-smoke.mjs` so regression now verifies both the runtime-adjustment helper registry API and that the extracted adjustment helpers are actually backing the live runtime, while the affected zone-definition seams continue to resolve correctly.
+- Updated `docs/ARCHITECTURE.md`, `docs/RUNTIME_FLOW.md`, `docs/ACTION_AUTHORING.md`, `AI_MAP.md`, `src/content/README.md`, and `src/content/definitions/README.md` so the second cross-zone helper extraction is part of the documented maintenance contract.
+- Verification:
+- `node --check src/content/helpers/runtime-adjustment-helpers.js`
+- `node --check src/content/definitions/valhalla-actions.js`
+- `node --check src/content/definitions/startington-actions.js`
+- `node --check src/content/definitions/commerceville-actions.js`
+- `node --check src/content/definitions/valley-of-olympus-actions.js`
+- `node --check actionList.js`
+- `node --check predictor-worker.js`
+- `node --check tests/smoke/runtime-smoke.mjs`
+- `npm run regression`
+- Phase note: `Phase 24` is now considered complete for the second cross-zone helper extraction baseline. The next content-side work is peeling the remaining helper families away from `actionList.js`, especially rank-related helpers, and then replacing legacy rule/effect/story adapters with true extracted implementations.

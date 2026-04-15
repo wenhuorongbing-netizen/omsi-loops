@@ -1,6 +1,6 @@
 # Content
 
-Entry points: `src/content/zone-registry.js`, `src/content/action-metadata-registry.js`, `src/content/runtime-hook-registry.js`, `src/content/content-registry.js`, `src/content/definitions/legacy-shared-actions.js`, `src/content/rules/legacy-action-rules.js`, `src/content/effects/legacy-action-effects.js`, `src/content/stories/legacy-story-hooks.js`, `generated/action-metadata-registry.js`
+Entry points: `src/content/zone-registry.js`, `src/content/action-metadata-registry.js`, `src/content/runtime-hook-registry.js`, `src/content/content-registry.js`, `src/content/definitions/legacy-shared-actions.js`, `src/content/helpers/exploration-helpers.js`, `src/content/helpers/runtime-adjustment-helpers.js`, `src/content/rules/legacy-action-rules.js`, `src/content/effects/legacy-action-effects.js`, `src/content/stories/legacy-story-hooks.js`, `generated/action-metadata-registry.js`
 
 This directory owns explicit content metadata seams for the legacy runtime. It is the home for stable zone definitions, generated action metadata, and future authored content definitions.
 
@@ -9,6 +9,7 @@ Current explicit content entry:
 - `IdleLoopsActionMetadataRegistry` exposes generated action metadata with stable lookup helpers
 - `IdleLoopsRuntimeHookRegistry` exposes stable legacy hook ids backed by the live runtime
 - `IdleLoopsLegacyDefinitionFactories` exposes extracted shared content definition factories used by `actionList.js`
+- `IdleLoopsContentHelperRegistry` exposes extracted cross-zone helper families used by `actionList.js` and runtime UI/predictor flows
 - `IdleLoopsLegacyActionRules`, `IdleLoopsLegacyActionEffects`, and `IdleLoopsLegacyStoryHooks` split content execution adapters by family
 - `IdleLoopsContentRegistry` exposes the combined runtime-facing content entry
 

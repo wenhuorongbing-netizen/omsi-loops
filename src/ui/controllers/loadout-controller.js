@@ -127,6 +127,7 @@
         const saveButton = document.getElementById("saveLoadoutButton");
         const renameButton = document.getElementById("renameLoadoutButton");
         const renameInput = document.getElementById("renameLoadout");
+        const loadoutLabels = Array.isArray(globalThis.loadoutnames) ? globalThis.loadoutnames : [];
         if (!(selectionSummary instanceof HTMLElement) || !(differenceSummary instanceof HTMLElement)) return;
 
         for (let i = 1; i <= 15; i++) {
@@ -136,7 +137,7 @@
             const isEmpty = !records || records.length === 0;
             const matchesCurrent = !isEmpty && areActionRecordsEquivalent(records, actions.next);
             const savedAt = formatLoadoutSavedAt(Localization.currentLang, view.loadoutSaveTimes[i]);
-            const loadoutName = loadoutnames[i - 1] ?? getDefaultLoadoutName(i);
+            const loadoutName = loadoutLabels[i - 1] ?? getDefaultLoadoutName(i);
             const actionCountText = isEmpty
                 ? view.getGuiText("loadoutEmpty")
                 : `${records.length} ${view.getGuiText("loadoutActions")}`;
@@ -173,7 +174,7 @@
         const isEmpty = !selectedRecords || selectedRecords.length === 0;
         const matchesCurrent = !isEmpty && areActionRecordsEquivalent(selectedRecords, actions.next);
         const savedAt = formatLoadoutSavedAt(Localization.currentLang, view.loadoutSaveTimes[curLoadout]);
-        selectionSummary.textContent = `${view.getGuiText("loadoutSelected")}: ${loadoutnames[curLoadout - 1] ?? getDefaultLoadoutName(curLoadout)}`;
+        selectionSummary.textContent = `${view.getGuiText("loadoutSelected")}: ${loadoutLabels[curLoadout - 1] ?? getDefaultLoadoutName(curLoadout)}`;
         differenceSummary.textContent = isEmpty
             ? view.getGuiText("loadoutEmpty")
             : `${selectedRecords.length} ${view.getGuiText("loadoutActions")} / ${matchesCurrent ? view.getGuiText("loadoutMatchesCurrent") : view.getGuiText("loadoutDiffersCurrent")}${savedAt ? ` / ${view.getGuiText("loadoutSavedAt")}: ${savedAt}` : ""}`;
@@ -181,7 +182,7 @@
         if (saveButton instanceof HTMLButtonElement) saveButton.disabled = false;
         if (renameButton instanceof HTMLButtonElement) renameButton.disabled = false;
         if (renameInput instanceof HTMLInputElement && document.activeElement !== renameInput) {
-            renameInput.value = loadoutnames[curLoadout - 1] ?? getLoadoutNameDefault();
+            renameInput.value = loadoutLabels[curLoadout - 1] ?? getLoadoutNameDefault();
         }
     }
 

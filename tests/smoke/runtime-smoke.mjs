@@ -64,10 +64,17 @@ export async function runRuntimeSmoke({
     if (results.some(result =>
         !result.bootstrap?.hasContentRegistryGetter
         || !result.bootstrap?.hasContentDefinitionFactoryApi
+        || !result.bootstrap?.hasContentHelperRegistryApi
+        || !result.bootstrap?.hasRuntimeAdjustmentHelperRegistryApi
         || !result.bootstrap?.hasZoneDefinitionFactoryApi
         || !result.bootstrap?.hasForestPathDefinitionFactoryApi
         || !result.bootstrap?.hasMerchantonDefinitionFactoryApi
         || !result.bootstrap?.hasOlympusDefinitionFactoryApi
+        || !result.bootstrap?.hasValhallaDefinitionFactoryApi
+        || !result.bootstrap?.hasStartingtonDefinitionFactoryApi
+        || !result.bootstrap?.hasJunglePathDefinitionFactoryApi
+        || !result.bootstrap?.hasCommercevilleDefinitionFactoryApi
+        || !result.bootstrap?.hasValleyOfOlympusDefinitionFactoryApi
         || !result.bootstrap?.hasZoneRegistryApi
         || !result.bootstrap?.hasActionMetadataRegistryApi
         || !result.bootstrap?.hasContentRuleRegistryApi
@@ -118,10 +125,17 @@ export async function runRuntimeSmoke({
         result.bootstrap?.contentActionCount !== result.bootstrap?.totalActions
         || result.bootstrap?.contentZoneCount !== result.bootstrap?.townCount
         || !result.bootstrap?.usesExtractedSharedDefinitions
+        || !result.bootstrap?.usesExtractedExplorationHelpers
+        || !result.bootstrap?.usesExtractedRuntimeAdjustmentHelpers
         || !result.bootstrap?.usesExtractedBeginnersvilleDefinitions
         || !result.bootstrap?.usesExtractedForestPathDefinitions
         || !result.bootstrap?.usesExtractedMerchantonDefinitions
         || !result.bootstrap?.usesExtractedOlympusDefinitions
+        || !result.bootstrap?.usesExtractedValhallaDefinitions
+        || !result.bootstrap?.usesExtractedStartingtonDefinitions
+        || !result.bootstrap?.usesExtractedJunglePathDefinitions
+        || !result.bootstrap?.usesExtractedCommercevilleDefinitions
+        || !result.bootstrap?.usesExtractedValleyOfOlympusDefinitions
         || !result.bootstrap?.contentHookCount
         || !result.bootstrap?.contentRuleHookCount
         || !result.bootstrap?.contentEffectHookCount
@@ -190,10 +204,17 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
             hasGameSessionGetter: typeof globalThis.IdleLoopsBootstrap?.getGameSession === "function",
             hasContentRegistryGetter: typeof globalThis.IdleLoopsBootstrap?.getContentRegistry === "function",
             hasContentDefinitionFactoryApi: typeof globalThis.IdleLoopsLegacyDefinitionFactories?.registerSharedActionFactories === "function",
+            hasContentHelperRegistryApi: typeof globalThis.IdleLoopsContentHelperRegistry?.getExplorationHelpers === "function",
+            hasRuntimeAdjustmentHelperRegistryApi: typeof globalThis.IdleLoopsContentHelperRegistry?.getRuntimeAdjustmentHelpers === "function",
             hasZoneDefinitionFactoryApi: typeof globalThis.IdleLoopsZoneDefinitionFactories?.registerBeginnersvilleActions === "function",
             hasForestPathDefinitionFactoryApi: typeof globalThis.IdleLoopsZoneDefinitionFactories?.registerForestPathActions === "function",
             hasMerchantonDefinitionFactoryApi: typeof globalThis.IdleLoopsZoneDefinitionFactories?.registerMerchantonActions === "function",
             hasOlympusDefinitionFactoryApi: typeof globalThis.IdleLoopsZoneDefinitionFactories?.registerOlympusActions === "function",
+            hasValhallaDefinitionFactoryApi: typeof globalThis.IdleLoopsZoneDefinitionFactories?.registerValhallaActions === "function",
+            hasStartingtonDefinitionFactoryApi: typeof globalThis.IdleLoopsZoneDefinitionFactories?.registerStartingtonActions === "function",
+            hasJunglePathDefinitionFactoryApi: typeof globalThis.IdleLoopsZoneDefinitionFactories?.registerJunglePathActions === "function",
+            hasCommercevilleDefinitionFactoryApi: typeof globalThis.IdleLoopsZoneDefinitionFactories?.registerCommercevilleActions === "function",
+            hasValleyOfOlympusDefinitionFactoryApi: typeof globalThis.IdleLoopsZoneDefinitionFactories?.registerValleyOfOlympusActions === "function",
             hasZoneRegistryApi: typeof globalThis.IdleLoopsZoneRegistry?.listZones === "function"
                 && typeof globalThis.IdleLoopsZoneRegistry?.getZoneByTownNum === "function",
             hasActionMetadataRegistryApi: typeof globalThis.IdleLoopsActionMetadataRegistry?.listActionMetadata === "function"
@@ -306,6 +327,33 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
                     && Action.AssassinZ0 instanceof sharedDefinitions.AssassinAction
                     && typeof adjustAllRocks === "function";
             })(),
+            usesExtractedExplorationHelpers: (() => {
+                const getHelpers = globalThis.IdleLoopsContentHelperRegistry?.getExplorationHelpers;
+                if (typeof getHelpers !== "function") {
+                    return false;
+                }
+                const extractedHelpers = getHelpers();
+                return !!extractedHelpers
+                    && extractedHelpers.fullyExploredZones === fullyExploredZones
+                    && extractedHelpers.getExploreProgress === getExploreProgress
+                    && extractedHelpers.getExploreSkill === getExploreSkill
+                    && extractedHelpers.exchangeMap === exchangeMap;
+            })(),
+            usesExtractedRuntimeAdjustmentHelpers: (() => {
+                const getHelpers = globalThis.IdleLoopsContentHelperRegistry?.getRuntimeAdjustmentHelpers;
+                if (typeof getHelpers !== "function") {
+                    return false;
+                }
+                const extractedHelpers = getHelpers();
+                return !!extractedHelpers
+                    && extractedHelpers.adjustDonations === adjustDonations
+                    && extractedHelpers.adjustPylons === adjustPylons
+                    && extractedHelpers.adjustWells === adjustWells
+                    && extractedHelpers.adjustPockets === adjustPockets
+                    && extractedHelpers.adjustWarehouses === adjustWarehouses
+                    && extractedHelpers.adjustInsurance === adjustInsurance
+                    && extractedHelpers.adjustTrainingExpMult === adjustTrainingExpMult;
+            })(),
             usesExtractedBeginnersvilleDefinitions: (() => {
                 const registerZoneDefinitions = globalThis.IdleLoopsZoneDefinitionFactories?.registerBeginnersvilleActions;
                 if (typeof registerZoneDefinitions !== "function"
@@ -389,6 +437,99 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
                     && typeof Action.ClimbMountain === "object"
                     && typeof Action.ImbueMind === "object"
                     && typeof Action.FaceJudgement === "object";
+            })(),
+            usesExtractedValhallaDefinitions: (() => {
+                const registerZoneDefinitions = globalThis.IdleLoopsZoneDefinitionFactories?.registerValhallaActions;
+                if (typeof registerZoneDefinitions !== "function"
+                    || typeof Action === "undefined"
+                    || typeof MultipartAction !== "function") {
+                    return false;
+                }
+                const extractedDefinitions = registerZoneDefinitions({
+                    Action,
+                    MultipartAction,
+                });
+                return !!extractedDefinitions
+                    && extractedDefinitions.getWizCollegeRank === getWizCollegeRank
+                    && extractedDefinitions.getFrostGiantsRank === getFrostGiantsRank
+                    && typeof Action.GuidedTour === "object"
+                    && typeof Action.WizardCollege === "object"
+                    && typeof Action.FallFromGrace === "object";
+            })(),
+            usesExtractedStartingtonDefinitions: (() => {
+                const registerZoneDefinitions = globalThis.IdleLoopsZoneDefinitionFactories?.registerStartingtonActions;
+                if (typeof registerZoneDefinitions !== "function"
+                    || typeof Action === "undefined"
+                    || typeof MultipartAction !== "function"
+                    || typeof DungeonAction !== "function"
+                    || typeof TrialAction !== "function") {
+                    return false;
+                }
+                const extractedDefinitions = registerZoneDefinitions({
+                    Action,
+                    MultipartAction,
+                    DungeonAction,
+                    TrialAction,
+                });
+                return !!extractedDefinitions
+                    && typeof Action.Meander === "object"
+                    && typeof Action.TheSpire === "object"
+                    && typeof Action.DeadTrial === "object";
+            })(),
+            usesExtractedJunglePathDefinitions: (() => {
+                const registerZoneDefinitions = globalThis.IdleLoopsZoneDefinitionFactories?.registerJunglePathActions;
+                if (typeof registerZoneDefinitions !== "function"
+                    || typeof Action === "undefined"
+                    || typeof MultipartAction !== "function") {
+                    return false;
+                }
+                const extractedDefinitions = registerZoneDefinitions({
+                    Action,
+                    MultipartAction,
+                });
+                return !!extractedDefinitions
+                    && extractedDefinitions.getFightJungleMonstersRank === getFightJungleMonstersRank
+                    && typeof Action.ExploreJungle === "object"
+                    && typeof Action.FightJungleMonsters === "object"
+                    && typeof Action.OpenPortal === "object";
+            })(),
+            usesExtractedCommercevilleDefinitions: (() => {
+                const registerZoneDefinitions = globalThis.IdleLoopsZoneDefinitionFactories?.registerCommercevilleActions;
+                if (typeof registerZoneDefinitions !== "function"
+                    || typeof Action === "undefined"
+                    || typeof MultipartAction !== "function"
+                    || typeof TrialAction !== "function") {
+                    return false;
+                }
+                const extractedDefinitions = registerZoneDefinitions({
+                    Action,
+                    MultipartAction,
+                    TrialAction,
+                });
+                return !!extractedDefinitions
+                    && extractedDefinitions.getThievesGuildRank === getThievesGuildRank
+                    && extractedDefinitions.totalAssassinations === totalAssassinations
+                    && typeof Action.Excursion === "object"
+                    && typeof Action.ThievesGuild === "object"
+                    && typeof Action.LeaveCity === "object";
+            })(),
+            usesExtractedValleyOfOlympusDefinitions: (() => {
+                const registerZoneDefinitions = globalThis.IdleLoopsZoneDefinitionFactories?.registerValleyOfOlympusActions;
+                if (typeof registerZoneDefinitions !== "function"
+                    || typeof Action === "undefined"
+                    || typeof MultipartAction !== "function"
+                    || typeof TrialAction !== "function") {
+                    return false;
+                }
+                const extractedDefinitions = registerZoneDefinitions({
+                    Action,
+                    MultipartAction,
+                    TrialAction,
+                });
+                return !!extractedDefinitions
+                    && typeof Action.ImbueSoul === "object"
+                    && typeof Action.GodsTrial === "object"
+                    && typeof Action.RestoreTime === "object";
             })(),
             contentHookCount: globalThis.IdleLoopsRuntimeHookRegistry?.listRuntimeHooks?.().length ?? -1,
             contentRuleHookCount: globalThis.IdleLoopsRuntimeHookRegistry?.listRuntimeHooksByKind?.("rule")?.length ?? -1,

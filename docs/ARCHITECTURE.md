@@ -20,6 +20,13 @@
 - `Phase 15` complete: the second zone-sized action block now executes through `src/content/definitions/*` instead of being registered inline in `actionList.js`
 - `Phase 16` complete: the third zone-sized action block now executes through `src/content/definitions/*` instead of being registered inline in `actionList.js`
 - `Phase 17` complete: the fourth zone-sized action block now executes through `src/content/definitions/*` instead of being registered inline in `actionList.js`
+- `Phase 18` complete: the fifth zone-sized action block now executes through `src/content/definitions/*` instead of being registered inline in `actionList.js`
+- `Phase 19` complete: the sixth zone-sized action block now executes through `src/content/definitions/*` instead of being registered inline in `actionList.js`
+- `Phase 20` complete: the seventh zone-sized action block now executes through `src/content/definitions/*` instead of being registered inline in `actionList.js`
+- `Phase 21` complete: the eighth zone-sized action block now executes through `src/content/definitions/*` instead of being registered inline in `actionList.js`
+- `Phase 22` complete: the ninth zone-sized action block now executes through `src/content/definitions/*` instead of being registered inline in `actionList.js`
+- `Phase 23` complete: the first cross-zone helper family now executes through `src/content/helpers/*` instead of being owned by a zone module
+- `Phase 24` complete: the second cross-zone helper family now executes through `src/content/helpers/*` instead of being owned by zone modules
 
 ## Stable Entry Points
 
@@ -28,10 +35,17 @@
 - Browser session access: `IdleLoopsBootstrap.getGameSession()`
 - Runtime content metadata access: `IdleLoopsBootstrap.getContentRegistry()`
 - Shared content definition factories: `IdleLoopsLegacyDefinitionFactories.registerSharedActionFactories(...)`
+- Cross-zone content helper seam: `IdleLoopsContentHelperRegistry.getExplorationHelpers()`
+- Runtime adjustment helper seam: `IdleLoopsContentHelperRegistry.getRuntimeAdjustmentHelpers()`
 - Zone action definition factories: `IdleLoopsZoneDefinitionFactories.registerBeginnersvilleActions(...)`
 - Forest Path action definition factories: `IdleLoopsZoneDefinitionFactories.registerForestPathActions(...)`
 - Merchanton action definition factories: `IdleLoopsZoneDefinitionFactories.registerMerchantonActions(...)`
 - Olympus action definition factories: `IdleLoopsZoneDefinitionFactories.registerOlympusActions(...)`
+- Valhalla action definition factories: `IdleLoopsZoneDefinitionFactories.registerValhallaActions(...)`
+- Startington action definition factories: `IdleLoopsZoneDefinitionFactories.registerStartingtonActions(...)`
+- Jungle Path action definition factories: `IdleLoopsZoneDefinitionFactories.registerJunglePathActions(...)`
+- Commerceville action definition factories: `IdleLoopsZoneDefinitionFactories.registerCommercevilleActions(...)`
+- Valley of Olympus action definition factories: `IdleLoopsZoneDefinitionFactories.registerValleyOfOlympusActions(...)`
 - Legacy runtime bridge: `IdleLoopsAppContext.getLegacyAppContext()`
 - Runtime action truth today: `actionList.js`
 - Runtime action-hook truth today: `src/content/runtime-hook-registry.js`

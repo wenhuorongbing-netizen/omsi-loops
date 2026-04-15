@@ -84,10 +84,17 @@ Today:
 
 - runtime content truth is `actionList.js`
 - first shared runtime definition factories now live in `src/content/definitions/legacy-shared-actions.js` and are consumed back into `actionList.js`
+- the shared survey/exploration helper family now lives in `src/content/helpers/exploration-helpers.js` and is consumed through `IdleLoopsContentHelperRegistry`
+- the shared driver-facing adjustment helper family now lives in `src/content/helpers/runtime-adjustment-helpers.js` and is consumed through `IdleLoopsContentHelperRegistry`
 - the full Beginnersville action-registration block now lives in `src/content/definitions/beginnersville-actions.js` and is consumed back into `actionList.js`
 - the full Forest Path action-registration block now lives in `src/content/definitions/forest-path-actions.js` and is consumed back into `actionList.js`
 - the full Merchanton action-registration block now lives in `src/content/definitions/merchanton-actions.js` and is consumed back into `actionList.js`
 - the full Mt. Olympus action-registration block now lives in `src/content/definitions/olympus-actions.js` and is consumed back into `actionList.js`
+- the full Valhalla action-registration block now lives in `src/content/definitions/valhalla-actions.js` and is consumed back into `actionList.js`
+- the full Startington action-registration block now lives in `src/content/definitions/startington-actions.js` and is consumed back into `actionList.js`
+- the full Jungle Path action-registration block now lives in `src/content/definitions/jungle-path-actions.js` and is consumed back into `actionList.js`
+- the full Commerceville action-registration block now lives in `src/content/definitions/commerceville-actions.js` and is consumed back into `actionList.js`
+- the full Valley of Olympus action-registration block now lives in `src/content/definitions/valley-of-olympus-actions.js` and is consumed back into `actionList.js`
 - generated runtime metadata truth is `generated/action-metadata-registry.js`
 - `src/content/zone-registry.js` and `src/content/action-metadata-registry.js` provide stable lookup APIs for zones and actions
 - `src/content/runtime-hook-registry.js` resolves content-facing hook ids back into the live legacy action methods
