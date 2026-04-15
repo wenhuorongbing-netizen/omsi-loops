@@ -320,7 +320,7 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
             contentZoneCount: globalThis.IdleLoopsZoneRegistry?.listZones?.().length ?? -1,
             faceJudgementTravelThresholdsMatchFinishLogic: (() => {
                 if (typeof getTravelNum !== "function"
-                    || !globalThis.resources
+                    || typeof resources === "undefined"
                     || typeof globalThis.IdleLoopsResourceState?.setResourceValue !== "function") {
                     return false;
                 }

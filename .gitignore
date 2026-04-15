@@ -4,3 +4,8 @@ node_modules/
 types/
 lang/en-EN/game_v2.xml
 output/smoke/
+output/**/*.png
+output/**/*.jpg
+output/**/*.jpeg
+output/**/*.webp
+output/**/*.gif
