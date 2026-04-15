@@ -1352,6 +1352,16 @@ Original prompt: 你是一个游戏汉化师仔细思考这个游戏该如何汉
 - `develop-web-game` Playwright client run against `http://127.0.0.1:4173` with screenshots in `output/gui-pass20-client/`
 - `npm run smoke`
 - `npm run baseline:check`
+- 2026-04-15 gui refactor pass 21:
+- Switched this pass from “add hierarchy” to “remove bulk”: the planner header, utility shell, quick filters, and amount controls were all compacted so the desktop layout wastes less vertical space and feels closer to a single-page planning surface instead of stacked mini-panels.
+- Made the action/story browser denser without making it murkier: cards now use smaller footprints, tighter art/title spacing, clearer left-aligned titles, smaller badges, and narrower grid minima so more content fits before scrolling while the action names themselves remain easier to read.
+- Added twenty-first-pass validation screenshots:
+- `output/gui-pass21-forest-overview-wide.png`
+- `output/gui-pass21-forest-selected-wide.png`
+- Verification:
+- `node --check views/main.view.js`
+- `npm run smoke`
+- `npm run baseline:check`
 - 2026-04-15 gui refactor pass 6:
 - Rebalanced the desktop three-column shell so the left planner and right inspector get materially more width while the town/action column stays large enough to preserve the existing play rhythm; this directly addresses the old “right side is too empty to still force tabs” complaint without changing the character panel behavior.
 - Raised the default action-list desktop height and the compact preset height so the queue and action browsers use more of the available vertical screen space before forcing scroll, which reduces the old “the list is already scrolling while the page still has empty space” feel.
