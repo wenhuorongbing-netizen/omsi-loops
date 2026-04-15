@@ -729,11 +729,11 @@
             <speedIncreaseCustom_text> Custom Bonus Speed </speedIncreaseCustom_text>
             <speedIncreaseBackground_text>Background Bonus Speed</speedIncreaseBackground_text>
             <speedIncreaseBackground_warning>(This will apply even if bonus is inactive. To make the game run at full speed in the background, unset this or set it to 1 or greater)</speedIncreaseBackground_warning>
-            <borrow_time>Borrow Time</borrow_time>
+            <borrow_time>Borrow 100 Days</borrow_time>
             <return_time>Return Time</return_time>
             <time_borrowed>Time borrowed:</time_borrowed>
             <borrow_time_tooltip>
-                You can grant yourself extra Bonus Seconds with this button, in one-day increments. You will always be able to see how much time you have borrowed in this way, and it will never
+                You can grant yourself extra Bonus Seconds with this button, in 100-day increments. You will always be able to see how much time you have borrowed in this way, and it will never
                 have any impact on anything else in the game. You can return time you've borrowed if you want to get the number back down to zero, but you aren't required to.
             </borrow_time_tooltip>
             <hotkeys_tooltip><![CDATA[
@@ -1123,7 +1123,7 @@
             <main_text><![CDATA[
           <p>While this bonus is on, you get {speed-1} extra seconds per second ({speed}x game speed).</p>
           <p>{background_info}</p>
-          <p>Accrue 1 bonus second per second when paused or offline. (capped at 1 month per offline period)</p>
+          <p>Accrue 1 bonus second per second when paused or offline.</p>
           <p>Bonus is {state}</p>
           <p>{counter_text} {bonusSeconds}</p>
           {lag_warning}

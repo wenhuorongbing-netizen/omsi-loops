@@ -81,7 +81,7 @@ class View {
             ? /** @type {ActionCategory} */(savedFilter)
             : "";
         this.actionCategoryLegendCollapsed = window.localStorage.getItem("actionCategoryLegendCollapsed") === "true";
-        this.readingPane = /** @type {"inspector"|"chronicle"|"character"} */("character");
+        this.readingPane = /** @type {"inspector"|"chronicle"|"character"} */("inspector");
         this.inspectorTab = /** @type {"summary"|"story"|"numbers"} */("summary");
         this.chronicleTab = /** @type {"log"|"chapters"|"stories"} */("log");
         this.chronicleChapter = 0;
@@ -613,6 +613,7 @@ class View {
         this.updateLoadoutManager();
         this.updateBuffGroups();
         this.applyTrackedResourcePins();
+        this.updateRunDeck(true);
         this.renderChronicleLogControls();
         this.renderChronicleChapters();
         this.renderChronicleStories();
@@ -884,12 +885,325 @@ class View {
         return `${this.getGuiText("chapterPrefix")}${index + 1}`;
     }
 
+    getShownTown() {
+        return towns[townShowing] ?? towns[0];
+    }
+
+    getQueueLoopCount() {
+        return actions.next.reduce((total, queuedAction) => total + (queuedAction.disabled ? 0 : queuedAction.loops), 0);
+    }
+
+    getPrimaryTownProgress() {
+        const town = this.getShownTown();
+        if (!town?.progressVars?.length) return null;
+        for (const varName of town.progressVars) {
+            const action = this.getActionByVarName(varName);
+            if (!action?.visible?.()) continue;
+            return {
+                label: action.labelDone || action.label,
+                level: town.getLevel(varName),
+                pctToNext: town.getPrcToNext(varName),
+            };
+        }
+        return null;
+    }
+
+    getRecommendedTownActions(limit = 4) {
+        const town = this.getShownTown();
+        const unreadStories = Array.isArray(globalThis.unreadActionStories) ? globalThis.unreadActionStories : [];
+        const categoryPriority = {
+            advance: 0,
+            growth: 1,
+            resource: 2,
+            shortcut: 3,
+            side: 4,
+        };
+        return (town?.totalActionList ?? [])
+            .filter(action => action.visible() && action.unlocked())
+            .map(action => ({
+                action,
+                isNew: !completedActions.includes(action.varName),
+                hasUnreadStory: unreadStories.includes(`storyContainer${action.varName}`),
+                queuedLoops: this.getQueuedLoopsForAction(action.varName),
+                canStartNow: typeof action.canStart !== "function" || action.canStart(),
+            }))
+            .sort((left, right) =>
+                Number(right.hasUnreadStory) - Number(left.hasUnreadStory)
+                || Number(right.isNew) - Number(left.isNew)
+                || Number(right.canStartNow) - Number(left.canStartNow)
+                || Number(left.queuedLoops > 0) - Number(right.queuedLoops > 0)
+                || (categoryPriority[left.action.category] ?? 99) - (categoryPriority[right.action.category] ?? 99)
+                || left.action.label.localeCompare(right.action.label, Localization.currentLang || undefined)
+            )
+            .slice(0, limit);
+    }
+
+    getRecommendationReason(recommendation) {
+        if (recommendation.hasUnreadStory) {
+            return this.isChineseLanguage() ? "有新故事可读" : "Unread story available";
+        }
+        if (recommendation.isNew) {
+            return this.isChineseLanguage() ? "这是当前区域的新内容" : "Fresh progress in this area";
+        }
+        if (!recommendation.canStartNow) {
+            return this.isChineseLanguage() ? "先排进循环，等资源条件满足" : "Queue it now and let the loop unlock the start condition";
+        }
+        if (recommendation.action.category === "advance") {
+            return this.isChineseLanguage() ? "优先推进当前区域" : "Primary area progress";
+        }
+        if (recommendation.action.category === "growth") {
+            return this.isChineseLanguage() ? "稳步补强成长面板" : "Reliable growth pick";
+        }
+        if (recommendation.action.category === "resource") {
+            return this.isChineseLanguage() ? "补资源，支撑后续动作" : "Build resources for later actions";
+        }
+        return this.isChineseLanguage() ? "可作为这一轮的补充动作" : "Useful filler for this loop";
+    }
+
+    renderActionShortcutButtons(recommendations, buttonClass = "guideActionButton") {
+        return recommendations.map(({action}) => `
+            <button
+                type="button"
+                class="button ${buttonClass}"
+                onclick='addActionToList(${JSON.stringify(action.name)}, ${action.townNum})'
+            >${action.label}</button>
+        `).join("");
+    }
+
+    getRunObjectiveText(stats, progress) {
+        if (actions.next.length === 0) {
+            return this.isChineseLanguage()
+                ? "队列还是空的。先排 2 到 4 个动作，做出一个能稳定回报的基础循环。"
+                : "Your queue is still empty. Add 2 to 4 actions first so the next loop has a stable payoff.";
+        }
+        if (gameIsStopped) {
+            return this.isChineseLanguage()
+                ? "队列已准备，点击开始后观察第一轮反馈，再按摘要调整。"
+                : "The queue is ready. Start the loop, watch the first round of feedback, then adjust from the summary.";
+        }
+        if (stats.unreadCount > 0) {
+            return this.isChineseLanguage()
+                ? "本区有未读故事。跑完这一轮后记得回纪事里看反馈。"
+                : "There are unread stories here. After this loop, check the chronicle for new feedback.";
+        }
+        if (progress && progress.pctToNext >= 80) {
+            return this.isChineseLanguage()
+                ? "当前进度快满了，准备观察下一次解锁或区域变化。"
+                : "Current progress is close to the next threshold. Watch for the next unlock or area change.";
+        }
+        return this.isChineseLanguage()
+            ? "当前循环正在运行，先等反馈，再改队列。"
+            : "The loop is running. Let it resolve, then tune the queue.";
+    }
+
+    renderRunVitals() {
+        const container = document.getElementById("runVitals");
+        if (!(container instanceof HTMLElement)) return;
+        const stats = this.getTownBrowserStats();
+        const progress = this.getPrimaryTownProgress();
+        const remainingMana = Math.max(0, timeNeeded - timer);
+        const remainingTime = formatTime(remainingMana / 50 / getActualGameSpeed());
+        const queueLoops = this.getQueueLoopCount();
+        const queueRows = actions.next.length;
+        const currentLoopLabel = Number.isFinite(currentLoop) ? formatNumber(currentLoop) : formatNumber((totals?.loops ?? 0) + 1);
+        const statusLabel = gameIsStopped
+            ? (this.isChineseLanguage() ? "暂停中" : "Paused")
+            : (this.isChineseLanguage() ? "循环运行中" : "Loop running");
+        const objectiveText = this.getRunObjectiveText(stats, progress);
+        const progressText = progress
+            ? `${progress.label} ${formatNumber(progress.level)}%`
+            : (this.isChineseLanguage() ? "查看区域卡片获取进度" : "Open the area cards for live progress");
+        container.innerHTML = `
+            <div class="runVitalsLead">
+                <span class="runVitalsEyebrow">${this.isChineseLanguage() ? "作战日志台" : "Loop Log Desk"}</span>
+                <div id="runStatusHeadline" class="runVitalsHeadline">${statusLabel}</div>
+                <p id="runObjectiveText" class="runVitalsObjective">${objectiveText}</p>
+            </div>
+            <div class="runVitalsGrid">
+                <div class="runVitalCard runVitalCard-primary">
+                    <span class="runVitalLabel">${this.isChineseLanguage() ? "剩余循环" : "Loop Remaining"}</span>
+                    <strong id="timer" class="runVitalValue">${intToString(remainingMana, options.fractionalMana ? 2 : 1, true)} | ${remainingTime}</strong>
+                    <span id="runLoopMeta" class="runVitalMeta">${this.isChineseLanguage() ? "第" : "Loop "}${currentLoopLabel}${this.isChineseLanguage() ? "轮" : ""}</span>
+                </div>
+                <div class="runVitalCard">
+                    <span class="runVitalLabel">${this.isChineseLanguage() ? "金币" : "Gold"}</span>
+                    <strong id="runGoldValue" class="runVitalValue">${formatNumber(resources.gold ?? 0)}</strong>
+                    <span class="runVitalMeta">${this.isChineseLanguage() ? "即时资源" : "Live resource"}</span>
+                </div>
+                <div class="runVitalCard">
+                    <span class="runVitalLabel">${this.isChineseLanguage() ? "当前区域" : "Current Area"}</span>
+                    <strong id="runAreaName" class="runVitalValue">${getTownName(townShowing)}</strong>
+                    <span id="runAreaProgress" class="runVitalMeta">${progressText}</span>
+                </div>
+                <div class="runVitalCard">
+                    <span class="runVitalLabel">${this.isChineseLanguage() ? "队列" : "Queue"}</span>
+                    <strong id="runQueueRowsValue" class="runVitalValue">${formatNumber(queueRows)}</strong>
+                    <span id="runQueueSummary" class="runVitalMeta">${this.isChineseLanguage() ? `${formatNumber(queueLoops)} 次可执行循环` : `${formatNumber(queueLoops)} executable loops queued`}</span>
+                </div>
+                <div class="runVitalCard">
+                    <span class="runVitalLabel">${this.isChineseLanguage() ? "新线索" : "Fresh Leads"}</span>
+                    <strong id="runLeadsValue" class="runVitalValue">${formatNumber(stats.unreadCount)}</strong>
+                    <span id="runLeadsSummary" class="runVitalMeta">${this.isChineseLanguage() ? `${formatNumber(stats.visibleCount)} 个已见行动` : `${formatNumber(stats.visibleCount)} visible actions`}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    updateRunVitalsLive() {
+        const timerElement = document.getElementById("timer");
+        if (!(timerElement instanceof HTMLElement)) {
+            this.renderRunVitals();
+            return;
+        }
+        const stats = this.getTownBrowserStats();
+        const progress = this.getPrimaryTownProgress();
+        const remainingMana = Math.max(0, timeNeeded - timer);
+        const remainingTime = formatTime(remainingMana / 50 / getActualGameSpeed());
+        const queueLoops = this.getQueueLoopCount();
+        const queueRows = actions.next.length;
+        const currentLoopLabel = Number.isFinite(currentLoop) ? formatNumber(currentLoop) : formatNumber((totals?.loops ?? 0) + 1);
+        timerElement.textContent = `${intToString(remainingMana, options.fractionalMana ? 2 : 1, true)} | ${remainingTime}`;
+        htmlElement("runStatusHeadline").textContent = gameIsStopped
+            ? (this.isChineseLanguage() ? "暂停中" : "Paused")
+            : (this.isChineseLanguage() ? "循环运行中" : "Loop running");
+        htmlElement("runObjectiveText").textContent = this.getRunObjectiveText(stats, progress);
+        htmlElement("runLoopMeta").textContent = `${this.isChineseLanguage() ? "第" : "Loop "}${currentLoopLabel}${this.isChineseLanguage() ? "轮" : ""}`;
+        htmlElement("runGoldValue").textContent = formatNumber(resources.gold ?? 0);
+        htmlElement("runAreaName").textContent = getTownName(townShowing);
+        htmlElement("runAreaProgress").textContent = progress
+            ? `${progress.label} ${formatNumber(progress.level)}%`
+            : (this.isChineseLanguage() ? "查看区域卡片获取进度" : "Open the area cards for live progress");
+        htmlElement("runQueueRowsValue").textContent = formatNumber(queueRows);
+        htmlElement("runQueueSummary").textContent = this.isChineseLanguage()
+            ? `${formatNumber(queueLoops)} 次可执行循环`
+            : `${formatNumber(queueLoops)} executable loops queued`;
+        htmlElement("runLeadsValue").textContent = formatNumber(stats.unreadCount);
+        htmlElement("runLeadsSummary").textContent = this.isChineseLanguage()
+            ? `${formatNumber(stats.visibleCount)} 个已见行动`
+            : `${formatNumber(stats.visibleCount)} visible actions`;
+    }
+
+    updateRunRuleSummary() {
+        const toggle = document.getElementById("timeControlsOptionsToggle");
+        const menuLabel = document.getElementById("menuDeckLabel");
+        if (menuLabel instanceof HTMLElement) {
+            menuLabel.textContent = this.isChineseLanguage() ? "存档 / 选项 / 高级系统" : "Saves / Options / Advanced Systems";
+        }
+        if (!(toggle instanceof HTMLElement)) return;
+        const activeRules = [];
+        if (options.pauseBeforeRestart) activeRules.push(_txt("time_controls>pause_before_restart"));
+        if (options.pauseOnFailedLoop) activeRules.push(_txt("time_controls>pause_on_failed_loop"));
+        if (options.pauseOnComplete) activeRules.push(_txt("time_controls>pause_on_complete"));
+        const ruleCount = activeRules.length;
+        toggle.textContent = this.isChineseLanguage()
+            ? `高级运行规则${ruleCount > 0 ? ` · 已开 ${ruleCount} 项` : " · 默认收起"}`
+            : `Advanced Run Rules${ruleCount > 0 ? ` · ${ruleCount} active` : " · collapsed by default"}`;
+        toggle.setAttribute("aria-label", toggle.textContent);
+        const card = document.getElementById("timeControlsOptionsCard");
+        if (card instanceof HTMLElement) {
+            card.dataset.activeRules = String(ruleCount);
+        }
+    }
+
+    renderInspectorEmptyState() {
+        const stats = this.getTownBrowserStats();
+        const progress = this.getPrimaryTownProgress();
+        const recommendations = this.getRecommendedTownActions();
+        const nextStep = actions.next.length === 0
+            ? (this.isChineseLanguage() ? "先把基础循环排出来" : "Build the first loop")
+            : gameIsStopped
+                ? (this.isChineseLanguage() ? "启动并观察第一轮反馈" : "Start and watch the first loop")
+                : (this.isChineseLanguage() ? "等待反馈后再改队列" : "Wait for feedback, then tune");
+        const helperText = actions.next.length === 0
+            ? (this.isChineseLanguage()
+                ? "先从 2 到 4 个动作开始，优先排能推进区域或补足资源的内容。"
+                : "Start with 2 to 4 actions. Prioritize area progress and resource support.")
+            : (this.isChineseLanguage()
+                ? "点任意行动卡、队列行或日志条目，这里就会固定显示详细情报。"
+                : "Click any action card, queue row, or log entry to pin detailed intel here.");
+        return `
+            <div class="inspectorGuide">
+                <section class="inspectorGuideHero">
+                    <span class="inspectorGuideEyebrow">${this.isChineseLanguage() ? "现在该做什么" : "What To Do Now"}</span>
+                    <h2 class="inspectorGuideTitle">${nextStep}</h2>
+                    <p class="inspectorGuideLead">${helperText}</p>
+                    <div class="inspectorGuideMetrics">
+                        <span class="inspectorGuideMetric">${this.isChineseLanguage() ? "区域" : "Area"}: ${getTownName(townShowing)}</span>
+                        <span class="inspectorGuideMetric">${this.isChineseLanguage() ? "未读故事" : "Unread Stories"}: ${formatNumber(stats.unreadCount)}</span>
+                        <span class="inspectorGuideMetric">${this.isChineseLanguage() ? "队列行数" : "Queue Rows"}: ${formatNumber(actions.next.length)}</span>
+                        ${progress ? `<span class="inspectorGuideMetric">${this.isChineseLanguage() ? "主进度" : "Main Progress"}: ${progress.label} ${formatNumber(progress.level)}%</span>` : ""}
+                    </div>
+                </section>
+                <section class="inspectorGuideSection">
+                    <div class="inspectorGuideSectionTitle">${this.isChineseLanguage() ? "推荐动作" : "Recommended Actions"}</div>
+                    <div class="inspectorGuideActionGrid">
+                        ${this.renderActionShortcutButtons(recommendations)}
+                    </div>
+                </section>
+                <section class="inspectorGuideSection">
+                    <div class="inspectorGuideSectionTitle">${this.isChineseLanguage() ? "为什么是这些" : "Why These"}</div>
+                    <div class="inspectorGuideList">
+                        ${recommendations.map(recommendation => `
+                            <div class="inspectorGuideListItem">
+                                <strong>${recommendation.action.label}</strong>
+                                <span>${this.getRecommendationReason(recommendation)}</span>
+                            </div>
+                        `).join("")}
+                    </div>
+                </section>
+            </div>
+        `;
+    }
+
+    renderQueueEmptyState() {
+        const emptyState = document.getElementById("queueEmptyState");
+        if (!(emptyState instanceof HTMLElement)) return;
+        const hasQueue = actions.next.length > 0;
+        emptyState.classList.toggle("hidden", hasQueue);
+        if (hasQueue) {
+            emptyState.innerHTML = "";
+            return;
+        }
+        const recommendations = this.getRecommendedTownActions();
+        emptyState.innerHTML = `
+            <div class="queueEmptyCard">
+                <span class="queueEmptyEyebrow">${this.isChineseLanguage() ? "行动规划" : "Action Planning"}</span>
+                <div class="queueEmptyTitle">${this.isChineseLanguage() ? "队列为空" : "Queue Empty"}</div>
+                <p class="queueEmptyText">${this.isChineseLanguage()
+                    ? "先挑 2 到 4 个推荐动作，做出一个能稳定回来的基础循环。"
+                    : "Pick 2 to 4 recommended actions first and build a loop that reliably comes back with progress."}</p>
+                <div class="queueEmptyActions">
+                    ${this.renderActionShortcutButtons(recommendations, "queueEmptyActionButton")}
+                </div>
+            </div>
+        `;
+    }
+
+    updateRunDeck(force = false) {
+        if (force) {
+            this.renderRunVitals();
+        } else {
+            this.updateRunVitalsLive();
+        }
+        this.updateRunRuleSummary();
+        if (force) {
+            this.renderQueueEmptyState();
+        }
+        if (force && !this.inspectorSelection) {
+            const empty = document.getElementById("inspectorEmpty");
+            if (empty instanceof HTMLElement) {
+                empty.innerHTML = this.renderInspectorEmptyState();
+            }
+        }
+    }
+
     renderInspector() {
         const empty = htmlElement("inspectorEmpty");
         const content = htmlElement("inspectorContent");
         if (!this.inspectorSelection) {
             empty.classList.remove("hidden");
             content.classList.add("hidden");
+            empty.innerHTML = this.renderInspectorEmptyState();
             htmlElement("inspectorHeader").textContent = "";
             htmlElement("inspectorMeta").innerHTML = "";
             htmlElement("inspectorSummaryPane").innerHTML = "";
@@ -1738,15 +2052,15 @@ class View {
 
     updateTime() {
         document.getElementById("timeBar").style.width = `${100 - timer / timeNeeded * 100}%`;
-        document.getElementById("timer").textContent = `${intToString((timeNeeded - timer), options.fractionalMana ? 2 : 1, true)} | ${formatTime((timeNeeded - timer) / 50 / getActualGameSpeed())}`;
         this.adjustGoldCost({varName:"Wells", cost: Action.ManaWell.goldCost()});
+        this.updateRunDeck(true);
         globalThis.IdleLoopsAccessibilityController.updateTimeBarState();
     };
     updateOffline() {
         document.getElementById("bonusSeconds").textContent = formatTime(totalOfflineMs / 1000);
         const returnTimeButton = document.getElementById("returnTimeButton");
         if (returnTimeButton instanceof HTMLButtonElement) {
-            returnTimeButton.disabled = totalOfflineMs < 86400_000;
+            returnTimeButton.disabled = !globalThis.IdleLoopsRuntimeState?.canReturnBorrowedTime(totalOfflineMs, totals);
         }
     }
     updateBonusText() {
@@ -1865,6 +2179,7 @@ class View {
     updateResources() {
         for (const resource in resources) this.updateResource(resource);
         this.applyTrackedResourcePins();
+        this.updateRunDeck(true);
     };
     updateActionTooltips() {
         document.getElementById("goldInvested").textContent = intToStringRound(goldInvested);
@@ -2099,6 +2414,7 @@ class View {
         this.applyInspectorSelectionHighlight();
         this.renderInspector();
         this.updatePlannerStatus();
+        this.updateRunDeck();
     };
 
     updateCurrentActionsDivs() {
@@ -2505,6 +2821,7 @@ class View {
         this.applyTownBrowserFilters();
         this.updateTownBrowserTools();
         this.renderChronicleStories();
+        this.updateRunDeck();
     };
 
     showActions(stories) {
@@ -3261,7 +3578,7 @@ class View {
         document.getElementById('totalPlaytime').textContent = `${formatTime(totals.time)}`;
         document.getElementById('totalEffectiveTime').textContent = `${formatTime(totals.effectiveTime)}`;
         document.getElementById('borrowedTimeBalance').textContent = formatTime(totals.borrowedTime);
-        document.getElementById('borrowedTimeDays').textContent = `${formatNumber(Math.floor(totals.borrowedTime / 86400))}${_txt("time_controls>days")}`;
+        document.getElementById('borrowedTimeDays').textContent = `${formatNumber(Math.floor(totals.borrowedTime / globalThis.IdleLoopsRuntimeState.SECONDS_PER_DAY))}${_txt("time_controls>days")}`;
         document.getElementById('totalLoops').textContent = `${formatNumber(totals.loops)}`;
         document.getElementById('totalActions').textContent = `${formatNumber(totals.actions)}`;
         if (totals.borrowedTime > 0) document.documentElement.classList.add("time-borrowed");

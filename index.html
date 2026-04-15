@@ -55,13 +55,22 @@
     <div id="talentTree" style="display: none;"></div>
     <header id="timeInfo" style="width:100%;text-align:center;">
         <button id="cheat" class="button showthat control localized" style="display: none; margin-top: 5px;" onclick="cheat()" data-lockey="misc>cheat">作弊</button>
-        <div id="timeBarContainer" style="width:100%;height:10px;background:var(--progress-bar-background);text-align:center;position:relative;">
-            <div id="timeBar" style="height:100%;width:20%;background-color:var(--progress-bar-mana-color);display:block;margin:auto;"></div>
+        <div id="commandDeck">
+            <div id="timeBarContainer" style="width:100%;height:10px;background:var(--progress-bar-background);text-align:center;position:relative;">
+                <div id="timeBar" style="height:100%;width:20%;background-color:var(--progress-bar-mana-color);display:block;margin:auto;"></div>
+            </div>
+            <div id="runStatusDeck">
+                <div id="runVitals" aria-live="polite"></div>
+                <div id='timeControls'></div>
+            </div>
+            <div id="resourceDeck">
+                <div id='trackedResources'></div>
+            </div>
+            <div id="menuDeck">
+                <div id="menuDeckLabel"></div>
+                <menu id='menu' style='float: left; height: 30px; margin-left: 24px; margin-right: -24px;'></menu>
+            </div>
         </div>
-        <menu id='menu' style='float: left; height: 30px; margin-left: 24px; margin-right: -24px;'></menu>
-        <div id='trackedResources'></div>
-        <br>
-        <div id='timeControls'></div>
     </header>
 
     <main id="main">
@@ -465,6 +474,7 @@
                         </div>
                     </div>
                     <div id="nextActionsListContainer">
+                        <div id="queueEmptyState" class="queueEmptyState hidden"></div>
                         <div id="nextActionsList"></div>
                         <div id="actionTooltipContainer" style="margin-top:10px;width:100%;text-align:left;max-height:357px;overflow:auto;"></div>
                     </div>

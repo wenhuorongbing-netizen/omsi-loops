@@ -104,7 +104,7 @@ body {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    font-family: Arial, "Segoe UI", "Helvetica Neue", Helvetica, "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC", sans-serif;
+    font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", "Helvetica Neue", Helvetica, sans-serif;
     color: var(--default-color);
     font-size: 1rem;
     height:100%;
@@ -115,22 +115,232 @@ body {
 
 #timeInfo {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 18px 14px;
+    justify-content: center;
+    padding: 12px 18px 14px;
     background: linear-gradient(var(--body-background) 78%, var(--body-background-transparent) 100%);
     position: sticky;
     top: 0;
     z-index: 4;
 }
 
+#commandDeck {
+    display: grid;
+    gap: 10px;
+    width: min(100%, 1360px);
+}
+
 #timeBarContainer {
-    width: min(100%, 1060px) !important;
+    width: 100% !important;
     height: 14px !important;
     border-radius: 999px;
     overflow: hidden;
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--input-border) 65%, transparent);
+}
+
+#runStatusDeck {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.9fr);
+    gap: 12px;
+    align-items: stretch;
+}
+
+#runVitals,
+#resourceDeck,
+#menuDeck {
+    border: 1px solid color-mix(in srgb, var(--input-border) 76%, transparent);
+    border-radius: 18px;
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--popup-background) 84%, transparent), color-mix(in srgb, var(--body-background) 82%, transparent)),
+        radial-gradient(circle at top left, color-mix(in srgb, var(--zone-color) 10%, transparent), transparent 44%);
+    box-shadow:
+        0 10px 24px color-mix(in srgb, var(--button-shadow) 10%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, white 18%, transparent);
+}
+
+#runVitals {
+    padding: 14px 16px;
+}
+
+.runVitalsLead {
+    display: grid;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+.runVitalsEyebrow,
+#menuDeckLabel {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.72;
+}
+
+.runVitalsHeadline {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.38rem;
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+.runVitalsObjective {
+    margin: 0;
+    max-width: 62ch;
+    font-size: 0.94rem;
+    line-height: 1.45;
+    opacity: 0.9;
+}
+
+.runVitalsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+    gap: 8px;
+}
+
+.runVitalCard {
+    display: grid;
+    gap: 4px;
+    min-height: 82px;
+    align-content: start;
+    padding: 10px 12px;
+    border: 1px solid color-mix(in srgb, var(--input-border) 74%, transparent);
+    border-radius: 14px;
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--body-background) 90%, transparent), color-mix(in srgb, var(--popup-background) 54%, transparent));
+}
+
+.runVitalCard-primary {
+    background:
+        linear-gradient(135deg, color-mix(in srgb, var(--button-background) 16%, transparent), transparent 62%),
+        linear-gradient(180deg, color-mix(in srgb, var(--body-background) 92%, transparent), color-mix(in srgb, var(--popup-background) 58%, transparent));
+}
+
+.runVitalLabel {
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.76;
+}
+
+.runVitalValue {
+    font-size: 1.02rem;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.runVitalMeta {
+    font-size: 0.78rem;
+    line-height: 1.35;
+    opacity: 0.78;
+}
+
+#timeControls {
+    display: grid;
+    gap: 8px;
+}
+
+#timeControlsMain,
+#timeControlsSupport {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 16px;
+    border: 1px solid color-mix(in srgb, var(--input-border) 76%, transparent);
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--popup-background) 82%, transparent), color-mix(in srgb, var(--body-background) 82%, transparent));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, white 14%, transparent);
+}
+
+#timeControlsMain {
+    min-height: 56px;
+}
+
+#timeControlsMain .button,
+#timeControlsSupport .button {
+    min-height: 38px;
+    padding: 0 14px;
+}
+
+#timeControlsMain .button {
+    font-weight: 700;
+}
+
+#bonusIsActiveInput {
+    display: none;
+}
+
+#timeControlsSupport {
+    min-height: 52px;
+}
+
+#timeControlsSupport .control {
+    margin-right: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#timeControlsOptionsCard {
+    display: grid;
+    gap: 0;
+    border: 1px solid color-mix(in srgb, var(--input-border) 76%, transparent);
+    border-radius: 16px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--popup-background) 74%, transparent);
+}
+
+#timeControlsOptionsCard > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    list-style: none;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+#timeControlsOptionsCard > summary::-webkit-details-marker {
+    display: none;
+}
+
+#timeControlsOptionsCard > summary::after {
+    content: "+";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--button-background) 18%, transparent);
+    color: var(--button-background);
+    font-size: 1rem;
+    line-height: 1;
+}
+
+#timeControlsOptionsCard[open] > summary::after {
+    content: "-";
+}
+
+#timeControlsOptions {
+    display: grid !important;
+    gap: 8px;
+    padding: 0 12px 12px;
+}
+
+#timeControlsOptions .control {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 8px;
+    align-items: start;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--body-background) 86%, transparent);
 }
 
 #menu {
@@ -139,37 +349,23 @@ body {
     margin: 0 !important;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    gap: 10px 16px;
+    gap: 8px;
 }
 
-#timeControls {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    width: 100%;
+#menuDeck {
+    display: grid;
+    gap: 8px;
+    padding: 12px 14px 14px;
 }
 
-#timeControlsMain,
-#timeControlsOptions {
-    display: flex !important;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 8px 14px;
-    padding: 6px 10px;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--popup-background) 60%, transparent);
+#resourceDeck {
+    padding: 10px 14px 12px;
 }
 
-#timeControlsMain .control,
-#timeControlsOptions .control {
-    margin-right: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+#resourceDeck #trackedResources {
+    justify-content: flex-start;
 }
 
 #story_control {
@@ -179,9 +375,144 @@ body {
     gap: 6px;
     min-height: 38px;
     padding: 0 14px;
-    border: 1px solid var(--input-border);
+    border: 1px solid color-mix(in srgb, var(--input-border) 76%, transparent);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--body-background) 88%, transparent);
+}
+
+#menu > li {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid color-mix(in srgb, var(--input-border) 76%, transparent);
     border-radius: 999px;
-    background: color-mix(in srgb, var(--popup-background) 72%, transparent);
+    background: color-mix(in srgb, var(--body-background) 88%, transparent);
+    font-size: 0.88rem;
+    font-weight: 700;
+    transition: background-color 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+
+#menu > li:hover,
+#menu > li:focus-within,
+#menu > li.menu-open {
+    background: color-mix(in srgb, var(--popup-background) 86%, transparent);
+    border-color: color-mix(in srgb, var(--button-background) 34%, var(--input-border));
+    transform: translateY(-1px);
+}
+
+#menu > li.alert {
+    border-color: color-mix(in srgb, var(--alert-color) 50%, var(--input-border));
+}
+
+.inspectorGuide {
+    display: grid;
+    gap: 12px;
+}
+
+.inspectorGuideHero,
+.inspectorGuideSection,
+.queueEmptyCard {
+    display: grid;
+    gap: 8px;
+    padding: 14px;
+    border: 1px solid color-mix(in srgb, var(--input-border) 74%, transparent);
+    border-radius: 16px;
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--body-background) 92%, transparent), color-mix(in srgb, var(--popup-background) 68%, transparent));
+}
+
+.inspectorGuideEyebrow,
+.queueEmptyEyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.74;
+}
+
+.inspectorGuideTitle,
+.queueEmptyTitle {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.2rem;
+    line-height: 1.15;
+}
+
+.inspectorGuideLead,
+.queueEmptyText {
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+.inspectorGuideMetrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.inspectorGuideMetric {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border: 1px solid color-mix(in srgb, var(--input-border) 70%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--body-background) 88%, transparent);
+    font-size: 0.8rem;
+}
+
+.inspectorGuideSectionTitle {
+    font-size: 0.84rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.78;
+}
+
+.inspectorGuideActionGrid,
+.queueEmptyActions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+}
+
+.guideActionButton,
+.queueEmptyActionButton {
+    min-height: 40px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    line-height: 1.25;
+}
+
+.inspectorGuideList {
+    display: grid;
+    gap: 8px;
+}
+
+.inspectorGuideListItem {
+    display: grid;
+    gap: 4px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--body-background) 86%, transparent);
+}
+
+.inspectorGuideListItem span {
+    font-size: 0.84rem;
+    line-height: 1.45;
+    opacity: 0.84;
+}
+
+.queueEmptyState {
+    margin-bottom: 10px;
+}
+
+.queueEmptyTitle {
+    font-size: 1.06rem;
 }
 
 .sr-only {
@@ -202,7 +533,7 @@ input, select, textarea {
 }
 
 /* These are only used in mobile view  */
-main, #actionLogContainer, #timeControlsMain, #timeControlsOptions {
+main, #actionLogContainer {
     display: contents;
 }
 #navbar {
@@ -4229,15 +4560,18 @@ body.ui-density-large .chronicleStoryUnread {
     }
 
     & #timeInfo {
-        /* width: 100vw !important; -- causes Chrome to have sad grid times? */
         grid-area: header;
-        display: grid;
+        display: flex;
+    }
+
+    & #commandDeck {
         grid:
-            "time time time" 10px
-            "menu resources ." 16px
-            "menu controls ." auto
-            / 1fr max-content 1fr;
-        gap: 2px;
+            "time time" 14px
+            "run menu" auto
+            "resources menu" auto
+            / minmax(0, 1.45fr) minmax(320px, 0.92fr);
+        align-items: start;
+        gap: 10px 12px;
     }
 
     & body > br, & #timeInfo > br {
@@ -4248,23 +4582,16 @@ body.ui-density-large .chronicleStoryUnread {
         grid-area: time;
     }
 
-    & #menu {
-        grid-area: menu;
-        text-align: left;
-        min-height: 30px;
-        height: auto !important;
-        margin-right: 0 !important;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
+    & #runStatusDeck {
+        grid-area: run;
     }
 
-    & #trackedResources {
+    & #resourceDeck {
         grid-area: resources;
     }
 
-    & #timeControls {
-        grid-area: controls;
+    & #menuDeck {
+        grid-area: menu;
     }
 
     & #statsColumn, & #actionsColumn, & #townColumn {
@@ -4461,81 +4788,41 @@ body.ui-density-large .chronicleStoryUnread {
         & body {
             overflow: initial;
             grid:
-                "menu" 30px
-                "time" 10px
-                "resources" 18px
-                "controls-main" min-content
-                "controls-options" min-content
+                "header" max-content
                 "main" minmax(max-content, 1fr)
                 / 100%
                 ;
         }
-        /* menu is at the top in mobile/two-column, but it doesn't stick */
+
+        & #timeInfo {
+            grid-area: header;
+        }
+
+        & #commandDeck {
+            grid:
+                "time" 14px
+                "run" auto
+                "resources" auto
+                "menu" auto
+                / 100%;
+        }
+
+        & #runStatusDeck {
+            grid-template-columns: 1fr;
+        }
+
+        & .runVitalsGrid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
         & #menu {
-            grid-area: menu;
-            text-align: left;
-            min-height: 30px;
-            height: 30px !important;
-            width: 100%;
-            margin-left: 0 !important;
-            margin-right: 0 !important;
-            display: flex;
-            flex-wrap: nowrap;
-            align-items: center;
-            justify-content: space-around;
-            & li {
-                height: auto !important;
-                font-size: 0.9rem;
-                margin: 0 !important;
-            }
+            justify-content: flex-start;
+            overflow-x: auto;
+            padding-bottom: 2px;
         }
 
-        /* sticky elements need to be at root grid level */
-        & #timeInfo, & #timeControls {
-            display: contents;
-        }
-        /* these will cause problems with grid/flex */
-        & body > br, & #timeInfo > br {
-            display: none;
-        }
-    
-        & #timeBarContainer {
-            grid-area: time;
-            position: sticky !important;
-            z-index: 1;
-            top: 0px;
-        }
-
-        & #trackedResources {
-            grid-area: resources;
-            position: sticky;
-            z-index: 1;
-            background-color: var(--body-background);
-            padding-top:2px;
-            top: 10px;
-        }
-
-        & .t-dark #trackedResources {
-            background-color: var(--body-background);
-        }
-    
-        & #timeControlsMain {
-            grid-area: controls-main;
-            display: block;
-            position: sticky;
-            z-index: 1;
-            background: linear-gradient(var(--body-background) 50%, var(--body-background-transparent) 100%);
-            padding-top:2px;
-            top: 28px;
-        }
-
-        & .t-dark #timeControlsMain {
-            background: linear-gradient(var(--body-background) 50%, var(--body-background-transparent) 100%);
-        }
-    
-        & #timeControlsOptions {
-            grid-area: controls-options;
-            display: block;
+        & #menu > li {
+            flex: 0 0 auto;
         }
     
         /* Main content area */
@@ -4724,11 +5011,7 @@ body.ui-density-large .chronicleStoryUnread {
             min-height: 100vh;
             display:grid;
             grid:
-                "menu" 30px
-                "time" 10px
-                "resources" 18px
-                "controls-main" min-content
-                "controls-options" min-content
+                "header" max-content
                 "main" minmax(max-content, 1fr)
                 "navbar" max-content
                 / 100vw
@@ -4737,76 +5020,61 @@ body.ui-density-large .chronicleStoryUnread {
             overflow: initial;
         }
 
-        /* Header area */
+        & #timeInfo {
+            grid-area: header;
+            padding: 10px 10px 12px;
+        }
 
-        /* menu is at the top in mobile, but it doesn't stick */
-        & #menu {
-            grid-area: menu;
-            text-align: left;
-            min-height: 30px;
-            height: 30px !important;
+        & #commandDeck {
+            grid:
+                "time" 12px
+                "run" auto
+                "resources" auto
+                "menu" auto
+                / 100%;
+            gap: 8px;
+        }
+
+        & #runStatusDeck {
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        & .runVitalsGrid {
+            grid-template-columns: 1fr;
+        }
+
+        & .runVitalCard {
+            min-height: 0;
+        }
+
+        & #timeControlsMain,
+        & #timeControlsSupport {
+            justify-content: stretch;
+        }
+
+        & #timeControlsMain .button,
+        & #timeControlsSupport .button,
+        & #story_control {
             width: 100%;
-            margin-left: 0 !important;
-            margin-right: 0 !important;
-            display: flex;
+            justify-content: center;
+        }
+
+        & #menu {
+            overflow-x: auto;
             flex-wrap: nowrap;
-            align-items: center;
-            justify-content: space-around;
-            & li {
-                height: auto !important;
-                font-size: 0.9rem;
-                margin: 0 !important;
-            }
+            padding-bottom: 2px;
         }
 
-        /* sticky elements need to be at root grid level */
-        & #timeInfo, & #timeControls {
-            display: contents;
-        }
-        /* these will cause problems with grid/flex */
-        & body > br, & #timeInfo > br {
-            display: none;
-        }
-    
-        & #timeBarContainer {
-            grid-area: time;
-            position: sticky !important;
-            z-index: 1;
-            top: 0px;
+        & #menuDeck,
+        & #resourceDeck,
+        & #runVitals,
+        & #timeControlsMain,
+        & #timeControlsSupport,
+        & #timeControlsOptionsCard {
+            border-radius: 14px;
         }
 
-        & #trackedResources {
-            grid-area: resources;
-            position: sticky;
-            z-index: 1;
-            background-color: var(--body-background);
-            padding-top:2px;
-            top: 10px;
-        }
-
-        & .t-dark #trackedResources {
-            background-color: var(--body-background);
-        }
-    
-        & #timeControlsMain {
-            grid-area: controls-main;
-            display: block;
-            position: sticky;
-            z-index: 1;
-            background: linear-gradient(var(--body-background) 50%, var(--body-background-transparent) 100%);
-            padding-top:2px;
-            top: 28px;
-        }
-
-        & .t-dark #timeControlsMain {
-            background: linear-gradient(var(--body-background) 50%, var(--body-background-transparent) 100%);
-        }
-    
-        & #timeControlsOptions {
-            grid-area: controls-options;
-            display: block;
-        }
-    
         /* Navbar */
 
         & #navbar {

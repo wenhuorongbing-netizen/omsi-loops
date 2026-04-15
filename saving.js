@@ -1521,8 +1521,7 @@ function doLoad(toLoad) {
     console.log("Updating prestige values from load")
     view.updatePrestigeValues();
 
-    // capped at 1 month of gain
-    addOffline(Math.min(Math.floor((Date.now() - Date.parse(toLoad.date)) * offlineRatio), 2678400000));
+    addOffline(Math.floor((Date.now() - Date.parse(toLoad.date)) * offlineRatio));
 
     getSaveMigrationsApi().migrateVersion75DungeonTotals(toLoad, towns, dungeons);
 

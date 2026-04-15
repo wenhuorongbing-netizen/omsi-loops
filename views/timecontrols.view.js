@@ -20,6 +20,8 @@ const timeControlsView = Views.registerView("timeControls", {
             <button onclick='manualRestart()' class='button showthatO control'>${_txt("time_controls>restart_button")}
                 <div class='showthis' style='color:var(--default-color);width:230px;'>${_txt("time_controls>restart_text")}</div>
             </button>
+        </div>
+        <div id='timeControlsSupport'>
             <input id='bonusIsActiveInput' type='checkbox' onchange='setOption("bonusIsActive", this.checked)'/>
             <button class='button showthatO control' onclick='toggleOffline()'>${_txt("time_controls>bonus_seconds>title")}
                 <div class='showthis' id='bonusText' style='max-width:500px;color:var(--default-color);'>
@@ -40,20 +42,23 @@ const timeControlsView = Views.registerView("timeControls", {
                 </div>
             </div>
         </div>
-        <div id='timeControlsOptions'>
-            <div class='control'>
-                <input type='checkbox' id='pauseBeforeRestartInput' onchange='setOption("pauseBeforeRestart", this.checked)'>
-                <label for='pauseBeforeRestartInput'>${_txt("time_controls>pause_before_restart")}</label>
+        <details id='timeControlsOptionsCard'>
+            <summary id='timeControlsOptionsToggle'></summary>
+            <div id='timeControlsOptions'>
+                <div class='control'>
+                    <input type='checkbox' id='pauseBeforeRestartInput' onchange='setOption("pauseBeforeRestart", this.checked)'>
+                    <label for='pauseBeforeRestartInput'>${_txt("time_controls>pause_before_restart")}</label>
+                </div>
+                <div class='control'>
+                    <input type='checkbox' id='pauseOnFailedLoopInput' onchange='setOption("pauseOnFailedLoop", this.checked)'>
+                    <label for='pauseOnFailedLoopInput'>${_txt("time_controls>pause_on_failed_loop")}</label>
+                </div>
+                <div class='control'>
+                    <input type='checkbox' id='pauseOnCompleteInput' onchange='setOption("pauseOnComplete", this.checked)'>
+                    <label for='pauseOnCompleteInput'>${_txt("time_controls>pause_on_complete")}</label>
+                </div>
             </div>
-            <div class='control'>
-                <input type='checkbox' id='pauseOnFailedLoopInput' onchange='setOption("pauseOnFailedLoop", this.checked)'>
-                <label for='pauseOnFailedLoopInput'>${_txt("time_controls>pause_on_failed_loop")}</label>
-            </div>
-            <div class='control'>
-                <input type='checkbox' id='pauseOnCompleteInput' onchange='setOption("pauseOnComplete", this.checked)'>
-                <label for='pauseOnCompleteInput'>${_txt("time_controls>pause_on_complete")}</label>
-            </div>
-        </div>`;
+        </details>`;
         return html;
     },
 });

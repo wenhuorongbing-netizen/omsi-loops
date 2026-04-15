@@ -1164,7 +1164,7 @@
       <speedIncreaseBackground_warning>（即使奖励未激活，这也适用。要使游戏在后台全速运行，请取消设置或将其设置为 1 或更大）</speedIncreaseBackground_warning>
       
             
-      <borrow_time>借入时间</borrow_time>
+      <borrow_time>一借100天</borrow_time>
       
             
       <return_time>归还时间</return_time>
@@ -1174,7 +1174,7 @@
       
             
       <borrow_time_tooltip>
-                你可以用这个按钮按“天”为单位给自己追加奖励时间。通过这种方式借入的时间会始终单独显示，也不会影响游戏中的其他任何内容。
+                你可以用这个按钮每次给自己追加 100 天奖励时间。通过这种方式借入的时间会始终单独显示，也不会影响游戏中的其他任何内容。
                 如果你想把借入时间降回零，可以随时归还，但并非必须。
             </borrow_time_tooltip>
       
@@ -2090,7 +2090,7 @@
       <main_text><![CDATA[
           <p>启用后，你每秒会额外获得 {speed-1} 秒（{speed} 倍游戏速度）。</p>
           <p>{background_info}</p>
-          <p>暂停或离线时，每秒累积 1 秒奖励时间。（每次离线最多累计 1 个月）</p>
+            <p>暂停或离线时，每秒累积 1 秒奖励时间。</p>
           <p>奖励当前为 {state}</p>
           <p>{counter_text} {bonusSeconds}</p>
           {lag_warning}

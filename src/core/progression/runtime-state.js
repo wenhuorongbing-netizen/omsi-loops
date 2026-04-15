@@ -1,7 +1,9 @@
 "use strict";
 
 (function setupRuntimeState(global) {
-    const BORROWED_TIME_SECONDS = 86400;
+    const SECONDS_PER_DAY = 86400;
+    const BORROWED_TIME_DAYS = 100;
+    const BORROWED_TIME_SECONDS = SECONDS_PER_DAY * BORROWED_TIME_DAYS;
     const BORROWED_TIME_MS = BORROWED_TIME_SECONDS * 1000;
 
     function addManaToTimeBudget(timeNeeded, amount) {
@@ -24,22 +26,28 @@
         return totalOfflineMs + BORROWED_TIME_MS;
     }
 
-    function canReturnBorrowedTime(totalOfflineMs) {
-        return totalOfflineMs >= BORROWED_TIME_MS;
+    function resolveReturnOfflineTimeMs(totalOfflineMs, totals) {
+        const borrowedTimeMs = Math.max((totals?.borrowedTime ?? 0) * 1000, 0);
+        return Math.min(BORROWED_TIME_MS, totalOfflineMs, borrowedTimeMs);
+    }
+
+    function canReturnBorrowedTime(totalOfflineMs, totals) {
+        return resolveReturnOfflineTimeMs(totalOfflineMs, totals) > 0;
     }
 
     function returnOfflineTime(totalOfflineMs, totals) {
-        if (!canReturnBorrowedTime(totalOfflineMs)) {
+        const returnOfflineMs = resolveReturnOfflineTimeMs(totalOfflineMs, totals);
+        if (returnOfflineMs <= 0) {
             return {
                 changed: false,
                 totalOfflineMs,
             };
         }
 
-        totals.borrowedTime -= BORROWED_TIME_SECONDS;
+        totals.borrowedTime = Math.max(totals.borrowedTime - returnOfflineMs / 1000, 0);
         return {
             changed: true,
-            totalOfflineMs: totalOfflineMs - BORROWED_TIME_MS,
+            totalOfflineMs: totalOfflineMs - returnOfflineMs,
         };
     }
 
@@ -63,11 +71,14 @@
     }
 
     global.IdleLoopsRuntimeState = Object.freeze({
+        SECONDS_PER_DAY,
+        BORROWED_TIME_DAYS,
         BORROWED_TIME_SECONDS,
         BORROWED_TIME_MS,
         addManaToTimeBudget,
         recordLoopTotals,
         borrowOfflineTime,
+        resolveReturnOfflineTimeMs,
         canReturnBorrowedTime,
         returnOfflineTime,
         buildChallengeTimeNeeded,
