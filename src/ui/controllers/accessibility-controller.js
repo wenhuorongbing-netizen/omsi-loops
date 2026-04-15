@@ -161,13 +161,28 @@
         panel.hidden = !selected;
     }
 
+    function setStackedTabState(buttonId, panelId, selected) {
+        const button = document.getElementById(buttonId);
+        const panel = document.getElementById(panelId);
+        if (!(button instanceof HTMLElement) || !(panel instanceof HTMLElement)) return;
+        button.setAttribute("role", "tab");
+        button.setAttribute("aria-controls", panelId);
+        button.setAttribute("aria-selected", String(selected));
+        button.tabIndex = selected ? 0 : -1;
+        panel.setAttribute("role", "region");
+        panel.setAttribute("aria-labelledby", buttonId);
+        panel.hidden = false;
+    }
+
     function refreshReadingShellAccessibility(view) {
         setTabState("readingTabInspector", "inspectorPane", view.readingPane === "inspector");
         setTabState("readingTabChronicle", "chroniclePane", view.readingPane === "chronicle");
         setTabState("readingTabCharacter", "statsWindow", view.readingPane === "character");
-        setTabState("inspectorTabSummary", "inspectorSummaryPane", view.inspectorTab === "summary");
-        setTabState("inspectorTabStory", "inspectorStoryPane", view.inspectorTab === "story");
-        setTabState("inspectorTabNumbers", "inspectorNumbersPane", view.inspectorTab === "numbers");
+        const stackedInspector = !!globalThis.IdleLoopsReadingShellController?.isStackedInspector?.(view);
+        const inspectorStateSetter = stackedInspector ? setStackedTabState : setTabState;
+        inspectorStateSetter("inspectorTabSummary", "inspectorSummaryPane", view.inspectorTab === "summary");
+        inspectorStateSetter("inspectorTabStory", "inspectorStoryPane", view.inspectorTab === "story");
+        inspectorStateSetter("inspectorTabNumbers", "inspectorNumbersPane", view.inspectorTab === "numbers");
         setTabState("chronicleTabLog", "chronicleLogPane", view.chronicleTab === "log");
         setTabState("chronicleTabChapters", "chronicleChaptersPane", view.chronicleTab === "chapters");
         setTabState("chronicleTabStories", "chronicleStoriesPane", view.chronicleTab === "stories");

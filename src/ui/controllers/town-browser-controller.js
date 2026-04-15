@@ -1,11 +1,25 @@
 "use strict";
 
 (function initTownBrowserController(global) {
+    function ensureTownActionUtilityShell() {
+        let shell = document.getElementById("townActionUtilityShell");
+        if (shell instanceof HTMLElement) return shell;
+
+        const title = document.getElementById("townActionTitle");
+        if (!(title instanceof HTMLElement)) return null;
+
+        shell = document.createElement("div");
+        shell.id = "townActionUtilityShell";
+        shell.className = "townActionUtilityShell";
+        title.append(shell);
+        return shell;
+    }
+
     /** @param {View} view */
     function initializeActionCategoryLegend(view) {
         if (document.getElementById("actionCategoryLegend")) return;
 
-        document.getElementById("townActionTitle")?.append(Rendered.html`
+        ensureTownActionUtilityShell()?.append(Rendered.html`
             <div id="actionCategoryLegend" class="actionCategoryLegend">
                 <div class="actionCategoryLegendHeader">
                     <span id="actionCategoryLegendTitle" class="actionCategoryLegendTitle"></span>
@@ -43,8 +57,39 @@
     /** @param {View} view */
     function initializeTownBrowserTools(view) {
         if (document.getElementById("townBrowserTools")) return;
-        document.getElementById("townActionTitle")?.append(Rendered.html`
+        ensureTownActionUtilityShell()?.append(Rendered.html`
             <div id="townBrowserTools" class="townBrowserTools">
+                <div id="townFilterBar" class="townFilterBar">
+                    <div class="townFilterSearchShell">
+                        <input
+                            id="townActionSearch"
+                            class="townActionSearch"
+                            type="search"
+                            autocomplete="off"
+                            oninput="view.setTownActionSearch(this.value)"
+                        >
+                    </div>
+                    <div id="townQuickFilterGroup" class="townQuickFilterGroup">
+                        <button
+                            type="button"
+                            id="townFilterNew"
+                            class="button townQuickFilter"
+                            onclick="view.toggleTownQuickFilter('new')"
+                        ></button>
+                        <button
+                            type="button"
+                            id="townFilterUnread"
+                            class="button townQuickFilter"
+                            onclick="view.toggleTownQuickFilter('unread')"
+                        ></button>
+                        <button
+                            type="button"
+                            id="townFilterTravelTrial"
+                            class="button townQuickFilter"
+                            onclick="view.toggleTownQuickFilter('travelTrial')"
+                        ></button>
+                    </div>
+                </div>
                 <div id="townSummaryStrip" class="townSummaryStrip">
                     <div class="townSummaryPrimary">
                         <span id="townSummaryVisible" class="townSummaryPill"></span>
@@ -55,33 +100,6 @@
                             <span id="townSummaryCategory${category}" class="townSummaryPill townSummaryCategoryPill action-category-${category}"></span>
                         `).join("")}
                     </div>
-                </div>
-                <div id="townFilterBar" class="townFilterBar">
-                    <input
-                        id="townActionSearch"
-                        class="townActionSearch"
-                        type="search"
-                        autocomplete="off"
-                        oninput="view.setTownActionSearch(this.value)"
-                    >
-                    <button
-                        type="button"
-                        id="townFilterNew"
-                        class="button townQuickFilter"
-                        onclick="view.toggleTownQuickFilter('new')"
-                    ></button>
-                    <button
-                        type="button"
-                        id="townFilterUnread"
-                        class="button townQuickFilter"
-                        onclick="view.toggleTownQuickFilter('unread')"
-                    ></button>
-                    <button
-                        type="button"
-                        id="townFilterTravelTrial"
-                        class="button townQuickFilter"
-                        onclick="view.toggleTownQuickFilter('travelTrial')"
-                    ></button>
                 </div>
             </div>
         `);
@@ -285,12 +303,29 @@
     function applyTownBrowserFilters(view) {
         const shownTown = towns[townShowing] ?? towns[0];
         const unreadStories = Array.isArray(unreadActionStories) ? unreadActionStories : [];
+        /** @type {Map<string, number>} */
+        const queuedCounts = new Map();
+        for (const queuedAction of actions.next) {
+            const prototype = getActionPrototype(queuedAction.name);
+            if (!prototype) continue;
+            queuedCounts.set(prototype.varName, (queuedCounts.get(prototype.varName) ?? 0) + queuedAction.loops);
+        }
         for (const action of shownTown?.totalActionList ?? []) {
             const actionElement = document.getElementById(`container${action.varName}`);
             const storyElement = document.getElementById(`storyContainer${action.varName}`);
             const isNew = !completedActions.includes(action.varName);
+            const isComplete = !isNew;
             const hasUnreadStory = unreadStories.includes(`storyContainer${action.varName}`);
             const isTravelTrial = isTravelOrTrialAction(action);
+            const queuedCount = queuedCounts.get(action.varName) ?? 0;
+            const isPriority = queuedCount > 0 || hasUnreadStory || isNew;
+            const browserBadge = hasUnreadStory
+                ? (view.isChineseLanguage() ? "未读" : "Unread")
+                : isNew
+                    ? (view.isChineseLanguage() ? "新" : "New")
+                    : isTravelTrial
+                        ? (view.isChineseLanguage() ? "旅行" : "Travel")
+                        : "";
             const searchable = `${action.label} ${getActionCategoryLabel(action.category)} ${view.getActionTypeLabel(action.type)} ${getTownName(action.townNum)}`.toLocaleLowerCase();
             const searchMiss = !!view.townActionSearch && !searchable.includes(view.townActionSearch);
             const quickFilterMiss = (view.townQuickFilters.new && !isNew)
@@ -301,14 +336,40 @@
             if (actionElement instanceof HTMLElement) {
                 actionElement.classList.toggle("town-browser-hidden", shouldHide);
                 actionElement.classList.toggle("action-is-new", isNew);
+                actionElement.classList.toggle("action-is-complete", isComplete);
                 actionElement.classList.toggle("action-has-unread-story", hasUnreadStory);
                 actionElement.classList.toggle("action-is-travel-trial", isTravelTrial);
+                actionElement.classList.toggle("action-is-queued", queuedCount > 0);
+                actionElement.classList.toggle("action-is-priority", isPriority);
+                actionElement.dataset.browserBadge = browserBadge;
+                actionElement.dataset.queuedCount = queuedCount > 0 ? String(queuedCount) : "";
+                const queueBadge = actionElement.querySelector(".actionQueueStateBadge");
+                if (queueBadge instanceof HTMLElement) {
+                    queueBadge.textContent = view.isChineseLanguage() ? `队列 x${queuedCount}` : `Queue x${queuedCount}`;
+                    queueBadge.classList.toggle("hidden", queuedCount <= 0);
+                }
+            }
+            const completionBadge = actionElement instanceof HTMLElement
+                ? actionElement.querySelector(".actionCompletionBadge")
+                : null;
+            if (completionBadge instanceof HTMLElement) {
+                completionBadge.textContent = view.isChineseLanguage() ? "已补完" : "Done";
+                completionBadge.classList.toggle("hidden", !isComplete || isPriority);
             }
             if (storyElement instanceof HTMLElement) {
                 storyElement.classList.toggle("town-browser-hidden", shouldHide);
                 storyElement.classList.toggle("action-is-new", isNew);
+                storyElement.classList.toggle("action-is-complete", isComplete);
                 storyElement.classList.toggle("action-has-unread-story", hasUnreadStory);
                 storyElement.classList.toggle("action-is-travel-trial", isTravelTrial);
+                storyElement.classList.toggle("action-is-queued", queuedCount > 0);
+                storyElement.classList.toggle("action-is-priority", isPriority);
+                storyElement.dataset.browserBadge = browserBadge;
+                const storyCompletionBadge = storyElement.querySelector(".actionCompletionBadge");
+                if (storyCompletionBadge instanceof HTMLElement) {
+                    storyCompletionBadge.textContent = view.isChineseLanguage() ? "已补完" : "Done";
+                    storyCompletionBadge.classList.toggle("hidden", !isComplete || isPriority);
+                }
             }
         }
     }

@@ -8,6 +8,7 @@
         setPredictorState(view, options.predictor ? "running" : "off");
         updateUiPresetButtons(view);
         updateUiDensityButtons(view);
+        updatePlannerViewMenu(view);
         updateQueueRepeatToggle(view);
         updatePlannerStatus(view);
         updateQuickSettings(view);
@@ -225,6 +226,17 @@
         return view.isChineseLanguage() ? "重复项：展开" : "Repeat Rows: Full";
     }
 
+    /** @param {View} view */
+    function getPlannerViewToggleLabel(view) {
+        const presetLabel = getUiPresetLabel(view, view.uiPreset);
+        const repeatLabel = view.queueCompactRepeats
+            ? (view.isChineseLanguage() ? "折叠" : "Compact")
+            : (view.isChineseLanguage() ? "展开" : "Full");
+        return view.isChineseLanguage()
+            ? `显示：${presetLabel} · ${repeatLabel}`
+            : `View: ${presetLabel} · ${repeatLabel}`;
+    }
+
     /**
      * @param {View} view
      * @param {string} value
@@ -292,6 +304,7 @@
             button.dataset.state = isActive ? "active" : "inactive";
             button.setAttribute("title", getUiPresetLabel(view, preset));
         }
+        updatePlannerViewMenu(view);
     }
 
     /** @param {View} view */
@@ -330,6 +343,30 @@
         button.classList.toggle("is-active", view.queueCompactRepeats);
         button.setAttribute("aria-pressed", String(view.queueCompactRepeats));
         button.setAttribute("title", label);
+        updatePlannerViewMenu(view);
+    }
+
+    /** @param {View} view */
+    function togglePlannerViewMenu(view) {
+        view.plannerViewMenuOpen = !view.plannerViewMenuOpen;
+        window.localStorage.setItem("plannerViewMenuOpen", String(view.plannerViewMenuOpen));
+        updatePlannerViewMenu(view);
+    }
+
+    /** @param {View} view */
+    function updatePlannerViewMenu(view) {
+        const toggle = document.getElementById("plannerViewToggle");
+        const body = document.getElementById("plannerViewControlBody");
+        if (toggle instanceof HTMLElement) {
+            const label = getPlannerViewToggleLabel(view);
+            toggle.textContent = label;
+            toggle.classList.toggle("is-active", view.plannerViewMenuOpen);
+            toggle.setAttribute("aria-expanded", String(view.plannerViewMenuOpen));
+            toggle.setAttribute("title", label);
+        }
+        if (body instanceof HTMLElement) {
+            body.classList.toggle("hidden", !view.plannerViewMenuOpen);
+        }
     }
 
     /**
@@ -392,25 +429,38 @@
         const predictorState = htmlElement("plannerPredictorState");
         const trackedStatState = htmlElement("plannerTrackedStatState");
         const selectionState = htmlElement("plannerSelectionState");
+        const predictorPrefix = view.isChineseLanguage() ? "预测器" : "Predictor";
+        const focusPrefix = view.isChineseLanguage() ? "预测关注" : "Focus";
+        const selectionPrefix = view.isChineseLanguage() ? "已选" : "Selected";
         const predictorLabel = {
             off: view.getGuiText("predictorOff"),
             running: view.getGuiText("predictorRunning"),
             ready: view.getGuiText("predictorReady"),
             stale: view.getGuiText("predictorStale"),
         }[options.predictor ? view.predictorState : "off"];
-        predictorState.textContent = `${view.getGuiText("predictor")}: ${predictorLabel}`;
+        predictorState.textContent = `${predictorPrefix} · ${predictorLabel}`;
         predictorState.dataset.state = options.predictor ? view.predictorState : "off";
-        trackedStatState.textContent = `${view.isChineseLanguage() ? "跟踪项" : "Tracked"}: ${getTrackedStatLabel()}`;
+        predictorState.dataset.kind = "predictor";
+        trackedStatState.textContent = `${view.isChineseLanguage() ? "预测关注" : "Focus"}: ${getTrackedStatLabel()}`;
         trackedStatState.dataset.state = options.predictor ? view.predictorState : "off";
+        trackedStatState.textContent = `${focusPrefix} · ${getTrackedStatLabel()}`;
+        trackedStatState.dataset.kind = "focus";
 
-        let selectionLabel = view.getGuiText("nothingSelected");
+        let selectionLabel = view.isChineseLanguage() ? "暂无检视对象" : "Nothing selected";
+        let selectionVisualState = "off";
         if (view.inspectorSelection?.kind === "action") {
             const action = view.getActionByVarName(view.inspectorSelection.varName);
-            if (action) selectionLabel = `${view.getGuiText("selected")}: ${action.label}`;
+            if (action) {
+                selectionLabel = action.label;
+                selectionVisualState = "ready";
+            }
         } else if (view.inspectorSelection?.kind === "log") {
-            selectionLabel = `${view.getGuiText("selected")}: ${view.getGuiText("log")} #${view.inspectorSelection.index + 1}`;
+            selectionLabel = `${view.getGuiText("log")} #${view.inspectorSelection.index + 1}`;
+            selectionVisualState = "ready";
         }
-        selectionState.textContent = selectionLabel;
+        selectionState.textContent = `${selectionPrefix} · ${selectionLabel}`;
+        selectionState.dataset.kind = "selection";
+        selectionState.dataset.state = selectionVisualState;
         updatePredictorPlannerPanel(view);
     }
 
@@ -421,6 +471,7 @@
         const viewHeading = document.getElementById("plannerViewHeading");
         const trackedStatLabel = document.getElementById("plannerTrackedStatLabel");
         const trackedStatInput = document.getElementById("predictorTrackedStatInput");
+        const trackedStatHint = document.getElementById("plannerTrackedStatHint");
         const totalDisplay = document.getElementById("predictorTotalDisplay");
         const statisticDisplay = document.getElementById("predictorStatisticDisplay");
         if (heading instanceof HTMLElement) {
@@ -430,7 +481,12 @@
             viewHeading.textContent = view.getGuiText("plannerViewHeading");
         }
         if (trackedStatLabel instanceof HTMLElement) {
-            trackedStatLabel.textContent = view.isChineseLanguage() ? "跟踪项" : "Tracked";
+            trackedStatLabel.textContent = view.isChineseLanguage() ? "预测关注" : "Prediction Focus";
+        }
+        if (trackedStatHint instanceof HTMLElement) {
+            trackedStatHint.textContent = view.isChineseLanguage()
+                ? "这里只决定预测器优先展示哪个指标，不会改变实际执行。"
+                : "This only changes which metric the predictor emphasizes. It does not change gameplay.";
         }
         if (trackedStatInput instanceof HTMLSelectElement) {
             trackedStatInput.value = options.predictorTrackedStat;
@@ -469,6 +525,7 @@
         getUiPresetLabel,
         getUiDensityLabel,
         getQueueRepeatToggleLabel,
+        getPlannerViewToggleLabel,
         handlePredictorTrackedStatChange,
         setUiPreset,
         applyUiPreset,
@@ -478,6 +535,8 @@
         updateUiDensityButtons,
         toggleQueueCompactRepeats,
         updateQueueRepeatToggle,
+        togglePlannerViewMenu,
+        updatePlannerViewMenu,
         toggleQuickSetting,
         updateQuickSettings,
         setPredictorState,

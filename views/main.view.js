@@ -110,6 +110,7 @@ class View {
         this.uiDensity = ["compact", "standard", "large"].includes(savedDensity)
             ? savedDensity
             : "standard";
+        this.plannerViewMenuOpen = window.localStorage.getItem("plannerViewMenuOpen") === "true";
         this.queueCompactRepeats = window.localStorage.getItem("queueCompactRepeats") === "true";
         try {
             const pinnedTrackedResources = JSON.parse(window.localStorage.getItem("pinnedTrackedResources") ?? "[]");
@@ -344,6 +345,8 @@ class View {
                 buffGroupFeast: "Feast",
                 buffGroupPrestige: "Prestige",
             };
+        panelTexts.queueBehaviorHeading = this.isChineseLanguage() ? "\u961f\u5217\u884c\u4e3a \u00b7 3\u9879" : "Queue Behavior · 3 toggles";
+        panelTexts.queueToolsHeading = this.isChineseLanguage() ? "\u961f\u5217\u5de5\u5177 \u00b7 \u6e05\u7a7a / \u9884\u8bbe" : "Queue Tools · Clear / Presets";
         panelTexts.plannerPredictorHeading = this.isChineseLanguage() ? "\u9884\u6d4b\u5668" : "Predictor";
         panelTexts.plannerViewHeading = this.isChineseLanguage() ? "\u5e03\u5c40" : "Layout";
         panelTexts.quickSettingsToggles = this.isChineseLanguage() ? "\u5e38\u7528\u5f00\u5173" : "Toggles";
@@ -381,6 +384,12 @@ class View {
             : "Hotkeys work when Hotkeys is enabled and text inputs are not focused.";
         panelTexts.hotkeyStatusOn = this.isChineseLanguage() ? "\u5df2\u542f\u7528" : "Enabled";
         panelTexts.hotkeyStatusOff = this.isChineseLanguage() ? "\u5df2\u5173\u95ed" : "Disabled";
+        extraTexts.status = this.isChineseLanguage() ? "\u72b6\u6001" : "Status";
+        extraTexts.actionStateUnread = this.isChineseLanguage() ? "\u672a\u8bfb\u6545\u4e8b" : "Unread Story";
+        extraTexts.actionStateNew = this.isChineseLanguage() ? "\u65b0\u5185\u5bb9" : "New";
+        extraTexts.actionStateQueued = this.isChineseLanguage() ? "\u5df2\u6392\u961f" : "Queued";
+        extraTexts.actionStateComplete = this.isChineseLanguage() ? "\u5df2\u8865\u5b8c" : "Completed";
+        extraTexts.actionStateAvailable = this.isChineseLanguage() ? "\u5df2\u89e3\u9501" : "Available";
         return texts[key] ?? extraTexts[key] ?? panelTexts[key] ?? key;
     }
 
@@ -483,6 +492,14 @@ class View {
         return globalThis.IdleLoopsPlannerController.updateUiPresetButtons(this);
     }
 
+    togglePlannerViewMenu() {
+        return globalThis.IdleLoopsPlannerController.togglePlannerViewMenu(this);
+    }
+
+    updatePlannerViewMenu() {
+        return globalThis.IdleLoopsPlannerController.updatePlannerViewMenu(this);
+    }
+
     updateUiDensityButtons() {
         return globalThis.IdleLoopsPlannerController.updateUiDensityButtons(this);
     }
@@ -567,7 +584,15 @@ class View {
         }
         const trackedStatLabel = document.getElementById("plannerTrackedStatLabel");
         if (trackedStatLabel instanceof HTMLElement) {
-            trackedStatLabel.textContent = this.isChineseLanguage() ? "\u8ddf\u8e2a\u9879" : "Tracked";
+            trackedStatLabel.textContent = this.isChineseLanguage() ? "\u9884\u6d4b\u5173\u6ce8" : "Prediction Focus";
+        }
+        const actionChangeOptionsTitle = document.getElementById("actionChangeOptionsTitle");
+        if (actionChangeOptionsTitle instanceof HTMLElement) {
+            actionChangeOptionsTitle.textContent = this.getGuiText("queueBehaviorHeading");
+        }
+        const actionChangeButtonsTitle = document.getElementById("actionChangeButtonsTitle");
+        if (actionChangeButtonsTitle instanceof HTMLElement) {
+            actionChangeButtonsTitle.textContent = this.getGuiText("queueToolsHeading");
         }
         const quickSettingsToggleHeading = document.getElementById("quickSettingsToggleHeading");
         if (quickSettingsToggleHeading instanceof HTMLElement) {
@@ -580,6 +605,7 @@ class View {
         this.updateHotkeyReferencePanels();
         this.updateUiPresetButtons();
         this.updateUiDensityButtons();
+        this.updatePlannerViewMenu();
         this.updateQueueRepeatToggle();
         this.updatePlannerStatus();
         this.updateTownBrowserTools();
@@ -674,6 +700,66 @@ class View {
         return storyContent instanceof HTMLElement ? storyContent.innerHTML : "";
     }
 
+    getPlainTextPreview(html, maxLength=180) {
+        const text = String(html ?? "")
+            .replace(/<br\s*\/?>/gi, " ")
+            .replace(/<[^>]*>/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+        if (!text) return "";
+        return text.length > maxLength ? `${text.slice(0, maxLength - 1).trimEnd()}…` : text;
+    }
+
+    getActionInspectorLead(action) {
+        const primaryText = this.getPlainTextPreview(action.tooltip, 150);
+        if (primaryText) return primaryText;
+        return this.getPlainTextPreview(this.getActionStoryHTML(action.varName), 150);
+    }
+
+    getQueuedLoopsForAction(varName) {
+        let queuedLoops = 0;
+        for (const queuedAction of actions.next) {
+            const prototype = getActionPrototype(queuedAction.name);
+            if (prototype?.varName !== varName) continue;
+            queuedLoops += queuedAction.loops;
+        }
+        return queuedLoops;
+    }
+
+    getActionInspectorStatus(action, queuedLoops=0) {
+        const hasUnreadStory = Array.isArray(globalThis.unreadActionStories)
+            && globalThis.unreadActionStories.includes(`storyContainer${action.varName}`);
+        if (hasUnreadStory) {
+            return {
+                label: this.getGuiText("actionStateUnread"),
+                className: "status-unread",
+            };
+        }
+        const isNew = !completedActions.includes(action.varName);
+        if (isNew) {
+            return {
+                label: this.getGuiText("actionStateNew"),
+                className: "status-new",
+            };
+        }
+        if (queuedLoops > 0) {
+            return {
+                label: this.getGuiText("actionStateQueued"),
+                className: "status-queued",
+            };
+        }
+        if (completedActions.includes(action.varName)) {
+            return {
+                label: this.getGuiText("actionStateComplete"),
+                className: "status-complete",
+            };
+        }
+        return {
+            label: this.getGuiText("actionStateAvailable"),
+            className: "status-available",
+        };
+    }
+
     getQueuePredictorDetails(actionId) {
         if (!options.predictor) return "";
         const actionElement = document.getElementById(`nextActionContainer${actionId}`);
@@ -712,6 +798,15 @@ class View {
                     </div>
                 `).join("")}
             </dl>
+        `;
+    }
+
+    renderInspectorSection(title, body, sectionClass="") {
+        return `
+            <section class="inspectorSectionCard ${sectionClass}">
+                <div class="inspectorSectionTitle">${title}</div>
+                <div class="inspectorSectionBody">${body}</div>
+            </section>
         `;
     }
 
@@ -754,14 +849,7 @@ class View {
     }
 
     openInspectorForAction(varName, preferredTab="summary") {
-        let nextTab = preferredTab;
-        if (preferredTab === "summary") {
-            const storyText = this.getActionStoryHTML(varName).replace(/<[^>]*>/g, "").trim();
-            const action = this.getActionByVarName(varName);
-            const numberText = action ? this.getActionTooltipHTML(action).replace(/<[^>]*>/g, "").trim() : "";
-            nextTab = storyText ? "story" : (numberText ? "numbers" : "summary");
-        }
-        this.setInspectorSelection({kind: "action", source: "action", varName}, nextTab);
+        this.setInspectorSelection({kind: "action", source: "action", varName}, preferredTab);
     }
 
     openInspectorForStory(varName) {
@@ -772,7 +860,7 @@ class View {
         const queuedAction = actions.next.find(action => action.actionId === actionId);
         const action = queuedAction ? getActionPrototype(queuedAction.name) : null;
         if (!queuedAction || !action) return;
-        this.setInspectorSelection({kind: "action", source: "queue", varName: action.varName, actionId}, "numbers");
+        this.setInspectorSelection({kind: "action", source: "queue", varName: action.varName, actionId}, "summary");
     }
 
     openInspectorForLog(index) {
@@ -812,6 +900,7 @@ class View {
 
         let title = "";
         let meta = "";
+        let lead = "";
         let summary = "";
         let story = `<p>${this.getGuiText("noStory")}</p>`;
         let numbers = `<p>${this.getGuiText("noNumbers")}</p>`;
@@ -822,22 +911,29 @@ class View {
                 this.clearInspectorSelection();
                 return;
             }
+            const queuedLoops = this.getQueuedLoopsForAction(action.varName);
             const queuedAction = this.inspectorSelection.source === "queue"
                 ? actions.next.find(nextAction => nextAction.actionId === this.inspectorSelection.actionId)
                 : null;
+            const status = this.getActionInspectorStatus(action, queuedLoops);
             const tags = this.getActionInspectorTags(action);
             title = action.label;
+            lead = this.getActionInspectorLead(action);
             meta = `
                 <span class="readingMetaChip zone-${action.townNum + 1}">${getTownName(action.townNum)}</span>
                 <span class="readingMetaChip action-category-${action.category}">${getActionCategoryLabel(action.category)}</span>
                 <span class="readingMetaChip action-type-${action.type}">${this.getActionTypeLabel(action.type)}</span>
+                <span class="readingMetaChip readingMetaChip-status ${status.className}">${status.label}</span>
+                <span class="readingMetaChip readingMetaChip-source">${this.getSelectionSourceLabel(this.inspectorSelection.source)}</span>
+                ${queuedLoops > 0 ? `<span class="readingMetaChip readingMetaChip-queue">${this.getGuiText("queuedLoops")}: ${formatNumber(queuedLoops)}</span>` : ""}
             `;
             summary = this.renderDefinitionRows([
                 [this.getGuiText("area"), getTownName(action.townNum)],
+                [this.getGuiText("status"), status.label],
                 [this.getGuiText("role"), getActionCategoryLabel(action.category)],
                 [this.getGuiText("type"), this.getActionTypeLabel(action.type)],
                 [this.getGuiText("source"), this.getSelectionSourceLabel(this.inspectorSelection.source)],
-                [this.getGuiText("queuedLoops"), queuedAction ? formatNumber(queuedAction.loops) : ""],
+                [this.getGuiText("queuedLoops"), queuedLoops > 0 ? formatNumber(queuedLoops) : ""],
                 [this.getGuiText("queueState"), queuedAction ? this.describeQueueState(queuedAction) : ""],
                 [this.getGuiText("tags"), tags.join(" · ")],
             ]);
@@ -854,6 +950,7 @@ class View {
             }
             const action = entry.action;
             title = action?.label ?? this.getGuiText("log");
+            lead = this.getPlainTextPreview(entry.element.textContent ?? "", 150);
             meta = `
                 <span class="readingMetaChip">${this.getGuiText("log")}</span>
                 <span class="readingMetaChip">${entry.type}</span>
@@ -875,9 +972,12 @@ class View {
         content.classList.remove("hidden");
         htmlElement("inspectorHeader").textContent = title;
         htmlElement("inspectorMeta").innerHTML = meta;
-        htmlElement("inspectorSummaryPane").innerHTML = summary;
-        htmlElement("inspectorStoryPane").innerHTML = story;
-        htmlElement("inspectorNumbersPane").innerHTML = numbers;
+        const leadElement = htmlElement("inspectorLead");
+        leadElement.textContent = lead;
+        leadElement.classList.toggle("hidden", lead === "");
+        htmlElement("inspectorSummaryPane").innerHTML = this.renderInspectorSection(this.getGuiText("summary"), summary, "inspectorSectionSummary");
+        htmlElement("inspectorStoryPane").innerHTML = this.renderInspectorSection(this.getGuiText("story"), story, "inspectorSectionStory");
+        htmlElement("inspectorNumbersPane").innerHTML = this.renderInspectorSection(this.getGuiText("numbers"), numbers, "inspectorSectionNumbers");
     }
 
     renderChronicleChapters() {
@@ -1885,8 +1985,13 @@ class View {
                         ondragleave=${dragExitUndecorate.bind(null, i)}
                         draggable='true' tabindex='0' role='button' data-action-id='${i}'
                     >
-                        <div class='nextActionLoops'><img class='smallIcon imageDragFix'> ×
-                        <div class='bold'></div><span class='nextActionRepeatBadge hidden'></span></div>
+                        <div class='nextActionLoops'>
+                            <img class='smallIcon imageDragFix'>
+                            <span class='nextActionName'></span>
+                            <span class='nextActionLoopGlyph'>×</span>
+                            <div class='nextActionLoopCount bold'></div>
+                            <span class='nextActionRepeatBadge hidden'></span>
+                        </div>
                         <div class='nextActionCategoryMark'></div>
                         <div class='nextActionButtons'>
                             <button onclick=${this.handleQueueControlClick.bind(this, i, capAction)}      class='capButton actionIcon far fa-circle'></button>
@@ -1953,7 +2058,11 @@ class View {
                 .select("div.nextActionLoops > img")
                 .property("src", a => `img/${a.action.imageName}.svg`))
             .call(container => container
-                .select("div.nextActionLoops > div.bold")
+                .select("span.nextActionName")
+                .text(({action}) => action.label)
+            )
+            .call(container => container
+                .select("div.nextActionLoopCount")
                 .text(action => action.loops > 99999 ? toSuffix(action.loops) : formatNumber(action.loops))
             )
             .call(container => container
@@ -2699,9 +2808,13 @@ class View {
                 onmouseout='view.updateAction(undefined)'
             >
                 ${categoryBadge}
-                <label>${action.label}</label><br>
-                <div style='position:relative'>
+                <span class='actionCardTitle'>${action.label}</span>
+                <div class='actionCardArt'>
                     <img src='img/${imageName}.svg' class='superLargeIcon' draggable='false'>${extraImage}
+                </div>
+                <div class='actionCardFooter'>
+                    <span class='actionCompletionBadge hidden'></span>
+                    <span class='actionQueueStateBadge hidden'></span>
                 </div>
                 ${statPie}
                 <div class='showthis when-unlocked' draggable='false'>
@@ -2759,11 +2872,13 @@ class View {
             const storyDivText =
                 `<div id='storyContainer${action.varName}' tabindex='0' class='storyContainer showthatstory action-category-${category}' data-action-category='${category}' draggable='false' onmouseover='hideNotification("storyContainer${action.varName}")'>
                     ${storyCategoryBadge}
-                    ${action.label}
-                    <br>
-                    <div style='position:relative'>
+                    <span class='storyCardTitle'>${action.label}</span>
+                    <div class='storyCardArt'>
                         <img src='img/${camelize(action.name)}.svg' class='superLargeIcon' draggable='false'>
                         <div id='storyContainer${action.varName}Notification' class='notification storyNotification'></div>
+                    </div>
+                    <div class='storyCardFooter'>
+                        <span class='actionCompletionBadge hidden'></span>
                     </div>
                     <div class='showthisstory' draggable='false'>
                         ${storyCategoryTooltip}

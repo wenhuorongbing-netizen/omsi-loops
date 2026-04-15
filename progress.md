@@ -1263,3 +1263,220 @@ Original prompt: 你是一个游戏汉化师仔细思考这个游戏该如何汉
 - `node --check tests/smoke/runtime-smoke.mjs`
 - `npm run regression`
 - Phase note: `Phase 24` is now considered complete for the second cross-zone helper extraction baseline. The next content-side work is peeling the remaining helper families away from `actionList.js`, especially rank-related helpers, and then replacing legacy rule/effect/story adapters with true extracted implementations.
+- 2026-04-15 gui refactor pass 1:
+- Refactored the planner header so the UI preset strip (`classic / planner / reader / compact`) is collapsed behind a single `plannerViewToggle`, while keeping the old preset actions and repeat-row toggle available in an expandable shell.
+- Clarified the predictor shell by renaming the tracked-stat wording to a prediction-focus label and adding helper copy that explains it only changes predictor emphasis, not gameplay.
+- Changed inspector behavior so clicking an action no longer auto-jumps to story/numbers; the inspector now defaults to summary, and on desktop the summary/story/numbers panes are rendered together as stacked cards while mobile still keeps the tabbed mode.
+- Reworked queue rows to show action names inline, keep loop counts tabular, and stabilize the queue-row layout without changing queue semantics or controls.
+- Tightened the town-browser filter strip and action-card layout so the search bar, quick filters, and action/story cards align more predictably in the existing shell.
+- Adjusted the top time/control strip sizing and spacing to make the timer/status area read as a first-class header instead of a thin utility row.
+- Added manual browser validation screenshots:
+- `output/gui-manual-overview.png`
+- `output/gui-manual-wander-selected.png`
+- `output/gui-manual-queue.png`
+- Verification:
+- `node --check views/main.view.js`
+- `node --check src/ui/controllers/planner-controller.js`
+- `node --check src/ui/controllers/reading-shell.js`
+- `node --check src/ui/controllers/accessibility-controller.js`
+- Pending follow-up: keep refining the queue/action area at narrower desktop widths if this GUI track continues, but do not reintroduce auto-wrapping of the three main columns because it broke first-screen structure.
+- 2026-04-15 gui refactor pass 2:
+- Rebuilt the queue footer into two explicit cards (`Queue Behavior` / `Queue Tools`) so the old checkbox-and-button pile reads as one coherent control surface instead of a leftover form block.
+- Turned the add-amount strip into a compact control card with equal-width amount presets plus a stable custom input, which removed the previous uneven inline spacing under the planner header.
+- Reworked the town browser tools so search and quick filters sit in a deliberate filter card layout, while the visibility/unread/category summary moved into its own overview row with clearer grouping.
+- Tightened the action/story card composition by giving titles and icon areas dedicated rows instead of relying on ad-hoc `<br>` spacing; this makes the card grid look more even when labels wrap.
+- Stabilized queue-row controls further by converting the per-row action buttons into a fixed 3x3 icon grid, which keeps the row controls visually aligned even when counts and names vary.
+- Enlarged the top timer/control strip a little more so the timing header reads as a primary status area on desktop instead of a cramped utility bar.
+- Added second-pass manual validation screenshots:
+- `output/gui-pass2-overview-wide.png`
+- `output/gui-pass2-queue-selected-wide.png`
+- `output/gui-pass2-queue-dense-wide.png`
+- Verification:
+- `node --check views/main.view.js`
+- `node --check src/ui/controllers/town-browser-controller.js`
+- `develop-web-game` Playwright client run against `http://127.0.0.1:4173` with screenshots in `output/gui-second-pass-client/`
+- Pending follow-up: if this GUI track continues, the next high-value polish target is the queue-row hover/tooltip interaction density, not the overall column structure.
+- 2026-04-15 gui refactor pass 3:
+- Split the town action header back into a real title row plus a separate tool area so `Action Options / 行动选项` no longer gets squeezed into a vertical pseudo-label beside the browser tools.
+- Gave the desktop inspector column a bit more width by rebalancing the base `stats / town` column widths and the planner/reader presets, while preserving the existing three-column shell and the character panel behavior.
+- Compressed the new queue footer cards slightly so they keep the cleaner grouping from pass 2 without stealing unnecessary height from the queue list itself.
+- Added final wide validation screenshots after the header/layout rebalance:
+- `output/gui-pass4-overview-wide.png`
+- `output/gui-pass4-queue-selected-wide.png`
+- Verification:
+- `npm run smoke`
+- `npm run baseline:check`
+- 2026-04-15 gui refactor pass 5:
+- Rebuilt the town action header into a true two-row grid: the title row now keeps the left/right browser arrows and centered `Action Options / 行动选项`, while the legend and search/filter tools live in one dedicated utility shell underneath instead of floating as unrelated blocks.
+- Converted the visible action/story galleries from `flex-wrap` to stable CSS grids and made the underlying action/story cards fill their grid tracks, which fixes the old one-digit/two-digit alignment drift and gives unlocked action lists a cleaner desktop rhythm.
+- Simplified the browser tool card by stacking search above the quick filters, so the Chinese labels no longer crush into awkward multi-line fragments at standard desktop widths.
+- Kept the character column untouched, preserved the stacked desktop inspector, and left gameplay/save/predictor logic unchanged; this pass only changed the UI shell and card layout.
+- Added fifth-pass manual validation screenshots:
+- `output/gui-pass5-overview-wide.png`
+- `output/gui-pass5-queue-selected-wide.png`
+- Verification:
+- `node --check src/ui/controllers/town-browser-controller.js`
+- `node --check views/main.view.js`
+- `npm run smoke`
+- `npm run baseline:check`
+- 2026-04-15 gui refactor pass 18:
+- Promoted the inspector from a labeled header into a fuller master-view surface by adding an `inspectorLead` line that pulls a plain-text tooltip/story preview directly under the hero chips; the right pane now gives users an immediate “what is this action about?” answer before they start reading the summary/story cards.
+- Strengthened long-queue scan just enough to matter without making the left rail noisy again: zone-start labels were given a clearer badge treatment and active-segment rows now tint the action name more decisively, so queue section boundaries read faster in dense midgame saves.
+- Added eighteenth-pass validation screenshots:
+- `output/gui-pass18-forest-overview-wide.png`
+- `output/gui-pass18-forest-selected-wide.png`
+- Verification:
+- `node --check views/main.view.js`
+- `npm run smoke`
+- `npm run baseline:check`
+- 2026-04-15 gui refactor pass 19:
+- Rebuilt action/story cards into a clearer three-part structure (`title / art / state footer`) instead of leaving completion and queue badges floating in the corners; queued and completed state now read as explicit card footers, which lowers visual noise and makes the browser feel more like a designed control surface than a pile of overlays.
+- Tightened the left footer utilities and upgraded the right summary card at the same time: queue behavior/tools accordions now waste less vertical space, while the inspector summary definition list can use a responsive multi-column layout in stacked desktop mode so the right pane finally uses its width like a summary panel instead of a long single-column checklist.
+- Added nineteenth-pass validation screenshots:
+- `output/gui-pass19-forest-overview-wide.png`
+- `output/gui-pass19-forest-selected-wide.png`
+- Verification:
+- `node --check src/ui/controllers/town-browser-controller.js`
+- `node --check views/main.view.js`
+- `develop-web-game` Playwright client run against `http://127.0.0.1:4173` with screenshots in `output/gui-pass19-client/`
+- `npm run smoke`
+- `npm run baseline:check`
+- 2026-04-15 gui refactor pass 20:
+- Strengthened the remaining weak feedback seams instead of just polishing: the inspector lead is now a real synopsis block with its own container and accent edge, so the right pane answers “what is this?” before the user starts reading detail cards.
+- Improved left-queue scan by turning loop counts into stable pills, giving queue rows a faint card shell/border, and separating the control matrix with a divider; this makes long lists read more like structured rows (`name / count / controls`) instead of text plus floating icons.
+- Quiet completion feedback was also nudged up another step so completed actions remain subdued but are no longer so faint that they disappear entirely.
+- Added twentieth-pass validation screenshots:
+- `output/gui-pass20-forest-overview-wide.png`
+- `output/gui-pass20-forest-selected-wide.png`
+- Verification:
+- `develop-web-game` Playwright client run against `http://127.0.0.1:4173` with screenshots in `output/gui-pass20-client/`
+- `npm run smoke`
+- `npm run baseline:check`
+- 2026-04-15 gui refactor pass 6:
+- Rebalanced the desktop three-column shell so the left planner and right inspector get materially more width while the town/action column stays large enough to preserve the existing play rhythm; this directly addresses the old “right side is too empty to still force tabs” complaint without changing the character panel behavior.
+- Raised the default action-list desktop height and the compact preset height so the queue and action browsers use more of the available vertical screen space before forcing scroll, which reduces the old “the list is already scrolling while the page still has empty space” feel.
+- Tightened queue-row alignment further by reserving fixed desktop tracks for loop counts and row controls, so one-digit and two-digit loop counts no longer push the icon/control column around.
+- Added sixth-pass manual validation screenshots:
+- `output/gui-pass6-overview-wide.png`
+- `output/gui-pass6-queue-selected-wide.png`
+- Verification:
+- `npm run smoke`
+- `npm run baseline:check`
+- 2026-04-15 gui refactor pass 7:
+- Converted the queue footer cards into native accordion sections so the noisier `Queue Behavior` controls can stay collapsed by default while the operational tools remain one click away; this reduces left-column clutter without hiding functionality behind custom JS.
+- Suppressed redundant heavy hover popups for the currently inspector-selected action/story card on desktop, so once an item is selected the right-side inspector becomes the primary feedback surface instead of fighting a second large tooltip in the middle column.
+- Fixed an old responsive-layout regression where `#expandableList` was still being forced to `20px !important`; the queue pane now correctly reuses the intended desktop list height even after the new accordion shell was introduced.
+- Added seventh-pass manual validation screenshots:
+- `output/gui-pass7-overview-wide.png`
+- `output/gui-pass7-queue-selected-wide.png`
+- Verification:
+- `npm run smoke`
+- `npm run baseline:check`
+- 2026-04-15 gui refactor pass 8:
+- Strengthened queue readability and inspector hierarchy instead of only shifting widths around: queue rows now read more like segmented flow blocks, while the stacked inspector cards use clearer visual priority so summary reads first, story second, and dense numbers last.
+- Made the queue footer accordions more self-descriptive by labeling them with the actual payload (`Queue Behavior · 3 toggles` / `Queue Tools · Clear / Presets`), which improves collapsed-state comprehensibility without adding new chrome.
+- Added eighth-pass manual validation screenshots:
+- `output/gui-pass8-overview-wide.png`
+- `output/gui-pass8-queue-selected-wide.png`
+- Verification:
+- `node --check views/main.view.js`
+- `npm run smoke`
+- `npm run baseline:check`
+- 2026-04-15 gui refactor pass 9:
+- Clarified the planner status strip instead of only recoloring it: the three pills now read as separate predictor/focus/selection states, and the desktop header gets stronger visual hierarchy without adding another toolbar row.
+- Added lightweight state chips to action/story cards (`new`, `unread`, `travel`) by wiring the town browser state into card-level dataset badges, so the middle column can be scanned without relying on tiny border differences alone.
+- Strengthened inspector-selected card emphasis so the chosen action/story reads as a deliberate focus target while keeping the character column and gameplay layout intact.
+- Added ninth-pass validation screenshots:
+- `output/gui-pass9-overview-wide.png`
+- `output/gui-pass9-queue-selected-wide.png`
+- Verification:
+- `node --check src/ui/controllers/planner-controller.js`
+- `node --check src/ui/controllers/town-browser-controller.js`
+- `node --check views/main.view.js`
+- `develop-web-game` Playwright client run against `http://127.0.0.1:4173` with screenshots in `output/gui-pass9-client/overview/`
+- 2026-04-15 gui refactor pass 10:
+- Pushed the queue from “aligned” toward “readable”: new-zone starts now behave more like real section dividers, repeat leaders read as grouped blocks, and the active/selected queue row carries stronger segment emphasis instead of looking like one more flat list item.
+- Deepened the stacked inspector card hierarchy so summary reads as a true primary card, while story and numbers remain present but visually subordinate; this keeps the right side information-dense without going back to a tab-only layout.
+- Added tenth-pass validation screenshots:
+- `output/gui-pass10-overview-wide.png`
+- `output/gui-pass10-queue-selected-wide.png`
+- Verification:
+- `develop-web-game` Playwright client run against `http://127.0.0.1:4173` with screenshots in `output/gui-pass10-client/overview/`
+- `npm run smoke`
+- `npm run baseline:check`
+- 2026-04-15 gui refactor pass 11:
+- Increased the visual “voice” of the action browser without changing its density: action/story cards now carry stronger category-tinted top rails and icon trays, so players can scan role identity faster instead of reading every label.
+- Promoted the inspector summary from “the first of three equal cards” to a more obviously primary panel by strengthening the header typography, meta chips, and definition-row presentation, while leaving story and numbers visible for the no-tab desktop workflow.
+- Added eleventh-pass validation screenshots:
+- `output/gui-pass11-overview-wide.png`
+- `output/gui-pass11-queue-selected-wide.png`
+- Verification:
+- `develop-web-game` Playwright client run against `http://127.0.0.1:4173` with screenshots in `output/gui-pass11-client/overview/`
+- `npm run smoke`
+- `npm run baseline:check`
+- 2026-04-15 gui refactor pass 12:
+- Reduced “same-weight controls everywhere” noise by giving the browser quick filters distinct semantics and making the queue control matrix visually step back until the row is hovered/selected, so names and state read first and controls read second.
+- Kept the pass-11 action-card and summary-card hierarchy, then corrected a readability regression in the quick-filter labels so the semantic color pass improves clarity instead of hiding text.
+- Added twelfth-pass validation screenshots:
+- `output/gui-pass12-overview-wide.png`
+- `output/gui-pass12-queue-selected-wide.png`
+- Verification:
+- `develop-web-game` Playwright client run against `http://127.0.0.1:4173` with screenshots in `output/gui-pass12-client/overview/`
+- `npm run smoke`
+- `npm run baseline:check`
+- 2026-04-15 gui refactor pass 13:
+- Turned the planner strip and browser summary/filter row into clearer “status reads” instead of another row of same-weight pills: planner status now sits inside a dedicated instrument shell, summary pills gained leading status dots, and quick filters read more like semantic toggles than generic green buttons.
+- Reduced queue-row control noise another step by lowering the default control-matrix prominence so the row label/segment/state scan comes first, while hover/selection still brings the controls back to full attention.
+- Added thirteenth-pass validation screenshots:
+- `output/gui-pass13-overview-wide.png`
+- `output/gui-pass13-queue-selected-wide.png`
+- Verification:
+- `develop-web-game` Playwright client run against `http://127.0.0.1:4173` with screenshots in `output/gui-pass13-client/overview/`
+- `npm run smoke`
+- `npm run baseline:check`
+- 2026-04-15 gui refactor pass 14:
+- Improved the planner/status area from “three static pills” toward an actual instrument strip by giving it a dedicated shell, stronger state dots, and a live running-state pulse; this makes the top bar feel like feedback instead of decoration.
+- Reworked the browser quick-filter row into more readable semantic toggles by switching it to a 2+1 layout, adding clearer left-aligned labels, and preserving stronger summary/status pills beneath it.
+- Added fourteenth-pass validation screenshots:
+- `output/gui-pass14-overview-wide.png`
+- `output/gui-pass14-queue-selected-wide.png`
+- Verification:
+- `develop-web-game` Playwright client run against `http://127.0.0.1:4173` with screenshots in `output/gui-pass14-client/overview/`
+- `npm run smoke`
+- `npm run baseline:check`
+- 2026-04-15 gui refactor pass 15:
+- Added explicit queue-state feedback to the action browser so queued actions now surface `队列 xN / Queue xN` directly on the card instead of forcing players to cross-reference the left queue manually.
+- Promoted queue context into the inspector meta row as well, so source and queued-loop count are visible immediately at the top of the right-hand pane without digging into the summary rows.
+- Fixed a real regression during this pass (`getTownBrowserStats()` had briefly picked up a bad unread-story initializer); the final state is verified green.
+- Added fifteenth-pass validation screenshots:
+- `output/gui-pass15-overview-wide.png`
+- `output/gui-pass15-queue-selected-wide.png`
+- Verification:
+- `develop-web-game` Playwright client run against `http://127.0.0.1:4173` with screenshots in `output/gui-pass15-client/overview/`
+- `npm run smoke`
+- `npm run baseline:check`
+- 2026-04-15 gui refactor pass 16:
+- Strengthened the inspector into a clearer hero panel: the right-hand header/meta area now sits inside a dedicated `#inspectorHero` shell, and actions expose an explicit top-level status chip (`Unread Story / New / Queued / Completed / Available`) instead of only showing source and type.
+- Added calmer completion treatment plus stronger priority treatment in the middle browser: visible actions/stories now get `action-is-complete` and `action-is-priority` classes, so already-cleared content steps back while queued/new/unread content reads as the thing worth looking at next.
+- Inspector queue context is now action-wide, not queue-row-only: selecting an action from the middle panel still surfaces total queued loops at the top of the right pane when that action is already in the left queue.
+- Added sixteenth-pass validation screenshots:
+- `output/gui-pass16-overview-wide.png`
+- `output/gui-pass16-queue-selected-wide.png`
+- Verification:
+- `node --check src/ui/controllers/town-browser-controller.js`
+- `node --check views/main.view.js`
+- `develop-web-game` Playwright client run against `http://127.0.0.1:4173` with screenshots in `output/gui-pass16-client/overview/`
+- `npm run smoke`
+- `npm run baseline:check`
+- 2026-04-15 gui refactor pass 17:
+- Added a dedicated quiet completion marker to action/story cards via `.actionCompletionBadge`, so the browser can distinguish “already cleared, lower attention” content from queued/new/unread cards without making completed cards loud again.
+- Revalidated the denser planner layout against a midgame save instead of only a fresh file: Forest Path screenshots confirm that the right-hand inspector hero, action-state chip stack, and higher-density browser still hold together when more stats, queue rows, and unlocked cards are present.
+- Added seventeenth-pass validation screenshots:
+- `output/gui-pass17-forest-overview-wide.png`
+- `output/gui-pass17-forest-selected-wide.png`
+- `output/gui-pass17-complete-badge-demo-wide.png`
+- Verification:
+- `node --check src/ui/controllers/town-browser-controller.js`
+- `node --check views/main.view.js`
+- `npm run smoke`
+- `npm run baseline:check`

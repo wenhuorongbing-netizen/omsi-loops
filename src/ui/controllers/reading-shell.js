@@ -26,6 +26,11 @@
     }
 
     /** @param {View} view */
+    function isStackedInspector(view) {
+        return !isMobileReadingUi(view);
+    }
+
+    /** @param {View} view */
     function updateMobileReadingState(view) {
         const mobileReadingUi = isMobileReadingUi(view);
         const isDrawerOpen = mobileReadingUi && view.readingPane !== "character";
@@ -37,6 +42,7 @@
     /** @param {View} view */
     function responsiveLayoutHandler(view) {
         updateMobileReadingState(view);
+        setInspectorTab(view, view.inspectorTab);
     }
 
     /**
@@ -70,12 +76,14 @@
      */
     function setInspectorTab(view, tab) {
         view.inspectorTab = tab;
+        const stackedInspector = isStackedInspector(view);
+        htmlElement("inspectorPane").classList.toggle("inspector-is-stacked", stackedInspector);
         htmlElement("inspectorTabSummary").classList.toggle("is-active", tab === "summary");
         htmlElement("inspectorTabStory").classList.toggle("is-active", tab === "story");
         htmlElement("inspectorTabNumbers").classList.toggle("is-active", tab === "numbers");
-        htmlElement("inspectorSummaryPane").classList.toggle("hidden", tab !== "summary");
-        htmlElement("inspectorStoryPane").classList.toggle("hidden", tab !== "story");
-        htmlElement("inspectorNumbersPane").classList.toggle("hidden", tab !== "numbers");
+        htmlElement("inspectorSummaryPane").classList.toggle("hidden", !stackedInspector && tab !== "summary");
+        htmlElement("inspectorStoryPane").classList.toggle("hidden", !stackedInspector && tab !== "story");
+        htmlElement("inspectorNumbersPane").classList.toggle("hidden", !stackedInspector && tab !== "numbers");
         global.IdleLoopsAccessibilityController?.refreshReadingShellAccessibility(view);
     }
 
@@ -214,6 +222,7 @@
     global.IdleLoopsReadingShellController = {
         initializeReadingShell,
         isMobileReadingUi,
+        isStackedInspector,
         updateMobileReadingState,
         responsiveLayoutHandler,
         setReadingPane,
