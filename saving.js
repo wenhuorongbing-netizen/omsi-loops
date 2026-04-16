@@ -282,7 +282,7 @@ let dungeonShowing;
 let trainingLimits = 10;
 let storyShowing = 0;
 let storyMax = 0;
-let unreadActionStories;
+let unreadActionStories = [];
 
 /** @typedef {keyof typeof storyFlags} StoryFlagName */
 const storyFlags = {
@@ -787,7 +787,7 @@ function loadStorySaveGlobals(toLoad) {
     const loadedGlobals = {
         storyMax: toLoad.storyMax === undefined ? 0 : toLoad.storyMax,
         unreadActionStories: toLoad.unreadActionStories === undefined
-            || toLoad.unreadActionStories.find(s => !s.includes("storyContainer"))
+            || !Array.isArray(toLoad.unreadActionStories) || toLoad.unreadActionStories.find(s => !s.includes("storyContainer"))
             ? []
             : toLoad.unreadActionStories,
     };
@@ -1112,7 +1112,7 @@ const optionValueHandlers = {
     },
     actionLog(value, init) {
         document.getElementById("actionLogContainer").style.display = value ? "" : "none";
-        document.getElementById("navbar_action_log").style.display = value ? "" : "none";
+        if (globalThis.NavigationController) globalThis.NavigationController.onActionLogToggled(value);
     },
     predictor(value, init) {
         getOptionsStoreApi().writePredictorToggle(localStorage, value);

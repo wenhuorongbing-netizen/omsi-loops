@@ -4553,8 +4553,8 @@ body.ui-density-large .chronicleStoryUnread {
         display:grid;
         grid:
             "header header header" max-content
-            "actions town stats" minmax(0, 1fr)
-            / minmax(300px, 1.08fr) minmax(600px, 1.58fr) minmax(340px, 1.16fr)
+            "town actions stats" minmax(0, 1fr)
+            / minmax(300px, 1.16fr) minmax(600px, 1.58fr) minmax(340px, 1.08fr)
             ;
         justify-items: stretch;
     }
@@ -4825,6 +4825,45 @@ body.ui-density-large .chronicleStoryUnread {
             flex: 0 0 auto;
         }
     
+
+        /* Mobile Tools Drawer */
+        & #mobileToolsDrawer {
+            position: fixed;
+            bottom: 50px;
+            left: 0;
+            right: 0;
+            background: var(--body-background);
+            border-top: 1px solid var(--input-border);
+            z-index: 1005;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        & #mobileToolsDrawer.is-open {
+            transform: translateY(0);
+        }
+
+        & .drawer-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            font-size: 24px;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        & .mobile-hidden {
+            display: none !important;
+        }
+
+        & #globalTools summary {
+            display: none; /* Hide summary on mobile since drawer handles it */
+        }
+
         /* Main content area */
     
         & main {
@@ -5087,17 +5126,24 @@ body.ui-density-large .chronicleStoryUnread {
             background-color: var(--navbar-background);
             gap: 1px;
 
-            & > a {
+            & > button {
+                appearance: none;
+                border: none;
                 position: relative;
                 padding: 1em 0;
                 text-decoration: none;
                 background-color: var(--navbar-link-inactive-background);
                 flex: 1;
                 text-align: center;
-                text-decoration: none;
                 font-weight: bold;
                 color: var(--navbar-link-inactive-color);
                 
+                &.is-active,
+                &:active {
+                    background-color: var(--navbar-link-active-background);
+                    color: var(--navbar-link-active-color);
+                }
+
                 &:hover {
                     background-color: var(--navbar-link-inactive-hover-color);
                 }
@@ -5427,4 +5473,21 @@ select.bold {
 
 select.bold:focus {
     border-color: var(--town-select-focus-border);
+}
+
+
+.global-tools-details {
+    margin-bottom: 15px;
+    background: color-mix(in srgb, var(--button-background) 10%, transparent);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    padding: 5px;
+}
+.global-tools-details summary {
+    cursor: pointer;
+    font-weight: bold;
+    padding: 5px;
+}
+.global-tools-body {
+    padding: 10px;
 }

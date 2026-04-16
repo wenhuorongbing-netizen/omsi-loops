@@ -66,10 +66,7 @@
             <div id="resourceDeck">
                 <div id='trackedResources'></div>
             </div>
-            <div id="menuDeck">
-                <div id="menuDeckLabel"></div>
-                <menu id='menu' style='float: left; height: 30px; margin-left: 24px; margin-right: -24px;'></menu>
-            </div>
+
         </div>
     </header>
 
@@ -393,6 +390,8 @@
         </div>
 
         <div id="actionsColumn">
+
+
             <div id="actionList" style="width:100%;text-align:center;">
                 <div class="showthat">
                     <div class="large bold localized" style="margin-right: -49px;" data-lockey="actions>title_list"></div>
@@ -413,59 +412,7 @@
                     <button class="button" style="z-index: 0;" onclick="adjustActionListSize(-100)"><i class="fas fa-minus"></i></button>
                 </div>
                 <br>
-                <div id="plannerHeader">
-                    <div id="plannerStatusBar">
-                        <div id="plannerPredictorState" class="plannerStatusPill"></div>
-                        <div id="plannerTrackedStatState" class="plannerStatusPill"></div>
-                        <div id="plannerSelectionState" class="plannerStatusPill"></div>
-                    </div>
-                    <div id="plannerMetaBar">
-                        <div id="plannerPredictorPanel">
-                            <div id="plannerPredictorHeading" class="plannerMetaHeading"></div>
-                            <div id="plannerPredictorSummary">
-                                <span id="predictorTotalDisplay" class="koviko"></span>
-                                <span id="predictorStatisticDisplay" class="koviko"></span>
-                            </div>
-                            <div id="plannerPredictorControls">
-                                <label for="predictorTrackedStatInput" id="plannerTrackedStatLabel"></label>
-                                <select id='predictorTrackedStatInput' class='button' onchange="view.handlePredictorTrackedStatChange(this.value)"></select>
-                            </div>
-                            <div id="plannerTrackedStatHint" class="plannerHelperText"></div>
-                        </div>
-                        <div id="plannerViewControls">
-                            <div id="plannerViewHeading" class="plannerMetaHeading"></div>
-                            <button
-                                id="plannerViewToggle"
-                                type="button"
-                                class="button plannerToggleButton plannerViewToggle"
-                                onclick="view.togglePlannerViewMenu()"
-                                aria-expanded="false"
-                            ></button>
-                            <div id="plannerViewControlBody" class="plannerViewControlBody hidden">
-                                <div id="plannerPresetBar" class="plannerPresetBar" role="group" aria-label="UI Presets">
-                                    <button id="uiPresetClassic" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('classic')"></button>
-                                    <button id="uiPresetPlanner" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('planner')"></button>
-                                    <button id="uiPresetReader" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('reader')"></button>
-                                    <button id="uiPresetCompact" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('compact')"></button>
-                                </div>
-                                <button id="queueRepeatToggle" type="button" class="button plannerToggleButton" onclick="view.toggleQueueCompactRepeats()"></button>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="plannerControls">
-                        <div id="nextActionsAmountButtons">
-                            <div class="plannerAmountLabel bold localized" data-lockey="actions>tooltip>amount"></div>
-                            <div id="nextActionsAmountGroup">
-                                <button class="button change-amount" onclick="changeActionAmount(1)">1</button>
-                                <button class="button change-amount" onclick="changeActionAmount(5)">5</button>
-                                <button class="button change-amount" onclick="changeActionAmount(10)">10</button>
-                                <input id="amountCustom" oninput="setCustomActionAmount()" onblur="setCustomActionAmount()" value="1">
-                            </div>
-                        </div>
-                    </details>
-                </div>
-                <div id="expandableList">
-                    <div id="curActionsListContainer">
+                <div id="curActionsListContainer">
                         <div id="curActionsList"></div>
                         <div id="curActionsManaUsed" class="showthat">
                             <div class="bold localized" data-lockey="actions>tooltip>mana_used"></div>
@@ -629,13 +576,80 @@
             </div>
         </div>
 
+    <div id="mobileToolsDrawer" aria-hidden="true" class="mobile-hidden drawer-bottom">
+                <div class="drawer-content">
+                    <button id="mobileToolsDrawerClose" class="drawer-close" aria-label="Close tools">&times;</button>
+                    <details id="globalTools" class="global-tools-details">
+                        <summary class="localized" data-lockey="menu>navigation>tools">Menu / Tools</summary>
+                        <div class="global-tools-body">
+                            <div id="menuDeck">
+                <div id="menuDeckLabel"></div>
+                <menu id='menu' style='float: left; height: 30px; margin-left: 24px; margin-right: -24px;'></menu>
+            </div>
+                            <div id="plannerHeader">
+                    <div id="plannerStatusBar">
+                        <div id="plannerPredictorState" class="plannerStatusPill"></div>
+                        <div id="plannerTrackedStatState" class="plannerStatusPill"></div>
+                        <div id="plannerSelectionState" class="plannerStatusPill"></div>
+                    </div>
+                    <div id="plannerMetaBar">
+                        <div id="plannerPredictorPanel">
+                            <div id="plannerPredictorHeading" class="plannerMetaHeading"></div>
+                            <div id="plannerPredictorSummary">
+                                <span id="predictorTotalDisplay" class="koviko"></span>
+                                <span id="predictorStatisticDisplay" class="koviko"></span>
+                            </div>
+                            <div id="plannerPredictorControls">
+                                <label for="predictorTrackedStatInput" id="plannerTrackedStatLabel"></label>
+                                <select id='predictorTrackedStatInput' class='button' onchange="view.handlePredictorTrackedStatChange(this.value)"></select>
+                            </div>
+                            <div id="plannerTrackedStatHint" class="plannerHelperText"></div>
+                        </div>
+                        <div id="plannerViewControls">
+                            <div id="plannerViewHeading" class="plannerMetaHeading"></div>
+                            <button
+                                id="plannerViewToggle"
+                                type="button"
+                                class="button plannerToggleButton plannerViewToggle"
+                                onclick="view.togglePlannerViewMenu()"
+                                aria-expanded="false"
+                            ></button>
+                            <div id="plannerViewControlBody" class="plannerViewControlBody hidden">
+                                <div id="plannerPresetBar" class="plannerPresetBar" role="group" aria-label="UI Presets">
+                                    <button id="uiPresetClassic" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('classic')"></button>
+                                    <button id="uiPresetPlanner" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('planner')"></button>
+                                    <button id="uiPresetReader" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('reader')"></button>
+                                    <button id="uiPresetCompact" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('compact')"></button>
+                                </div>
+                                <button id="queueRepeatToggle" type="button" class="button plannerToggleButton" onclick="view.toggleQueueCompactRepeats()"></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="plannerControls">
+                        <div id="nextActionsAmountButtons">
+                            <div class="plannerAmountLabel bold localized" data-lockey="actions>tooltip>amount"></div>
+                            <div id="nextActionsAmountGroup">
+                                <button class="button change-amount" onclick="changeActionAmount(1)">1</button>
+                                <button class="button change-amount" onclick="changeActionAmount(5)">5</button>
+                                <button class="button change-amount" onclick="changeActionAmount(10)">10</button>
+                                <input id="amountCustom" oninput="setCustomActionAmount()" onblur="setCustomActionAmount()" value="1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="expandableList">
+
+                        </div>
+                    </details>
+                </div>
+            </div>
     </main>
     
-    <nav id="navbar">
-        <a id="navbar_town" href="#shortTownColumn" class="nav localized" data-lockey="menu>navigation>town" onclick="return scrollToPanel(event, 'shortTownColumn')"></a>
-        <a id="navbar_actions" href="#actionsColumn" class="nav localized" data-lockey="menu>navigation>actions" onclick="return scrollToPanel(event, 'actionsColumn')"></a>
-        <a id="navbar_action_log" href="#statsColumn" class="nav localized" data-lockey="menu>navigation>action_log" onclick="view.openReadingPaneFromNav('chronicle', 'log'); return scrollToPanel(event, 'statsColumn')"></a>
-        <a id="navbar_stats" href="#statsColumn" class="nav localized" data-lockey="menu>navigation>stats" onclick="return scrollToPanel(event, 'statsColumn')"></a>
+    <nav id="navbar" role="navigation" aria-label="Mobile Navigation">
+        <button id="navbar_action" type="button" class="nav mobile-nav-btn is-active localized" aria-current="page" data-tab="action" data-lockey="menu>navigation>actions">Action</button>
+        <button id="navbar_chronicle" type="button" class="nav mobile-nav-btn localized" aria-current="false" data-tab="chronicle" data-lockey="menu>navigation>action_log">Chronicle</button>
+        <button id="navbar_character" type="button" class="nav mobile-nav-btn localized" aria-current="false" data-tab="character" data-lockey="menu>navigation>stats">Character</button>
+        <button id="navbar_tools" type="button" class="nav mobile-nav-btn localized" aria-expanded="false" data-tab="tools" data-lockey="menu>navigation>tools">Tools</button>
     </nav>
 
     <div id="tutorial" style="position:absolute;width:100%;height:100%;left:0;top:0;z-index:9999;">
@@ -723,6 +737,7 @@
     <script src="src/ui/controllers/planner-controller.js"></script>
     <script src="src/ui/controllers/reading-shell.js"></script>
     <script src="src/ui/controllers/accessibility-controller.js"></script>
+    <script src="src/ui/controllers/navigation-controller.js"></script>
     <script src="views/main.view.js"></script>
     <script src="town.js"></script>
     <script src="talents.js"></script>
