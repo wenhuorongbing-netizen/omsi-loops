@@ -42,9 +42,9 @@ const timeControlsView = Views.registerView("timeControls", {
                 </div>
             </div>
         </div>
-        <details id='timeControlsOptionsCard'>
-            <summary id='timeControlsOptionsToggle'></summary>
-            <div id='timeControlsOptions'>
+        <details id='timeControlsOptionsCard' class="advancedControlsAccordion">
+            <summary id='timeControlsOptionsToggle' class="advancedControlsAccordionTitle"></summary>
+            <div id='timeControlsOptions' class="advancedControlsAccordionBody">
                 <div class='control'>
                     <input type='checkbox' id='pauseBeforeRestartInput' onchange='setOption("pauseBeforeRestart", this.checked)'>
                     <label for='pauseBeforeRestartInput'>${_txt("time_controls>pause_before_restart")}</label>

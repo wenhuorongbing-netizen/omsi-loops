@@ -4832,9 +4832,9 @@ body.ui-density-large .chronicleStoryUnread {
             display: grid;
             height: 100%;
             grid:
-                "actions town" minmax(600px, max-content)
-                "stats log"
-                / minmax(min-content,3fr) minmax(min-content,2fr);
+                "actions town stats" minmax(600px, max-content)
+                "actions log stats"
+                / minmax(320px, 1fr) minmax(500px, 2fr) minmax(340px, 1fr);
             margin-right:0.5em;
         }
         
@@ -5427,4 +5427,38 @@ select.bold {
 
 select.bold:focus {
     border-color: var(--town-select-focus-border);
+}
+
+.advancedControlsAccordion {
+    border: 1px solid color-mix(in srgb, var(--input-border) 76%, transparent);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--body-background) 88%, transparent);
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+.advancedControlsAccordionTitle {
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 8px 12px;
+    cursor: pointer;
+    background: color-mix(in srgb, var(--popup-background) 86%, transparent);
+    list-style: none;
+}
+.advancedControlsAccordionTitle::marker,
+.advancedControlsAccordionTitle::-webkit-details-marker {
+    display: none;
+}
+.advancedControlsAccordionTitle:hover,
+.advancedControlsAccordionTitle:focus-visible {
+    background: color-mix(in srgb, var(--button-background) 34%, var(--input-border));
+}
+.advancedControlsAccordionBody {
+    padding: 10px;
+    border-top: 1px solid color-mix(in srgb, var(--input-border) 76%, transparent);
+}
+#chronicleLogPane {
+    border: none;
+    background-color: color-mix(in srgb, var(--body-background) 95%, transparent);
+    padding: 10px;
+    border-radius: 8px;
 }

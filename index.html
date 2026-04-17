@@ -66,10 +66,10 @@
             <div id="resourceDeck">
                 <div id='trackedResources'></div>
             </div>
-            <div id="menuDeck">
-                <div id="menuDeckLabel"></div>
+            <details id="menuDeck" class="advancedControlsAccordion">
+                <summary id="menuDeckLabel" class="advancedControlsAccordionTitle"></summary>
                 <menu id='menu' style='float: left; height: 30px; margin-left: 24px; margin-right: -24px;'></menu>
-            </div>
+            </details>
         </div>
     </header>
 
@@ -480,9 +480,9 @@
                     </div>
                 </div>
                 <div id="actionChanges">
-                    <details id="actionChangeOptions" class="actionChangeCard actionChangeAccordion">
-                        <summary id="actionChangeOptionsTitle" class="actionChangeCardTitle actionChangeAccordionTitle"></summary>
-                        <div class="actionChangeAccordionBody">
+                    <details id="actionChangeOptions" class="actionChangeCard actionChangeAccordion advancedControlsAccordion">
+                        <summary id="actionChangeOptionsTitle" class="actionChangeCardTitle actionChangeAccordionTitle advancedControlsAccordionTitle"></summary>
+                        <div class="actionChangeAccordionBody advancedControlsAccordionBody">
                         <label class="actionChangeOptionRow" for="keepCurrentListInput">
                             <input type="checkbox" id="keepCurrentListInput" class="checkbox" onchange="setOption('keepCurrentList', this.checked)">
                             <span class="actionChangeOptionText localized" data-lockey="actions>tooltip>current_list_active"></span>
@@ -497,9 +497,9 @@
                         </label>
                         </div>
                     </details>
-                    <details id="actionChangeButtons" class="actionChangeCard actionChangeAccordion" open>
-                        <summary id="actionChangeButtonsTitle" class="actionChangeCardTitle actionChangeAccordionTitle"></summary>
-                        <div class="actionChangeAccordionBody">
+                    <details id="actionChangeButtons" class="actionChangeCard actionChangeAccordion advancedControlsAccordion" open>
+                        <summary id="actionChangeButtonsTitle" class="actionChangeCardTitle actionChangeAccordionTitle advancedControlsAccordionTitle"></summary>
+                        <div class="actionChangeAccordionBody advancedControlsAccordionBody">
                         <div id="actionChangePrimaryButtons">
                             <button id="maxTraining" class="button localized" style="display:none" onclick="capAllTraining()" data-lockey="actions>tooltip>max_training"></button>
                             <button id="clearList" class="button localized" onclick="clearList()" data-lockey="actions>tooltip>clear_list"></button>

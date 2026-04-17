@@ -4,7 +4,7 @@
       "id": "new-game",
       "language": "en-EN",
       "screenshotTown": 0,
-      "screenshotPath": "C:\\Users\\Jack\\Documents\\GitHub\\omsi-loops\\output\\fixtures\\review\\new-game.png",
+      "screenshotPath": "/app/output/fixtures/review/new-game.png",
       "consoleErrors": [],
       "meta": {
         "curTown": 0,
@@ -30,7 +30,7 @@
       "id": "forest-midgame",
       "language": "en-EN",
       "screenshotTown": 1,
-      "screenshotPath": "C:\\Users\\Jack\\Documents\\GitHub\\omsi-loops\\output\\fixtures\\review\\forest-midgame.png",
+      "screenshotPath": "/app/output/fixtures/review/forest-midgame.png",
       "consoleErrors": [],
       "meta": {
         "curTown": 1,
@@ -57,7 +57,7 @@
       "id": "merchanton-midgame",
       "language": "en-EN",
       "screenshotTown": 2,
-      "screenshotPath": "C:\\Users\\Jack\\Documents\\GitHub\\omsi-loops\\output\\fixtures\\review\\merchanton-midgame.png",
+      "screenshotPath": "/app/output/fixtures/review/merchanton-midgame.png",
       "consoleErrors": [],
       "meta": {
         "curTown": 2,
@@ -85,7 +85,7 @@
       "id": "valhalla-startington-branch",
       "language": "en-EN",
       "screenshotTown": 5,
-      "screenshotPath": "C:\\Users\\Jack\\Documents\\GitHub\\omsi-loops\\output\\fixtures\\review\\valhalla-startington-branch.png",
+      "screenshotPath": "/app/output/fixtures/review/valhalla-startington-branch.png",
       "consoleErrors": [],
       "meta": {
         "curTown": 5,
@@ -116,7 +116,7 @@
       "id": "endgame",
       "language": "en-EN",
       "screenshotTown": 8,
-      "screenshotPath": "C:\\Users\\Jack\\Documents\\GitHub\\omsi-loops\\output\\fixtures\\review\\endgame.png",
+      "screenshotPath": "/app/output/fixtures/review/endgame.png",
       "consoleErrors": [],
       "meta": {
         "curTown": 8,
