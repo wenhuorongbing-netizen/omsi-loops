@@ -306,25 +306,7 @@ body {
 }
 
 #timeControlsOptionsCard > summary::-webkit-details-marker {
-    display: none;
-}
-
-#timeControlsOptionsCard > summary::after {
-    content: "+";
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px;
-    height: 22px;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--button-background) 18%, transparent);
-    color: var(--button-background);
-    font-size: 1rem;
-    line-height: 1;
-}
-
-#timeControlsOptionsCard[open] > summary::after {
-    content: "-";
+    display: block;
 }
 
 #timeControlsOptions {
@@ -344,9 +326,6 @@ body {
 }
 
 #menu {
-    float: none !important;
-    height: auto !important;
-    margin: 0 !important;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -355,7 +334,9 @@ body {
 }
 
 #menuDeck {
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     gap: 8px;
     padding: 12px 14px 14px;
 }
@@ -4554,7 +4535,7 @@ body.ui-density-large .chronicleStoryUnread {
         grid:
             "header header header" max-content
             "actions town stats" minmax(0, 1fr)
-            / minmax(300px, 1.08fr) minmax(600px, 1.58fr) minmax(340px, 1.16fr)
+            / minmax(0, 1.08fr) minmax(0, 1.58fr) minmax(0, 1.16fr)
             ;
         justify-items: stretch;
     }
@@ -4569,7 +4550,7 @@ body.ui-density-large .chronicleStoryUnread {
             "time time" 14px
             "run menu" auto
             "resources menu" auto
-            / minmax(0, 1.45fr) minmax(320px, 0.92fr);
+            / minmax(0, 1.45fr) minmax(0, 0.92fr);
         align-items: start;
         gap: 10px 12px;
     }

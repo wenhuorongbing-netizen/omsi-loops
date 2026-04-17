@@ -53,10 +53,9 @@ const menuView = Views.registerView("menu", {
         ];
         const disabledMenus = this.getDisabledMenus();
         const html =
-        `<li id='menusMenu' tabindex='0' style='display:inline-block;height:30px;margin-right:10px;' class='showthatH${menus.map(menu => disabledMenus.includes(menu) ? ` disabled-${menu}` : "").join("")}'>
-            <i class='fas fa-bars'></i>
-            <div class='showthisH' id='menus'>
-                <ul>
+        `<div id='menusMenu' style='display: none;' class='${menus.map(menu => disabledMenus.includes(menu) ? ` disabled-${menu}` : "").join("")}'>
+            <div id='menus'>
+                <ul style='display: none;'>
                     ${menus.map(menu => `
                     <li>
                         <input type='checkbox' id='enableMenu_${menu}' data-menu='${menu}' onchange='Views.menu.onEnableMenu(this)' ${disabledMenus.includes(menu) ? "" : "checked"}>
@@ -64,7 +63,7 @@ const menuView = Views.registerView("menu", {
                     </li>`).join("\n")}
                 </ul>
             </div>
-        </li>`;
+        </div>`;
         return html;
 
     },
