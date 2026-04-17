@@ -3,7 +3,6 @@ const menuView = Views.registerView("menu", {
     selector: "#menu",
     html() {
         let html = "";
-        html += Views.menu.htmlMenusMenu();
         html += Views.menu.htmlChangelog();
         html += Views.menu.htmlSaveMenu();
         html += Views.menu.htmlFAQMenu();
@@ -40,54 +39,7 @@ const menuView = Views.registerView("menu", {
     quickSettingsTitle() {
         return this.uiText("quickSettingsTitle");
     },
-    htmlMenusMenu() {
-        const menus = [
-            "changelog",
-            "save",
-            "faq",
-            "options",
-            "extras",
-            "challenges",
-            "totals",
-            "prestige_bonus",
-        ];
-        const disabledMenus = this.getDisabledMenus();
-        const html =
-        `<li id='menusMenu' tabindex='0' style='display:inline-block;height:30px;margin-right:10px;' class='showthatH${menus.map(menu => disabledMenus.includes(menu) ? ` disabled-${menu}` : "").join("")}'>
-            <i class='fas fa-bars'></i>
-            <div class='showthisH' id='menus'>
-                <ul>
-                    ${menus.map(menu => `
-                    <li>
-                        <input type='checkbox' id='enableMenu_${menu}' data-menu='${menu}' onchange='Views.menu.onEnableMenu(this)' ${disabledMenus.includes(menu) ? "" : "checked"}>
-                        <label for='enableMenu_${menu}'>${_txt(`menu>${menu}>meta>title`)}</label>
-                    </li>`).join("\n")}
-                </ul>
-            </div>
-        </li>`;
-        return html;
 
-    },
-    getDisabledMenus() {
-        let disabledMenus = [];
-        try {
-            disabledMenus = JSON.parse(localStorage.getItem("disabledMenus")) ?? disabledMenus;
-        } catch { }
-        return disabledMenus;
-    },
-    /** @param {HTMLInputElement} input  */
-    onEnableMenu(input) {
-        const menu = input.dataset.menu;
-        htmlElement("menusMenu").classList.toggle(`disabled-${menu}`, !input.checked);
-        const disabledMenus = this.getDisabledMenus();
-        const index = disabledMenus.indexOf(menu);
-        if (index === -1 && !input.checked) {
-            disabledMenus.push(menu);
-        } else if (index >= 0 && input.checked) {
-            disabledMenus.splice(index, 1);
-        }
-        localStorage.setItem("disabledMenus", JSON.stringify(disabledMenus));
-    },
     versions() {
         let html = "";
         const versions = _txtsObj("menu>changelog>version");

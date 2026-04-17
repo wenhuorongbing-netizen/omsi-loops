@@ -44,7 +44,7 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://apis.google.com/js/api.js" async defer></script>
 
-<body id="theBody" style="min-width:1210px">
+<body id="theBody" style="min-width:1024px">
     <div id="accessibilityStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
     <div id="accessibilityAlert" class="sr-only" role="alert" aria-live="assertive" aria-atomic="true"></div>
     <div id="loadingBox" class="showWhileLoading hideWhenLoaded">
@@ -419,52 +419,48 @@
                         <div id="plannerTrackedStatState" class="plannerStatusPill"></div>
                         <div id="plannerSelectionState" class="plannerStatusPill"></div>
                     </div>
-                    <div id="plannerMetaBar">
-                        <div id="plannerPredictorPanel">
-                            <div id="plannerPredictorHeading" class="plannerMetaHeading"></div>
-                            <div id="plannerPredictorSummary">
-                                <span id="predictorTotalDisplay" class="koviko"></span>
-                                <span id="predictorStatisticDisplay" class="koviko"></span>
-                            </div>
-                            <div id="plannerPredictorControls">
-                                <label for="predictorTrackedStatInput" id="plannerTrackedStatLabel"></label>
-                                <select id='predictorTrackedStatInput' class='button' onchange="view.handlePredictorTrackedStatChange(this.value)"></select>
-                            </div>
-                            <div id="plannerTrackedStatHint" class="plannerHelperText"></div>
-                        </div>
-                        <div id="plannerViewControls">
-                            <div id="plannerViewHeading" class="plannerMetaHeading"></div>
-                            <button
-                                id="plannerViewToggle"
-                                type="button"
-                                class="button plannerToggleButton plannerViewToggle"
-                                onclick="view.togglePlannerViewMenu()"
-                                aria-expanded="false"
-                            ></button>
-                            <div id="plannerViewControlBody" class="plannerViewControlBody hidden">
-                                <div id="plannerPresetBar" class="plannerPresetBar" role="group" aria-label="UI Presets">
-                                    <button id="uiPresetClassic" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('classic')"></button>
-                                    <button id="uiPresetPlanner" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('planner')"></button>
-                                    <button id="uiPresetReader" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('reader')"></button>
-                                    <button id="uiPresetCompact" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('compact')"></button>
+
+                    <details id="plannerAdvancedDetails" class="actionChangeCard actionChangeAccordion">
+                        <summary class="actionChangeCardTitle actionChangeAccordionTitle localized" data-lockey="actions>tooltip>advanced_planner_controls"></summary>
+                        <div class="actionChangeAccordionBody">
+                            <div id="plannerMetaBar">
+                                <div id="plannerPredictorPanel">
+                                    <div id="plannerPredictorHeading" class="plannerMetaHeading"></div>
+                                    <div id="plannerPredictorSummary">
+                                        <span id="predictorTotalDisplay" class="koviko"></span>
+                                        <span id="predictorStatisticDisplay" class="koviko"></span>
+                                    </div>
+                                    <div id="plannerPredictorControls">
+                                        <label for="predictorTrackedStatInput" id="plannerTrackedStatLabel"></label>
+                                        <select id='predictorTrackedStatInput' class='button' onchange="view.handlePredictorTrackedStatChange(this.value)"></select>
+                                    </div>
+                                    <div id="plannerTrackedStatHint" class="plannerHelperText"></div>
                                 </div>
-                                <button id="queueRepeatToggle" type="button" class="button plannerToggleButton" onclick="view.toggleQueueCompactRepeats()"></button>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="plannerControls">
-                        <div id="nextActionsAmountButtons">
-                            <div class="plannerAmountLabel bold localized" data-lockey="actions>tooltip>amount"></div>
-                            <div id="nextActionsAmountGroup">
-                                <button class="button change-amount" onclick="changeActionAmount(1)">1</button>
-                                <button class="button change-amount" onclick="changeActionAmount(5)">5</button>
-                                <button class="button change-amount" onclick="changeActionAmount(10)">10</button>
-                                <input id="amountCustom" oninput="setCustomActionAmount()" onblur="setCustomActionAmount()" value="1">
+                                <div id="plannerViewControls">
+                                    <div id="plannerViewHeading" class="plannerMetaHeading"></div>
+                                    <button
+                                        id="plannerViewToggle"
+                                        type="button"
+                                        class="button plannerToggleButton plannerViewToggle"
+                                        onclick="view.togglePlannerViewMenu()"
+                                        aria-expanded="false"
+                                    ></button>
+                                    <div id="plannerViewControlBody" class="plannerViewControlBody hidden">
+                                        <div id="plannerPresetBar" class="plannerPresetBar" role="group" aria-label="UI Presets">
+                                            <button id="uiPresetClassic" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('classic')"></button>
+                                            <button id="uiPresetPlanner" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('planner')"></button>
+                                            <button id="uiPresetReader" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('reader')"></button>
+                                            <button id="uiPresetCompact" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('compact')"></button>
+                                        </div>
+                                        <button id="queueRepeatToggle" type="button" class="button plannerToggleButton" onclick="view.toggleQueueCompactRepeats()"></button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </details>
                 </div>
                 <div id="expandableList">
+
                     <div id="curActionsListContainer">
                         <div id="curActionsList"></div>
                         <div id="curActionsManaUsed" class="showthat">
@@ -479,8 +475,20 @@
                         <div id="actionTooltipContainer" style="margin-top:10px;width:100%;text-align:left;max-height:357px;overflow:auto;"></div>
                     </div>
                 </div>
+                    <div id="plannerControls">
+                        <div id="nextActionsAmountButtons">
+                            <div class="plannerAmountLabel bold localized" data-lockey="actions>tooltip>amount"></div>
+                            <div id="nextActionsAmountGroup">
+                                <button class="button change-amount" onclick="changeActionAmount(1)">1</button>
+                                <button class="button change-amount" onclick="changeActionAmount(5)">5</button>
+                                <button class="button change-amount" onclick="changeActionAmount(10)">10</button>
+                                <input id="amountCustom" oninput="setCustomActionAmount()" onblur="setCustomActionAmount()" value="1">
+                            </div>
+                        </div>
+                    </div>
                 <div id="actionChanges">
                     <details id="actionChangeOptions" class="actionChangeCard actionChangeAccordion">
+
                         <summary id="actionChangeOptionsTitle" class="actionChangeCardTitle actionChangeAccordionTitle"></summary>
                         <div class="actionChangeAccordionBody">
                         <label class="actionChangeOptionRow" for="keepCurrentListInput">
@@ -497,7 +505,8 @@
                         </label>
                         </div>
                     </details>
-                    <details id="actionChangeButtons" class="actionChangeCard actionChangeAccordion" open>
+<details id="actionChangeButtons" class="actionChangeCard actionChangeAccordion" open>
+
                         <summary id="actionChangeButtonsTitle" class="actionChangeCardTitle actionChangeAccordionTitle"></summary>
                         <div class="actionChangeAccordionBody">
                         <div id="actionChangePrimaryButtons">
@@ -514,7 +523,9 @@
                             </div>
                         </div>
                         </div>
-                        <div tabindex="0" class="showthatloadout"><span class="localized" data-lockey="actions>tooltip>manage_loadouts">管理预设</span>
+
+</details>
+<div tabindex="0" class="showthatloadout"><span class="localized" data-lockey="actions>tooltip>manage_loadouts">管理预设</span>
                             <div class="showthisloadout">
                                 <button class="loadoutbutton unused" id="load1" onclick="selectLoadout(1)" style="width:200px">预设 1</button>
                                 <br>
