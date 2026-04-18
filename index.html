@@ -419,39 +419,44 @@
                         <div id="plannerTrackedStatState" class="plannerStatusPill"></div>
                         <div id="plannerSelectionState" class="plannerStatusPill"></div>
                     </div>
-                    <div id="plannerMetaBar">
-                        <div id="plannerPredictorPanel">
-                            <div id="plannerPredictorHeading" class="plannerMetaHeading"></div>
-                            <div id="plannerPredictorSummary">
-                                <span id="predictorTotalDisplay" class="koviko"></span>
-                                <span id="predictorStatisticDisplay" class="koviko"></span>
-                            </div>
-                            <div id="plannerPredictorControls">
-                                <label for="predictorTrackedStatInput" id="plannerTrackedStatLabel"></label>
-                                <select id='predictorTrackedStatInput' class='button' onchange="view.handlePredictorTrackedStatChange(this.value)"></select>
-                            </div>
-                            <div id="plannerTrackedStatHint" class="plannerHelperText"></div>
-                        </div>
-                        <div id="plannerViewControls">
-                            <div id="plannerViewHeading" class="plannerMetaHeading"></div>
-                            <button
-                                id="plannerViewToggle"
-                                type="button"
-                                class="button plannerToggleButton plannerViewToggle"
-                                onclick="view.togglePlannerViewMenu()"
-                                aria-expanded="false"
-                            ></button>
-                            <div id="plannerViewControlBody" class="plannerViewControlBody hidden">
-                                <div id="plannerPresetBar" class="plannerPresetBar" role="group" aria-label="UI Presets">
-                                    <button id="uiPresetClassic" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('classic')"></button>
-                                    <button id="uiPresetPlanner" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('planner')"></button>
-                                    <button id="uiPresetReader" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('reader')"></button>
-                                    <button id="uiPresetCompact" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('compact')"></button>
+                    <details id="plannerMetaBarDetails" class="actionChangeAccordion">
+                        <summary id="plannerMetaBarSummary" class="actionChangeAccordionTitle" style="font-weight: bold; background: color-mix(in srgb, var(--body-background) 80%, var(--default-color) 20%); padding: 5px; border-radius: 5px;">
+                            Advanced Controls / 高级控制
+                        </summary>
+                        <div id="plannerMetaBar">
+                            <div id="plannerPredictorPanel">
+                                <div id="plannerPredictorHeading" class="plannerMetaHeading"></div>
+                                <div id="plannerPredictorSummary">
+                                    <span id="predictorTotalDisplay" class="koviko"></span>
+                                    <span id="predictorStatisticDisplay" class="koviko"></span>
                                 </div>
-                                <button id="queueRepeatToggle" type="button" class="button plannerToggleButton" onclick="view.toggleQueueCompactRepeats()"></button>
+                                <div id="plannerPredictorControls">
+                                    <label for="predictorTrackedStatInput" id="plannerTrackedStatLabel"></label>
+                                    <select id='predictorTrackedStatInput' class='button' onchange="view.handlePredictorTrackedStatChange(this.value)"></select>
+                                </div>
+                                <div id="plannerTrackedStatHint" class="plannerHelperText"></div>
+                            </div>
+                            <div id="plannerViewControls">
+                                <div id="plannerViewHeading" class="plannerMetaHeading"></div>
+                                <button
+                                    id="plannerViewToggle"
+                                    type="button"
+                                    class="button plannerToggleButton plannerViewToggle"
+                                    onclick="view.togglePlannerViewMenu()"
+                                    aria-expanded="false"
+                                ></button>
+                                <div id="plannerViewControlBody" class="plannerViewControlBody hidden">
+                                    <div id="plannerPresetBar" class="plannerPresetBar" role="group" aria-label="UI Presets">
+                                        <button id="uiPresetClassic" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('classic')"></button>
+                                        <button id="uiPresetPlanner" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('planner')"></button>
+                                        <button id="uiPresetReader" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('reader')"></button>
+                                        <button id="uiPresetCompact" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('compact')"></button>
+                                    </div>
+                                    <button id="queueRepeatToggle" type="button" class="button plannerToggleButton" onclick="view.toggleQueueCompactRepeats()"></button>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </details>
                     <div id="plannerControls">
                         <div id="nextActionsAmountButtons">
                             <div class="plannerAmountLabel bold localized" data-lockey="actions>tooltip>amount"></div>
@@ -462,7 +467,7 @@
                                 <input id="amountCustom" oninput="setCustomActionAmount()" onblur="setCustomActionAmount()" value="1">
                             </div>
                         </div>
-                    </details>
+                    </div>
                 </div>
                 <div id="expandableList">
                     <div id="curActionsListContainer">

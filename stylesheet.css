@@ -4553,8 +4553,8 @@ body.ui-density-large .chronicleStoryUnread {
         display:grid;
         grid:
             "header header header" max-content
-            "actions town stats" minmax(0, 1fr)
-            / minmax(300px, 1.08fr) minmax(600px, 1.58fr) minmax(340px, 1.16fr)
+            "stats actions town" minmax(0, 1fr)
+            / minmax(340px, 1fr) minmax(600px, 2fr) minmax(340px, 1fr)
             ;
         justify-items: stretch;
     }
