@@ -4566,11 +4566,10 @@ body.ui-density-large .chronicleStoryUnread {
 
     & #commandDeck {
         grid:
-            "time time" 14px
-            "run menu" auto
-            "resources menu" auto
-            / minmax(0, 1.45fr) minmax(320px, 0.92fr);
-        align-items: start;
+            "time time time" 10px
+            "run resources menu" auto
+            / auto 1fr auto;
+        align-items: center;
         gap: 10px 12px;
     }
 

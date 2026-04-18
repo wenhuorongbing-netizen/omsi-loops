@@ -20,8 +20,8 @@
         if (document.getElementById("actionCategoryLegend")) return;
 
         ensureTownActionUtilityShell()?.append(Rendered.html`
-            <div id="actionCategoryLegend" class="actionCategoryLegend">
-                <div class="actionCategoryLegendHeader">
+            <details id="actionCategoryLegend" class="actionCategoryLegend">
+                <summary class="actionCategoryLegendHeader">
                     <span id="actionCategoryLegendTitle" class="actionCategoryLegendTitle"></span>
                     <button
                         type="button"
@@ -29,10 +29,10 @@
                         class="button actionCategoryLegendToggle"
                         onclick="view.toggleActionCategoryLegend()"
                     ></button>
-                </div>
+                </summary>
                 <div id="actionCategoryLegendButtons" class="actionCategoryLegendButtons"></div>
                 <div id="actionCategoryLegendHint" class="actionCategoryLegendHint"></div>
-            </div>
+            </details>
         `);
 
         const buttons = document.getElementById("actionCategoryLegendButtons");
@@ -58,7 +58,8 @@
     function initializeTownBrowserTools(view) {
         if (document.getElementById("townBrowserTools")) return;
         ensureTownActionUtilityShell()?.append(Rendered.html`
-            <div id="townBrowserTools" class="townBrowserTools">
+            <details id="townBrowserTools" class="townBrowserTools">
+                <summary class="townBrowserToolsTitle" style="font-weight: 600; padding-bottom: 8px;">Action Search & Filters</summary>
                 <div id="townFilterBar" class="townFilterBar">
                     <div class="townFilterSearchShell">
                         <input
@@ -101,7 +102,7 @@
                         `).join("")}
                     </div>
                 </div>
-            </div>
+            </details>
         `);
         updateTownBrowserTools(view);
     }
