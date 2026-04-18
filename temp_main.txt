@@ -1,318 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <!-- to force a reload -->
-    <meta http-equiv="cache-control" content="max-age=0" />
-    <meta http-equiv="cache-control" content="no-cache" />
-    <meta http-equiv="expires" content="0" />
-    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
-    <meta http-equiv="pragma" content="no-cache" />
-    <!-- mobile support -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-    
-    <title>Idle Loops</title>
-    <link rel="stylesheet" href="themes.css">
-    <link rel="stylesheet" href="predictor.css">
-    <link rel="stylesheet" href="stylesheet.css">
-    <link rel="stylesheet" href="statsgraph.css">
-    <link rel="stylesheet" href="iconfont.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" crossorigin="anonymous">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="manifest" href="manifest.webmanifest">
-    
-    <script src='lib/jquery.min.js'></script>
-    <script src='lib/lz-string.min.js'></script>
-    <script src='lib/d3.v7.min.js'></script>
-    <script src='lib/mousetrap.min.js'></script>
-
-    <script src='polyfills.js'></script>
-
-</head>
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-D7MKZE2ZZH"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-D7MKZE2ZZH');
-</script>
-<!-- Google API (for cloud saves) -->
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://apis.google.com/js/api.js" async defer></script>
-
-<body id="theBody" style="min-width:1210px">
-    <div id="accessibilityStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
-    <div id="accessibilityAlert" class="sr-only" role="alert" aria-live="assertive" aria-atomic="true"></div>
-    <div id="loadingBox" class="showWhileLoading hideWhenLoaded">
-        <!-- This will only be visible if the localization has never been loaded in this browser -->
-        <div id="loadingText" class="localized" data-lockey="misc>loading">初次加载（可能需要一点时间）...</div>
-    </div>
-    <canvas id="talentTreeCanvas" style="display: none;"></canvas>
-    <div id="talentTree" style="display: none;"></div>
-    <header id="timeInfo" style="width:100%;text-align:center;">
-        <button id="cheat" class="button showthat control localized" style="display: none; margin-top: 5px;" onclick="cheat()" data-lockey="misc>cheat">作弊</button>
-        <div id="commandDeck">
-            <div id="timeBarContainer" style="width:100%;height:10px;background:var(--progress-bar-background);text-align:center;position:relative;">
-                <div id="timeBar" style="height:100%;width:20%;background-color:var(--progress-bar-mana-color);display:block;margin:auto;"></div>
-            </div>
-            <div id="runStatusDeck">
-                <div id="runVitals" aria-live="polite"></div>
-                <div id='timeControls'></div>
-            </div>
-            <div id="resourceDeck">
-                <div id='trackedResources'></div>
-            </div>
-            <div id="menuDeck">
-                <div id="menuDeckLabel"></div>
-                <menu id='menu' style='float: left; height: 30px; margin-left: 24px; margin-right: -24px;'></menu>
-            </div>
-        </div>
-    </header>
 
     <main id="main">
-        <div id="townColumn" style="width:535px;vertical-align:top;">
-            <div id="shortTownColumn">
-                <div id="townWindow" style="width:100%;text-align:center;height:34px">
-                    <div style="float:left;margin-left:150px;" class="actionIcon fa fa-arrow-left" id="townViewLeft" onclick="view.showTown(townsUnlocked[townsUnlocked.indexOf(townShowing)-1])"></div>
-                    <div class="showthat">
-                        <div class="large bold"><select class="bold" style="text-align:center" id="TownSelect"></select></div>
-                        <div id='townDesc' class='showthis'></div>
-                    </div>
-                    <div style="float:right;margin-right:150px;" class="actionIcon fa fa-arrow-right" id="townViewRight" onclick="view.showTown(townsUnlocked[townsUnlocked.indexOf(townShowing)+1])"></div>
-                    <div id="hideVarsButton" class="far fa-eye" onclick="view.toggleHiding()"></div>
-                </div><br>
-                <div id="townInfos">
-                    <div id="townInfo0" class='townInfo'></div>
-                    <div id="townInfo1" class='townInfo' style="display:none;"></div>
-                    <div id="townInfo2" class='townInfo' style="display:none;"></div>
-                    <div id="townInfo3" class='townInfo' style="display:none;"></div>
-                    <div id="townInfo4" class='townInfo' style="display:none;"></div>
-                    <div id="townInfo5" class='townInfo' style="display:none;"></div>
-                    <div id="townInfo6" class='townInfo' style="display:none;"></div>
-                    <div id="townInfo7" class='townInfo' style="display:none;"></div>
-                    <div id="townInfo8" class='townInfo' style="display:none;"></div>
-                </div>
-
-                <div id="townActionTitle" class="block showthat" style="text-align:center;">
-                    <div style="float:left;margin-left:150px;" class="actionIcon fa fa-arrow-left" id="actionsViewLeft" onclick="view.showActions(false)"></div>
-                    <span class='large bold' id="actionsTitle"></span>
-                    <div class='showthis localized' data-lockey="actions>tooltip>desc"></div>
-                    <div style="float:right;margin-right:150px;" class="actionIcon fa fa-arrow-right" id="actionsViewRight" onclick="view.showActions(true)"></div>
-                </div>
-                <div id="townActions">
-                    <div id="actionOptionsTown0" class='actionOptions'></div>
-                    <div id="actionOptionsTown1" class='actionOptions' style="display:none;"></div>
-                    <div id="actionOptionsTown2" class='actionOptions' style="display:none;"></div>
-                    <div id="actionOptionsTown3" class='actionOptions' style="display:none;"></div>
-                    <div id="actionOptionsTown4" class='actionOptions' style="display:none;"></div>
-                    <div id="actionOptionsTown5" class='actionOptions' style="display:none;"></div>
-                    <div id="actionOptionsTown6" class='actionOptions' style="display:none;"></div>
-                    <div id="actionOptionsTown7" class='actionOptions' style="display:none;"></div>
-                    <div id="actionOptionsTown8" class='actionOptions' style="display:none;"></div>
-                    <div id="actionStoriesTown0" class='actionStories' style="display:none;"></div>
-                    <div id="actionStoriesTown1" class='actionStories' style="display:none;"></div>
-                    <div id="actionStoriesTown2" class='actionStories' style="display:none;"></div>
-                    <div id="actionStoriesTown3" class='actionStories' style="display:none;"></div>
-                    <div id="actionStoriesTown4" class='actionStories' style="display:none;"></div>
-                    <div id="actionStoriesTown5" class='actionStories' style="display:none;"></div>
-                    <div id="actionStoriesTown6" class='actionStories' style="display:none;"></div>
-                    <div id="actionStoriesTown7" class='actionStories' style="display:none;"></div>
-                    <div id="actionStoriesTown8" class='actionStories' style="display:none;"></div>
-                    <div id="addActionAtCapText" class="localized" data-lockey="actions>tooltip>add_at_cap"></div>
-                </div>
-            </div>
-            <div id="actionLogContainer">
-                <div id="actionLogTitle" class="large bold block localized" data-lockey="actions>title_log" style="margin:10px auto 2px auto;text-align:center;"></div>
-                <ul id="actionLog">
-                    <li id="actionLogLoadPrevious" class="small italic localized" data-lockey="actions>log>load_previous" onclick="actionLog.loadHistory(5)"></li>
-                    <li id="actionLogLatest" class="small italic localized" data-lockey="actions>log>latest"></li>
-                </ul>
-            </div>
-        </div>
-
-    
-        <div id="actionsColumn">
-            <div id="actionList" style="width:100%;text-align:center;">
-                <div class="showthat">
-                    <div class="large bold localized" style="margin-right: -49px;" data-lockey="actions>title_list"></div>
-                    <div class="showthis">
-                        <i class='actionIcon far fa-circle'></i> <span class='localized' data-lockey="actions>tooltip>icons>circle"></span><br>
-                        <i class='actionIcon fas fa-plus'></i> <span class='localized' data-lockey="actions>tooltip>icons>plus"></span><br>
-                        <i class='actionIcon fas fa-minus'></i> <span class='localized' data-lockey="actions>tooltip>icons>minus"></span><br>
-                        <i class='actionIcon fas fa-arrows-alt-h'></i> <span class='localized' data-lockey="actions>tooltip>icons>arrows_h"></span><br>
-                        <i class='actionIcon fas fa-sort-up'></i> <span class='localized' data-lockey="actions>tooltip>icons>sort_up"></span><br>
-                        <i class='actionIcon fas fa-sort-down'></i> <span class='localized' data-lockey="actions>tooltip>icons>sort_down"></span><br>
-                        <i class='actionIcon far fa-check-circle'></i><span style="margin-left: -2px;"> /</span><i class='actionIcon far fa-times-circle'></i> <span class='localized' data-lockey="actions>tooltip>icons>circles"></span><br>
-                        <i class='actionIcon fas fa-times'></i> <span class='localized' data-lockey="actions>tooltip>icons>times"></span><br>
-                        <span class='localized' data-lockey="actions>tooltip>list_explanation"></span>
-                    </div>
-                </div>
-                <div style="position: relative; left: 135px;">
-                    <button class="button" style="z-index: 0;" onclick="adjustActionListSize(100)"><i class="fas fa-plus"></i></button>
-                    <button class="button" style="z-index: 0;" onclick="adjustActionListSize(-100)"><i class="fas fa-minus"></i></button>
-                </div>
-                <br>
-                <div id="plannerHeader">
-                    <div id="plannerStatusBar">
-                        <div id="plannerPredictorState" class="plannerStatusPill"></div>
-                        <div id="plannerTrackedStatState" class="plannerStatusPill"></div>
-                        <div id="plannerSelectionState" class="plannerStatusPill"></div>
-                    </div>
-                    <div id="plannerMetaBar">
-                        <div id="plannerPredictorPanel">
-                            <div id="plannerPredictorHeading" class="plannerMetaHeading"></div>
-                            <div id="plannerPredictorSummary">
-                                <span id="predictorTotalDisplay" class="koviko"></span>
-                                <span id="predictorStatisticDisplay" class="koviko"></span>
-                            </div>
-                            <div id="plannerPredictorControls">
-                                <label for="predictorTrackedStatInput" id="plannerTrackedStatLabel"></label>
-                                <select id='predictorTrackedStatInput' class='button' onchange="view.handlePredictorTrackedStatChange(this.value)"></select>
-                            </div>
-                            <div id="plannerTrackedStatHint" class="plannerHelperText"></div>
-                        </div>
-                        <div id="plannerViewControls">
-                            <div id="plannerViewHeading" class="plannerMetaHeading"></div>
-                            <button
-                                id="plannerViewToggle"
-                                type="button"
-                                class="button plannerToggleButton plannerViewToggle"
-                                onclick="view.togglePlannerViewMenu()"
-                                aria-expanded="false"
-                            ></button>
-                            <div id="plannerViewControlBody" class="plannerViewControlBody hidden">
-                                <div id="plannerPresetBar" class="plannerPresetBar" role="group" aria-label="UI Presets">
-                                    <button id="uiPresetClassic" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('classic')"></button>
-                                    <button id="uiPresetPlanner" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('planner')"></button>
-                                    <button id="uiPresetReader" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('reader')"></button>
-                                    <button id="uiPresetCompact" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('compact')"></button>
-                                </div>
-                                <button id="queueRepeatToggle" type="button" class="button plannerToggleButton" onclick="view.toggleQueueCompactRepeats()"></button>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="plannerControls">
-                        <div id="nextActionsAmountButtons">
-                            <div class="plannerAmountLabel bold localized" data-lockey="actions>tooltip>amount"></div>
-                            <div id="nextActionsAmountGroup">
-                                <button class="button change-amount" onclick="changeActionAmount(1)">1</button>
-                                <button class="button change-amount" onclick="changeActionAmount(5)">5</button>
-                                <button class="button change-amount" onclick="changeActionAmount(10)">10</button>
-                                <input id="amountCustom" oninput="setCustomActionAmount()" onblur="setCustomActionAmount()" value="1">
-                            </div>
-                        </div>
-                    
-                </div>
-                <div id="expandableList">
-                    <div id="curActionsListContainer">
-                        <div id="curActionsList"></div>
-                        <div id="curActionsManaUsed" class="showthat">
-                            <div class="bold localized" data-lockey="actions>tooltip>mana_used"></div>
-                            <div id="totalTicks" style="font-size: 0.75rem;"></div>
-                            <div class="showthis localized" data-lockey="actions>tooltip>mana_used_explanation"></div>
-                        </div>
-                    </div>
-                    <div id="nextActionsListContainer">
-                        <div id="queueEmptyState" class="queueEmptyState hidden"></div>
-                        <div id="nextActionsList"></div>
-                        <div id="actionTooltipContainer" style="margin-top:10px;width:100%;text-align:left;max-height:357px;overflow:auto;"></div>
-                    </div>
-                </div>
-                <div id="actionChanges">
-                    <details id="actionChangeOptions" class="actionChangeCard actionChangeAccordion">
-                        <summary id="actionChangeOptionsTitle" class="actionChangeCardTitle actionChangeAccordionTitle"></summary>
-                        <div class="actionChangeAccordionBody">
-                        <label class="actionChangeOptionRow" for="keepCurrentListInput">
-                            <input type="checkbox" id="keepCurrentListInput" class="checkbox" onchange="setOption('keepCurrentList', this.checked)">
-                            <span class="actionChangeOptionText localized" data-lockey="actions>tooltip>current_list_active"></span>
-                        </label>
-                        <label class="actionChangeOptionRow" for="repeatLastActionInput">
-                            <input type="checkbox" id="repeatLastActionInput" class="checkbox" onchange="setOption('repeatLastAction', this.checked)">
-                            <span class="actionChangeOptionText localized" data-lockey="actions>tooltip>repeat_last_action"></span>
-                        </label>
-                        <label class="actionChangeOptionRow" for="addActionsToTopInput">
-                            <input type="checkbox" id="addActionsToTopInput" class="checkbox" onchange="setOption('addActionsToTop', this.checked)">
-                            <span class="actionChangeOptionText localized" data-lockey="actions>tooltip>add_action_top"></span>
-                        </label>
-                        </div>
-                    </details>
-                    <details id="actionChangeButtons" class="actionChangeCard actionChangeAccordion" open>
-                        <summary id="actionChangeButtonsTitle" class="actionChangeCardTitle actionChangeAccordionTitle"></summary>
-                        <div class="actionChangeAccordionBody">
-                        <div id="actionChangePrimaryButtons">
-                            <button id="maxTraining" class="button localized" style="display:none" onclick="capAllTraining()" data-lockey="actions>tooltip>max_training"></button>
-                            <button id="clearList" class="button localized" onclick="clearList()" data-lockey="actions>tooltip>clear_list"></button>
-                        </div>
-                        <div id="loadoutManagerShell">
-                            <button id="loadoutManagerToggle" type="button" class="button localized" onclick="view.toggleLoadoutManager()" aria-expanded="false" data-lockey="actions>tooltip>manage_loadouts"></button>
-                            <div id="loadoutManagerPanel" class="hidden">
-                                <div id="loadoutSelectionSummary" class="loadoutManagerSummary"></div>
-                                <div id="loadoutDifferenceSummary" class="loadoutManagerSummary"></div>
-                                <div id="loadoutSlotGrid"></div>
-                                <div id="loadoutManagerActions"></div>
-                            </div>
-                        </div>
-                        </div>
-                        <div tabindex="0" class="showthatloadout"><span class="localized" data-lockey="actions>tooltip>manage_loadouts">管理预设</span>
-                            <div class="showthisloadout">
-                                <button class="loadoutbutton unused" id="load1" onclick="selectLoadout(1)" style="width:200px">预设 1</button>
-                                <br>
-                                <button class="loadoutbutton unused" id="load2" onclick="selectLoadout(2)" style="width:200px">预设 2</button>
-                                <br>
-                                <button class="loadoutbutton unused" id="load3" onclick="selectLoadout(3)" style="width:200px">预设 3</button>
-                                <br>
-                                <button class="loadoutbutton unused" id="load4" onclick="selectLoadout(4)" style="width:200px">预设 4</button>
-                                <br>
-                                <button class="loadoutbutton unused" id="load5" onclick="selectLoadout(5)" style="width:200px">预设 5</button>
-                                <br>
-                                <button class="loadoutbutton unused" id="load6" onclick="selectLoadout(6)" style="width:200px">预设 6</button>
-                                <br>
-                                <button class="loadoutbutton unused" id="load7" onclick="selectLoadout(7)" style="width:200px">预设 7</button>
-                                <br>
-                                <button class="loadoutbutton unused" id="load8" onclick="selectLoadout(8)" style="width:200px">预设 8</button>
-                                <br>
-                                <button class="loadoutbutton unused" id="load9" onclick="selectLoadout(9)" style="width:200px">预设 9</button>
-                                <br>
-                                <button class="loadoutbutton unused" id="load10" onclick="selectLoadout(10)" style="width:200px">预设 10</button>
-                                <br>
-                                <button class="loadoutbutton unused" id="load11" onclick="selectLoadout(11)" style="width:200px">预设 11</button>
-                                <br>
-                                <button class="loadoutbutton unused" id="load12" onclick="selectLoadout(12)" style="width:200px">预设 12</button>
-                                <br>
-                                <button class="loadoutbutton unused" id="load13" onclick="selectLoadout(13)" style="width:200px">预设 13</button>
-                                <br>
-                                <button class="loadoutbutton unused" id="load14" onclick="selectLoadout(14)" style="width:200px">预设 14</button>
-                                <br>
-                                <button class="loadoutbutton unused" id="load15" onclick="selectLoadout(15)" style="width:200px">预设 15</button>
-                                <br>
-                                <button class="loadoutbutton localized" style="margin-bottom:5px;margin-top:3px;" onclick="saveList()" data-lockey="actions>tooltip>save_loadout"></button>
-                                <button class="loadoutbutton localized" style="margin-bottom:5px;" onclick="loadList()" data-lockey="actions>tooltip>load_loadout"></button>
-                                <br>
-                                <input id="renameLoadout" value="预设名称" data-locvalue="actions>tooltip>loadout_name_default" data-locplaceholder="actions>tooltip>loadout_name_default" style="width: 100px; height: 16px; border: 1px solid var(--input-border); margin-left: 5px; margin-bottom: 2px;">
-                                <button class="loadoutbutton localized" style="margin-bottom:5px;margin-top:3px;margin-right:-4px;" onclick="nameList(true)" data-lockey="actions>tooltip>rename">重命名</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="spells" style="width:100%;text-align:center;margin-top:10px;display:none">
-                <div class="showthat">
-                    <div class="large bold localized" data-lockey="spells>title"></div>
-                    <div class="showthis">
-                    </div>
-                </div><br>
-                <div style="width:100%;padding-top:5px;">
-                </div>
-            </div>
-
-        </div>
-
-        
         <div id="statsColumn">
             <div id="readingShell">
                 <div id="readingTabs" class="readingTabs" role="tablist" aria-label="Reading Panels">
@@ -631,7 +318,243 @@
             </div>
         </div>
 
-        
+        <div id="actionsColumn">
+            <div id="actionList" style="width:100%;text-align:center;">
+                <div class="showthat">
+                    <div class="large bold localized" style="margin-right: -49px;" data-lockey="actions>title_list"></div>
+                    <div class="showthis">
+                        <i class='actionIcon far fa-circle'></i> <span class='localized' data-lockey="actions>tooltip>icons>circle"></span><br>
+                        <i class='actionIcon fas fa-plus'></i> <span class='localized' data-lockey="actions>tooltip>icons>plus"></span><br>
+                        <i class='actionIcon fas fa-minus'></i> <span class='localized' data-lockey="actions>tooltip>icons>minus"></span><br>
+                        <i class='actionIcon fas fa-arrows-alt-h'></i> <span class='localized' data-lockey="actions>tooltip>icons>arrows_h"></span><br>
+                        <i class='actionIcon fas fa-sort-up'></i> <span class='localized' data-lockey="actions>tooltip>icons>sort_up"></span><br>
+                        <i class='actionIcon fas fa-sort-down'></i> <span class='localized' data-lockey="actions>tooltip>icons>sort_down"></span><br>
+                        <i class='actionIcon far fa-check-circle'></i><span style="margin-left: -2px;"> /</span><i class='actionIcon far fa-times-circle'></i> <span class='localized' data-lockey="actions>tooltip>icons>circles"></span><br>
+                        <i class='actionIcon fas fa-times'></i> <span class='localized' data-lockey="actions>tooltip>icons>times"></span><br>
+                        <span class='localized' data-lockey="actions>tooltip>list_explanation"></span>
+                    </div>
+                </div>
+                <div style="position: relative; left: 135px;">
+                    <button class="button" style="z-index: 0;" onclick="adjustActionListSize(100)"><i class="fas fa-plus"></i></button>
+                    <button class="button" style="z-index: 0;" onclick="adjustActionListSize(-100)"><i class="fas fa-minus"></i></button>
+                </div>
+                <br>
+                <div id="plannerHeader">
+                    <div id="plannerStatusBar">
+                        <div id="plannerPredictorState" class="plannerStatusPill"></div>
+                        <div id="plannerTrackedStatState" class="plannerStatusPill"></div>
+                        <div id="plannerSelectionState" class="plannerStatusPill"></div>
+                    </div>
+                    <div id="plannerMetaBar">
+                        <div id="plannerPredictorPanel">
+                            <div id="plannerPredictorHeading" class="plannerMetaHeading"></div>
+                            <div id="plannerPredictorSummary">
+                                <span id="predictorTotalDisplay" class="koviko"></span>
+                                <span id="predictorStatisticDisplay" class="koviko"></span>
+                            </div>
+                            <div id="plannerPredictorControls">
+                                <label for="predictorTrackedStatInput" id="plannerTrackedStatLabel"></label>
+                                <select id='predictorTrackedStatInput' class='button' onchange="view.handlePredictorTrackedStatChange(this.value)"></select>
+                            </div>
+                            <div id="plannerTrackedStatHint" class="plannerHelperText"></div>
+                        </div>
+                        <div id="plannerViewControls">
+                            <div id="plannerViewHeading" class="plannerMetaHeading"></div>
+                            <button
+                                id="plannerViewToggle"
+                                type="button"
+                                class="button plannerToggleButton plannerViewToggle"
+                                onclick="view.togglePlannerViewMenu()"
+                                aria-expanded="false"
+                            ></button>
+                            <div id="plannerViewControlBody" class="plannerViewControlBody hidden">
+                                <div id="plannerPresetBar" class="plannerPresetBar" role="group" aria-label="UI Presets">
+                                    <button id="uiPresetClassic" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('classic')"></button>
+                                    <button id="uiPresetPlanner" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('planner')"></button>
+                                    <button id="uiPresetReader" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('reader')"></button>
+                                    <button id="uiPresetCompact" type="button" class="button plannerPresetButton" onclick="view.setUiPreset('compact')"></button>
+                                </div>
+                                <button id="queueRepeatToggle" type="button" class="button plannerToggleButton" onclick="view.toggleQueueCompactRepeats()"></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="plannerControls">
+                        <div id="nextActionsAmountButtons">
+                            <div class="plannerAmountLabel bold localized" data-lockey="actions>tooltip>amount"></div>
+                            <div id="nextActionsAmountGroup">
+                                <button class="button change-amount" onclick="changeActionAmount(1)">1</button>
+                                <button class="button change-amount" onclick="changeActionAmount(5)">5</button>
+                                <button class="button change-amount" onclick="changeActionAmount(10)">10</button>
+                                <input id="amountCustom" oninput="setCustomActionAmount()" onblur="setCustomActionAmount()" value="1">
+                            </div>
+                        </div>
+                    
+                </div>
+                <div id="expandableList">
+                    <div id="curActionsListContainer">
+                        <div id="curActionsList"></div>
+                        <div id="curActionsManaUsed" class="showthat">
+                            <div class="bold localized" data-lockey="actions>tooltip>mana_used"></div>
+                            <div id="totalTicks" style="font-size: 0.75rem;"></div>
+                            <div class="showthis localized" data-lockey="actions>tooltip>mana_used_explanation"></div>
+                        </div>
+                    </div>
+                    <div id="nextActionsListContainer">
+                        <div id="queueEmptyState" class="queueEmptyState hidden"></div>
+                        <div id="nextActionsList"></div>
+                        <div id="actionTooltipContainer" style="margin-top:10px;width:100%;text-align:left;max-height:357px;overflow:auto;"></div>
+                    </div>
+                </div>
+                <div id="actionChanges">
+                    <details id="actionChangeOptions" class="actionChangeCard actionChangeAccordion">
+                        <summary id="actionChangeOptionsTitle" class="actionChangeCardTitle actionChangeAccordionTitle"></summary>
+                        <div class="actionChangeAccordionBody">
+                        <label class="actionChangeOptionRow" for="keepCurrentListInput">
+                            <input type="checkbox" id="keepCurrentListInput" class="checkbox" onchange="setOption('keepCurrentList', this.checked)">
+                            <span class="actionChangeOptionText localized" data-lockey="actions>tooltip>current_list_active"></span>
+                        </label>
+                        <label class="actionChangeOptionRow" for="repeatLastActionInput">
+                            <input type="checkbox" id="repeatLastActionInput" class="checkbox" onchange="setOption('repeatLastAction', this.checked)">
+                            <span class="actionChangeOptionText localized" data-lockey="actions>tooltip>repeat_last_action"></span>
+                        </label>
+                        <label class="actionChangeOptionRow" for="addActionsToTopInput">
+                            <input type="checkbox" id="addActionsToTopInput" class="checkbox" onchange="setOption('addActionsToTop', this.checked)">
+                            <span class="actionChangeOptionText localized" data-lockey="actions>tooltip>add_action_top"></span>
+                        </label>
+                        </div>
+                    </details>
+                    <details id="actionChangeButtons" class="actionChangeCard actionChangeAccordion" open>
+                        <summary id="actionChangeButtonsTitle" class="actionChangeCardTitle actionChangeAccordionTitle"></summary>
+                        <div class="actionChangeAccordionBody">
+                        <div id="actionChangePrimaryButtons">
+                            <button id="maxTraining" class="button localized" style="display:none" onclick="capAllTraining()" data-lockey="actions>tooltip>max_training"></button>
+                            <button id="clearList" class="button localized" onclick="clearList()" data-lockey="actions>tooltip>clear_list"></button>
+                        </div>
+                        <div id="loadoutManagerShell">
+                            <button id="loadoutManagerToggle" type="button" class="button localized" onclick="view.toggleLoadoutManager()" aria-expanded="false" data-lockey="actions>tooltip>manage_loadouts"></button>
+                            <div id="loadoutManagerPanel" class="hidden">
+                                <div id="loadoutSelectionSummary" class="loadoutManagerSummary"></div>
+                                <div id="loadoutDifferenceSummary" class="loadoutManagerSummary"></div>
+                                <div id="loadoutSlotGrid"></div>
+                                <div id="loadoutManagerActions"></div>
+                            </div>
+                        </div>
+                        </div>
+                        <div tabindex="0" class="showthatloadout"><span class="localized" data-lockey="actions>tooltip>manage_loadouts">管理预设</span>
+                            <div class="showthisloadout">
+                                <button class="loadoutbutton unused" id="load1" onclick="selectLoadout(1)" style="width:200px">预设 1</button>
+                                <br>
+                                <button class="loadoutbutton unused" id="load2" onclick="selectLoadout(2)" style="width:200px">预设 2</button>
+                                <br>
+                                <button class="loadoutbutton unused" id="load3" onclick="selectLoadout(3)" style="width:200px">预设 3</button>
+                                <br>
+                                <button class="loadoutbutton unused" id="load4" onclick="selectLoadout(4)" style="width:200px">预设 4</button>
+                                <br>
+                                <button class="loadoutbutton unused" id="load5" onclick="selectLoadout(5)" style="width:200px">预设 5</button>
+                                <br>
+                                <button class="loadoutbutton unused" id="load6" onclick="selectLoadout(6)" style="width:200px">预设 6</button>
+                                <br>
+                                <button class="loadoutbutton unused" id="load7" onclick="selectLoadout(7)" style="width:200px">预设 7</button>
+                                <br>
+                                <button class="loadoutbutton unused" id="load8" onclick="selectLoadout(8)" style="width:200px">预设 8</button>
+                                <br>
+                                <button class="loadoutbutton unused" id="load9" onclick="selectLoadout(9)" style="width:200px">预设 9</button>
+                                <br>
+                                <button class="loadoutbutton unused" id="load10" onclick="selectLoadout(10)" style="width:200px">预设 10</button>
+                                <br>
+                                <button class="loadoutbutton unused" id="load11" onclick="selectLoadout(11)" style="width:200px">预设 11</button>
+                                <br>
+                                <button class="loadoutbutton unused" id="load12" onclick="selectLoadout(12)" style="width:200px">预设 12</button>
+                                <br>
+                                <button class="loadoutbutton unused" id="load13" onclick="selectLoadout(13)" style="width:200px">预设 13</button>
+                                <br>
+                                <button class="loadoutbutton unused" id="load14" onclick="selectLoadout(14)" style="width:200px">预设 14</button>
+                                <br>
+                                <button class="loadoutbutton unused" id="load15" onclick="selectLoadout(15)" style="width:200px">预设 15</button>
+                                <br>
+                                <button class="loadoutbutton localized" style="margin-bottom:5px;margin-top:3px;" onclick="saveList()" data-lockey="actions>tooltip>save_loadout"></button>
+                                <button class="loadoutbutton localized" style="margin-bottom:5px;" onclick="loadList()" data-lockey="actions>tooltip>load_loadout"></button>
+                                <br>
+                                <input id="renameLoadout" value="预设名称" data-locvalue="actions>tooltip>loadout_name_default" data-locplaceholder="actions>tooltip>loadout_name_default" style="width: 100px; height: 16px; border: 1px solid var(--input-border); margin-left: 5px; margin-bottom: 2px;">
+                                <button class="loadoutbutton localized" style="margin-bottom:5px;margin-top:3px;margin-right:-4px;" onclick="nameList(true)" data-lockey="actions>tooltip>rename">重命名</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="spells" style="width:100%;text-align:center;margin-top:10px;display:none">
+                <div class="showthat">
+                    <div class="large bold localized" data-lockey="spells>title"></div>
+                    <div class="showthis">
+                    </div>
+                </div><br>
+                <div style="width:100%;padding-top:5px;">
+                </div>
+            </div>
+
+        </div>
+
+        <div id="townColumn" style="width:535px;vertical-align:top;">
+            <div id="shortTownColumn">
+                <div id="townWindow" style="width:100%;text-align:center;height:34px">
+                    <div style="float:left;margin-left:150px;" class="actionIcon fa fa-arrow-left" id="townViewLeft" onclick="view.showTown(townsUnlocked[townsUnlocked.indexOf(townShowing)-1])"></div>
+                    <div class="showthat">
+                        <div class="large bold"><select class="bold" style="text-align:center" id="TownSelect"></select></div>
+                        <div id='townDesc' class='showthis'></div>
+                    </div>
+                    <div style="float:right;margin-right:150px;" class="actionIcon fa fa-arrow-right" id="townViewRight" onclick="view.showTown(townsUnlocked[townsUnlocked.indexOf(townShowing)+1])"></div>
+                    <div id="hideVarsButton" class="far fa-eye" onclick="view.toggleHiding()"></div>
+                </div><br>
+                <div id="townInfos">
+                    <div id="townInfo0" class='townInfo'></div>
+                    <div id="townInfo1" class='townInfo' style="display:none;"></div>
+                    <div id="townInfo2" class='townInfo' style="display:none;"></div>
+                    <div id="townInfo3" class='townInfo' style="display:none;"></div>
+                    <div id="townInfo4" class='townInfo' style="display:none;"></div>
+                    <div id="townInfo5" class='townInfo' style="display:none;"></div>
+                    <div id="townInfo6" class='townInfo' style="display:none;"></div>
+                    <div id="townInfo7" class='townInfo' style="display:none;"></div>
+                    <div id="townInfo8" class='townInfo' style="display:none;"></div>
+                </div>
+
+                <div id="townActionTitle" class="block showthat" style="text-align:center;">
+                    <div style="float:left;margin-left:150px;" class="actionIcon fa fa-arrow-left" id="actionsViewLeft" onclick="view.showActions(false)"></div>
+                    <span class='large bold' id="actionsTitle"></span>
+                    <div class='showthis localized' data-lockey="actions>tooltip>desc"></div>
+                    <div style="float:right;margin-right:150px;" class="actionIcon fa fa-arrow-right" id="actionsViewRight" onclick="view.showActions(true)"></div>
+                </div>
+                <div id="townActions">
+                    <div id="actionOptionsTown0" class='actionOptions'></div>
+                    <div id="actionOptionsTown1" class='actionOptions' style="display:none;"></div>
+                    <div id="actionOptionsTown2" class='actionOptions' style="display:none;"></div>
+                    <div id="actionOptionsTown3" class='actionOptions' style="display:none;"></div>
+                    <div id="actionOptionsTown4" class='actionOptions' style="display:none;"></div>
+                    <div id="actionOptionsTown5" class='actionOptions' style="display:none;"></div>
+                    <div id="actionOptionsTown6" class='actionOptions' style="display:none;"></div>
+                    <div id="actionOptionsTown7" class='actionOptions' style="display:none;"></div>
+                    <div id="actionOptionsTown8" class='actionOptions' style="display:none;"></div>
+                    <div id="actionStoriesTown0" class='actionStories' style="display:none;"></div>
+                    <div id="actionStoriesTown1" class='actionStories' style="display:none;"></div>
+                    <div id="actionStoriesTown2" class='actionStories' style="display:none;"></div>
+                    <div id="actionStoriesTown3" class='actionStories' style="display:none;"></div>
+                    <div id="actionStoriesTown4" class='actionStories' style="display:none;"></div>
+                    <div id="actionStoriesTown5" class='actionStories' style="display:none;"></div>
+                    <div id="actionStoriesTown6" class='actionStories' style="display:none;"></div>
+                    <div id="actionStoriesTown7" class='actionStories' style="display:none;"></div>
+                    <div id="actionStoriesTown8" class='actionStories' style="display:none;"></div>
+                    <div id="addActionAtCapText" class="localized" data-lockey="actions>tooltip>add_at_cap"></div>
+                </div>
+            </div>
+            <div id="actionLogContainer">
+                <div id="actionLogTitle" class="large bold block localized" data-lockey="actions>title_log" style="margin:10px auto 2px auto;text-align:center;"></div>
+                <ul id="actionLog">
+                    <li id="actionLogLoadPrevious" class="small italic localized" data-lockey="actions>log>load_previous" onclick="actionLog.loadHistory(5)"></li>
+                    <li id="actionLogLatest" class="small italic localized" data-lockey="actions>log>latest"></li>
+                </ul>
+            </div>
+        </div>
+
     </main>
     
     <nav id="navbar">
@@ -701,54 +624,3 @@
     <script src="src/core/loop/frame-gate.js"></script>
     <script src="src/core/progression/world-state.js"></script>
     <script src="driver.js"></script>
-    <script src="stats.js"></script>
-    <script src="statsgraph.js"></script>
-    <script src="src/core/queue/queue-store.js"></script>
-    <script src="src/core/runner/current-action-state.js"></script>
-    <script src="src/core/runner/action-failure.js"></script>
-    <script src="src/core/runner/next-valid-action.js"></script>
-    <script src="src/core/runner/action-formulas.js"></script>
-    <script src="src/core/runner/action-tick.js"></script>
-    <script src="actions.js"></script>
-    <script src="src/core/domain/town-state.js"></script>
-    <script src="src/core/domain/resource-state.js"></script>
-    <script src="src/core/progression/town-progress.js"></script>
-    <script src="src/core/progression/meta-progression.js"></script>
-    <script src="src/core/progression/prestige-state.js"></script>
-    <script src="src/core/progression/buff-cap-state.js"></script>
-    <script src="src/core/progression/runtime-state.js"></script>
-    <script src="src/core/progression/character-state.js"></script>
-    <script src="src/core/progression/story-state.js"></script>
-    <script src="src/core/progression/challenge-state.js"></script>
-    <script src="src/ui/controllers/cloud-save-ui.js"></script>
-    <script src="src/ui/controllers/loadout-controller.js"></script>
-    <script src="src/ui/controllers/town-browser-controller.js"></script>
-    <script src="src/ui/controllers/planner-controller.js"></script>
-    <script src="src/ui/controllers/reading-shell.js"></script>
-    <script src="src/ui/controllers/accessibility-controller.js"></script>
-    <script src="views/main.view.js"></script>
-    <script src="town.js"></script>
-    <script src="talents.js"></script>
-    <script src="prestige.js"></script>
-    <script src="src/app/legacy-globals.js"></script>
-    <script src="src/app/app-context.js"></script>
-    <script src="src/app/game-session.js"></script>
-    <script src="saving.js"></script>
-    <script src="challenges.js"></script>
-    <script src="hotkeys.js"></script>
-    <script src="predictor.js"></script>
-    <script src="views/views.js"></script>
-    <script src="views/menu.view.js"></script>
-    <script src="views/trackedresources.view.js"></script>
-    <script src="views/timecontrols.view.js"></script>
-    <script src="views/buffs.view.js"></script>
-    <script src="views/talenttree.view.js"></script>
-    <script src="src/app/bootstrap.js"></script>
-    <script>
-        IdleLoopsBootstrap.bootstrapGame().catch(error => {
-            console.error("Failed to bootstrap game", error);
-            throw error;
-        });
-    </script>
-</body>
-</html>

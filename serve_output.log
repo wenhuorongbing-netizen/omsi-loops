@@ -1,0 +1,6 @@
+
+> serve
+> node tools/static-server.mjs
+
+Static server running at http://127.0.0.1:5500
+Serving files from /app
