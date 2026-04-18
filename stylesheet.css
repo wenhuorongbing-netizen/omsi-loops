@@ -5428,3 +5428,52 @@ select.bold {
 select.bold:focus {
     border-color: var(--town-select-focus-border);
 }
+
+/* Structural Details styling for Advanced Controls and Menus */
+#plannerMetaBarDetails, #menuDeckDetails {
+    background-color: var(--card-background-color);
+    border: 1px solid var(--container-border-color);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    padding: 0;
+    overflow: hidden;
+}
+
+#plannerMetaBarDetails > summary, #menuDeckDetails > summary {
+    cursor: pointer;
+    padding: 6px 12px;
+    font-weight: bold;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    background-color: var(--container-background-color);
+    user-select: none;
+    display: flex;
+    align-items: center;
+    color: var(--default-color);
+    border-bottom: 1px solid transparent;
+}
+
+#plannerMetaBarDetails[open] > summary, #menuDeckDetails[open] > summary {
+    border-bottom: 1px solid var(--container-border-color);
+}
+
+#plannerMetaBarDetails > summary:hover, #menuDeckDetails > summary:hover {
+    background-color: var(--button-background-hover);
+}
+
+#menuDeckDetails > summary {
+    justify-content: center;
+}
+
+#plannerMetaBarDetails > summary {
+    justify-content: space-between;
+}
+
+#menuDeckDetails {
+    margin-top: 8px;
+    width: fit-content;
+    align-self: flex-end;
+}
+#menuDeck {
+    padding: 8px;
+}
