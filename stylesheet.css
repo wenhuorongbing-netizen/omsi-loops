@@ -4147,10 +4147,6 @@ li#actionLogLatest {
 }
 
 #nextActionsAmountButtons {
-    position:absolute;
-    bottom:0;
-    left:0;
-    width:100%;
 }
 
 /* General scrollbar styling */
@@ -4740,7 +4736,7 @@ body.ui-density-large .chronicleStoryUnread {
         visibility: collapse;
     }
 
-    & #curActionsManaUsed, & #nextActionsAmountButtons {
+    & #curActionsManaUsed {
         position: static;
         width: auto;
         margin-top: auto;
@@ -4954,7 +4950,7 @@ body.ui-density-large .chronicleStoryUnread {
             visibility: collapse;
         }
     
-        & #curActionsManaUsed, & #nextActionsAmountButtons {
+        & #curActionsManaUsed {
             position: static;
             width: auto;
             margin-top: auto;
@@ -5293,7 +5289,7 @@ body.ui-density-large .chronicleStoryUnread {
             visibility: collapse;
         }
     
-        & #curActionsManaUsed, & #nextActionsAmountButtons {
+        & #curActionsManaUsed {
             position: static;
             width: auto;
             margin-top: auto;
