@@ -196,16 +196,17 @@
                         </div>
                     </div>
                     <div id="plannerControls">
-                        <div id="nextActionsAmountButtons">
-                            <div class="plannerAmountLabel bold localized" data-lockey="actions>tooltip>amount"></div>
-                            <div id="nextActionsAmountGroup">
-                                <button class="button change-amount" onclick="changeActionAmount(1)">1</button>
-                                <button class="button change-amount" onclick="changeActionAmount(5)">5</button>
-                                <button class="button change-amount" onclick="changeActionAmount(10)">10</button>
-                                <input id="amountCustom" oninput="setCustomActionAmount()" onblur="setCustomActionAmount()" value="1">
-                            </div>
-                        </div>
-                    
+                        <!-- Removed duplicate nextActionsAmountButtons -->
+                    </div>
+                </div>
+                <div id="nextActionsAmountButtons">
+                    <div class="plannerAmountLabel bold localized" data-lockey="actions>tooltip>amount"></div>
+                    <div id="nextActionsAmountGroup">
+                        <button class="button change-amount" onclick="changeActionAmount(1)">1</button>
+                        <button class="button change-amount" onclick="changeActionAmount(5)">5</button>
+                        <button class="button change-amount" onclick="changeActionAmount(10)">10</button>
+                        <input id="amountCustom" oninput="setCustomActionAmount()" onblur="setCustomActionAmount()" value="1">
+                    </div>
                 </div>
                 <div id="expandableList">
                     <div id="curActionsListContainer">

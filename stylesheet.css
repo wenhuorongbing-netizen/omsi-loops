@@ -3524,14 +3524,7 @@ li#actionLogLatest {
     gap: 5px;
 }
 
-#plannerHeader #nextActionsAmountButtons {
-    display: grid;
-    gap: 4px;
-    padding: 8px 10px;
-    border: 1px solid var(--input-border);
-    border-radius: 10px;
-    background: color-mix(in srgb, var(--popup-background) 72%, transparent);
-}
+
 
 #plannerHeader #actionChanges {
     margin-top: 0 !important;
@@ -4147,10 +4140,17 @@ li#actionLogLatest {
 }
 
 #nextActionsAmountButtons {
-    position:absolute;
-    bottom:0;
-    left:0;
-    width:100%;
+    position: relative;
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    background: var(--darker-background-2);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 /* General scrollbar styling */
