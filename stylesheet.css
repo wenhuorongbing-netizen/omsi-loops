@@ -116,7 +116,7 @@ body {
 #timeInfo {
     display: flex;
     justify-content: center;
-    padding: 12px 18px 14px;
+    padding: 8px 10px;
     background: linear-gradient(var(--body-background) 78%, var(--body-background-transparent) 100%);
     position: sticky;
     top: 0;
@@ -2015,16 +2015,17 @@ input[type="checkbox"][disabled] + label {
     border-bottom: 1px solid var(--zone-color);
     margin-bottom: 1ex;
     position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem;
 }
 
 #townActionTitle {
-    display: grid;
-    grid-template-columns: minmax(32px, max-content) minmax(0, 1fr) minmax(32px, max-content);
-    grid-template-areas:
-        "left title right"
-        "tools tools tools";
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 8px 10px;
+    text-align: center;
     background: color-mix(in srgb, var(--zone-color) 25%, var(--body-background));
     border-top: 1px solid var(--zone-color);
     border-bottom: 1px solid var(--zone-color);
@@ -2032,7 +2033,6 @@ input[type="checkbox"][disabled] + label {
     padding: 8px 10px 9px;
     width: 100%;
     box-sizing: border-box;
-    text-align: left;
 }
 
 #actionsViewLeft {
@@ -4571,7 +4571,7 @@ body.ui-density-large .chronicleStoryUnread {
             "resources menu" auto
             / minmax(0, 1.45fr) minmax(320px, 0.92fr);
         align-items: start;
-        gap: 10px 12px;
+        gap: 4px 8px;
     }
 
     & body > br, & #timeInfo > br {
@@ -4640,14 +4640,14 @@ body.ui-density-large .chronicleStoryUnread {
 
     & #townWindow {
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
         flex-shrink: 0;
     }
 
     & #townActionTitle {
-        display: grid;
-        justify-content: stretch;
+        display: flex;
+        justify-content: space-between;
         align-items: center;
         flex-shrink: 0;
     }

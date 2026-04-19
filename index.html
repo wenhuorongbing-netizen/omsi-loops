@@ -68,12 +68,12 @@
             </div>
             <details id="menuDeckDetails">
                 <summary>SAVES / OPTIONS / ADVANCED SYSTEMS</summary>
-            <div id="menuDeck">
-                <div id="menuDeckLabel"></div>
-                <menu id='menu' style='float: left; height: 30px; margin-left: 24px; margin-right: -24px;'></menu>
-            </div>
-        </div>
+                <div id="menuDeck">
+                    <div id="menuDeckLabel"></div>
+                    <menu id='menu'></menu>
+                </div>
             </details>
+        </div>
     </header>
 
     <main id="main">
@@ -575,15 +575,15 @@
 
         </div>
 
-        <div id="townColumn" style="width:535px;vertical-align:top;">
+        <div id="townColumn">
             <div id="shortTownColumn">
-                <div id="townWindow" style="width:100%;text-align:center;height:34px">
-                    <div style="float:left;margin-left:150px;" class="actionIcon fa fa-arrow-left" id="townViewLeft" onclick="view.showTown(townsUnlocked[townsUnlocked.indexOf(townShowing)-1])"></div>
+                <div id="townWindow">
+                    <div class="actionIcon fa fa-arrow-left" id="townViewLeft" onclick="view.showTown(townsUnlocked[townsUnlocked.indexOf(townShowing)-1])"></div>
                     <div class="showthat">
                         <div class="large bold"><select class="bold" style="text-align:center" id="TownSelect"></select></div>
                         <div id='townDesc' class='showthis'></div>
                     </div>
-                    <div style="float:right;margin-right:150px;" class="actionIcon fa fa-arrow-right" id="townViewRight" onclick="view.showTown(townsUnlocked[townsUnlocked.indexOf(townShowing)+1])"></div>
+                    <div class="actionIcon fa fa-arrow-right" id="townViewRight" onclick="view.showTown(townsUnlocked[townsUnlocked.indexOf(townShowing)+1])"></div>
                     <div id="hideVarsButton" class="far fa-eye" onclick="view.toggleHiding()"></div>
                 </div><br>
                 <div id="townInfos">
@@ -599,10 +599,10 @@
                 </div>
 
                 <div id="townActionTitle" class="block showthat" style="text-align:center;">
-                    <div style="float:left;margin-left:150px;" class="actionIcon fa fa-arrow-left" id="actionsViewLeft" onclick="view.showActions(false)"></div>
+                    <div class="actionIcon fa fa-arrow-left" id="actionsViewLeft" onclick="view.showActions(false)"></div>
                     <span class='large bold' id="actionsTitle"></span>
                     <div class='showthis localized' data-lockey="actions>tooltip>desc"></div>
-                    <div style="float:right;margin-right:150px;" class="actionIcon fa fa-arrow-right" id="actionsViewRight" onclick="view.showActions(true)"></div>
+                    <div class="actionIcon fa fa-arrow-right" id="actionsViewRight" onclick="view.showActions(true)"></div>
                 </div>
                 <div id="townActions">
                     <div id="actionOptionsTown0" class='actionOptions'></div>
