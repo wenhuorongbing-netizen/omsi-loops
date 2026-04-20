@@ -34,6 +34,7 @@ const menuView = Views.registerView("menu", {
                 simpleTooltips: "Simple Tooltips",
                 simpleTooltipsTooltip: "Reduce hover tooltip density in one click. Full detail stays available in the Inspector.",
                 viewHotkeys: "View Hotkeys",
+                showTutorial: "Show Tutorial / Notice",
             };
         return texts[key] ?? key;
     },
@@ -177,6 +178,7 @@ const menuView = Views.registerView("menu", {
             ${_txt("menu>options>meta>title")}
             <div class='showthisH'>
                 <a target='_blank' href='${_txt("menu>options>discord>link")}'>${_txt("menu>options>discord>title")}</a><br>
+                <button class='button' onclick='showTutorial()'>${Views.menu.uiText('showTutorial')}</button><br>
                 ${Views.menu.htmlThemeMenu()}
                 ${Object.keys(Localization.supportedLang).length > 1 ? Views.menu.htmlLocalizationMenu() : ""}
                 ${_txt("menu>options>adblock_warning")}<br>
