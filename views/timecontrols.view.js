@@ -21,30 +21,32 @@ const timeControlsView = Views.registerView("timeControls", {
                 <div class='showthis' style='color:var(--default-color);width:230px;'>${_txt("time_controls>restart_text")}</div>
             </button>
         </div>
-        <div id='timeControlsSupport'>
-            <input id='bonusIsActiveInput' type='checkbox' onchange='setOption("bonusIsActive", this.checked)'/>
-            <button class='button showthatO control' onclick='toggleOffline()'>${_txt("time_controls>bonus_seconds>title")}
-                <div class='showthis' id='bonusText' style='max-width:500px;color:var(--default-color);'>
-                    ${view.getBonusText()}
-                </div>
-            </button>
-            <button id='talentTreeBtn' style='display: none;' onclick='view.showTalents()'' class='button control'>${_txt("time_controls>talents_button")}</button>
-            <div class='control'>
-                <div tabindex='0' id='story_control' class='showthatH' onmouseover='view.updateStory(storyShowing)' onfocus='view.updateStory(storyShowing)' style='height:30px;'>
-                    <div class='large bold'>${_txt("time_controls>story_title")}</div>
-                    <div id='newStory' style='color:var(--alert-color);display:none;'>(!)</div>
-                    <div id='story_tooltip' class='showthisH' style='width:400px;'>
-                        <button style='margin-left:175px;' class='actionIcon fa fa-arrow-left control' id='storyLeft' onclick='view.updateStory(storyShowing-1)'></button>
-                        <div style='' id='storyPage' class='bold control'></div>
-                        <button style='' class='actionIcon fa fa-arrow-right control' id='storyRight' onclick='view.updateStory(storyShowing+1)'></button>
-                        ${timeControlsView.stories()}
-                    </div>
-                </div>
-            </div>
-        </div>
         <details id='timeControlsOptionsCard'>
             <summary id='timeControlsOptionsToggle'></summary>
             <div id='timeControlsOptions'>
+                <div class='control'>
+                    <input id='bonusIsActiveInput' type='checkbox' onchange='setOption("bonusIsActive", this.checked)'/>
+                    <button class='button showthatO control' onclick='toggleOffline()'>${_txt("time_controls>bonus_seconds>title")}
+                        <div class='showthis' id='bonusText' style='max-width:500px;color:var(--default-color);'>
+                            ${view.getBonusText()}
+                        </div>
+                    </button>
+                </div>
+                <div class='control'>
+                    <button id='talentTreeBtn' style='display: none;' onclick='view.showTalents()'' class='button control'>${_txt("time_controls>talents_button")}</button>
+                </div>
+                <div class='control'>
+                    <div tabindex='0' id='story_control' class='showthatH' onmouseover='view.updateStory(storyShowing)' onfocus='view.updateStory(storyShowing)' style='height:30px;'>
+                        <div class='large bold'>${_txt("time_controls>story_title")}</div>
+                        <div id='newStory' style='color:var(--alert-color);display:none;'>(!)</div>
+                        <div id='story_tooltip' class='showthisH' style='width:400px;'>
+                            <button style='margin-left:175px;' class='actionIcon fa fa-arrow-left control' id='storyLeft' onclick='view.updateStory(storyShowing-1)'></button>
+                            <div style='' id='storyPage' class='bold control'></div>
+                            <button style='' class='actionIcon fa fa-arrow-right control' id='storyRight' onclick='view.updateStory(storyShowing+1)'></button>
+                            ${timeControlsView.stories()}
+                        </div>
+                    </div>
+                </div>
                 <div class='control'>
                     <input type='checkbox' id='pauseBeforeRestartInput' onchange='setOption("pauseBeforeRestart", this.checked)'>
                     <label for='pauseBeforeRestartInput'>${_txt("time_controls>pause_before_restart")}</label>

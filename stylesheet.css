@@ -116,7 +116,7 @@ body {
 #timeInfo {
     display: flex;
     justify-content: center;
-    padding: 12px 18px 14px;
+    padding: 6px 18px 8px;
     background: linear-gradient(var(--body-background) 78%, var(--body-background-transparent) 100%);
     position: sticky;
     top: 0;
@@ -125,7 +125,7 @@ body {
 
 #commandDeck {
     display: grid;
-    gap: 10px;
+    gap: 6px;
     width: min(100%, 1360px);
 }
 
@@ -140,7 +140,7 @@ body {
 #runStatusDeck {
     display: grid;
     grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.9fr);
-    gap: 12px;
+    gap: 8px;
     align-items: stretch;
 }
 
@@ -158,13 +158,13 @@ body {
 }
 
 #runVitals {
-    padding: 14px 16px;
+    padding: 10px 14px;
 }
 
 .runVitalsLead {
     display: grid;
-    gap: 4px;
-    margin-bottom: 10px;
+    gap: 2px;
+    margin-bottom: 6px;
 }
 
 .runVitalsEyebrow,
@@ -178,7 +178,7 @@ body {
 
 .runVitalsHeadline {
     font-family: Georgia, "Times New Roman", serif;
-    font-size: 1.38rem;
+    font-size: 1.2rem;
     font-weight: 700;
     line-height: 1.15;
 }
@@ -200,9 +200,9 @@ body {
 .runVitalCard {
     display: grid;
     gap: 4px;
-    min-height: 82px;
+    min-height: auto;
     align-content: start;
-    padding: 10px 12px;
+    padding: 6px 10px;
     border: 1px solid color-mix(in srgb, var(--input-border) 74%, transparent);
     border-radius: 14px;
     background:
@@ -237,17 +237,16 @@ body {
 
 #timeControls {
     display: grid;
-    gap: 8px;
+    gap: 6px;
 }
 
-#timeControlsMain,
-#timeControlsSupport {
+#timeControlsMain {
     display: flex !important;
     flex-wrap: wrap;
     align-items: center;
     justify-content: flex-start;
     gap: 8px;
-    padding: 10px 12px;
+    padding: 6px 10px;
     border-radius: 16px;
     border: 1px solid color-mix(in srgb, var(--input-border) 76%, transparent);
     background:
@@ -256,11 +255,10 @@ body {
 }
 
 #timeControlsMain {
-    min-height: 56px;
+    min-height: auto;
 }
 
-#timeControlsMain .button,
-#timeControlsSupport .button {
+#timeControlsMain .button {
     min-height: 38px;
     padding: 0 14px;
 }
@@ -271,17 +269,6 @@ body {
 
 #bonusIsActiveInput {
     display: none;
-}
-
-#timeControlsSupport {
-    min-height: 52px;
-}
-
-#timeControlsSupport .control {
-    margin-right: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
 }
 
 #timeControlsOptionsCard {
@@ -298,7 +285,7 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    padding: 10px 12px;
+    padding: 6px 10px;
     cursor: pointer;
     list-style: none;
     font-size: 0.82rem;
@@ -357,11 +344,11 @@ body {
 #menuDeck {
     display: grid;
     gap: 8px;
-    padding: 12px 14px 14px;
+    padding: 8px 14px 10px;
 }
 
 #resourceDeck {
-    padding: 10px 14px 12px;
+    padding: 6px 14px 8px;
 }
 
 #resourceDeck #trackedResources {
@@ -4805,10 +4792,12 @@ body.ui-density-large .chronicleStoryUnread {
                 "resources" auto
                 "menu" auto
                 / 100%;
+            gap: 6px;
         }
 
         & #runStatusDeck {
             grid-template-columns: 1fr;
+            gap: 6px;
         }
 
         & .runVitalsGrid {
@@ -5022,7 +5011,7 @@ body.ui-density-large .chronicleStoryUnread {
 
         & #timeInfo {
             grid-area: header;
-            padding: 10px 10px 12px;
+            padding: 6px 6px 8px;
         }
 
         & #commandDeck {
@@ -5032,12 +5021,12 @@ body.ui-density-large .chronicleStoryUnread {
                 "resources" auto
                 "menu" auto
                 / 100%;
-            gap: 8px;
+            gap: 6px;
         }
 
         & #runStatusDeck {
             grid-template-columns: 1fr;
-            gap: 8px;
+            gap: 6px;
         }
 
         & .runVitalsGrid {
@@ -5048,13 +5037,11 @@ body.ui-density-large .chronicleStoryUnread {
             min-height: 0;
         }
 
-        & #timeControlsMain,
-        & #timeControlsSupport {
+        & #timeControlsMain {
             justify-content: stretch;
         }
 
         & #timeControlsMain .button,
-        & #timeControlsSupport .button,
         & #story_control {
             width: 100%;
             justify-content: center;
@@ -5070,7 +5057,6 @@ body.ui-density-large .chronicleStoryUnread {
         & #resourceDeck,
         & #runVitals,
         & #timeControlsMain,
-        & #timeControlsSupport,
         & #timeControlsOptionsCard {
             border-radius: 14px;
         }
