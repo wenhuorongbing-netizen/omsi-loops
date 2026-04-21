@@ -5030,7 +5030,7 @@ body.ui-density-large .chronicleStoryUnread {
         }
 
         & .runVitalsGrid {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
         & .runVitalCard {
@@ -5043,7 +5043,8 @@ body.ui-density-large .chronicleStoryUnread {
 
         & #timeControlsMain .button,
         & #story_control {
-            width: 100%;
+            width: auto;
+            flex: 1 1 auto;
             justify-content: center;
         }
 
