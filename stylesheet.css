@@ -5029,12 +5029,29 @@ body.ui-density-large .chronicleStoryUnread {
             gap: 6px;
         }
 
-        & .runVitalsGrid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+& .runVitalsGrid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        & .runVitalsLead {
+            display: none;
         }
 
         & .runVitalCard {
             min-height: 0;
+            padding: 4px;
+        }
+
+        & .runVitalLabel {
+            font-size: 0.6rem;
+        }
+
+        & .runVitalValue {
+            font-size: 0.9rem;
+        }
+
+        & .runVitalMeta {
+            font-size: 0.6rem;
         }
 
         & #timeControlsMain {
