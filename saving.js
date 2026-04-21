@@ -1235,6 +1235,11 @@ function clearPauseNotification() {
 
 function closeTutorial() {
     document.getElementById("tutorial").style.display = "none";
+    window.localStorage.setItem("tutorialDismissed", "true");
+}
+
+function showTutorial() {
+    document.getElementById("tutorial").style.display = "block";
 }
 
 function clearSave() {
@@ -1284,8 +1289,13 @@ function load(inChallenge, saveJson = getSaveServiceApi().readSaveJson(window.lo
     let toLoad = {};
     // has a save file
     if (saveJson && saveJson !== "null") {
-        closeTutorial();
         toLoad = JSON.parse(saveJson);
+    }
+
+    if ((saveJson && saveJson !== "null") || window.localStorage.getItem("tutorialDismissed") === "true") {
+        document.getElementById("tutorial").style.display = "none";
+    } else {
+        document.getElementById("tutorial").style.display = "block";
     }
 
     console.log("Loading game from: " + saveName + " inChallenge: " + inChallenge);

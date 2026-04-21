@@ -638,10 +638,9 @@
         <a id="navbar_stats" href="#statsColumn" class="nav localized" data-lockey="menu>navigation>stats" onclick="return scrollToPanel(event, 'statsColumn')"></a>
     </nav>
 
-    <div id="tutorial" style="position:absolute;width:100%;height:100%;left:0;top:0;z-index:9999;">
-        <div style="width:100%;height:100%;background-color:grey;position:relative;opacity:.5"></div>
-        <div style="padding:20px;background-color:var(--body-background);border:1px solid var(--input-border);position:absolute;text-align:left;left:150px;top:150px;">
-            <span class="localized" data-lockey="tutorial"></span>
+    <div id="tutorial" style="position:fixed; bottom:20px; right:20px; z-index:9999; padding:20px; background-color:var(--body-background); border:1px solid var(--input-border); text-align:left; max-width:450px; box-shadow:0 4px 8px rgba(0,0,0,0.5); display:none;">
+        <span class="localized" data-lockey="tutorial"></span>
+        <div style="text-align: right; margin-top: 10px;">
             <button class="button localized" onclick="closeTutorial()" data-lockey="misc>ok">确定</button>
         </div>
     </div>
