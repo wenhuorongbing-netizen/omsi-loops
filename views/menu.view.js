@@ -27,6 +27,7 @@ const menuView = Views.registerView("menu", {
                 simpleTooltips: "\u7b80\u5316\u63d0\u793a",
                 simpleTooltipsTooltip: "\u4e00\u952e\u964d\u4f4e hover \u63d0\u793a\u7684\u5bc6\u5ea6\uff0c\u5b8c\u6574\u6570\u503c\u4ecd\u4fdd\u7559\u5728 Inspector \u91cc\u3002",
                 viewHotkeys: "\u67e5\u770b\u952e\u4f4d",
+                showTutorial: "\u663e\u793a\u6559\u7a0b / \u63d0\u793a",
             }
             : {
                 quickSettingsTitle: "Quick Settings",
