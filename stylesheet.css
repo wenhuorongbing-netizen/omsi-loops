@@ -5023,8 +5023,8 @@ body.ui-density-large .chronicleStoryUnread {
             flex-direction: column;
             gap: 2px;
             padding-bottom: 2px;
-            max-height: 260px;
-            overflow-y: auto;
+            max-height: 260px !important;
+            overflow-y: auto !important;
         }
 
         & #runStatusDeck {
