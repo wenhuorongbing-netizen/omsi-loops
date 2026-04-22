@@ -5018,26 +5018,23 @@ body.ui-density-large .chronicleStoryUnread {
             padding: 6px 6px 8px;
         }
 
-        & #commandDeck, html.responsive body #commandDeck, body.ui-preset-classic #commandDeck {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 2px !important;
-            padding-bottom: 2px !important;
-            max-height: 260px !important;
-            overflow-y: auto !important;
+        & #commandDeck {
+            grid:
+                "time" 12px
+                "run" auto
+                "resources" auto
+                "menu" auto
+                / 100%;
+            gap: 6px;
         }
 
         & #runStatusDeck {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            flex-shrink: 0;
+            grid-template-columns: 1fr;
+            gap: 6px;
         }
 
-        & .runVitalsGrid {
+& .runVitalsGrid {
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 2px;
-            align-content: start;
         }
 
         & .runVitalsLead {
@@ -5046,38 +5043,30 @@ body.ui-density-large .chronicleStoryUnread {
 
         & .runVitalCard {
             min-height: 0;
-            padding: 2px 4px;
-            gap: 0;
+            padding: 4px;
         }
 
         & .runVitalLabel {
-            font-size: 0.5rem;
-            margin-bottom: 2px;
+            font-size: 0.6rem;
         }
 
         & .runVitalValue {
-            font-size: 0.8rem;
+            font-size: 0.9rem;
         }
 
         & .runVitalMeta {
-            font-size: 0.5rem;
+            font-size: 0.6rem;
         }
 
         & #timeControlsMain {
-            display: flex;
-            flex-direction: row;
             justify-content: stretch;
-            gap: 2px;
-            flex-shrink: 0;
         }
 
         & #timeControlsMain .button,
         & #story_control {
-            flex: 1 1 auto;
             width: auto;
-            margin: 0;
-            padding: 4px;
-            min-height: 24px;
+            flex: 1 1 auto;
+            justify-content: center;
         }
 
         & #trackedResources {
@@ -5085,9 +5074,6 @@ body.ui-density-large .chronicleStoryUnread {
             flex-wrap: nowrap;
             overflow-x: auto;
             gap: 4px;
-            margin-bottom: 0;
-            flex-shrink: 0;
-            max-height: 48px;
         }
 
         & #trackedResources > div {
@@ -5095,18 +5081,9 @@ body.ui-density-large .chronicleStoryUnread {
         }
 
         & #menu {
-            display: flex;
-            justify-content: flex-start;
             overflow-x: auto;
             flex-wrap: nowrap;
             padding-bottom: 2px;
-            margin: 0;
-            max-height: 48px;
-            flex-shrink: 0;
-        }
-
-        & #menu > li {
-            flex: 0 0 auto;
         }
 
         & #menuDeck,
@@ -5469,36 +5446,4 @@ select.bold {
 
 select.bold:focus {
     border-color: var(--town-select-focus-border);
-}
-
-/* GLOBAL FAILSAFE OVERRIDES FOR ISSUE #28 - DO NOT REMOVE */
-@media (max-width: 810px) {
-    #commandDeck,
-    #commandDeck[style],
-    :root #commandDeck,
-    .responsive #commandDeck,
-    body.ui-preset-classic #commandDeck,
-    html.responsive body #commandDeck,
-    html body div#commandDeck {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 2px !important;
-        padding-bottom: 2px !important;
-        max-height: 250px !important;
-        min-height: 0 !important;
-        height: auto !important;
-        overflow-y: auto !important;
-    }
-}
-@media (max-width: 1300px) {
-    #commandDeck,
-    #commandDeck[style],
-    :root #commandDeck,
-    .responsive #commandDeck,
-    body.ui-preset-classic #commandDeck,
-    html.responsive body #commandDeck,
-    html body div#commandDeck {
-        max-height: 40vh !important;
-        overflow-y: auto !important;
-    }
 }
