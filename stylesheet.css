@@ -4802,6 +4802,8 @@ body.ui-density-large .chronicleStoryUnread {
 
         & .runVitalsGrid {
             grid-template-columns: repeat(3, minmax(0, 1fr));
+            max-height: 120px;
+            overflow-y: auto;
         }
 
         & .runVitalsLead {
@@ -5035,6 +5037,8 @@ body.ui-density-large .chronicleStoryUnread {
 
 & .runVitalsGrid {
             grid-template-columns: repeat(3, minmax(0, 1fr));
+            max-height: 120px;
+            overflow-y: auto;
         }
 
         & .runVitalsLead {
