@@ -4785,7 +4785,7 @@ body.ui-density-large .chronicleStoryUnread {
             grid-area: header;
         }
 
-            & #commandDeck {
+            & #commandDeck, html.responsive body #commandDeck {
         grid:
             "time" 14px
             "run" auto
@@ -5018,12 +5018,13 @@ body.ui-density-large .chronicleStoryUnread {
             padding: 4px 4px 6px;
         }
 
-        & #commandDeck {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            padding-bottom: 2px;
+        & #commandDeck, html.responsive body #commandDeck, body.ui-preset-classic #commandDeck {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 2px !important;
+            padding-bottom: 2px !important;
             max-height: 260px !important;
+            height: auto !important;
             overflow-y: auto !important;
         }
 
