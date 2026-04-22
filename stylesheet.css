@@ -4792,18 +4792,20 @@ body.ui-density-large .chronicleStoryUnread {
                 "resources" auto
                 "menu" auto
                 / 100%;
-            gap: 6px;
+            gap: 4px;
         }
 
         & #runStatusDeck {
             grid-template-columns: 1fr;
-            gap: 6px;
+            gap: 4px;
         }
 
         & .runVitalsGrid {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            max-height: 120px;
-            overflow-y: auto;
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 4px;
+            max-height: none;
         }
 
         & .runVitalsLead {
@@ -5018,6 +5020,8 @@ body.ui-density-large .chronicleStoryUnread {
         & #timeInfo {
             grid-area: header;
             padding: 6px 6px 8px;
+            min-width: 0;
+            box-sizing: border-box;
         }
 
         & #commandDeck {
@@ -5028,11 +5032,14 @@ body.ui-density-large .chronicleStoryUnread {
                 "menu" auto
                 / 100%;
             gap: 6px;
+            min-width: 0;
+            box-sizing: border-box;
         }
 
         & #runStatusDeck {
             grid-template-columns: 1fr;
             gap: 6px;
+            min-width: 0;
         }
 
 & .runVitalsGrid {
@@ -5046,6 +5053,8 @@ body.ui-density-large .chronicleStoryUnread {
         }
 
         & .runVitalCard {
+            flex: 0 0 auto;
+            min-width: 90px;
             min-height: 0;
             padding: 4px;
         }
@@ -5074,6 +5083,9 @@ body.ui-density-large .chronicleStoryUnread {
             width: auto;
             flex: 0 0 auto;
             justify-content: center;
+            min-height: 30px;
+            padding: 0 8px;
+            font-size: 0.8rem;
         }
 
         & #trackedResources {
@@ -5087,10 +5099,30 @@ body.ui-density-large .chronicleStoryUnread {
             flex: 0 0 auto;
         }
 
+        & #menuDeckLabel {
+            display: none;
+        }
+
+        & #menuDeck {
+            display: flex;
+            align-items: center;
+        }
+
         & #menu {
             overflow-x: auto;
             flex-wrap: nowrap;
             padding-bottom: 2px;
+            margin: 0 !important;
+        }
+
+        & #menu > li {
+            height: 28px !important;
+        }
+
+        & #menu .button {
+            min-height: 28px !important;
+            padding: 0 8px;
+            font-size: 0.8rem;
         }
 
         & #menuDeck,
@@ -5099,6 +5131,9 @@ body.ui-density-large .chronicleStoryUnread {
         & #timeControlsMain,
         & #timeControlsOptionsCard {
             border-radius: 14px;
+            padding: 4px 6px;
+            min-width: 0;
+            box-sizing: border-box;
         }
 
         /* Navbar */
