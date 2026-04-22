@@ -5020,6 +5020,8 @@ body.ui-density-large .chronicleStoryUnread {
         & #timeInfo {
             grid-area: header;
             padding: 6px 6px 8px;
+            min-width: 0;
+            box-sizing: border-box;
         }
 
         & #commandDeck {
@@ -5030,11 +5032,14 @@ body.ui-density-large .chronicleStoryUnread {
                 "menu" auto
                 / 100%;
             gap: 6px;
+            min-width: 0;
+            box-sizing: border-box;
         }
 
         & #runStatusDeck {
             grid-template-columns: 1fr;
             gap: 6px;
+            min-width: 0;
         }
 
 & .runVitalsGrid {
@@ -5127,6 +5132,8 @@ body.ui-density-large .chronicleStoryUnread {
         & #timeControlsOptionsCard {
             border-radius: 14px;
             padding: 4px 6px;
+            min-width: 0;
+            box-sizing: border-box;
         }
 
         /* Navbar */
