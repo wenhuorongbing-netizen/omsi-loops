@@ -5019,22 +5019,24 @@ body.ui-density-large .chronicleStoryUnread {
         }
 
         & #commandDeck {
-            grid:
-                "time" 12px
-                "run" auto
-                "resources" auto
-                "menu" auto
-                / 100%;
-            gap: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding-bottom: 2px;
+            max-height: 40vh;
+            overflow-y: auto;
         }
 
         & #runStatusDeck {
-            grid-template-columns: 1fr;
-            gap: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
         }
 
-& .runVitalsGrid {
+        & .runVitalsGrid {
             grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 2px;
+            align-content: start;
         }
 
         & .runVitalsLead {
@@ -5043,30 +5045,50 @@ body.ui-density-large .chronicleStoryUnread {
 
         & .runVitalCard {
             min-height: 0;
-            padding: 4px;
+            padding: 2px 4px;
+            gap: 0;
         }
 
         & .runVitalLabel {
             font-size: 0.6rem;
+            margin-bottom: 2px;
+            display: none;
         }
 
         & .runVitalValue {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
 
         & .runVitalMeta {
-            font-size: 0.6rem;
+            display: none;
         }
 
         & #timeControlsMain {
+            display: flex;
+            flex-direction: row;
             justify-content: stretch;
+            gap: 2px;
         }
 
         & #timeControlsMain .button,
         & #story_control {
-            width: auto;
             flex: 1 1 auto;
-            justify-content: center;
+            width: auto;
+            margin: 0;
+            padding: 4px;
+            min-height: 24px;
+        }
+
+        & #trackedResources {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 4px;
+            margin-bottom: 0;
+        }
+
+        & #trackedResources > div {
+            flex: 0 0 auto;
         }
 
         & #menu {
