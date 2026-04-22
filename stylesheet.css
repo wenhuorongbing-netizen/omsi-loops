@@ -4785,15 +4785,17 @@ body.ui-density-large .chronicleStoryUnread {
             grid-area: header;
         }
 
-        & #commandDeck {
-            grid:
-                "time" 14px
-                "run" auto
-                "resources" auto
-                "menu" auto
-                / 100%;
-            gap: 6px;
-        }
+            & #commandDeck {
+        grid:
+            "time" 14px
+            "run" auto
+            "resources" auto
+            "menu" auto
+            / 100%;
+        gap: 4px;
+        max-height: 40vh;
+        overflow-y: auto;
+    }
 
         & #runStatusDeck {
             display: flex;
@@ -5021,7 +5023,7 @@ body.ui-density-large .chronicleStoryUnread {
             flex-direction: column;
             gap: 2px;
             padding-bottom: 2px;
-            max-height: 35vh;
+            max-height: 30vh;
             overflow-y: auto;
         }
 
