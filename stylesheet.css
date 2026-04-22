@@ -5060,12 +5060,15 @@ body.ui-density-large .chronicleStoryUnread {
 
         & #timeControlsMain {
             justify-content: stretch;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 4px;
         }
 
         & #timeControlsMain .button,
         & #story_control {
             width: auto;
-            flex: 1 1 auto;
+            flex: 0 0 auto;
             justify-content: center;
         }
 
