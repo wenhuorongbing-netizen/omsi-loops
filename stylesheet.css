@@ -4800,7 +4800,7 @@ body.ui-density-large .chronicleStoryUnread {
         & #runStatusDeck {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 1px;
             flex-shrink: 0;
         }
 
@@ -5023,7 +5023,7 @@ body.ui-density-large .chronicleStoryUnread {
             flex-direction: column;
             gap: 2px;
             padding-bottom: 2px;
-            max-height: 30vh;
+            max-height: 260px;
             overflow-y: auto;
         }
 
@@ -5036,7 +5036,7 @@ body.ui-density-large .chronicleStoryUnread {
 
         & .runVitalsGrid {
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 2px;
+            gap: 1px;
             align-content: start;
         }
 
