@@ -5470,3 +5470,16 @@ select.bold {
 select.bold:focus {
     border-color: var(--town-select-focus-border);
 }
+
+/* GLOBAL FAILSAFE OVERRIDES FOR ISSUE #28 */
+#commandDeck {
+    max-height: 45vh;
+    overflow-y: auto;
+}
+
+@media (max-width: 810px) {
+    body #commandDeck, html #commandDeck, :root #commandDeck, .responsive #commandDeck {
+        max-height: 260px !important;
+        overflow-y: auto !important;
+    }
+}
