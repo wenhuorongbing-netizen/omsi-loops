@@ -5013,7 +5013,7 @@ body.ui-density-large .chronicleStoryUnread {
 
         & #timeInfo {
             grid-area: header;
-            padding: 6px 6px 8px;
+            padding: 4px 4px 6px;
         }
 
         & #commandDeck {
@@ -5021,7 +5021,7 @@ body.ui-density-large .chronicleStoryUnread {
             flex-direction: column;
             gap: 2px;
             padding-bottom: 2px;
-            max-height: 40vh;
+            max-height: 35vh;
             overflow-y: auto;
         }
 
@@ -5044,7 +5044,7 @@ body.ui-density-large .chronicleStoryUnread {
 
         & .runVitalCard {
             min-height: 0;
-            padding: 2px 4px;
+            padding: 0px 4px;
             gap: 0;
         }
 
