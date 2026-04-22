@@ -4785,27 +4785,27 @@ body.ui-density-large .chronicleStoryUnread {
             grid-area: header;
         }
 
-            & #commandDeck, html.responsive body #commandDeck {
-        grid:
-            "time" 14px
-            "run" auto
-            "resources" auto
-            "menu" auto
-            / 100%;
-        gap: 4px;
-        max-height: 40vh;
-        overflow-y: auto;
-    }
+        & #commandDeck {
+            grid:
+                "time" 14px
+                "run" auto
+                "resources" auto
+                "menu" auto
+                / 100%;
+            gap: 6px;
+        }
 
         & #runStatusDeck {
-            display: flex;
-            flex-direction: column;
-            gap: 1px;
-            flex-shrink: 0;
+            grid-template-columns: 1fr;
+            gap: 6px;
         }
 
         & .runVitalsGrid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        & .runVitalsLead {
+            display: none;
         }
 
         & #menu {
@@ -5015,7 +5015,7 @@ body.ui-density-large .chronicleStoryUnread {
 
         & #timeInfo {
             grid-area: header;
-            padding: 4px 4px 6px;
+            padding: 6px 6px 8px;
         }
 
         & #commandDeck, html.responsive body #commandDeck, body.ui-preset-classic #commandDeck {
@@ -5023,8 +5023,7 @@ body.ui-density-large .chronicleStoryUnread {
             flex-direction: column !important;
             gap: 2px !important;
             padding-bottom: 2px !important;
-            max-height: 260px !important;
-            height: auto !important;
+            max-height: 30vh !important;
             overflow-y: auto !important;
         }
 
@@ -5037,7 +5036,7 @@ body.ui-density-large .chronicleStoryUnread {
 
         & .runVitalsGrid {
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 1px;
+            gap: 2px;
             align-content: start;
         }
 
@@ -5047,7 +5046,7 @@ body.ui-density-large .chronicleStoryUnread {
 
         & .runVitalCard {
             min-height: 0;
-            padding: 0px 4px;
+            padding: 2px 4px;
             gap: 0;
         }
 
@@ -5088,6 +5087,7 @@ body.ui-density-large .chronicleStoryUnread {
             gap: 4px;
             margin-bottom: 0;
             flex-shrink: 0;
+            max-height: 48px;
         }
 
         & #trackedResources > div {
@@ -5101,6 +5101,7 @@ body.ui-density-large .chronicleStoryUnread {
             flex-wrap: nowrap;
             padding-bottom: 2px;
             margin: 0;
+            max-height: 48px;
             flex-shrink: 0;
         }
 
