@@ -5031,6 +5031,7 @@ body.ui-density-large .chronicleStoryUnread {
             display: flex;
             flex-direction: column;
             gap: 2px;
+            flex-shrink: 0;
         }
 
         & .runVitalsGrid {
@@ -5085,6 +5086,8 @@ body.ui-density-large .chronicleStoryUnread {
             overflow-x: auto;
             gap: 4px;
             margin-bottom: 0;
+            flex-shrink: 0;
+            max-height: 48px;
         }
 
         & #trackedResources > div {
@@ -5092,9 +5095,18 @@ body.ui-density-large .chronicleStoryUnread {
         }
 
         & #menu {
+            display: flex;
+            justify-content: flex-start;
             overflow-x: auto;
             flex-wrap: nowrap;
             padding-bottom: 2px;
+            margin: 0;
+            max-height: 48px;
+            flex-shrink: 0;
+        }
+
+        & #menu > li {
+            flex: 0 0 auto;
         }
 
         & #menuDeck,
@@ -5457,4 +5469,36 @@ select.bold {
 
 select.bold:focus {
     border-color: var(--town-select-focus-border);
+}
+
+/* GLOBAL FAILSAFE OVERRIDES FOR ISSUE #28 - DO NOT REMOVE */
+@media (max-width: 810px) {
+    #commandDeck,
+    #commandDeck[style],
+    :root #commandDeck,
+    .responsive #commandDeck,
+    body.ui-preset-classic #commandDeck,
+    html.responsive body #commandDeck,
+    html body div#commandDeck {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 2px !important;
+        padding-bottom: 2px !important;
+        max-height: 250px !important;
+        min-height: 0 !important;
+        height: auto !important;
+        overflow-y: auto !important;
+    }
+}
+@media (max-width: 1300px) {
+    #commandDeck,
+    #commandDeck[style],
+    :root #commandDeck,
+    .responsive #commandDeck,
+    body.ui-preset-classic #commandDeck,
+    html.responsive body #commandDeck,
+    html body div#commandDeck {
+        max-height: 40vh !important;
+        overflow-y: auto !important;
+    }
 }
