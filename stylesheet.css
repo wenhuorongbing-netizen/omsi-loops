@@ -140,7 +140,7 @@ body {
 #runStatusDeck {
     display: grid;
     grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.9fr);
-    gap: 8px;
+    gap: 6px;
     align-items: stretch;
 }
 
@@ -158,16 +158,19 @@ body {
 }
 
 #runVitals {
-    padding: 10px 14px;
+    padding: 6px 10px;
 }
 
 .runVitalsLead {
     display: grid;
-    gap: 2px;
-    margin-bottom: 6px;
+    gap: 0;
+    margin-bottom: 4px;
 }
 
-.runVitalsEyebrow,
+.runVitalsEyebrow {
+    display: none;
+}
+
 #menuDeckLabel {
     font-size: 0.72rem;
     font-weight: 700;
@@ -194,7 +197,7 @@ body {
 .runVitalsGrid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
-    gap: 8px;
+    gap: 4px;
 }
 
 .runVitalCard {
@@ -202,7 +205,7 @@ body {
     gap: 4px;
     min-height: auto;
     align-content: start;
-    padding: 6px 10px;
+    padding: 4px 8px;
     border: 1px solid color-mix(in srgb, var(--input-border) 74%, transparent);
     border-radius: 14px;
     background:
@@ -216,7 +219,7 @@ body {
 }
 
 .runVitalLabel {
-    font-size: 0.74rem;
+    font-size: 0.65rem;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -224,20 +227,20 @@ body {
 }
 
 .runVitalValue {
-    font-size: 1.02rem;
+    font-size: 0.9rem;
     font-weight: 800;
-    line-height: 1.25;
+    line-height: 1.1;
 }
 
 .runVitalMeta {
-    font-size: 0.78rem;
+    font-size: 0.7rem;
     line-height: 1.35;
     opacity: 0.78;
 }
 
 #timeControls {
     display: grid;
-    gap: 6px;
+    gap: 4px;
 }
 
 #timeControlsMain {
@@ -245,8 +248,8 @@ body {
     flex-wrap: wrap;
     align-items: center;
     justify-content: flex-start;
-    gap: 8px;
-    padding: 6px 10px;
+    gap: 6px;
+    padding: 4px 8px;
     border-radius: 16px;
     border: 1px solid color-mix(in srgb, var(--input-border) 76%, transparent);
     background:
@@ -259,7 +262,7 @@ body {
 }
 
 #timeControlsMain .button {
-    min-height: 38px;
+    min-height: 30px;
     padding: 0 14px;
 }
 
@@ -285,7 +288,7 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    padding: 6px 10px;
+    padding: 4px 8px;
     cursor: pointer;
     list-style: none;
     font-size: 0.82rem;
@@ -317,15 +320,15 @@ body {
 #timeControlsOptions {
     display: grid !important;
     gap: 8px;
-    padding: 0 12px 12px;
+    padding: 0 8px 8px;
 }
 
 #timeControlsOptions .control {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
-    gap: 8px;
+    gap: 6px;
     align-items: start;
-    padding: 8px 10px;
+    padding: 4px 8px;
     border-radius: 12px;
     background: color-mix(in srgb, var(--body-background) 86%, transparent);
 }
