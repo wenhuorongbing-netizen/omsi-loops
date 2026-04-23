@@ -1015,7 +1015,6 @@ class View {
             : (this.isChineseLanguage() ? "查看区域卡片获取进度" : "Open the area cards for live progress");
         container.innerHTML = `
             <div class="runVitalsLead">
-                <span class="runVitalsEyebrow">${this.isChineseLanguage() ? "作战日志台" : "Loop Log Desk"}</span>
                 <div id="runStatusHeadline" class="runVitalsHeadline">${statusLabel}</div>
                 <p id="runObjectiveText" class="runVitalsObjective">${objectiveText}</p>
             </div>
