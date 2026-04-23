@@ -30,12 +30,8 @@ export async function openFixturePage({
     baseUrl,
     fixturePath,
     language = "en-EN",
-    viewport,
 }) {
     const fixture = readFixtureFile(fixturePath);
-    if (viewport) {
-        fixture.viewport = viewport;
-    }
     const context = await createFixtureContext(browser, fixture);
     const page = await context.newPage();
     const consoleErrors = [];
