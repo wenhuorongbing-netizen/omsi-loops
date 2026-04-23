@@ -5029,26 +5029,27 @@ body.ui-density-large .chronicleStoryUnread {
 
         & #commandDeck {
             grid:
-                "time" 12px
-                "run" auto
-                "resources" auto
-                "menu" auto
-                / 100%;
-            gap: 6px;
+                "time time" 12px
+                "run run" auto
+                "resources menu" auto
+                / auto minmax(0, 1fr);
+            gap: 4px;
             min-width: 0;
             box-sizing: border-box;
         }
 
         & #runStatusDeck {
             grid-template-columns: 1fr;
-            gap: 6px;
+            gap: 4px;
             min-width: 0;
         }
 
-& .runVitalsGrid {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            max-height: 120px;
-            overflow-y: auto;
+        & .runVitalsGrid {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            max-height: none;
+            gap: 4px;
         }
 
         & .runVitalsLead {
@@ -5057,9 +5058,9 @@ body.ui-density-large .chronicleStoryUnread {
 
         & .runVitalCard {
             flex: 0 0 auto;
-            min-width: 90px;
+            min-width: 80px;
             min-height: 0;
-            padding: 4px;
+            padding: 2px 4px;
         }
 
         & .runVitalLabel {
@@ -5109,11 +5110,26 @@ body.ui-density-large .chronicleStoryUnread {
         & #menuDeck {
             display: flex;
             align-items: center;
+            overflow: hidden;
+            border: none;
+            padding-left: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            justify-content: flex-end;
+        }
+
+        & #resourceDeck {
+            border: none;
+            padding-right: 0;
+            padding-top: 0;
+            padding-bottom: 0;
         }
 
         & #menu {
             overflow-x: auto;
+            display: flex;
             flex-wrap: nowrap;
+            align-items: center;
             padding-bottom: 2px;
             margin: 0 !important;
         }
@@ -5126,6 +5142,35 @@ body.ui-density-large .chronicleStoryUnread {
             min-height: 28px !important;
             padding: 0 8px;
             font-size: 0.8rem;
+        }
+
+        & #timeControls {
+            display: flex;
+            gap: 4px;
+            align-items: stretch;
+            overflow-x: auto;
+        }
+
+        & #timeControlsOptionsCard {
+            margin: 0;
+            padding: 0;
+        }
+
+        & #timeControlsOptionsCard > summary {
+            padding: 4px 8px;
+            height: 100%;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+        }
+
+        & #timeControlsOptionsCard > summary::after {
+            display: none;
+        }
+
+        & #timeControlsOptionsCard[open] > summary {
+            border-bottom-left-radius: 14px;
+            border-bottom-right-radius: 14px;
         }
 
         & #menuDeck,

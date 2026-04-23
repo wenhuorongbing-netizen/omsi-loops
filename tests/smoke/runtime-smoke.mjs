@@ -21,6 +21,11 @@ export async function runRuntimeSmoke({
     fixturePath = defaultFixturePath,
     outputDir,
     languages = ["zh-CN", "en-EN"],
+    viewports = [
+        { width: 1440, height: 1100, label: "desktop-large" },
+        { width: 1024, height: 768, label: "desktop-default" },
+        { width: 390, height: 844, label: "mobile-narrow" }
+    ],
 }) {
     const fixture = readFixtureFile(fixturePath);
     fs.mkdirSync(outputDir, {recursive: true});
@@ -30,13 +35,16 @@ export async function runRuntimeSmoke({
 
     try {
         for (const language of languages) {
-            results.push(await runLanguageScenario({
-                baseUrl,
-                browser,
-                fixturePath,
-                language,
-                outputDir,
-            }));
+            for (const viewport of viewports) {
+                results.push(await runLanguageScenario({
+                    baseUrl,
+                    browser,
+                    fixturePath,
+                    language,
+                    viewport,
+                    outputDir,
+                }));
+            }
         }
     } finally {
         await browser.close();
@@ -188,12 +196,13 @@ export async function runRuntimeSmoke({
     return summary;
 }
 
-async function runLanguageScenario({baseUrl, browser, fixturePath, language, outputDir}) {
+async function runLanguageScenario({baseUrl, browser, fixturePath, language, viewport, outputDir}) {
     const runtime = await openFixturePage({
         browser,
         baseUrl,
         fixturePath,
         language,
+        viewport,
     });
     try {
         const {page, scenarioUrl, consoleErrors, workerUrls} = runtime;
@@ -613,6 +622,14 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
             townCount: typeof towns !== "undefined" && Array.isArray(towns) ? towns.length : -1,
             sessionAvailable: !!globalThis.IdleLoopsBootstrap?.getGameSession?.(),
         }));
+        const layoutGeometryState = await page.evaluate(() => {
+            const commandDeckEl = document.getElementById("commandDeck");
+            const actionListEl = document.getElementById("actionList");
+            return {
+                commandDeck: commandDeckEl ? commandDeckEl.getBoundingClientRect().toJSON() : null,
+                actionList: actionListEl ? actionListEl.getBoundingClientRect().toJSON() : null,
+            };
+        });
         const compatBridgeState = await page.evaluate(() => {
             const session = globalThis.IdleLoopsBootstrap?.getGameSession?.();
             const appContext = session?.appContext;
@@ -946,12 +963,14 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
             trackedStat: options?.predictorTrackedStat ?? null,
         }));
 
-        const screenshotPath = path.join(outputDir, `runtime-${language}.png`);
+        const screenshotPath = path.join(outputDir, `runtime-${language}-${viewport.label}.png`);
         await page.screenshot({path: screenshotPath, fullPage: true});
 
         return {
             language,
+            viewportLabel: viewport.label,
             url: scenarioUrl,
+            layoutGeometry: layoutGeometryState,
             bootstrap: bootstrapState,
             compatBridge: compatBridgeState,
             accessibility: accessibilityState,
