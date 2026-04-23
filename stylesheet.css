@@ -125,11 +125,14 @@ body {
 
 #commandDeck {
     display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "time time" "run run" "resources menu";
     gap: 6px;
     width: min(100%, 1360px);
 }
 
 #timeBarContainer {
+    grid-area: time;
     width: 100% !important;
     height: 14px !important;
     border-radius: 999px;
@@ -138,6 +141,7 @@ body {
 }
 
 #runStatusDeck {
+    grid-area: run;
     display: grid;
     grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.9fr);
     gap: 6px;
@@ -158,12 +162,13 @@ body {
 }
 
 #runVitals {
-    padding: 6px 10px;
+    padding: 4px 8px;
 }
 
 .runVitalsLead {
-    display: grid;
-    gap: 0;
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
     margin-bottom: 4px;
 }
 
@@ -172,16 +177,12 @@ body {
 }
 
 #menuDeckLabel {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    opacity: 0.72;
+    display: none;
 }
 
 .runVitalsHeadline {
     font-family: Georgia, "Times New Roman", serif;
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 700;
     line-height: 1.15;
 }
@@ -189,23 +190,24 @@ body {
 .runVitalsObjective {
     margin: 0;
     max-width: 62ch;
-    font-size: 0.94rem;
-    line-height: 1.45;
+    font-size: 0.85rem;
+    line-height: 1.2;
     opacity: 0.9;
 }
 
 .runVitalsGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 4px;
 }
 
 .runVitalCard {
-    display: grid;
-    gap: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
     min-height: auto;
-    align-content: start;
-    padding: 4px 8px;
+    flex: 1 1 auto;
+    padding: 2px 6px;
     border: 1px solid color-mix(in srgb, var(--input-border) 74%, transparent);
     border-radius: 14px;
     background:
@@ -219,7 +221,7 @@ body {
 }
 
 .runVitalLabel {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -227,7 +229,7 @@ body {
 }
 
 .runVitalValue {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 800;
     line-height: 1.1;
 }
@@ -249,7 +251,7 @@ body {
     align-items: center;
     justify-content: flex-start;
     gap: 6px;
-    padding: 4px 8px;
+    padding: 2px 6px;
     border-radius: 16px;
     border: 1px solid color-mix(in srgb, var(--input-border) 76%, transparent);
     background:
@@ -262,8 +264,8 @@ body {
 }
 
 #timeControlsMain .button {
-    min-height: 30px;
-    padding: 0 14px;
+    min-height: 26px;
+    padding: 0 10px;
 }
 
 #timeControlsMain .button {
@@ -345,13 +347,16 @@ body {
 }
 
 #menuDeck {
-    display: grid;
-    gap: 8px;
-    padding: 8px 14px 10px;
+    grid-area: menu;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
 }
 
 #resourceDeck {
-    padding: 6px 14px 8px;
+    grid-area: resources;
+    padding: 4px 8px 4px;
 }
 
 #resourceDeck #trackedResources {
@@ -374,7 +379,7 @@ body {
     display: inline-flex !important;
     align-items: center;
     justify-content: center;
-    min-height: 34px;
+    min-height: 28px;
     padding: 0 12px;
     border: 1px solid color-mix(in srgb, var(--input-border) 76%, transparent);
     border-radius: 999px;
@@ -4352,11 +4357,10 @@ li#actionLogLatest {
 
 #trackedResources {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     gap: 4px;
     flex-wrap: wrap;
-    margin-bottom: -10px;
     min-height: 24px;
     height: auto;
 }
