@@ -125,7 +125,7 @@ body {
 
 #commandDeck {
     display: grid;
-    gap: 6px;
+    gap: 4px;
     width: min(100%, 1360px);
 }
 
@@ -140,7 +140,7 @@ body {
 #runStatusDeck {
     display: grid;
     grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.9fr);
-    gap: 6px;
+    gap: 4px;
     align-items: stretch;
 }
 
@@ -158,13 +158,13 @@ body {
 }
 
 #runVitals {
-    padding: 6px 10px;
+    padding: 4px 8px;
 }
 
 .runVitalsLead {
     display: grid;
     gap: 0;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
 
 .runVitalsEyebrow {
@@ -177,6 +177,34 @@ body {
     letter-spacing: 0.08em;
     text-transform: uppercase;
     opacity: 0.72;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    cursor: pointer;
+    list-style: none;
+}
+
+#menuDeckLabel::-webkit-details-marker {
+    display: none;
+}
+
+#menuDeckLabel::after {
+    content: "+";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--button-background) 18%, transparent);
+    color: var(--button-background);
+    font-size: 1rem;
+    line-height: 1;
+}
+
+#menuDeck[open] > #menuDeckLabel::after {
+    content: "-";
 }
 
 .runVitalsHeadline {
@@ -248,7 +276,7 @@ body {
     flex-wrap: wrap;
     align-items: center;
     justify-content: flex-start;
-    gap: 6px;
+    gap: 4px;
     padding: 4px 8px;
     border-radius: 16px;
     border: 1px solid color-mix(in srgb, var(--input-border) 76%, transparent);
@@ -262,7 +290,7 @@ body {
 }
 
 #timeControlsMain .button {
-    min-height: 30px;
+    min-height: 24px;
     padding: 0 14px;
 }
 
@@ -346,12 +374,12 @@ body {
 
 #menuDeck {
     display: grid;
-    gap: 8px;
-    padding: 8px 14px 10px;
+    gap: 4px;
+    padding: 4px 8px 6px;
 }
 
 #resourceDeck {
-    padding: 6px 14px 8px;
+    padding: 4px 8px 6px;
 }
 
 #resourceDeck #trackedResources {
@@ -363,7 +391,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    min-height: 38px;
+    min-height: 28px;
     padding: 0 14px;
     border: 1px solid color-mix(in srgb, var(--input-border) 76%, transparent);
     border-radius: 12px;
@@ -374,7 +402,7 @@ body {
     display: inline-flex !important;
     align-items: center;
     justify-content: center;
-    min-height: 34px;
+    min-height: 28px;
     padding: 0 12px;
     border: 1px solid color-mix(in srgb, var(--input-border) 76%, transparent);
     border-radius: 999px;
