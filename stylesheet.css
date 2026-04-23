@@ -140,7 +140,7 @@ body {
 #runStatusDeck {
     display: grid;
     grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.9fr);
-    gap: 6px;
+    gap: 4px;
     align-items: stretch;
 }
 
@@ -158,13 +158,13 @@ body {
 }
 
 #runVitals {
-    padding: 6px 10px;
+    padding: 4px 8px;
 }
 
 .runVitalsLead {
     display: grid;
     gap: 0;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
 
 .runVitalsEyebrow {
@@ -181,7 +181,7 @@ body {
 
 .runVitalsHeadline {
     font-family: Georgia, "Times New Roman", serif;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 700;
     line-height: 1.15;
 }
@@ -197,15 +197,15 @@ body {
 .runVitalsGrid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
-    gap: 4px;
+    gap: 2px;
 }
 
 .runVitalCard {
     display: grid;
-    gap: 4px;
+    gap: 2px;
     min-height: auto;
     align-content: start;
-    padding: 4px 8px;
+    padding: 2px 6px;
     border: 1px solid color-mix(in srgb, var(--input-border) 74%, transparent);
     border-radius: 14px;
     background:
@@ -248,7 +248,7 @@ body {
     flex-wrap: wrap;
     align-items: center;
     justify-content: flex-start;
-    gap: 6px;
+    gap: 4px;
     padding: 4px 8px;
     border-radius: 16px;
     border: 1px solid color-mix(in srgb, var(--input-border) 76%, transparent);
@@ -262,8 +262,8 @@ body {
 }
 
 #timeControlsMain .button {
-    min-height: 30px;
-    padding: 0 14px;
+    min-height: 26px;
+    padding: 0 10px;
 }
 
 #timeControlsMain .button {
@@ -5041,7 +5041,7 @@ body.ui-density-large .chronicleStoryUnread {
 
         & #runStatusDeck {
             grid-template-columns: 1fr;
-            gap: 6px;
+            gap: 4px;
             min-width: 0;
         }
 
