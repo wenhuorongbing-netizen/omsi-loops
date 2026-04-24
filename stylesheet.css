@@ -158,13 +158,21 @@ body {
 }
 
 #runVitals {
-    padding: 6px 10px;
+    padding: 4px 8px;
 }
 
 .runVitalsLead {
-    display: grid;
-    gap: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
     margin-bottom: 4px;
+}
+
+.runVitalsLeadText {
+    display: grid;
+    gap: 2px;
 }
 
 .runVitalsEyebrow {
@@ -182,7 +190,7 @@ body {
 
 .runVitalsHeadline {
     font-family: Georgia, "Times New Roman", serif;
-    font-size: 1.2rem;
+    font-size: 1.05rem;
     font-weight: 700;
     line-height: 1.15;
 }
@@ -190,23 +198,38 @@ body {
 .runVitalsObjective {
     margin: 0;
     max-width: 62ch;
-    font-size: 0.94rem;
+    font-size: 0.85rem;
     line-height: 1.45;
     opacity: 0.9;
 }
 
+.runVitalsDetails {
+    margin-top: 4px;
+}
+
+.runVitalsSummary {
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: var(--text-muted);
+    user-select: none;
+    margin-bottom: 4px;
+}
+
 .runVitalsGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 4px;
 }
 
 .runVitalCard {
+    flex: 1 1 auto;
+    min-width: 100px;
     display: grid;
     gap: 4px;
     min-height: auto;
     align-content: start;
-    padding: 4px 8px;
+    padding: 2px 6px;
     border: 1px solid color-mix(in srgb, var(--input-border) 74%, transparent);
     border-radius: 14px;
     background:
@@ -214,6 +237,12 @@ body {
 }
 
 .runVitalCard-primary {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 8px;
     background:
         linear-gradient(135deg, color-mix(in srgb, var(--button-background) 16%, transparent), transparent 62%),
         linear-gradient(180deg, color-mix(in srgb, var(--body-background) 92%, transparent), color-mix(in srgb, var(--popup-background) 58%, transparent));
@@ -4806,18 +4835,6 @@ body.ui-density-large .chronicleStoryUnread {
             gap: 4px;
         }
 
-        & .runVitalsGrid {
-            display: flex;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            gap: 4px;
-            max-height: none;
-        }
-
-        & .runVitalsLead {
-            display: none;
-        }
-
         & #menu {
             justify-content: flex-start;
             overflow-x: auto;
@@ -5048,20 +5065,7 @@ body.ui-density-large .chronicleStoryUnread {
             min-width: 0;
         }
 
-& .runVitalsGrid {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            max-height: 120px;
-            overflow-y: auto;
-        }
-
-        & .runVitalsLead {
-            display: none;
-        }
-
         & .runVitalCard {
-            flex: 0 0 auto;
-            min-width: 90px;
-            min-height: 0;
             padding: 4px;
         }
 

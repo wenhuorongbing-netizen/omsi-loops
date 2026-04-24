@@ -66,7 +66,7 @@ class GameKeyboard {
 
 // Don't bind spacebar during button focus
 Mousetrap.prototype.stopCallback = (
-    (origStopCallback) => (e, element, combo) => (origStopCallback(e, element, combo) || (element.tagName === "BUTTON" && combo === "space"))
+    (origStopCallback) => (e, element, combo) => (origStopCallback(e, element, combo) || ((element.tagName === "BUTTON" || element.tagName === "SUMMARY") && combo === "space"))
 )(Mousetrap.prototype.stopCallback);
 
 GameKeyboard.spins = [];
