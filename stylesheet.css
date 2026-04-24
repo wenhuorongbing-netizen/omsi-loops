@@ -161,14 +161,54 @@ body {
     padding: 6px 10px;
 }
 
-.runVitalsLead {
-    display: grid;
-    gap: 0;
-    margin-bottom: 4px;
+.runVitalsDetails {
+    /* Base wrapper for the native disclosure */
 }
 
-.runVitalsEyebrow {
-    display: none;
+.runVitalsSummary {
+    cursor: pointer;
+    list-style: none; /* Hide default arrow in standard browsers */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 2px 0;
+    user-select: none;
+}
+
+.runVitalsSummary::-webkit-details-marker {
+    display: none; /* Hide arrow in Safari */
+}
+
+.runVitalsPrimary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 12px;
+}
+
+.runVitalsStatus {
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.runVitalTimer {
+    font-size: 1.1em;
+}
+
+.runVitalsAreaGroup {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.runVitalsArea {
+    font-weight: 600;
+}
+
+.runVitalsExpanded {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid color-mix(in srgb, var(--input-border) 40%, transparent);
 }
 
 #menuDeckLabel {
@@ -213,11 +253,6 @@ body {
         linear-gradient(180deg, color-mix(in srgb, var(--body-background) 90%, transparent), color-mix(in srgb, var(--popup-background) 54%, transparent));
 }
 
-.runVitalCard-primary {
-    background:
-        linear-gradient(135deg, color-mix(in srgb, var(--button-background) 16%, transparent), transparent 62%),
-        linear-gradient(180deg, color-mix(in srgb, var(--body-background) 92%, transparent), color-mix(in srgb, var(--popup-background) 58%, transparent));
-}
 
 .runVitalLabel {
     font-size: 0.65rem;
@@ -4814,10 +4849,6 @@ body.ui-density-large .chronicleStoryUnread {
             max-height: none;
         }
 
-        & .runVitalsLead {
-            display: none;
-        }
-
         & #menu {
             justify-content: flex-start;
             overflow-x: auto;
@@ -5052,10 +5083,6 @@ body.ui-density-large .chronicleStoryUnread {
             grid-template-columns: repeat(3, minmax(0, 1fr));
             max-height: 120px;
             overflow-y: auto;
-        }
-
-        & .runVitalsLead {
-            display: none;
         }
 
         & .runVitalCard {
