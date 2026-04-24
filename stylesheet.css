@@ -161,6 +161,50 @@ body {
     padding: 6px 10px;
 }
 
+.runVitalsDetails {
+    display: block;
+}
+
+.runVitalsSummary {
+    list-style: none;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.runVitalsSummary::after {
+    content: "▼";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8rem;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.runVitalsDetails[open] .runVitalsSummary::after {
+    content: "▲";
+}
+
+.runVitalsSummary::-webkit-details-marker {
+    display: none;
+}
+
+.runVitalsCompact {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+    gap: 4px;
+    padding-right: 20px;
+}
+
+.runVitalsExpanded {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid color-mix(in srgb, var(--input-border) 40%, transparent);
+}
+
 .runVitalsLead {
     display: grid;
     gap: 0;
@@ -188,7 +232,7 @@ body {
 }
 
 .runVitalsObjective {
-    margin: 0;
+    margin: 0 0 6px 0;
     max-width: 62ch;
     font-size: 0.94rem;
     line-height: 1.45;
@@ -4806,6 +4850,7 @@ body.ui-density-large .chronicleStoryUnread {
             gap: 4px;
         }
 
+        & .runVitalsCompact,
         & .runVitalsGrid {
             display: flex;
             flex-wrap: nowrap;
@@ -5048,8 +5093,9 @@ body.ui-density-large .chronicleStoryUnread {
             min-width: 0;
         }
 
-& .runVitalsGrid {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+        & .runVitalsCompact,
+        & .runVitalsGrid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             max-height: 120px;
             overflow-y: auto;
         }
