@@ -116,7 +116,7 @@ body {
 #timeInfo {
     display: flex;
     justify-content: center;
-    padding: 6px 18px 8px;
+    padding: 2px 18px 4px;
     background: linear-gradient(var(--body-background) 78%, var(--body-background-transparent) 100%);
     position: sticky;
     top: 0;
@@ -125,7 +125,7 @@ body {
 
 #commandDeck {
     display: grid;
-    gap: 6px;
+    gap: 4px;
     width: min(100%, 1360px);
 }
 
@@ -140,7 +140,7 @@ body {
 #runStatusDeck {
     display: grid;
     grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.9fr);
-    gap: 6px;
+    gap: 4px;
     align-items: stretch;
 }
 
@@ -4620,7 +4620,7 @@ body.ui-density-large .chronicleStoryUnread {
             "resources menu" auto
             / minmax(0, 1.45fr) minmax(320px, 0.92fr);
         align-items: start;
-        gap: 10px 12px;
+        gap: 6px 12px;
     }
 
     & body > br, & #timeInfo > br {
@@ -4854,12 +4854,12 @@ body.ui-density-large .chronicleStoryUnread {
                 "resources" auto
                 "menu" auto
                 / 100%;
-            gap: 4px;
+            gap: 2px;
         }
 
         & #runStatusDeck {
             grid-template-columns: 1fr;
-            gap: 4px;
+            gap: 2px;
         }
 
         & .runVitalsGrid {
@@ -5088,7 +5088,7 @@ body.ui-density-large .chronicleStoryUnread {
 
         & #timeInfo {
             grid-area: header;
-            padding: 6px 6px 8px;
+            padding: 2px 6px 4px;
             min-width: 0;
             box-sizing: border-box;
         }
@@ -5100,14 +5100,14 @@ body.ui-density-large .chronicleStoryUnread {
                 "resources" auto
                 "menu" auto
                 / 100%;
-            gap: 6px;
+            gap: 4px;
             min-width: 0;
             box-sizing: border-box;
         }
 
         & #runStatusDeck {
             grid-template-columns: 1fr;
-            gap: 6px;
+            gap: 4px;
             min-width: 0;
         }
 
