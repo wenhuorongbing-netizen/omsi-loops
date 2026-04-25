@@ -168,6 +168,7 @@ export async function runRuntimeSmoke({
     if (results.some(result =>
         !result.viewport?.isActionsVisible1280
         || !result.viewport?.isActionsVisible1024
+        || !result.viewport?.isActionsVisible390
     )) {
         throw new Error(`Smoke failed: primary action/town workspace is pushed below the first screen by the shell. See ${resultsPath}`);
     }
@@ -937,6 +938,7 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
             return {
                 isActionsVisible1280: true,
                 isActionsVisible1024: true,
+                isActionsVisible390: true,
             };
         });
 
@@ -953,6 +955,13 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
         viewportState.isActionsVisible1024 = await page.evaluate(() => {
             const el = document.getElementById("actionsColumn");
             return el ? el.getBoundingClientRect().top < 768 : false;
+        });
+
+        await page.setViewportSize({ width: 390, height: 844 });
+        await page.waitForTimeout(500);
+        viewportState.isActionsVisible390 = await page.evaluate(() => {
+            const el = document.getElementById("actionsColumn");
+            return el ? el.getBoundingClientRect().top < 844 : false;
         });
 
         const workerEvent = page.waitForEvent("worker", {timeout: 5000}).catch(() => null);
