@@ -999,6 +999,11 @@ class View {
     renderRunVitals() {
         const container = document.getElementById("runVitals");
         if (!(container instanceof HTMLElement)) return;
+        const detailsEl = document.getElementById("runVitalsDetails");
+        if (detailsEl instanceof HTMLDetailsElement) {
+            this.updateRunVitalsLive();
+            return;
+        }
         const stats = this.getTownBrowserStats();
         const progress = this.getPrimaryTownProgress();
         const remainingMana = Math.max(0, timeNeeded - timer);
@@ -1013,7 +1018,6 @@ class View {
         const progressText = progress
             ? `${progress.label} ${formatNumber(progress.level)}%`
             : (this.isChineseLanguage() ? "查看区域卡片获取进度" : "Open the area cards for live progress");
-        const detailsEl = document.getElementById("runVitalsDetails");
         const wasOpen = detailsEl instanceof HTMLDetailsElement && detailsEl.open;
         container.innerHTML = `
             <details id="runVitalsDetails" class="runVitalsDetails" ${wasOpen ? "open" : ""}>
@@ -1061,7 +1065,7 @@ class View {
         const summaryEl = document.querySelector("#runVitalsDetails summary");
         if (summaryEl) {
             summaryEl.addEventListener("keydown", (e) => {
-                if (e.code === "Space") {
+                if (e.code === "Space" || e.code === "Enter") {
                     e.stopPropagation();
                 }
             });
@@ -1070,7 +1074,8 @@ class View {
 
     updateRunVitalsLive() {
         const timerElement = document.getElementById("timer");
-        if (!(timerElement instanceof HTMLElement)) {
+        const detailsEl = document.getElementById("runVitalsDetails");
+        if (!(timerElement instanceof HTMLElement) || !(detailsEl instanceof HTMLDetailsElement)) {
             this.renderRunVitals();
             return;
         }
