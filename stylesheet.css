@@ -2051,7 +2051,7 @@ input[type="checkbox"][disabled] + label {
     --default-background: color-mix(in srgb, var(--zone-color) 50%, var(--next-actions-background));
     background: var(--default-background);
     border-bottom: 1px solid var(--zone-color);
-    margin-bottom: 1ex;
+    margin-bottom: 0.5ex;
     position: relative;
 }
 
@@ -2066,8 +2066,8 @@ input[type="checkbox"][disabled] + label {
     background: color-mix(in srgb, var(--zone-color) 25%, var(--body-background));
     border-top: 1px solid var(--zone-color);
     border-bottom: 1px solid var(--zone-color);
-    margin: 1.1ex 0 0.7ex;
-    padding: 8px 10px 9px;
+    margin: 0.5ex 0 0.5ex;
+    padding: 4px 10px;
     width: 100%;
     box-sizing: border-box;
     text-align: left;
