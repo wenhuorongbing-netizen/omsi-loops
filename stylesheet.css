@@ -2618,14 +2618,14 @@ div.townInfoContainer > .numeric {
 .actionOrTravelContainer {
     cursor:pointer;
     position: relative;
-    min-height: 80px;
+    min-height: 54px;
     height: auto;
     display: grid;
-    grid-template-rows: minmax(2.2em, auto) minmax(30px, auto) minmax(19px, auto);
+    grid-template-rows: minmax(2em, auto) minmax(24px, auto) minmax(16px, auto);
     justify-items: center;
     align-content: start;
-    gap: 4px;
-    padding: 9px 8px 6px;
+    gap: 2px;
+    padding: 4px 6px 4px;
     box-sizing: border-box;
     /* 0.928571 ≅ 13/14, 14px * 13/14 = 13px */
     font-size: 0.928571rem;
@@ -2671,7 +2671,22 @@ div.townInfoContainer > .numeric {
     background: linear-gradient(180deg, color-mix(in srgb, #6c7280 10%, transparent), transparent 34%);
 }
 
-.actionCardTitle,
+.actionCardTitle {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 1.8em;
+    margin: 0;
+    padding: 0 10px 0 18px;
+    box-sizing: border-box;
+    line-height: 1.1;
+    text-align: left;
+    text-wrap: balance;
+    font-weight: 700;
+    font-size: 0.82rem;
+}
+
 .storyCardTitle {
     display: flex;
     align-items: center;
@@ -2688,7 +2703,17 @@ div.townInfoContainer > .numeric {
     font-size: 0.82rem;
 }
 
-.actionCardArt,
+.actionCardArt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24px;
+    width: 100%;
+    padding: 1px 0;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--body-background) 84%, transparent);
+}
+
 .storyCardArt {
     display: flex;
     align-items: center;
@@ -2700,18 +2725,34 @@ div.townInfoContainer > .numeric {
     background: color-mix(in srgb, var(--body-background) 84%, transparent);
 }
 
-.actionCardArt .superLargeIcon,
+.actionCardArt .superLargeIcon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
 .storyCardArt .superLargeIcon {
     width: 28px;
     height: 28px;
     object-fit: contain;
 }
 
-.actionCardFooter,
-.storyCardFooter {
+.actionCardFooter {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
+    width: 100%;
+    min-height: 16px;
+    gap: 4px;
+    padding: 2px 2px 0;
+    box-sizing: border-box;
+    border-top: 1px solid color-mix(in srgb, var(--input-border) 54%, transparent);
+}
+
+.storyCardFooter {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
     width: 100%;
     min-height: 19px;
     gap: 4px;
@@ -2720,15 +2761,11 @@ div.townInfoContainer > .numeric {
     border-top: 1px solid color-mix(in srgb, var(--input-border) 54%, transparent);
 }
 
-.storyCardFooter {
-    justify-content: flex-start;
-}
-
 .actionCategoryBadge {
     position: absolute;
     z-index: 1;
     left: 8px;
-    top: 8px;
+    top: 4px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
