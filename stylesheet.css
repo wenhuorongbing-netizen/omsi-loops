@@ -158,7 +158,33 @@ body {
 }
 
 #runVitals {
+    padding: 0;
+}
+
+.runVitalsDetails {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.runVitalsSummary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+    gap: 4px;
     padding: 6px 10px;
+    cursor: pointer;
+    list-style: none;
+    align-items: stretch;
+}
+.runVitalsSummary::-webkit-details-marker {
+    display: none;
+}
+
+.runVitalsExpanded {
+    padding: 0 10px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .runVitalsLead {
@@ -4814,6 +4840,13 @@ body.ui-density-large .chronicleStoryUnread {
             max-height: none;
         }
 
+        & .runVitalsSummary {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 4px;
+        }
+
         & .runVitalsLead {
             display: none;
         }
@@ -5051,6 +5084,11 @@ body.ui-density-large .chronicleStoryUnread {
 & .runVitalsGrid {
             grid-template-columns: repeat(3, minmax(0, 1fr));
             max-height: 120px;
+            overflow-y: auto;
+        }
+
+        & .runVitalsSummary {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             overflow-y: auto;
         }
 
