@@ -2483,9 +2483,9 @@ input[type="checkbox"][disabled] + label {
     display:grid;
     text-align:left;
     grid-template-columns: [full-row-start] repeat(2, max-content) [progress-value-start] repeat(2, max-content) [progress-value-end] repeat(2, max-content) [progress-bars-start] repeat(2, max-content) 1fr [progress-bars-end full-row-end];
-    grid-auto-rows: minmax(32px,1fr);
+    grid-auto-rows: minmax(24px,1fr);
     align-items: center;
-    gap: 4px;
+    gap: 2px;
 }
 
 .townContainer {
@@ -4681,6 +4681,7 @@ body.ui-density-large .chronicleStoryUnread {
         justify-content: center;
         align-items: center;
         flex-shrink: 0;
+        margin-bottom: 0;
     }
 
     & #townActionTitle {
@@ -4688,6 +4689,7 @@ body.ui-density-large .chronicleStoryUnread {
         justify-content: stretch;
         align-items: center;
         flex-shrink: 0;
+        margin: 0;
     }
 
     & #townViewLeft, #townViewRight, #actionsViewLeft, & #actionsViewRight {
@@ -4945,6 +4947,7 @@ body.ui-density-large .chronicleStoryUnread {
         }
         
         & #townWindow {
+            margin-bottom: 0;
         }
     
         & #townWindow > div.showthat {
@@ -5349,6 +5352,7 @@ body.ui-density-large .chronicleStoryUnread {
             justify-content: center;
             align-items: center;
             flex-shrink: 0;
+            margin-bottom: 0;
         }
     
         & #townWindow > div.showthat {
