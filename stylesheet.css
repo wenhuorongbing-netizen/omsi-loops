@@ -197,15 +197,6 @@ body {
     display: none;
 }
 
-#menuDeckLabel {
-    display: none;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    opacity: 0.72;
-}
-
 .runVitalsHeadline {
     font-family: Georgia, "Times New Roman", serif;
     font-size: 1.2rem;
@@ -5180,10 +5171,6 @@ body.ui-density-large .chronicleStoryUnread {
 
         & #trackedResources > div {
             flex: 0 0 auto;
-        }
-
-        & #menuDeckLabel {
-            display: none;
         }
 
         & #menuDeck {
