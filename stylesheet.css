@@ -2051,7 +2051,7 @@ input[type="checkbox"][disabled] + label {
     --default-background: color-mix(in srgb, var(--zone-color) 50%, var(--next-actions-background));
     background: var(--default-background);
     border-bottom: 1px solid var(--zone-color);
-    margin-bottom: 1ex;
+    margin-bottom: 0.5ex;
     position: relative;
 }
 
@@ -2066,8 +2066,8 @@ input[type="checkbox"][disabled] + label {
     background: color-mix(in srgb, var(--zone-color) 25%, var(--body-background));
     border-top: 1px solid var(--zone-color);
     border-bottom: 1px solid var(--zone-color);
-    margin: 1.1ex 0 0.7ex;
-    padding: 8px 10px 9px;
+    margin: 0.5ex 0 0.5ex;
+    padding: 4px 10px;
     width: 100%;
     box-sizing: border-box;
     text-align: left;
@@ -2483,9 +2483,9 @@ input[type="checkbox"][disabled] + label {
     display:grid;
     text-align:left;
     grid-template-columns: [full-row-start] repeat(2, max-content) [progress-value-start] repeat(2, max-content) [progress-value-end] repeat(2, max-content) [progress-bars-start] repeat(2, max-content) 1fr [progress-bars-end full-row-end];
-    grid-auto-rows: minmax(32px,1fr);
+    grid-auto-rows: minmax(24px,1fr);
     align-items: center;
-    gap: 4px;
+    gap: 2px;
 }
 
 .townContainer {
@@ -4681,6 +4681,7 @@ body.ui-density-large .chronicleStoryUnread {
         justify-content: center;
         align-items: center;
         flex-shrink: 0;
+        margin-bottom: 0;
     }
 
     & #townActionTitle {
@@ -4688,6 +4689,7 @@ body.ui-density-large .chronicleStoryUnread {
         justify-content: stretch;
         align-items: center;
         flex-shrink: 0;
+        margin: 0;
     }
 
     & #townViewLeft, #townViewRight, #actionsViewLeft, & #actionsViewRight {
@@ -4945,6 +4947,7 @@ body.ui-density-large .chronicleStoryUnread {
         }
         
         & #townWindow {
+            margin-bottom: 0;
         }
     
         & #townWindow > div.showthat {
@@ -5349,6 +5352,7 @@ body.ui-density-large .chronicleStoryUnread {
             justify-content: center;
             align-items: center;
             flex-shrink: 0;
+            margin-bottom: 0;
         }
     
         & #townWindow > div.showthat {
