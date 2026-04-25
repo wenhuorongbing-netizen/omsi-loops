@@ -1013,39 +1013,59 @@ class View {
         const progressText = progress
             ? `${progress.label} ${formatNumber(progress.level)}%`
             : (this.isChineseLanguage() ? "查看区域卡片获取进度" : "Open the area cards for live progress");
+        const detailsEl = document.getElementById("runVitalsDetails");
+        const wasOpen = detailsEl instanceof HTMLDetailsElement && detailsEl.open;
         container.innerHTML = `
-            <div class="runVitalsLead">
-                <div id="runStatusHeadline" class="runVitalsHeadline">${statusLabel}</div>
-                <p id="runObjectiveText" class="runVitalsObjective">${objectiveText}</p>
-            </div>
-            <div class="runVitalsGrid">
-                <div class="runVitalCard runVitalCard-primary">
-                    <span class="runVitalLabel">${this.isChineseLanguage() ? "剩余循环" : "Loop Remaining"}</span>
-                    <strong id="timer" class="runVitalValue">${intToString(remainingMana, options.fractionalMana ? 2 : 1, true)} | ${remainingTime}</strong>
-                    <span id="runLoopMeta" class="runVitalMeta">${this.isChineseLanguage() ? "第" : "Loop "}${currentLoopLabel}${this.isChineseLanguage() ? "轮" : ""}</span>
+            <details id="runVitalsDetails" class="runVitalsDetails" ${wasOpen ? "open" : ""}>
+                <summary class="runVitalsSummary">
+                    <div class="runVitalCard runVitalCard-primary">
+                        <span class="runVitalLabel">${this.isChineseLanguage() ? "剩余循环" : "Loop Remaining"}</span>
+                        <strong id="timer" class="runVitalValue">${intToString(remainingMana, options.fractionalMana ? 2 : 1, true)} | ${remainingTime}</strong>
+                        <span id="runLoopMeta" class="runVitalMeta">${this.isChineseLanguage() ? "第" : "Loop "}${currentLoopLabel}${this.isChineseLanguage() ? "轮" : ""}</span>
+                    </div>
+                    <div class="runVitalCard">
+                        <span class="runVitalLabel">${this.isChineseLanguage() ? "当前区域" : "Current Area"}</span>
+                        <strong id="runAreaName" class="runVitalValue">${getTownName(townShowing)}</strong>
+                        <span id="runAreaProgress" class="runVitalMeta">${progressText}</span>
+                    </div>
+                    <div class="runVitalCard">
+                        <span class="runVitalLabel">${this.isChineseLanguage() ? "状态" : "Status"}</span>
+                        <strong id="runStatusHeadline" class="runVitalValue">${statusLabel}</strong>
+                        <span class="runVitalMeta">${this.isChineseLanguage() ? "查看详情" : "See details"}</span>
+                    </div>
+                </summary>
+                <div class="runVitalsExpanded">
+                    <div class="runVitalsLead">
+                        <p id="runObjectiveText" class="runVitalsObjective">${objectiveText}</p>
+                    </div>
+                    <div class="runVitalsGrid">
+                        <div class="runVitalCard">
+                            <span class="runVitalLabel">${this.isChineseLanguage() ? "金币" : "Gold"}</span>
+                            <strong id="runGoldValue" class="runVitalValue">${formatNumber(resources.gold ?? 0)}</strong>
+                            <span class="runVitalMeta">${this.isChineseLanguage() ? "即时资源" : "Live resource"}</span>
+                        </div>
+                        <div class="runVitalCard">
+                            <span class="runVitalLabel">${this.isChineseLanguage() ? "队列" : "Queue"}</span>
+                            <strong id="runQueueRowsValue" class="runVitalValue">${formatNumber(queueRows)}</strong>
+                            <span id="runQueueSummary" class="runVitalMeta">${this.isChineseLanguage() ? `${formatNumber(queueLoops)} 次可执行循环` : `${formatNumber(queueLoops)} executable loops queued`}</span>
+                        </div>
+                        <div class="runVitalCard">
+                            <span class="runVitalLabel">${this.isChineseLanguage() ? "新线索" : "Fresh Leads"}</span>
+                            <strong id="runLeadsValue" class="runVitalValue">${formatNumber(stats.unreadCount)}</strong>
+                            <span id="runLeadsSummary" class="runVitalMeta">${this.isChineseLanguage() ? `${formatNumber(stats.visibleCount)} 个已见行动` : `${formatNumber(stats.visibleCount)} visible actions`}</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="runVitalCard">
-                    <span class="runVitalLabel">${this.isChineseLanguage() ? "金币" : "Gold"}</span>
-                    <strong id="runGoldValue" class="runVitalValue">${formatNumber(resources.gold ?? 0)}</strong>
-                    <span class="runVitalMeta">${this.isChineseLanguage() ? "即时资源" : "Live resource"}</span>
-                </div>
-                <div class="runVitalCard">
-                    <span class="runVitalLabel">${this.isChineseLanguage() ? "当前区域" : "Current Area"}</span>
-                    <strong id="runAreaName" class="runVitalValue">${getTownName(townShowing)}</strong>
-                    <span id="runAreaProgress" class="runVitalMeta">${progressText}</span>
-                </div>
-                <div class="runVitalCard">
-                    <span class="runVitalLabel">${this.isChineseLanguage() ? "队列" : "Queue"}</span>
-                    <strong id="runQueueRowsValue" class="runVitalValue">${formatNumber(queueRows)}</strong>
-                    <span id="runQueueSummary" class="runVitalMeta">${this.isChineseLanguage() ? `${formatNumber(queueLoops)} 次可执行循环` : `${formatNumber(queueLoops)} executable loops queued`}</span>
-                </div>
-                <div class="runVitalCard">
-                    <span class="runVitalLabel">${this.isChineseLanguage() ? "新线索" : "Fresh Leads"}</span>
-                    <strong id="runLeadsValue" class="runVitalValue">${formatNumber(stats.unreadCount)}</strong>
-                    <span id="runLeadsSummary" class="runVitalMeta">${this.isChineseLanguage() ? `${formatNumber(stats.visibleCount)} 个已见行动` : `${formatNumber(stats.visibleCount)} visible actions`}</span>
-                </div>
-            </div>
+            </details>
         `;
+        const summaryEl = document.querySelector("#runVitalsDetails summary");
+        if (summaryEl) {
+            summaryEl.addEventListener("keydown", (e) => {
+                if (e.code === "Space") {
+                    e.stopPropagation();
+                }
+            });
+        }
     }
 
     updateRunVitalsLive() {

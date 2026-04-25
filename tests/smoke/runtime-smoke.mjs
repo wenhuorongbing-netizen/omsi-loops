@@ -166,6 +166,12 @@ export async function runRuntimeSmoke({
         throw new Error(`Smoke failed to verify the accessibility shell contract. See ${resultsPath}`);
     }
     if (results.some(result =>
+        !result.viewport?.isActionsVisible1280
+        || !result.viewport?.isActionsVisible1024
+    )) {
+        throw new Error(`Smoke failed: primary action/town workspace is pushed below the first screen by the shell. See ${resultsPath}`);
+    }
+    if (results.some(result =>
         !result.saveBridge?.saveUsesAppContext
         || !result.saveBridge?.loadUsesAppContext
         || !result.saveBridge?.loadMatchesExpected
@@ -927,6 +933,28 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
             }
         });
 
+        const viewportState = await page.evaluate(() => {
+            return {
+                isActionsVisible1280: true,
+                isActionsVisible1024: true,
+            };
+        });
+
+        // We run checks manually on viewport resizing, simulating the checks.
+        await page.setViewportSize({ width: 1280, height: 720 });
+        await page.waitForTimeout(500);
+        viewportState.isActionsVisible1280 = await page.evaluate(() => {
+            const el = document.getElementById("actionsColumn");
+            return el ? el.getBoundingClientRect().top < 720 : false;
+        });
+
+        await page.setViewportSize({ width: 1024, height: 768 });
+        await page.waitForTimeout(500);
+        viewportState.isActionsVisible1024 = await page.evaluate(() => {
+            const el = document.getElementById("actionsColumn");
+            return el ? el.getBoundingClientRect().top < 768 : false;
+        });
+
         const workerEvent = page.waitForEvent("worker", {timeout: 5000}).catch(() => null);
         const predictorStateBefore = await page.locator("#plannerPredictorState").textContent();
         await page.evaluate(() => {
@@ -955,6 +983,7 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
             bootstrap: bootstrapState,
             compatBridge: compatBridgeState,
             accessibility: accessibilityState,
+            viewport: viewportState,
             saveBridge: saveBridgeState,
             queue: queueState,
             predictor: {
