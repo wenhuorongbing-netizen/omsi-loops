@@ -258,7 +258,7 @@ body {
 
 #timeControls {
     display: grid;
-    gap: 4px;
+    gap: 2px;
 }
 
 #timeControlsMain {
@@ -266,26 +266,19 @@ body {
     flex-wrap: wrap;
     align-items: center;
     justify-content: flex-start;
-    gap: 6px;
-    padding: 4px 8px;
-    border-radius: 16px;
+    gap: 4px;
+    padding: 2px 4px;
+    border-radius: 12px;
     border: 1px solid color-mix(in srgb, var(--input-border) 76%, transparent);
     background:
         linear-gradient(180deg, color-mix(in srgb, var(--popup-background) 82%, transparent), color-mix(in srgb, var(--body-background) 82%, transparent));
     box-shadow: inset 0 0 0 1px color-mix(in srgb, white 14%, transparent);
-}
-
-#timeControlsMain {
     min-height: 0;
-    padding: 2px 4px;
 }
 
 #timeControlsMain .button {
-    min-height: 26px;
-    padding: 0 14px;
-}
-
-#timeControlsMain .button {
+    min-height: 24px;
+    padding: 0 10px;
     font-weight: 700;
 }
 
@@ -307,7 +300,7 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    padding: 4px 8px;
+    padding: 2px 6px;
     cursor: pointer;
     list-style: none;
     font-size: 0.82rem;
@@ -323,12 +316,12 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
     border-radius: 999px;
     background: color-mix(in srgb, var(--button-background) 18%, transparent);
     color: var(--button-background);
-    font-size: 1rem;
+    font-size: 0.85rem;
     line-height: 1;
 }
 
@@ -5107,7 +5100,7 @@ body.ui-density-large .chronicleStoryUnread {
 
         & #runStatusDeck {
             grid-template-columns: 1fr;
-            gap: 4px;
+            gap: 2px;
             min-width: 0;
         }
 
@@ -5201,7 +5194,7 @@ body.ui-density-large .chronicleStoryUnread {
         & #timeControlsMain,
         & #timeControlsOptionsCard {
             border-radius: 14px;
-            padding: 4px 6px;
+            padding: 2px 4px;
             min-width: 0;
             box-sizing: border-box;
         }
