@@ -571,8 +571,14 @@ input, select, textarea {
 }
 
 /* These are only used in mobile view  */
-main, #actionLogContainer {
+main {
     display: contents;
+}
+#actionLogContainer {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
 }
 #navbar {
     display: none;
@@ -1547,9 +1553,15 @@ input[type="checkbox"][disabled] + label {
     line-height: 1.45;
 }
 
-#chronicleStoriesContent,
-#chronicleLogBody {
+#chronicleStoriesContent {
     display: block;
+}
+
+#chronicleLogBody {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
 }
 
 .chronicle-log-hidden {
@@ -5589,15 +5601,12 @@ select.bold:focus {
     }
 
     .responsive body.ui-preset-classic #shortTownColumn {
-        display: none;
+        display: flex;
+        flex-direction: column;
     }
 
     .responsive body.ui-preset-classic #statsColumn {
         grid-area: stats;
-    }
-
-    .responsive body.ui-preset-classic #actionLogContainer {
-        display: none;
     }
 }
 
