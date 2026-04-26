@@ -2618,14 +2618,14 @@ div.townInfoContainer > .numeric {
 .actionOrTravelContainer {
     cursor:pointer;
     position: relative;
-    min-height: 80px;
+    min-height: 60px;
     height: auto;
     display: grid;
-    grid-template-rows: minmax(2.2em, auto) minmax(30px, auto) minmax(19px, auto);
+    grid-template-rows: minmax(1.8em, auto) minmax(26px, auto) minmax(17px, auto);
     justify-items: center;
     align-content: start;
-    gap: 4px;
-    padding: 9px 8px 6px;
+    gap: 2px;
+    padding: 6px 6px 4px;
     box-sizing: border-box;
     /* 0.928571 ≅ 13/14, 14px * 13/14 = 13px */
     font-size: 0.928571rem;
@@ -2677,9 +2677,9 @@ div.townInfoContainer > .numeric {
     align-items: center;
     justify-content: flex-start;
     width: 100%;
-    min-height: 2.2em;
+    min-height: 1.8em;
     margin: 0;
-    padding: 0 10px 0 18px;
+    padding: 0 8px 0 14px;
     box-sizing: border-box;
     line-height: 1.1;
     text-align: left;
@@ -2693,17 +2693,17 @@ div.townInfoContainer > .numeric {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 30px;
+    min-height: 26px;
     width: 100%;
-    padding: 1px 0;
+    padding: 0;
     border-radius: 8px;
     background: color-mix(in srgb, var(--body-background) 84%, transparent);
 }
 
 .actionCardArt .superLargeIcon,
 .storyCardArt .superLargeIcon {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     object-fit: contain;
 }
 
@@ -2713,9 +2713,9 @@ div.townInfoContainer > .numeric {
     align-items: flex-end;
     justify-content: space-between;
     width: 100%;
-    min-height: 19px;
+    min-height: 17px;
     gap: 4px;
-    padding: 3px 2px 0;
+    padding: 2px 2px 0;
     box-sizing: border-box;
     border-top: 1px solid color-mix(in srgb, var(--input-border) 54%, transparent);
 }
