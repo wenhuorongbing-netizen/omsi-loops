@@ -2608,7 +2608,6 @@ div.townInfoContainer > .numeric {
     align-content: flex-start;
     gap: 8px 6px;
     text-align: center;
-    min-height: 470px;
 }
 
 .actionDiv, .travelDiv {
@@ -4792,6 +4791,14 @@ body.ui-density-large .chronicleStoryUnread {
 
     & .nextActionButtons {
         margin-right: 10px;
+        grid-template-columns: repeat(3, 24px);
+        padding: 0 4px 0 6px;
+        gap: 4px;
+    }
+
+    & .nextActionButtons > button {
+        width: 24px;
+        height: 24px;
     }
 
 
@@ -5024,6 +5031,14 @@ body.ui-density-large .chronicleStoryUnread {
     
         & .nextActionButtons {
             margin-right: 10px;
+            grid-template-columns: repeat(3, 24px);
+            padding: 0 4px 0 6px;
+            gap: 4px;
+        }
+
+        & .nextActionButtons > button {
+            width: 24px;
+            height: 24px;
         }
     
     
@@ -5428,6 +5443,14 @@ body.ui-density-large .chronicleStoryUnread {
     
         & .nextActionButtons {
             margin-right: 10px;
+            grid-template-columns: repeat(3, 24px);
+            padding: 0 4px 0 6px;
+            gap: 4px;
+        }
+
+        & .nextActionButtons > button {
+            width: 24px;
+            height: 24px;
         }
     
     
