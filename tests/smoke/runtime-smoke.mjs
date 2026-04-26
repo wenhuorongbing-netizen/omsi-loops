@@ -169,8 +169,12 @@ export async function runRuntimeSmoke({
         !result.viewport?.isActionsVisible1280
         || !result.viewport?.isActionsVisible1024
         || !result.viewport?.isActionsVisible390
+        || !result.viewport?.classic1280?.isActionsVisible
+        || result.viewport?.classic1280?.hasOverflow
+        || !result.viewport?.classic1024?.isActionsVisible
+        || result.viewport?.classic1024?.hasOverflow
     )) {
-        throw new Error(`Smoke failed: primary action/town workspace is pushed below the first screen by the shell. See ${resultsPath}`);
+        throw new Error(`Smoke failed: primary action/town workspace is pushed below the first screen by the shell or horizontal overflow detected. See ${resultsPath}`);
     }
     if (results.some(result =>
         !result.saveBridge?.saveUsesAppContext
@@ -939,6 +943,8 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
                 isActionsVisible1280: true,
                 isActionsVisible1024: true,
                 isActionsVisible390: true,
+                classic1280: null,
+                classic1024: null,
             };
         });
 
@@ -962,6 +968,64 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
         viewportState.isActionsVisible390 = await page.evaluate(() => {
             const el = document.getElementById("actionsColumn");
             return el ? el.getBoundingClientRect().top < 844 : false;
+        });
+
+        // Classic preset metrics
+        await page.evaluate(() => {
+            const presetBtn = document.getElementById("uiPresetClassic");
+            if (presetBtn) presetBtn.click();
+        });
+
+        await page.setViewportSize({ width: 1280, height: 720 });
+        await page.waitForTimeout(500);
+        viewportState.classic1280 = await page.evaluate(() => {
+            const actions = document.getElementById("actionsColumn");
+            const town = document.getElementById("townColumn");
+            const stats = document.getElementById("statsColumn");
+
+            const isVisible = actions ? actions.getBoundingClientRect().top < 720 : false;
+            const overflow = document.documentElement.scrollWidth > 1280 || document.body.scrollWidth > 1280;
+
+            return {
+                viewport: { width: 1280, height: 720 },
+                bodyClass: document.body.className,
+                rootClass: document.documentElement.className,
+                scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+                actionsColumn: actions ? actions.getBoundingClientRect() : null,
+                townColumn: town ? town.getBoundingClientRect() : null,
+                statsColumn: stats ? stats.getBoundingClientRect() : null,
+                isActionsVisible: isVisible,
+                hasOverflow: overflow,
+            };
+        });
+
+        await page.setViewportSize({ width: 1024, height: 768 });
+        await page.waitForTimeout(500);
+        viewportState.classic1024 = await page.evaluate(() => {
+            const actions = document.getElementById("actionsColumn");
+            const town = document.getElementById("townColumn");
+            const stats = document.getElementById("statsColumn");
+
+            const isVisible = actions ? actions.getBoundingClientRect().top < 768 : false;
+            const overflow = document.documentElement.scrollWidth > 1024 || document.body.scrollWidth > 1024;
+
+            return {
+                viewport: { width: 1024, height: 768 },
+                bodyClass: document.body.className,
+                rootClass: document.documentElement.className,
+                scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+                actionsColumn: actions ? actions.getBoundingClientRect() : null,
+                townColumn: town ? town.getBoundingClientRect() : null,
+                statsColumn: stats ? stats.getBoundingClientRect() : null,
+                isActionsVisible: isVisible,
+                hasOverflow: overflow,
+            };
+        });
+
+        // Revert preset
+        await page.evaluate(() => {
+            const presetBtn = document.getElementById("uiPresetCompact");
+            if (presetBtn) presetBtn.click();
         });
 
         const workerEvent = page.waitForEvent("worker", {timeout: 5000}).catch(() => null);

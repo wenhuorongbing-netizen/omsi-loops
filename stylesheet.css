@@ -5551,3 +5551,57 @@ select.bold {
 select.bold:focus {
     border-color: var(--town-select-focus-border);
 }
+
+@media (min-width: 811px) and (max-width: 1300px) {
+    :root.responsive:has(body.ui-preset-classic) {
+        height: 100%;
+        overflow: clip;
+        contain: strict;
+    }
+
+    .responsive body.ui-preset-classic {
+        min-width: 0 !important;
+        overflow: hidden !important;
+        height: 100vh;
+        grid:
+            "header header header" max-content
+            "actions town stats" minmax(0, 1fr)
+            / minmax(280px, 1.08fr) minmax(400px, 1.58fr) minmax(280px, 1.16fr) !important;
+    }
+
+    .responsive body.ui-preset-classic main {
+        display: contents;
+    }
+
+    .responsive body.ui-preset-classic #timeInfo {
+        grid-area: header;
+        display: flex;
+    }
+
+    .responsive body.ui-preset-classic #actionsColumn {
+        grid-area: actions;
+        margin: 0;
+    }
+
+    .responsive body.ui-preset-classic #townColumn {
+        display: flex;
+        grid-area: town;
+    }
+
+    .responsive body.ui-preset-classic #shortTownColumn {
+        display: none;
+    }
+
+    .responsive body.ui-preset-classic #statsColumn {
+        grid-area: stats;
+    }
+
+    .responsive body.ui-preset-classic #actionLogContainer {
+        display: none;
+    }
+}
+
+.responsive body.ui-preset-classic #timeInfo {
+    box-sizing: border-box;
+    width: 100%;
+}
