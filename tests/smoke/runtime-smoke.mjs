@@ -169,8 +169,12 @@ export async function runRuntimeSmoke({
         !result.viewport?.isActionsVisible1280
         || !result.viewport?.isActionsVisible1024
         || !result.viewport?.isActionsVisible390
+        || !result.viewport?.isActionsVisible1280Classic
+        || result.viewport?.hasOverflow1280Classic
+        || !result.viewport?.isActionsVisible1024Classic
+        || result.viewport?.hasOverflow1024Classic
     )) {
-        throw new Error(`Smoke failed: primary action/town workspace is pushed below the first screen by the shell. See ${resultsPath}`);
+        throw new Error(`Smoke failed: primary action/town workspace is pushed below the first screen by the shell or horizontal overflow detected. See ${resultsPath}`);
     }
     if (results.some(result =>
         !result.saveBridge?.saveUsesAppContext
