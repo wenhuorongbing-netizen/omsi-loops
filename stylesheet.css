@@ -2618,14 +2618,14 @@ div.townInfoContainer > .numeric {
 .actionOrTravelContainer {
     cursor:pointer;
     position: relative;
-    min-height: 60px;
+    min-height: 48px;
     height: auto;
     display: grid;
-    grid-template-rows: minmax(1.8em, auto) minmax(26px, auto) minmax(17px, auto);
+    grid-template-rows: minmax(1.4em, auto) minmax(24px, auto) minmax(16px, auto);
     justify-items: center;
     align-content: start;
     gap: 2px;
-    padding: 6px 6px 4px;
+    padding: 4px 6px 2px;
     box-sizing: border-box;
     /* 0.928571 ≅ 13/14, 14px * 13/14 = 13px */
     font-size: 0.928571rem;
@@ -2677,7 +2677,7 @@ div.townInfoContainer > .numeric {
     align-items: center;
     justify-content: flex-start;
     width: 100%;
-    min-height: 1.8em;
+    min-height: 1.4em;
     margin: 0;
     padding: 0 8px 0 14px;
     box-sizing: border-box;
@@ -2693,7 +2693,7 @@ div.townInfoContainer > .numeric {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 26px;
+    min-height: 24px;
     width: 100%;
     padding: 0;
     border-radius: 8px;
@@ -2713,7 +2713,7 @@ div.townInfoContainer > .numeric {
     align-items: flex-end;
     justify-content: space-between;
     width: 100%;
-    min-height: 17px;
+    min-height: 16px;
     gap: 4px;
     padding: 2px 2px 0;
     box-sizing: border-box;
@@ -3780,8 +3780,8 @@ li#actionLogLatest {
     grid-template-columns: minmax(0, 1fr) 58px 64px;
     gap: 10px;
     width: auto;
-    min-height: 30px;
-    padding: 4px 4px 4px 2px;
+    min-height: 24px;
+    padding: 2px 4px 2px 2px;
     padding-right: 4px;
     border: 1px solid transparent;
     border-radius: 8px;
@@ -4023,10 +4023,10 @@ li#actionLogLatest {
     margin-left: auto;
     order: 1;
     display: grid;
-    grid-template-columns: repeat(3, 18px);
+    grid-template-columns: repeat(3, 16px);
     gap: 2px;
     justify-content: end;
-    padding: 2px 2px 2px 6px;
+    padding: 0px 2px 0px 6px;
     border-left: 1px solid color-mix(in srgb, var(--input-border) 72%, transparent);
     border-radius: 6px;
     background: color-mix(in srgb, var(--popup-background) 60%, transparent);
@@ -4039,8 +4039,8 @@ li#actionLogLatest {
 }
 
 .nextActionButtons > button {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
