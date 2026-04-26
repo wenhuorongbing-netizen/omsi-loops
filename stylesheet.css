@@ -2618,14 +2618,14 @@ div.townInfoContainer > .numeric {
 .actionOrTravelContainer {
     cursor:pointer;
     position: relative;
-    min-height: 60px;
+    min-height: 44px;
     height: auto;
     display: grid;
-    grid-template-rows: minmax(1.8em, auto) minmax(26px, auto) minmax(17px, auto);
+    grid-template-rows: minmax(1.4em, auto) minmax(20px, auto) minmax(14px, auto);
     justify-items: center;
     align-content: start;
-    gap: 2px;
-    padding: 6px 6px 4px;
+    gap: 0px;
+    padding: 4px 4px 2px;
     box-sizing: border-box;
     /* 0.928571 ≅ 13/14, 14px * 13/14 = 13px */
     font-size: 0.928571rem;
@@ -2677,7 +2677,7 @@ div.townInfoContainer > .numeric {
     align-items: center;
     justify-content: flex-start;
     width: 100%;
-    min-height: 1.8em;
+    min-height: 1.4em;
     margin: 0;
     padding: 0 8px 0 14px;
     box-sizing: border-box;
@@ -2693,7 +2693,7 @@ div.townInfoContainer > .numeric {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 26px;
+    min-height: 20px;
     width: 100%;
     padding: 0;
     border-radius: 8px;
@@ -2702,8 +2702,8 @@ div.townInfoContainer > .numeric {
 
 .actionCardArt .superLargeIcon,
 .storyCardArt .superLargeIcon {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     object-fit: contain;
 }
 
@@ -3778,10 +3778,10 @@ li#actionLogLatest {
 .nextActionContainer {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 58px 64px;
-    gap: 10px;
+    gap: 6px;
     width: auto;
-    min-height: 30px;
-    padding: 4px 4px 4px 2px;
+    min-height: 26px;
+    padding: 2px 4px 2px 2px;
     padding-right: 4px;
     border: 1px solid transparent;
     border-radius: 8px;
