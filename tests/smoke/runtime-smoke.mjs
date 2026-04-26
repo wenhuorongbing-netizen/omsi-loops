@@ -939,6 +939,10 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
                 isActionsVisible1280: true,
                 isActionsVisible1024: true,
                 isActionsVisible390: true,
+                isActionsVisible1280Classic: true,
+                hasOverflow1280Classic: false,
+                isActionsVisible1024Classic: true,
+                hasOverflow1024Classic: false,
             };
         });
 
@@ -962,6 +966,40 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
         viewportState.isActionsVisible390 = await page.evaluate(() => {
             const el = document.getElementById("actionsColumn");
             return el ? el.getBoundingClientRect().top < 844 : false;
+        });
+
+        // Classic preset metrics
+        await page.evaluate(() => {
+            const presetBtn = document.getElementById("uiPresetClassic");
+            if (presetBtn) presetBtn.click();
+        });
+
+        await page.setViewportSize({ width: 1280, height: 720 });
+        await page.waitForTimeout(500);
+        const classic1280Metrics = await page.evaluate(() => {
+            const el = document.getElementById("actionsColumn");
+            const isVisible = el ? el.getBoundingClientRect().top < 720 : false;
+            const overflow = document.documentElement.scrollWidth > 1280 || document.body.scrollWidth > 1280;
+            return { isVisible, overflow };
+        });
+        viewportState.isActionsVisible1280Classic = classic1280Metrics.isVisible;
+        viewportState.hasOverflow1280Classic = classic1280Metrics.overflow;
+
+        await page.setViewportSize({ width: 1024, height: 768 });
+        await page.waitForTimeout(500);
+        const classic1024Metrics = await page.evaluate(() => {
+            const el = document.getElementById("actionsColumn");
+            const isVisible = el ? el.getBoundingClientRect().top < 768 : false;
+            const overflow = document.documentElement.scrollWidth > 1024 || document.body.scrollWidth > 1024;
+            return { isVisible, overflow };
+        });
+        viewportState.isActionsVisible1024Classic = classic1024Metrics.isVisible;
+        viewportState.hasOverflow1024Classic = classic1024Metrics.overflow;
+
+        // Revert preset
+        await page.evaluate(() => {
+            const presetBtn = document.getElementById("uiPresetCompact");
+            if (presetBtn) presetBtn.click();
         });
 
         const workerEvent = page.waitForEvent("worker", {timeout: 5000}).catch(() => null);
