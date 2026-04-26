@@ -169,10 +169,10 @@ export async function runRuntimeSmoke({
         !result.viewport?.isActionsVisible1280
         || !result.viewport?.isActionsVisible1024
         || !result.viewport?.isActionsVisible390
-        || !result.viewport?.isActionsVisible1280Classic
-        || result.viewport?.hasOverflow1280Classic
-        || !result.viewport?.isActionsVisible1024Classic
-        || result.viewport?.hasOverflow1024Classic
+        || !result.viewport?.classic1280?.isActionsVisible
+        || result.viewport?.classic1280?.hasOverflow
+        || !result.viewport?.classic1024?.isActionsVisible
+        || result.viewport?.classic1024?.hasOverflow
     )) {
         throw new Error(`Smoke failed: primary action/town workspace is pushed below the first screen by the shell or horizontal overflow detected. See ${resultsPath}`);
     }
@@ -943,10 +943,8 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
                 isActionsVisible1280: true,
                 isActionsVisible1024: true,
                 isActionsVisible390: true,
-                isActionsVisible1280Classic: true,
-                hasOverflow1280Classic: false,
-                isActionsVisible1024Classic: true,
-                hasOverflow1024Classic: false,
+                classic1280: null,
+                classic1024: null,
             };
         });
 
@@ -980,25 +978,49 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
 
         await page.setViewportSize({ width: 1280, height: 720 });
         await page.waitForTimeout(500);
-        const classic1280Metrics = await page.evaluate(() => {
-            const el = document.getElementById("actionsColumn");
-            const isVisible = el ? el.getBoundingClientRect().top < 720 : false;
+        viewportState.classic1280 = await page.evaluate(() => {
+            const actions = document.getElementById("actionsColumn");
+            const town = document.getElementById("townColumn");
+            const stats = document.getElementById("statsColumn");
+
+            const isVisible = actions ? actions.getBoundingClientRect().top < 720 : false;
             const overflow = document.documentElement.scrollWidth > 1280 || document.body.scrollWidth > 1280;
-            return { isVisible, overflow };
+
+            return {
+                viewport: { width: 1280, height: 720 },
+                bodyClass: document.body.className,
+                rootClass: document.documentElement.className,
+                scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+                actionsColumn: actions ? actions.getBoundingClientRect() : null,
+                townColumn: town ? town.getBoundingClientRect() : null,
+                statsColumn: stats ? stats.getBoundingClientRect() : null,
+                isActionsVisible: isVisible,
+                hasOverflow: overflow,
+            };
         });
-        viewportState.isActionsVisible1280Classic = classic1280Metrics.isVisible;
-        viewportState.hasOverflow1280Classic = classic1280Metrics.overflow;
 
         await page.setViewportSize({ width: 1024, height: 768 });
         await page.waitForTimeout(500);
-        const classic1024Metrics = await page.evaluate(() => {
-            const el = document.getElementById("actionsColumn");
-            const isVisible = el ? el.getBoundingClientRect().top < 768 : false;
+        viewportState.classic1024 = await page.evaluate(() => {
+            const actions = document.getElementById("actionsColumn");
+            const town = document.getElementById("townColumn");
+            const stats = document.getElementById("statsColumn");
+
+            const isVisible = actions ? actions.getBoundingClientRect().top < 768 : false;
             const overflow = document.documentElement.scrollWidth > 1024 || document.body.scrollWidth > 1024;
-            return { isVisible, overflow };
+
+            return {
+                viewport: { width: 1024, height: 768 },
+                bodyClass: document.body.className,
+                rootClass: document.documentElement.className,
+                scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+                actionsColumn: actions ? actions.getBoundingClientRect() : null,
+                townColumn: town ? town.getBoundingClientRect() : null,
+                statsColumn: stats ? stats.getBoundingClientRect() : null,
+                isActionsVisible: isVisible,
+                hasOverflow: overflow,
+            };
         });
-        viewportState.isActionsVisible1024Classic = classic1024Metrics.isVisible;
-        viewportState.hasOverflow1024Classic = classic1024Metrics.overflow;
 
         // Revert preset
         await page.evaluate(() => {
