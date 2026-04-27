@@ -220,10 +220,12 @@ body {
 }
 
 .runVitalCard {
-    display: grid;
-    gap: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 6px;
+    row-gap: 2px;
+    align-items: baseline;
     min-height: auto;
-    align-content: start;
     padding: 2px 4px;
     border: 1px solid color-mix(in srgb, var(--input-border) 74%, transparent);
     border-radius: 8px;
@@ -238,6 +240,7 @@ body {
 }
 
 .runVitalLabel {
+    flex: 1 1 auto;
     font-size: 0.65rem;
     font-weight: 700;
     letter-spacing: 0.04em;
@@ -246,36 +249,42 @@ body {
 }
 
 .runVitalValue {
-    font-size: 0.9rem;
+    flex: 1 1 100%;
+    font-size: 0.85rem;
     font-weight: 800;
     line-height: 1.1;
 }
 
 .runVitalMeta {
+    flex: 0 0 auto;
     font-size: 0.7rem;
-    line-height: 1.35;
+    line-height: 1.2;
     opacity: 0.78;
+    text-align: right;
 }
 
 #timeControls {
     display: grid;
-    gap: 2px;
+    gap: 0;
 }
 
 #timeControlsMain {
     display: flex !important;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
     justify-content: flex-start;
-    gap: 4px;
+    gap: 2px;
     padding: 0;
     min-height: 0;
+    overflow-x: auto;
 }
 
 #timeControlsMain .button {
-    min-height: 24px;
-    padding: 0 10px;
+    flex: 0 0 auto;
+    min-height: 22px;
+    padding: 0 8px;
     font-weight: 700;
+    font-size: 0.8rem;
 }
 
 #bonusIsActiveInput {
@@ -4865,7 +4874,7 @@ body.ui-density-large .chronicleStoryUnread {
             display: flex;
             flex-wrap: nowrap;
             overflow-x: auto;
-            gap: 4px;
+            gap: 2px;
         }
 
         & .runVitalsLead {
@@ -5111,6 +5120,7 @@ body.ui-density-large .chronicleStoryUnread {
 
         & .runVitalsSummary {
             grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 2px;
             overflow-y: auto;
         }
 
