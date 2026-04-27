@@ -5581,24 +5581,30 @@ select.bold:focus {
     .responsive body.ui-preset-classic #actionsColumn {
         grid-area: actions;
         margin: 0;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
     }
 
     .responsive body.ui-preset-classic #townColumn {
         display: flex;
+        flex-direction: column;
+        overflow-y: auto;
         grid-area: town;
-    }
-
-    .responsive body.ui-preset-classic #shortTownColumn {
-        display: none;
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
     }
 
     .responsive body.ui-preset-classic #statsColumn {
         grid-area: stats;
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
     }
 
-    .responsive body.ui-preset-classic #actionLogContainer {
-        display: none;
-    }
 }
 
 .responsive body.ui-preset-classic #timeInfo {
