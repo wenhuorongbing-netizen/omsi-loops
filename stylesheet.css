@@ -4676,6 +4676,10 @@ body.ui-density-large .chronicleStoryUnread {
         grid-area: town;
     }
 
+    & #townActionUtilityShell {
+        display: none;
+    }
+
     & #townWindow {
         display: flex;
         justify-content: center;
@@ -4690,6 +4694,8 @@ body.ui-density-large .chronicleStoryUnread {
         align-items: center;
         flex-shrink: 0;
         margin: 0;
+        grid-template-areas: "left title right";
+        gap: 0;
     }
 
     & #townViewLeft, #townViewRight, #actionsViewLeft, & #actionsViewRight {
