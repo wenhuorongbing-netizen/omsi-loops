@@ -5585,11 +5585,18 @@ select.bold:focus {
 
     .responsive body.ui-preset-classic #townColumn {
         display: flex;
+        flex-direction: column;
         grid-area: town;
+        overflow: hidden;
+        gap: 10px;
     }
 
     .responsive body.ui-preset-classic #shortTownColumn {
-        display: none;
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: hidden;
     }
 
     .responsive body.ui-preset-classic #statsColumn {
@@ -5597,7 +5604,11 @@ select.bold:focus {
     }
 
     .responsive body.ui-preset-classic #actionLogContainer {
-        display: none;
+        display: flex;
+        flex-direction: column;
+        flex: 0 0 auto;
+        height: 25%;
+        min-height: 100px;
     }
 }
 
