@@ -5596,7 +5596,7 @@ select.bold:focus {
         flex-direction: column;
         flex: 1 1 auto;
         min-height: 0;
-        overflow: hidden;
+        overflow-y: auto;
     }
 
     .responsive body.ui-preset-classic #statsColumn {
