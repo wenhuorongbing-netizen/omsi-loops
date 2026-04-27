@@ -24,6 +24,10 @@ const server = await startStaticServer({
 const browser = await chromium.launch({headless: true});
 const mismatches = [];
 
+function normalizeLineEndings(value) {
+    return value.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+}
+
 try {
     for (const fixture of activeFixtures) {
         const runtime = await openFixturePage({
@@ -48,7 +52,7 @@ try {
                 continue;
             }
             const expectedJson = fs.readFileSync(fixture.baselinePath, "utf8");
-            if (actualJson !== expectedJson) {
+            if (normalizeLineEndings(actualJson) !== normalizeLineEndings(expectedJson)) {
                 fs.writeFileSync(path.join(mismatchDir, `${fixture.id}.actual.json`), actualJson, "utf8");
                 mismatches.push(`${fixture.id}: runtime metrics differ from ${path.relative(rootDir, fixture.baselinePath)}`);
                 continue;
