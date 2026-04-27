@@ -571,7 +571,7 @@ input, select, textarea {
 }
 
 /* These are only used in mobile view  */
-main, #actionLogContainer {
+main {
     display: contents;
 }
 #navbar {
@@ -4641,6 +4641,11 @@ body.ui-density-large .chronicleStoryUnread {
         display: flex;
     }
 
+    & #actionLogContainer {
+        display: flex;
+        flex-direction: column;
+    }
+
     & #statsColumn {
     grid-area: stats;  
     }  
@@ -4889,8 +4894,8 @@ body.ui-density-large .chronicleStoryUnread {
             display: grid;
             height: 100%;
             grid:
-                "actions town" minmax(600px, max-content)
-                "stats log"
+                "actions town" auto
+                "stats log" minmax(0, 1fr)
                 / minmax(min-content,3fr) minmax(min-content,2fr);
             margin-right:0.5em;
         }
@@ -4900,7 +4905,10 @@ body.ui-density-large .chronicleStoryUnread {
         }
 
         & #statsColumn, & #actionsColumn, & #shortTownColumn, & #actionLogContainer {
-            overflow: initial;
+            overflow-x: hidden;
+            overflow-y: auto;
+            flex-direction: column;
+            display: flex;
         }
 
         & #statsWindow {
