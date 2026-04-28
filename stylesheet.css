@@ -5105,12 +5105,12 @@ body.ui-density-large .chronicleStoryUnread {
         }
 
         & #runStatusDeck {
-            grid-template-columns: 1fr;
+            grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.9fr);
             gap: 2px;
             min-width: 0;
         }
 
-& .runVitalsGrid {
+        & .runVitalsGrid {
             grid-template-columns: repeat(3, minmax(0, 1fr));
             max-height: 120px;
             overflow-y: auto;
@@ -5121,6 +5121,12 @@ body.ui-density-large .chronicleStoryUnread {
             grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 2px;
             overflow-y: auto;
+        }
+
+        & #timeControls {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         & .runVitalsLead {
