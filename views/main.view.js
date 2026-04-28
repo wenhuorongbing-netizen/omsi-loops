@@ -1108,24 +1108,9 @@ class View {
     }
 
     updateRunRuleSummary() {
-        const toggle = document.getElementById("timeControlsOptionsToggle");
         const menuLabel = document.getElementById("menuDeckLabel");
         if (menuLabel instanceof HTMLElement) {
             menuLabel.textContent = this.isChineseLanguage() ? "存档 / 选项 / 高级系统" : "Saves / Options / Advanced Systems";
-        }
-        if (!(toggle instanceof HTMLElement)) return;
-        const activeRules = [];
-        if (options.pauseBeforeRestart) activeRules.push(_txt("time_controls>pause_before_restart"));
-        if (options.pauseOnFailedLoop) activeRules.push(_txt("time_controls>pause_on_failed_loop"));
-        if (options.pauseOnComplete) activeRules.push(_txt("time_controls>pause_on_complete"));
-        const ruleCount = activeRules.length;
-        toggle.textContent = this.isChineseLanguage()
-            ? `高级运行规则${ruleCount > 0 ? ` · 已开 ${ruleCount} 项` : " · 默认收起"}`
-            : `Advanced Run Rules${ruleCount > 0 ? ` · ${ruleCount} active` : " · collapsed by default"}`;
-        toggle.setAttribute("aria-label", toggle.textContent);
-        const card = document.getElementById("timeControlsOptionsCard");
-        if (card instanceof HTMLElement) {
-            card.dataset.activeRules = String(ruleCount);
         }
     }
 

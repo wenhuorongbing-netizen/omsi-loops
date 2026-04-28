@@ -264,90 +264,48 @@ body {
 }
 
 #timeControls {
-    display: grid;
-    gap: 0;
-}
-
-#timeControlsMain {
-    display: flex !important;
-    flex-wrap: nowrap;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
     align-items: center;
     justify-content: flex-start;
-    gap: 2px;
     padding: 0;
-    min-height: 0;
-    overflow-x: auto;
 }
 
-#timeControlsMain .button {
-    flex: 0 0 auto;
+#timeControls div.control {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 4px;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+#timeControls label {
+    font-size: 0.75rem;
+    white-space: nowrap;
+    font-weight: bold;
+}
+
+#timeControls .button {
     min-height: 22px;
-    padding: 0 8px;
+    padding: 0 6px;
+    font-size: 0.75rem;
     font-weight: 700;
-    font-size: 0.8rem;
+}
+
+#story_control {
+    height: 22px !important;
+    min-height: 22px !important;
+    padding: 0 6px !important;
+}
+
+#story_control .large {
+    font-size: 0.75rem !important;
 }
 
 #bonusIsActiveInput {
     display: none;
-}
-
-#timeControlsOptionsCard {
-    display: grid;
-    gap: 0;
-    border: 1px solid color-mix(in srgb, var(--input-border) 76%, transparent);
-    border-radius: 16px;
-    overflow: hidden;
-    background: color-mix(in srgb, var(--popup-background) 74%, transparent);
-}
-
-#timeControlsOptionsCard > summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 2px 6px;
-    cursor: pointer;
-    list-style: none;
-    font-size: 0.82rem;
-    font-weight: 700;
-}
-
-#timeControlsOptionsCard > summary::-webkit-details-marker {
-    display: none;
-}
-
-#timeControlsOptionsCard > summary::after {
-    content: "+";
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    height: 18px;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--button-background) 18%, transparent);
-    color: var(--button-background);
-    font-size: 0.85rem;
-    line-height: 1;
-}
-
-#timeControlsOptionsCard[open] > summary::after {
-    content: "-";
-}
-
-#timeControlsOptions {
-    display: grid !important;
-    gap: 8px;
-    padding: 0 8px 8px;
-}
-
-#timeControlsOptions .control {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 6px;
-    align-items: start;
-    padding: 4px 8px;
-    border-radius: 12px;
-    background: color-mix(in srgb, var(--body-background) 86%, transparent);
 }
 
 #menu {
@@ -5146,21 +5104,14 @@ body.ui-density-large .chronicleStoryUnread {
             font-size: 0.6rem;
         }
 
-        & #timeControlsMain {
-            justify-content: stretch;
+        & #timeControls {
             flex-wrap: nowrap;
             overflow-x: auto;
-            gap: 4px;
+            padding-bottom: 2px;
         }
 
-        & #timeControlsMain .button,
-        & #story_control {
-            width: auto;
+        & #timeControls .control {
             flex: 0 0 auto;
-            justify-content: center;
-            min-height: 26px;
-            padding: 0 8px;
-            font-size: 0.8rem;
         }
 
         & #trackedResources {
@@ -5198,8 +5149,7 @@ body.ui-density-large .chronicleStoryUnread {
 
         & #menuDeck,
         & #resourceDeck,
-        & #runStatusDeck,
-        & #timeControlsOptionsCard {
+        & #runStatusDeck {
             border-radius: 14px;
             padding: 2px 4px;
             min-width: 0;
