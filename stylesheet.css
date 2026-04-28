@@ -140,9 +140,9 @@ body {
 #runStatusDeck {
     display: grid;
     grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.9fr);
-    gap: 2px;
+    gap: 0;
     align-items: center;
-    padding: 2px 4px;
+    padding: 2px;
 }
 
 #runStatusDeck,
@@ -172,7 +172,7 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
     gap: 2px;
-    padding: 2px 4px;
+    padding: 1px 2px;
     cursor: pointer;
     list-style: none;
     align-items: stretch;
@@ -226,7 +226,7 @@ body {
     row-gap: 2px;
     align-items: baseline;
     min-height: auto;
-    padding: 2px 4px;
+    padding: 1px 4px;
     border: 1px solid color-mix(in srgb, var(--input-border) 74%, transparent);
     border-radius: 8px;
     background:
@@ -264,12 +264,15 @@ body {
 }
 
 #timeControls {
-    display: grid;
-    gap: 0;
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px !important;
 }
 
 #timeControlsMain {
     display: flex !important;
+    flex: 1 1 auto;
     flex-wrap: nowrap;
     align-items: center;
     justify-content: flex-start;
@@ -293,6 +296,8 @@ body {
 
 #timeControlsOptionsCard {
     display: grid;
+    flex: 1 1 auto;
+    min-width: 140px;
     gap: 0;
     border: 1px solid color-mix(in srgb, var(--input-border) 76%, transparent);
     border-radius: 16px;
@@ -305,7 +310,7 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    padding: 2px 6px;
+    padding: 1px 6px;
     cursor: pointer;
     list-style: none;
     font-size: 0.82rem;
