@@ -5598,7 +5598,7 @@ select.bold:focus {
     }
 
     .responsive body.ui-preset-classic #shortTownColumn {
-        display: none;
+        display: flex;
     }
 
     .responsive body.ui-preset-classic #statsColumn {
@@ -5606,7 +5606,7 @@ select.bold:focus {
     }
 
     .responsive body.ui-preset-classic #actionLogContainer {
-        display: none;
+        display: flex;
     }
 }
 
