@@ -4871,9 +4871,8 @@ body.ui-density-large .chronicleStoryUnread {
         }
 
         & .runVitalsSummary {
-            display: flex;
-            flex-wrap: nowrap;
-            overflow-x: auto;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 2px;
         }
 
