@@ -4858,7 +4858,6 @@ body.ui-density-large .chronicleStoryUnread {
         }
 
         & #runStatusDeck {
-            grid-template-columns: 1fr;
             gap: 2px;
         }
 
@@ -5118,6 +5117,7 @@ body.ui-density-large .chronicleStoryUnread {
         }
 
         & .runVitalsSummary {
+            display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 2px;
             overflow-y: auto;
