@@ -272,6 +272,25 @@ body {
     padding: 0;
 }
 
+#timeControlsMain,
+#timeControlsOptionsCard,
+#timeControlsOptions {
+    display: contents !important;
+}
+
+#timeControlsOptionsCard > summary {
+    /* Visually hidden but remains focusable for accessibility and automation checks */
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    clip: rect(0, 0, 0, 0) !important;
+    border: 0 !important;
+}
+
 #timeControls div.control {
     display: inline-flex !important;
     align-items: center;
