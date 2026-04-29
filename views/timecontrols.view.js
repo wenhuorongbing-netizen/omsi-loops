@@ -16,7 +16,7 @@ const timeControlsView = Views.registerView("timeControls", {
             // <button id='rewindButton' class='button control'>${_txt("time_controls>rewind_button")}</button>
         const html =
         `<div id='timeControlsMain'>
-            <button id='pausePlay' onclick='pauseGame()'' class='button control'>${_txt("time_controls>pause_button")}</button>
+            <button id='pausePlay' onclick='pauseGame()' class='button control'>${_txt("time_controls>pause_button")}</button>
             <button onclick='manualRestart()' class='button showthatO control'>${_txt("time_controls>restart_button")}
                 <div class='showthis' style='color:var(--default-color);width:230px;'>${_txt("time_controls>restart_text")}</div>
             </button>
@@ -33,7 +33,7 @@ const timeControlsView = Views.registerView("timeControls", {
                     </button>
                 </div>
                 <div class='control'>
-                    <button id='talentTreeBtn' style='display: none;' onclick='view.showTalents()'' class='button control'>${_txt("time_controls>talents_button")}</button>
+                    <button id='talentTreeBtn' style='display: none;' onclick='view.showTalents()' class='button control'>${_txt("time_controls>talents_button")}</button>
                 </div>
                 <div class='control'>
                     <div tabindex='0' id='story_control' class='showthatH' onmouseover='view.updateStory(storyShowing)' onfocus='view.updateStory(storyShowing)' style='height:30px;'>

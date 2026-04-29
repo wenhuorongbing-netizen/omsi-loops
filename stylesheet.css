@@ -285,6 +285,8 @@ body {
     padding: 0 8px;
     font-weight: 700;
     font-size: 0.8rem;
+    line-height: 1.2;
+    margin: 0;
 }
 
 #bonusIsActiveInput {
@@ -4404,8 +4406,12 @@ li#actionLogLatest {
     -ms-user-select: none;
 }
 
-#trackedResources .resource, #timeControls .control {
+#trackedResources .resource {
   margin-right : 5px;
+}
+
+#timeControlsOptions .control {
+  margin-right: 5px;
 }
 
 #trackedResources {
@@ -5162,6 +5168,11 @@ body.ui-density-large .chronicleStoryUnread {
             min-height: 26px;
             padding: 0 8px;
             font-size: 0.8rem;
+        }
+
+        & #timeControlsMain .button {
+            line-height: 1.2;
+            margin: 0;
         }
 
         & #trackedResources {
