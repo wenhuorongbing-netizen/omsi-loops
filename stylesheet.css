@@ -365,12 +365,12 @@ body {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 8px;
-    padding: 4px 10px;
+    gap: 4px;
+    padding: 2px 6px;
 }
 
 #resourceDeck {
-    padding: 4px 10px;
+    padding: 2px 6px;
 }
 
 #resourceDeck #trackedResources {
@@ -381,16 +381,17 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
-    padding: 4px 8px;
+    gap: 6px;
+    padding: 2px 6px;
     cursor: pointer;
     user-select: none;
     background-color: var(--button-background);
     color: var(--button-text);
-    border-radius: 12px;
+    border-radius: 8px;
     font-weight: 700;
     text-transform: uppercase;
     opacity: 0.72;
+    font-size: 0.85rem;
 }
 
 #resourceDeck > summary::-webkit-details-marker, #menuDeck > summary::-webkit-details-marker {
@@ -402,12 +403,12 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
     background-color: var(--button-text);
     color: var(--button-background);
-    font-size: 1rem;
+    font-size: 0.9rem;
     line-height: 1;
 }
 
@@ -431,12 +432,12 @@ body {
     display: inline-flex !important;
     align-items: center;
     justify-content: center;
-    min-height: 34px;
-    padding: 0 12px;
+    min-height: 28px;
+    padding: 0 10px;
     border: 1px solid color-mix(in srgb, var(--input-border) 76%, transparent);
     border-radius: 999px;
     background: color-mix(in srgb, var(--body-background) 88%, transparent);
-    font-size: 0.88rem;
+    font-size: 0.8rem;
     font-weight: 700;
     transition: background-color 120ms ease, border-color 120ms ease, transform 120ms ease;
 }
@@ -4618,7 +4619,7 @@ body.ui-density-large .chronicleStoryUnread {
             "resources menu" auto
             / minmax(0, 1.45fr) minmax(320px, 0.92fr);
         align-items: start;
-        gap: 6px 12px;
+        gap: 4px 8px;
     }
 
     & body > br, & #timeInfo > br {
