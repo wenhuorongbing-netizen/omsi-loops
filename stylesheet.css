@@ -5178,6 +5178,7 @@ body.ui-density-large .chronicleStoryUnread {
         & #menuDeck {
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         & #menu {
@@ -5185,6 +5186,8 @@ body.ui-density-large .chronicleStoryUnread {
             flex-wrap: nowrap;
             padding-bottom: 2px;
             margin: 0 !important;
+            width: calc(100vw - 32px);
+            max-width: 100%;
         }
 
         & #menu > li {
