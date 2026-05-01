@@ -171,7 +171,7 @@ body {
 .runVitalsSummary {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
-    gap: 2px;
+    gap: 0;
     padding: 2px 4px;
     cursor: pointer;
     list-style: none;
@@ -182,35 +182,10 @@ body {
 }
 
 .runVitalsExpanded {
-    padding: 0 4px 4px 4px;
+    padding: 0 2px 2px 2px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-}
-
-.runVitalsLead {
-    display: grid;
-    gap: 0;
-    margin-bottom: 4px;
-}
-
-.runVitalsEyebrow {
-    display: none;
-}
-
-.runVitalsHeadline {
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 1.2rem;
-    font-weight: 700;
-    line-height: 1.15;
-}
-
-.runVitalsObjective {
-    margin: 0;
-    max-width: 62ch;
-    font-size: 0.94rem;
-    line-height: 1.45;
-    opacity: 0.9;
+    gap: 2px;
 }
 
 .runVitalsGrid {
@@ -222,11 +197,11 @@ body {
 .runVitalCard {
     display: flex;
     flex-wrap: wrap;
-    column-gap: 6px;
-    row-gap: 2px;
+    column-gap: 4px;
+    row-gap: 0;
     align-items: baseline;
     min-height: auto;
-    padding: 2px 4px;
+    padding: 2px;
     border: 1px solid color-mix(in srgb, var(--input-border) 74%, transparent);
     border-radius: 8px;
     background:
@@ -241,7 +216,7 @@ body {
 
 .runVitalLabel {
     flex: 1 1 auto;
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -250,14 +225,14 @@ body {
 
 .runVitalValue {
     flex: 1 1 100%;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 800;
     line-height: 1.1;
 }
 
 .runVitalMeta {
     flex: 0 0 auto;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     line-height: 1.2;
     opacity: 0.78;
     text-align: right;
@@ -4874,11 +4849,7 @@ body.ui-density-large .chronicleStoryUnread {
         & .runVitalsSummary {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 2px;
-        }
-
-        & .runVitalsLead {
-            display: none;
+            gap: 0;
         }
 
         & #menu {
@@ -5120,12 +5091,8 @@ body.ui-density-large .chronicleStoryUnread {
 
         & .runVitalsSummary {
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 2px;
+            gap: 0;
             overflow-y: auto;
-        }
-
-        & .runVitalsLead {
-            display: none;
         }
 
         & .runVitalCard {

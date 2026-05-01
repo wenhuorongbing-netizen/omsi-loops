@@ -1035,13 +1035,10 @@ class View {
                     <div class="runVitalCard">
                         <span class="runVitalLabel">${this.isChineseLanguage() ? "状态" : "Status"}</span>
                         <strong id="runStatusHeadline" class="runVitalValue">${statusLabel}</strong>
-                        <span class="runVitalMeta">${this.isChineseLanguage() ? "查看详情" : "See details"}</span>
+                        <span id="runObjectiveText" class="runVitalMeta" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; display: inline-block;">${objectiveText}</span>
                     </div>
                 </summary>
                 <div class="runVitalsExpanded">
-                    <div class="runVitalsLead">
-                        <p id="runObjectiveText" class="runVitalsObjective">${objectiveText}</p>
-                    </div>
                     <div class="runVitalsGrid">
                         <div class="runVitalCard">
                             <span class="runVitalLabel">${this.isChineseLanguage() ? "金币" : "Gold"}</span>
