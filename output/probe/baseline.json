@@ -1,0 +1,170 @@
+{
+  "meta": {
+    "branch": "new-horizon",
+    "head": "958ba4b8a33e2df24b32adb8b0a188d1cf77d113",
+    "runDir": "unknown",
+    "command": "node /home/jules/verification/probe.mjs",
+    "timestamp": "2026-05-01T16:19:18.850Z"
+  },
+  "observations": {
+    "desktop-1280x720": {
+      "selectors": {
+        "#commandDeck": {
+          "top": 2,
+          "left": 10,
+          "width": 1259.984375,
+          "height": 179.84375,
+          "bottom": 181.84375
+        },
+        "#timeInfo": {
+          "top": 0,
+          "left": 0,
+          "width": 1279.984375,
+          "height": 185.84375,
+          "bottom": 185.84375
+        },
+        "#runStatusDeck": {
+          "top": 14,
+          "left": 10,
+          "width": 1259.984375,
+          "height": 107.84375,
+          "bottom": 121.84375
+        },
+        "#runVitals": {
+          "top": 17,
+          "left": 15,
+          "width": 1249.984375,
+          "height": 51.84375,
+          "bottom": 68.84375
+        },
+        "#actionsColumn": {
+          "top": 185.84375,
+          "left": 0,
+          "width": 361.875,
+          "height": 534.15625,
+          "bottom": 720
+        },
+        "#mainColumn": null
+      },
+      "criticalControls": {
+        "#timeControls": {
+          "visible": true,
+          "rect": {
+            "top": 70.84375,
+            "left": 15,
+            "width": 1249.984375,
+            "height": 48
+          }
+        }
+      },
+      "visibleText": {},
+      "actionsColumnReachabilityTop": 185.84375
+    },
+    "laptop-1024x768": {
+      "selectors": {
+        "#commandDeck": {
+          "top": 2,
+          "left": 10,
+          "width": 1003.984375,
+          "height": 179.84375,
+          "bottom": 181.84375
+        },
+        "#timeInfo": {
+          "top": 0,
+          "left": 0,
+          "width": 1023.984375,
+          "height": 185.84375,
+          "bottom": 185.84375
+        },
+        "#runStatusDeck": {
+          "top": 14,
+          "left": 10,
+          "width": 1003.984375,
+          "height": 107.84375,
+          "bottom": 121.84375
+        },
+        "#runVitals": {
+          "top": 17,
+          "left": 15,
+          "width": 993.984375,
+          "height": 51.84375,
+          "bottom": 68.84375
+        },
+        "#actionsColumn": {
+          "top": 185.84375,
+          "left": 0,
+          "width": 289.5,
+          "height": 582.15625,
+          "bottom": 768
+        },
+        "#mainColumn": null
+      },
+      "criticalControls": {
+        "#timeControls": {
+          "visible": true,
+          "rect": {
+            "top": 70.84375,
+            "left": 15,
+            "width": 993.984375,
+            "height": 48
+          }
+        }
+      },
+      "visibleText": {},
+      "actionsColumnReachabilityTop": 185.84375
+    },
+    "mobile-390x844": {
+      "selectors": {
+        "#commandDeck": {
+          "top": 1,
+          "left": 4,
+          "width": 382,
+          "height": 182.921875,
+          "bottom": 183.921875
+        },
+        "#timeInfo": {
+          "top": 0,
+          "left": 0,
+          "width": 390,
+          "height": 185.921875,
+          "bottom": 185.921875
+        },
+        "#runStatusDeck": {
+          "top": 11,
+          "left": 4,
+          "width": 382,
+          "height": 112.921875,
+          "bottom": 123.921875
+        },
+        "#runVitals": {
+          "top": 14,
+          "left": 9,
+          "width": 372,
+          "height": 48.921875,
+          "bottom": 62.921875
+        },
+        "#actionsColumn": {
+          "top": 185.921875,
+          "left": 404,
+          "width": 390,
+          "height": 646.15625,
+          "bottom": 832.078125
+        },
+        "#mainColumn": null
+      },
+      "criticalControls": {
+        "#timeControls": {
+          "visible": true,
+          "rect": {
+            "top": 64.921875,
+            "left": 9,
+            "width": 372,
+            "height": 56
+          }
+        }
+      },
+      "visibleText": {},
+      "actionsColumnReachabilityTop": 185.921875
+    }
+  }
+}
