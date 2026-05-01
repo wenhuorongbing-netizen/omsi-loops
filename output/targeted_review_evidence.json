@@ -1,0 +1,26 @@
+[
+  {
+    "type": "browser_probe",
+    "metrics": {
+      "viewport": "1280x720",
+      "target": "#timeControlsMain",
+      "geometry": { "height": 22 }
+    }
+  },
+  {
+    "type": "browser_probe",
+    "metrics": {
+      "viewport": "1024x768",
+      "target": "#timeControlsMain",
+      "geometry": { "height": 22 }
+    }
+  },
+  {
+    "type": "browser_probe",
+    "metrics": {
+      "viewport": "390x844",
+      "target": "#timeControlsMain",
+      "geometry": { "height": 26 }
+    }
+  }
+]
