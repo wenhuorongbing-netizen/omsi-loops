@@ -1,0 +1,22 @@
+[
+  {
+    "type": "browser_probe",
+    "metrics": {
+      "viewport": "1280x720",
+      "target": "#timeControlsMain",
+      "geometry": { "height": 22 },
+      "localization": "zh-CN",
+      "raw-key": "success"
+    }
+  },
+  {
+    "type": "browser_probe",
+    "metrics": {
+      "viewport": "1024x768",
+      "target": "#timeControlsMain",
+      "geometry": { "height": 22 },
+      "localization": "zh-CN",
+      "raw-key": "success"
+    }
+  }
+]

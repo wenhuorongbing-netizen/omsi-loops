@@ -1,0 +1,12 @@
+[
+  {
+    "type": "browser_probe",
+    "metrics": {
+      "viewport": "390x844",
+      "target": "#timeControlsMain",
+      "geometry": { "height": 26 },
+      "interaction": "success",
+      "overflow": false
+    }
+  }
+]
