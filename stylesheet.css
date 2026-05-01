@@ -142,7 +142,7 @@ body {
     grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.9fr);
     gap: 2px;
     align-items: center;
-    padding: 2px 4px;
+    padding: 1px 2px;
 }
 
 #runStatusDeck,
@@ -172,7 +172,7 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
     gap: 2px;
-    padding: 2px 4px;
+    padding: 1px 2px;
     cursor: pointer;
     list-style: none;
     align-items: stretch;
@@ -223,10 +223,10 @@ body {
     display: flex;
     flex-wrap: wrap;
     column-gap: 6px;
-    row-gap: 2px;
+    row-gap: 0;
     align-items: baseline;
     min-height: auto;
-    padding: 2px 4px;
+    padding: 1px 4px;
     border: 1px solid color-mix(in srgb, var(--input-border) 74%, transparent);
     border-radius: 8px;
     background:
@@ -241,7 +241,7 @@ body {
 
 .runVitalLabel {
     flex: 1 1 auto;
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -250,15 +250,15 @@ body {
 
 .runVitalValue {
     flex: 1 1 100%;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 800;
     line-height: 1.1;
 }
 
 .runVitalMeta {
     flex: 0 0 auto;
-    font-size: 0.7rem;
-    line-height: 1.2;
+    font-size: 0.65rem;
+    line-height: 1.1;
     opacity: 0.78;
     text-align: right;
 }
