@@ -37,8 +37,7 @@ npm run typecheck
 ### Codex Rules
 
 - Do not commit .env, .env.*, *.local, secrets/, credentials/, private keys, tokens, passwords, local databases, migration archives, or Codex local state.
-- Do not commit 
-ode_modules/, virtual environments, caches, build outputs, coverage reports, logs, or archive files.
+- Do not commit node_modules/, virtual environments, caches, build outputs, coverage reports, logs, or archive files.
 - Do not delete or rewrite user local files unless explicitly asked.
 - Prefer small, focused changes and run the smallest relevant verification before finishing.
 - If verification cannot run, document the exact reason.

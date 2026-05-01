@@ -53,7 +53,7 @@ This repository is one of the six local projects being migrated from the old Cod
 - README.md, if present
 - AGENTS.md
 - docs/codex-handoff.md
-- Project build files such as package.json, pom.xml, pyproject.toml, equirements.txt, or equivalent
+- Project build files such as package.json, pom.xml, pyproject.toml, requirements.txt, or equivalent
 
 ## Commands To Run First On The New Machine
 
@@ -95,17 +95,7 @@ npm run typecheck
 On branch new-horizon
 Your branch is up to date with 'origin/new-horizon'.
 
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-	modified:   .gitignore
-
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-	AGENTS.md
-	docs/codex-handoff.md
-
-no changes added to commit (use "git add" and/or "git commit -a")
+nothing to commit, working tree clean
 ~~~
 
 ## Files Kept Out Of GitHub And Put Into The Encrypted Private Package
@@ -114,7 +104,7 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 ## User Preferences And Codex Rules
 
-- Do not commit .env, tokens, passwords, secrets, private keys, uth.json, local Codex state, logs, caches, dependencies, build outputs, or migration archives.
+- Do not commit .env, tokens, passwords, secrets, private keys, auth.json, local Codex state, logs, caches, dependencies, build outputs, or migration archives.
 - Do not delete local project files or old Codex state.
 - Continue processing other projects if one project fails.
 - Make direct, pragmatic code changes when requested; avoid stopping at suggestions unless blocked.
