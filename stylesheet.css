@@ -281,8 +281,8 @@ body {
 
 #timeControlsMain .button {
     flex: 0 0 auto;
-    min-height: 22px;
-    padding: 0 8px;
+    min-height: 20px;
+    padding: 0 6px;
     font-weight: 700;
     font-size: 0.8rem;
 }
@@ -4404,8 +4404,11 @@ li#actionLogLatest {
     -ms-user-select: none;
 }
 
-#trackedResources .resource, #timeControls .control {
+#trackedResources .resource, #timeControlsOptionsCard .control {
   margin-right : 5px;
+}
+#timeControlsMain .control {
+  margin-right: 0px !important;
 }
 
 #trackedResources {
@@ -5159,8 +5162,8 @@ body.ui-density-large .chronicleStoryUnread {
             width: auto;
             flex: 0 0 auto;
             justify-content: center;
-            min-height: 26px;
-            padding: 0 8px;
+            min-height: 24px;
+            padding: 0 6px;
             font-size: 0.8rem;
         }
 
