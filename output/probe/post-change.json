@@ -1,0 +1,174 @@
+{
+  "timestamp": "2026-05-01T16:10:03.152Z",
+  "branch": "jules/issue-124-task-remeasure-and-compact-the-top-shell-entry-path-on-current-new-horizon",
+  "commit": "d258ec232367bca8cccab0708475455567054750",
+  "run_dir": "/app",
+  "generationCommand": "node tools/probe-top-shell.mjs --post",
+  "results": [
+    {
+      "viewportLabel": "desktop",
+      "viewportDimensions": {
+        "width": 1280,
+        "height": 720,
+        "label": "desktop"
+      },
+      "observations": {
+        "#commandDeck": {
+          "x": 10,
+          "y": 0,
+          "width": 1259.984375,
+          "height": 148
+        },
+        "#timeInfo": {
+          "x": 0,
+          "y": 0,
+          "width": 1279.984375,
+          "height": 150
+        },
+        "#runStatusDeck": {
+          "x": 10,
+          "y": 12,
+          "width": 1259.984375,
+          "height": 76
+        },
+        "#runVitals": {
+          "x": 15,
+          "y": 15,
+          "width": 1249.984375,
+          "height": 20
+        },
+        "#timeControls": {
+          "x": 15,
+          "y": 37,
+          "width": 1249.984375,
+          "height": 48
+        },
+        "#actionsColumn": {
+          "x": 0,
+          "y": 150,
+          "width": 361.875,
+          "height": 570
+        }
+      },
+      "interactionAndAccessibility": {
+        "pausePlayVisible": true,
+        "pausePlayText": "开始",
+        "menuVisible": true,
+        "menuText": "存档 / 选项 / 高级系统"
+      },
+      "localizedTextObservations": {
+        "runVitalLabel": "剩余循环"
+      }
+    },
+    {
+      "viewportLabel": "narrow",
+      "viewportDimensions": {
+        "width": 1024,
+        "height": 768,
+        "label": "narrow"
+      },
+      "observations": {
+        "#commandDeck": {
+          "x": 10,
+          "y": 0,
+          "width": 1003.984375,
+          "height": 148
+        },
+        "#timeInfo": {
+          "x": 0,
+          "y": 0,
+          "width": 1023.984375,
+          "height": 150
+        },
+        "#runStatusDeck": {
+          "x": 10,
+          "y": 12,
+          "width": 1003.984375,
+          "height": 76
+        },
+        "#runVitals": {
+          "x": 15,
+          "y": 15,
+          "width": 993.984375,
+          "height": 20
+        },
+        "#timeControls": {
+          "x": 15,
+          "y": 37,
+          "width": 993.984375,
+          "height": 48
+        },
+        "#actionsColumn": {
+          "x": 0,
+          "y": 150,
+          "width": 289.5,
+          "height": 618
+        }
+      },
+      "interactionAndAccessibility": {
+        "pausePlayVisible": true,
+        "pausePlayText": "开始",
+        "menuVisible": true,
+        "menuText": "存档 / 选项 / 高级系统"
+      },
+      "localizedTextObservations": {
+        "runVitalLabel": "剩余循环"
+      }
+    },
+    {
+      "viewportLabel": "mobile",
+      "viewportDimensions": {
+        "width": 390,
+        "height": 844,
+        "label": "mobile"
+      },
+      "observations": {
+        "#commandDeck": {
+          "x": 4,
+          "y": 1,
+          "width": 382,
+          "height": 163.921875
+        },
+        "#timeInfo": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 166.921875
+        },
+        "#runStatusDeck": {
+          "x": 4,
+          "y": 11,
+          "width": 382,
+          "height": 93.921875
+        },
+        "#runVitals": {
+          "x": 9,
+          "y": 14,
+          "width": 372,
+          "height": 29.921875
+        },
+        "#timeControls": {
+          "x": 9,
+          "y": 45.921875,
+          "width": 372,
+          "height": 56
+        },
+        "#actionsColumn": {
+          "x": 397,
+          "y": 166.921875,
+          "width": 383,
+          "height": 646.15625
+        }
+      },
+      "interactionAndAccessibility": {
+        "pausePlayVisible": true,
+        "pausePlayText": "开始",
+        "menuVisible": true,
+        "menuText": "存档 / 选项 / 高级系统"
+      },
+      "localizedTextObservations": {
+        "runVitalLabel": "剩余循环"
+      }
+    }
+  ]
+}
