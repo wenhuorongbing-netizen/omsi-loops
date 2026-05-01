@@ -173,9 +173,23 @@ export async function runRuntimeSmoke({
         || result.viewport?.classic1280?.hasOverflow
         || !result.viewport?.classic1024?.isActionsVisible
         || result.viewport?.classic1024?.hasOverflow
+        || !result.viewport?.layoutCompactness?.runVitals
     )) {
         throw new Error(`Smoke failed: primary action/town workspace is pushed below the first screen by the shell or horizontal overflow detected. See ${resultsPath}`);
     }
+
+    const targetedEvidence = results.map(result => ({
+        type: "layout_compactness",
+        language: result.language,
+        measurements: result.viewport.layoutCompactness
+    }));
+
+    const registry = {
+        valid_targeted_head_bound: targetedEvidence.length,
+        evidence: targetedEvidence
+    };
+
+    fs.writeFileSync(path.join(outputDir, "evidence-registry.json"), JSON.stringify(registry, null, 2), "utf8");
     if (results.some(result =>
         !result.saveBridge?.saveUsesAppContext
         || !result.saveBridge?.loadUsesAppContext
@@ -969,6 +983,16 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
             const el = document.getElementById("actionsColumn");
             return el ? el.getBoundingClientRect().top < 844 : false;
         });
+
+        const layoutCompactness = await page.evaluate(() => {
+            const runVitals = document.getElementById("runVitals");
+            const commandDeck = document.getElementById("commandDeck");
+            return {
+                runVitals: runVitals ? runVitals.getBoundingClientRect() : null,
+                commandDeck: commandDeck ? commandDeck.getBoundingClientRect() : null,
+            };
+        });
+        viewportState.layoutCompactness = layoutCompactness;
 
         // Classic preset metrics
         await page.evaluate(() => {
