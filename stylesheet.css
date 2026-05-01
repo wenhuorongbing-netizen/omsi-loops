@@ -116,7 +116,7 @@ body {
 #timeInfo {
     display: flex;
     justify-content: center;
-    padding: 2px 10px 4px;
+    padding: 0 10px 2px;
     background: linear-gradient(var(--body-background) 78%, var(--body-background-transparent) 100%);
     position: sticky;
     top: 0;
@@ -125,7 +125,7 @@ body {
 
 #commandDeck {
     display: grid;
-    gap: 2px;
+    gap: 0;
     width: min(100%, 1360px);
 }
 
@@ -142,7 +142,7 @@ body {
     grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.9fr);
     gap: 2px;
     align-items: center;
-    padding: 2px 4px;
+    padding: 0 4px;
 }
 
 #runStatusDeck,
@@ -223,10 +223,10 @@ body {
     display: flex;
     flex-wrap: wrap;
     column-gap: 6px;
-    row-gap: 2px;
+    row-gap: 0;
     align-items: baseline;
     min-height: auto;
-    padding: 2px 4px;
+    padding: 0 4px;
     border: 1px solid color-mix(in srgb, var(--input-border) 74%, transparent);
     border-radius: 8px;
     background:
@@ -250,7 +250,7 @@ body {
 
 .runVitalValue {
     flex: 1 1 100%;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 800;
     line-height: 1.1;
 }
