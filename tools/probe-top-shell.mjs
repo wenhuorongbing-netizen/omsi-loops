@@ -79,6 +79,7 @@ async function probe() {
         timestamp: new Date().toISOString(),
         branch,
         commit,
+        run_dir: process.env.RUN_DIR || null,
         generationCommand: isPostChange ? "node tools/probe-top-shell.mjs --post" : "node tools/probe-top-shell.mjs",
         results
     };

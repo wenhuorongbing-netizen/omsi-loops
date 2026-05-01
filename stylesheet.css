@@ -5256,9 +5256,11 @@ body.ui-density-large .chronicleStoryUnread {
         }
 
         & #statsColumn, & #actionsColumn, & #shortTownColumn, & #actionLogContainer {
-            width: 100vw !important;
+            width: 100% !important;
+            max-width: 100%;
+            overflow-x: hidden;
             flex: none;
-            overflow: hidden;
+            overflow-y: hidden;
             padding-bottom: 2ex;
             flex-direction: column;
             display: flex;
