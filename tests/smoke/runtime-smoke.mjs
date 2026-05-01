@@ -994,6 +994,9 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
                 actionsColumn: actions ? actions.getBoundingClientRect() : null,
                 townColumn: town ? town.getBoundingClientRect() : null,
                 statsColumn: stats ? stats.getBoundingClientRect() : null,
+                timeControls: document.getElementById("timeControls") ? document.getElementById("timeControls").getBoundingClientRect() : null,
+                timeControlsMain: document.getElementById("timeControlsMain") ? document.getElementById("timeControlsMain").getBoundingClientRect() : null,
+                commandDeck: document.getElementById("commandDeck") ? document.getElementById("commandDeck").getBoundingClientRect() : null,
                 isActionsVisible: isVisible,
                 hasOverflow: overflow,
             };
@@ -1020,6 +1023,44 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
                 isActionsVisible: isVisible,
                 hasOverflow: overflow,
             };
+        });
+
+        await page.setViewportSize({ width: 390, height: 844 });
+        await page.waitForTimeout(500);
+        viewportState.classic390 = await page.evaluate(() => {
+            const actions = document.getElementById("actionsColumn");
+            const town = document.getElementById("townColumn");
+            const stats = document.getElementById("statsColumn");
+
+            const isVisible = actions ? actions.getBoundingClientRect().top < 844 : false;
+            const overflow = document.documentElement.scrollWidth > 390 || document.body.scrollWidth > 390;
+
+            return {
+                viewport: { width: 390, height: 844 },
+                bodyClass: document.body.className,
+                rootClass: document.documentElement.className,
+                scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+                actionsColumn: actions ? actions.getBoundingClientRect() : null,
+                townColumn: town ? town.getBoundingClientRect() : null,
+                statsColumn: stats ? stats.getBoundingClientRect() : null,
+                timeControls: document.getElementById("timeControls") ? document.getElementById("timeControls").getBoundingClientRect() : null,
+                timeControlsMain: document.getElementById("timeControlsMain") ? document.getElementById("timeControlsMain").getBoundingClientRect() : null,
+                commandDeck: document.getElementById("commandDeck") ? document.getElementById("commandDeck").getBoundingClientRect() : null,
+                isActionsVisible: isVisible,
+                hasOverflow: overflow,
+            };
+        });
+
+        // Test basic mobile interaction
+        await page.setViewportSize({ width: 390, height: 844 });
+        await page.waitForTimeout(500);
+        viewportState.mobileInteraction = await page.evaluate(() => {
+            const pauseBtn = document.querySelector('#timeControlsMain button[onclick="pauseGame()"]');
+            if (pauseBtn) {
+                pauseBtn.click();
+                return true;
+            }
+            return false;
         });
 
         // Revert preset
