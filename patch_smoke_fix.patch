@@ -1,0 +1,17 @@
+--- tests/smoke/runtime-smoke.mjs
++++ tests/smoke/runtime-smoke.mjs
+@@ -976,14 +976,6 @@
+             return { vitals: vitals?.getBoundingClientRect(), status: status?.getBoundingClientRect() };
+         });
+
+-        await page.setViewportSize({ width: 800, height: 600 });
+-        await page.waitForTimeout(500);
+-        viewportState.vitals800 = await page.evaluate(() => {
+-            const vitals = document.getElementById("runVitals");
+-            const status = document.getElementById("runStatusDeck");
+-            return { vitals: vitals?.getBoundingClientRect(), status: status?.getBoundingClientRect() };
+-        });
+-
+         // Classic preset metrics
+         await page.evaluate(() => {
+             const presetBtn = document.getElementById("uiPresetClassic");

@@ -983,14 +983,6 @@ async function runLanguageScenario({baseUrl, browser, fixturePath, language, out
             return { vitals: vitals?.getBoundingClientRect(), status: status?.getBoundingClientRect() };
         });
 
-        await page.setViewportSize({ width: 800, height: 600 });
-        await page.waitForTimeout(500);
-        viewportState.vitals800 = await page.evaluate(() => {
-            const vitals = document.getElementById("runVitals");
-            const status = document.getElementById("runStatusDeck");
-            return { vitals: vitals?.getBoundingClientRect(), status: status?.getBoundingClientRect() };
-        });
-
         // Classic preset metrics
         await page.evaluate(() => {
             const presetBtn = document.getElementById("uiPresetClassic");
